@@ -1,2 +1,0 @@
-kafka-producer=com.chua.utils.netx.kafka.factory.KafkaProducerFactory
-kafka-consumer=com.chua.utils.netx.kafka.factory.KafkaConsumerFactory
