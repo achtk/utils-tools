@@ -1,3 +1,0 @@
-single-solr=com.chua.utils.netx.solr.factory.SingleSolrFactory
-single-cloud=com.chua.utils.netx.solr.factory.CloudSolrFactory
-solr=com.chua.utils.netx.solr.factory.SingleSolrFactory
