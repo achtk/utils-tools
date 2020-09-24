@@ -1,0 +1,3 @@
+jdk=com.chua.utils.tools.compiler.JdkCompilerFactory
+jdk2=com.chua.utils.tools.compiler.Jdk2CompilerFactory
+javassist=com.chua.utils.tools.compiler.JavassistCompilerFactory

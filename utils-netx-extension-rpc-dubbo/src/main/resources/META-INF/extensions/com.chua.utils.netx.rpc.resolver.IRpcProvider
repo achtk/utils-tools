@@ -1,0 +1,2 @@
+dubbo-producer=com.chua.utils.netx.rpc.dubbo.DubboProvider
+dubbo-consumer=com.chua.utils.netx.rpc.dubbo.DubboConsumer

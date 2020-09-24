@@ -1,0 +1,3 @@
+jar=com.chua.utils.tools.resource.adaptor.JarResourceAdaptor
+war=com.chua.utils.tools.resource.adaptor.WarResourceAdaptor
+zip=com.chua.utils.tools.resource.adaptor.ZipResourceAdaptor

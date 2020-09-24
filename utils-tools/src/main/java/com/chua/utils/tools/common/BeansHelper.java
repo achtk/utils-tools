@@ -1,0 +1,199 @@
+package com.chua.utils.tools.common;
+
+import com.google.common.base.Preconditions;
+import net.sf.cglib.beans.BeanCopier;
+import net.sf.cglib.beans.BeanMap;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+/**
+ * @author CH
+ */
+public class BeansHelper {
+
+    /**
+     * 实体对象赋值
+     *
+     * @param entity      对象
+     * @param params 值
+     * @param =<T>
+     * @return
+     */
+    public static <T> T setProperty(final T entity, final Map<String, Object> params) {
+        Preconditions.checkArgument(!BooleanHelper.isEmpty(params));
+        BeanMap beanMap = BeanMap.create(entity);
+        beanMap.putAll(params);
+        return (T) beanMap.getBean();
+    }
+
+    /**
+     * 实体对象赋值
+     *
+     * @param <T>
+     * @param t     对象
+     * @param fName key
+     * @param value  value
+     * @return
+     */
+    public static <T> T setProperty(final T t, final String fName, final Object value) {
+        if (StringHelper.isNotBlank(fName)) {
+            BeanMap beanMap = BeanMap.create(t);
+            beanMap.put(fName, value);
+            return (T) beanMap.getBean();
+        }
+        return t;
+    }
+
+    /**
+     * 实体对象复制
+     *
+     * @param t   对象
+     * @param t1  对象
+     * @param <T>
+     * @return
+     */
+    public static <T> void copier(final Class<T> t, final Class<T> t1) {
+        Preconditions.checkArgument(null != t);
+        Preconditions.checkArgument(null != t1);
+
+        final BeanCopier beanCopier = BeanCopier.create(t, t1, false);
+        beanCopier.copy(t, t1, null);
+    }
+    /**
+     * 实体对象复制
+     *
+     * @param from   对象
+     * @param to  对象
+     * @return
+     */
+    public static <E, E1>void copier(final E from, final E1 to) {
+        Preconditions.checkArgument(null != from);
+        Preconditions.checkArgument(null != to);
+
+        final BeanCopier beanCopier = BeanCopier.create(from.getClass(), to.getClass(), false);
+        beanCopier.copy(from, to, null);
+    }
+    /**
+     * 实体对象反射复制
+     *
+     * @param from   对象
+     * @param to  对象
+     * @return
+     */
+    public static <E, E1>void reflectCopier(final E from, final E1 to) {
+        Preconditions.checkArgument(null != from);
+        Preconditions.checkArgument(null != to);
+
+        Map<String, Object> nameAndValues = ReflectHelper.getAllFieldNameAndValues(from);
+        ReflectHelper.setProperties(to, nameAndValues);
+    }
+    /**
+     * 实体对象复制
+     *
+     * @param from   对象
+     * @param to  对象
+     * @return
+     */
+    public static <E, E1> E1 copier(final E from, final Class<E1> to) {
+        Preconditions.checkArgument(null != from);
+        Preconditions.checkArgument(null != to);
+
+        try {
+            E1 e1 = to.newInstance();
+            final BeanCopier beanCopier = BeanCopier.create(from.getClass(), to, false);
+            beanCopier.copy(from, e1, null);
+            return e1;
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    /**
+     * 实体对象复制
+     *
+     * @param from   对象
+     * @param to  对象
+     * @return
+     */
+    public static <E, E1> List<E1> copier(final List<E> from, final Class<E1> to) {
+        Preconditions.checkArgument(null != from);
+        Preconditions.checkArgument(null != to);
+
+        List<E1> result = new ArrayList<>();
+        Class<?> aClass = to.getClass();
+        for (E e : from) {
+            try {
+                E1 instance = (E1) aClass.newInstance();
+                copier(e, instance);
+                result.add(instance);
+            } catch (Throwable ex) {
+                continue;
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * object 2 byte[]
+     * @param obj
+     * @return
+     */
+    public static byte[] convert(final Object obj) {
+        Preconditions.checkArgument(null != obj);
+
+        try (
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(bos)
+        ) {
+            //读取对象并转换成二进制数据
+            oos.writeObject(obj);
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * object 2 byte[]
+     * @param obj
+     * @return
+     */
+    public static Object convert(final byte[] obj) {
+        Preconditions.checkArgument(null != obj);
+
+        try (ObjectInputStream oos = new ObjectInputStream(new ByteArrayInputStream(obj))) {
+            //读取对象并转换成二进制数据
+            return oos.readObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 拷贝集合到对象
+     * @param object 对象
+     * @param properties 集合
+     * @return
+     */
+    public static <T>T copierProperties2Object(T object, final Properties properties) {
+        if(!BooleanHelper.hasLength(properties) || null == object) {
+            return object;
+        }
+
+        BeanMap beanMap = BeanMap.create(object);
+        beanMap.putAll(properties);
+        return (T) beanMap.getBean();
+    }
+}

@@ -1,0 +1,3 @@
+nacos=com.chua.utils.netx.nacos.factory.NacosConfigFactory
+nacos-config=com.chua.utils.netx.nacos.factory.NacosConfigFactory
+nacos-name=com.chua.utils.netx.nacos.factory.NacosNamingFactory

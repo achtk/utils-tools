@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="8a733940-5f8e-4686-9ebb-15d04429b670" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="JUnit3 Test Class" />
+        <option value="TestNG Test Class" />
+        <option value="Interface" />
+        <option value="Enum" />
+        <option value="FxmlFile" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="$PROJECT_DIR$/../../三方软件/apache-maven-3.6.1" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="downloadSourcesAutomatically" value="true" />
+        <option name="vmOptionsForImporter" value="-Xmx768m" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1gGyIjJwbkw2QYAstGbcJU5wNMo" />
+  <component name="ProjectViewState">
+    <option name="flattenPackages" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="TestNG" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit3" value="junit.framework.TestCase" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.TestNG" value="" />
+    <property name="jdk.selected.JAVA_MODULE" value="1.8" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/utils-netx-extension-zookeeper/src/main/java/com/chua/utils/netx/zookeeper" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/utils-netx-extension-rpc-sofa/src/main/resources" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="com.chua.utils.http.http" />
+      <recent name="com.chua.utils.tools.strategy" />
+      <recent name="com.chua.utils.tools.resource" />
+      <recent name="com.chua.utils.tools.spi.factory" />
+      <recent name="com.chua.utils.tools.office.excel" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+      <recent name="junit.framework.TestCase" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.chua.utils.tools.common" />
+      <recent name="com.chua.unified.function" />
+      <recent name="com.chua.utils.netx.redission.factory" />
+      <recent name="com.chua.utils.netx.redis.context" />
+      <recent name="com.chua.utils.netx.kafka.context" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="I:\work\work\work-final\utils-netx-extension-rpc-sofa\src\main\resources" />
+      <recent name="I:\work\work\work-final\utils-netx-extension-rpc-sofa\src\main\java\com\chua\utils\netx\rpc" />
+      <recent name="I:\work\work\work-final\utils-netx-extension-rpc-dubbo\src\main\java\com\chua\utils\netx\rpc" />
+      <recent name="I:\work\work\work-final\utils-netx\src\main\java\com\chua\utils\netx\rpc" />
+      <recent name="I:\work\work\work-final\utils-tools\src\main\java\com\chua\utils\tools\common" />
+    </key>
+  </component>
+  <component name="RunManager" selected="TestNG.NetxFactoryExample.testNetxFactory">
+    <configuration name="FastResourceHelperTest.testGetResources" type="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="utils-tools" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.chua.utils.tools.resource.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.chua.utils.tools.resource" />
+      <option name="MAIN_CLASS_NAME" value="com.chua.utils.tools.resource.FastResourceHelperTest" />
+      <option name="METHOD_NAME" value="testGetResources" />
+      <option name="TEST_OBJECT" value="METHOD" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="HttpExample.testNewGet" type="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="utils-example" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.chua.utils.tools.example.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.chua.utils.tools.example" />
+      <option name="MAIN_CLASS_NAME" value="com.chua.utils.tools.example.HttpExample" />
+      <option name="METHOD_NAME" value="testNewGet" />
+      <option name="TEST_OBJECT" value="METHOD" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IHttpClientFactoryTest.testNewGet" type="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="utils-http" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.chua.utils.http.http.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.chua.utils.http.http" />
+      <option name="MAIN_CLASS_NAME" value="com.chua.utils.http.http.IHttpClientFactoryTest" />
+      <option name="METHOD_NAME" value="testNewGet" />
+      <option name="TEST_OBJECT" value="METHOD" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NetxFactoryExample.testNetxFactory" type="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="utils-example" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.chua.utils.tools.example.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.chua.utils.tools.example" />
+      <option name="MAIN_CLASS_NAME" value="com.chua.utils.tools.example.NetxFactoryExample" />
+      <option name="METHOD_NAME" value="testNetxFactory" />
+      <option name="TEST_OBJECT" value="METHOD" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="StrategyTypeTest.testCallee" type="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="utils-tools" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.chua.utils.tools.strategy.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.chua.utils.tools.strategy" />
+      <option name="MAIN_CLASS_NAME" value="com.chua.utils.tools.strategy.StrategyTypeTest" />
+      <option name="METHOD_NAME" value="testCallee" />
+      <option name="TEST_OBJECT" value="METHOD" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="TestNG.NetxFactoryExample.testNetxFactory" />
+        <item itemvalue="TestNG.HttpExample.testNewGet" />
+        <item itemvalue="TestNG.IHttpClientFactoryTest.testNewGet" />
+        <item itemvalue="TestNG.StrategyTypeTest.testCallee" />
+        <item itemvalue="TestNG.FastResourceHelperTest.testGetResources" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration>C:\Users\ARCHTK\AppData\Roaming\Subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8a733940-5f8e-4686-9ebb-15d04429b670" name="Default Changelist" comment="" />
+      <created>1597755145060</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1597755145060</updated>
+      <workItem from="1597755151204" duration="11060000" />
+      <workItem from="1597843422903" duration="4355000" />
+      <workItem from="1598008171227" duration="9557000" />
+      <workItem from="1598069158090" duration="14679000" />
+      <workItem from="1598753897228" duration="7060000" />
+      <workItem from="1600651566188" duration="391000" />
+      <workItem from="1600651991495" duration="18402000" />
+      <workItem from="1600829878402" duration="15880000" />
+      <workItem from="1600957416539" duration="266000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="初始化" />
+    <option name="LAST_COMMIT_MESSAGE" value="初始化" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="586" y="198" key="#Inspections" timestamp="1598757375458">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="586" y="198" key="#Inspections/0.0.1920.1040@0.0.1920.1040" timestamp="1598757375458" />
+    <state x="552" y="178" width="816" height="731" key="#Intentions" timestamp="1600832250453">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="178" width="816" height="731" key="#Intentions/0.0.1920.1040@0.0.1920.1040" timestamp="1600832250453" />
+    <state x="440" y="94" key="#Project_Structure" timestamp="1600846582521">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="440" y="94" key="#Project_Structure/0.0.1920.1040@0.0.1920.1040" timestamp="1600846582521" />
+    <state x="690" y="274" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1598073277139">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="274" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598073277139" />
+    <state x="615" y="320" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1598069768721">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="615" y="320" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1598069768721" />
+    <state x="765" y="225" key="#com.intellij.ide.util.MemberChooser" timestamp="1600844543336">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="765" y="225" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1600844543336" />
+    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1600844609796">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="0" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1600844609796" />
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1600659846934">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1600659846934" />
+    <state x="690" y="266" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog" timestamp="1598011445708">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="690" y="266" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598011445708" />
+    <state width="973" height="466" key="DebuggerActiveHint" timestamp="1600841991232">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="973" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1600841991232" />
+    <state x="740" y="274" key="FileChooserDialogImpl" timestamp="1600846747900">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1600846747899" />
+    <state width="1877" height="378" key="GridCell.Tab.0.bottom" timestamp="1600846872387">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="378" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1600846872387" />
+    <state width="1877" height="378" key="GridCell.Tab.0.center" timestamp="1600846872387">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="378" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1600846872387" />
+    <state width="1877" height="378" key="GridCell.Tab.0.left" timestamp="1600846872387">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="378" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1600846872387" />
+    <state width="1877" height="378" key="GridCell.Tab.0.right" timestamp="1600846872387">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="378" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1600846872387" />
+    <state width="1877" height="378" key="GridCell.Tab.1.bottom" timestamp="1600846872387">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="378" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1600846872387" />
+    <state width="1877" height="378" key="GridCell.Tab.1.center" timestamp="1600846872387">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="378" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1600846872387" />
+    <state width="1877" height="378" key="GridCell.Tab.1.left" timestamp="1600846872387">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="378" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1600846872387" />
+    <state width="1877" height="378" key="GridCell.Tab.1.right" timestamp="1600846872387">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="378" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1600846872387" />
+    <state x="490" y="174" key="Maven.ArtifactSearchDialog" timestamp="1598757397086">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="490" y="174" key="Maven.ArtifactSearchDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1598757397086" />
+    <state x="461" y="164" key="SettingsEditor" timestamp="1600835111239">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1600835111239" />
+    <state x="681" y="261" width="564" height="524" key="StructurePopup" timestamp="1600846249950">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="681" y="261" width="564" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1600846249950" />
+    <state width="520" height="446" key="SwitcherDM" timestamp="1598071843556">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="520" height="446" key="SwitcherDM/0.0.1920.1040@0.0.1920.1040" timestamp="1598071843556" />
+    <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1600674194069">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="968" height="528" key="XDebugger.FullValuePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1600674194069" />
+    <state x="759" y="297" key="chooseDestDirectoryDialog" timestamp="1600839498305">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="759" y="297" key="chooseDestDirectoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1600839498305" />
+    <state x="1257" y="216" width="663" height="589" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1600832266687">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="1257" y="216" width="663" height="589" key="com.intellij.testIntegration.createTest.CreateTestDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1600832266687" />
+    <state x="661" y="252" width="1049" height="536" key="find.popup" timestamp="1600832464317">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="661" y="252" width="1049" height="536" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1600832464317" />
+    <state x="320" y="360" key="new project wizard" timestamp="1600846664524">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="320" y="360" key="new project wizard/0.0.1920.1040@0.0.1920.1040" timestamp="1600846664524" />
+    <state x="800" y="275" key="refactoring.ChangeSignatureDialog" timestamp="1600671062297">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="800" y="275" key="refactoring.ChangeSignatureDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1600671062297" />
+    <state x="616" y="240" key="run.anything.popup" timestamp="1600669350556">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1600669350556" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1600846246075">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1600846246075" />
+    <state x="790" y="310" key="svn.repositoryBrowser" timestamp="1600655264468">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="790" y="310" key="svn.repositoryBrowser/0.0.1920.1040@0.0.1920.1040" timestamp="1600655264468" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/utils-tools/src/main/java/com/chua/utils/tools/prop/resolver/XmlFileResolver.java</url>
+          <line>69</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/utils-tools/src/main/java/com/chua/utils/tools/cfg/CfgOptions.java</url>
+          <line>130</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/utils-tools/src/main/java/com/chua/utils/tools/proxy/JavassistProxyAgent.java</url>
+          <line>83</line>
+          <option name="timeStamp" value="43" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

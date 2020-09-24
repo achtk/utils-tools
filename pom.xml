@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.chua</groupId>
+    <artifactId>utils-tools-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0</version>
+
+    <properties>
+        <cqengine.version>3.2.0</cqengine.version>
+        <commons-collection.version>4.4</commons-collection.version>
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        <commons-configuration.version>2.7</commons-configuration.version>
+        <commons-lang3.version>3.9</commons-lang3.version>
+        <commons-dbutils.version>1.7</commons-dbutils.version>
+        <commons-pool2.version>2.8.0</commons-pool2.version>
+        <commons-exec.version>1.3</commons-exec.version>
+        <commons-io.version>2.6</commons-io.version>
+        <commons-logging.version>1.2</commons-logging.version>
+        <commons-net.version>3.6</commons-net.version>
+        <commons-cli.version>1.4</commons-cli.version>
+        <commons-compress.version>1.20</commons-compress.version>
+        <commons-math3.version>3.6.1</commons-math3.version>
+        <commons-text.version>1.8</commons-text.version>
+        <commons-csv.version>1.8</commons-csv.version>
+        <commons-codec.version>1.12</commons-codec.version>
+        <commons-dbcp.version>2.7.0</commons-dbcp.version>
+        <commons-vfs2.version>2.6.0</commons-vfs2.version>
+        <commons-compress.version>1.18</commons-compress.version>
+
+        <spring-jdbc.version>5.2.6.RELEASE</spring-jdbc.version>
+        <spring-core.version>5.2.6.RELEASE</spring-core.version>
+        <spring-aop.version>5.2.6.RELEASE</spring-aop.version>
+        <spring-context.version>5.2.6.RELEASE</spring-context.version>
+        <spring-webmvc.version>5.2.6.RELEASE</spring-webmvc.version>
+        <spring-web.version>5.2.6.RELEASE</spring-web.version>
+        <spring-retry.version>1.3.0</spring-retry.version>
+
+        <aspectjweaver.version>1.9.4</aspectjweaver.version>
+
+        <webmagic.version>0.7.3</webmagic.version>
+        <htmlunit.version>2.35.0</htmlunit.version>
+        <selenium.version>4.0.0-alpha-5</selenium.version>
+
+        <ehcache.version>3.8.1</ehcache.version><!--3.8.1-->
+        <caffeine.version>2.8.4</caffeine.version>
+
+        <cglib.version>3.3.0</cglib.version>
+        <jodd.version>3.7.1</jodd.version>
+
+        <google-gson.version>2.8.6</google-gson.version>
+        <google-guava-retrying.version>2.0.0</google-guava-retrying.version>
+        <google-guava.version>29.0-jre</google-guava.version>
+
+        <sentinel-core.version>1.7.2</sentinel-core.version>
+        <dubbo.version>2.7.8</dubbo.version>
+        <sofa-rpc.version>5.7.2</sofa-rpc.version>
+
+        <webp-io.version>0.0.5</webp-io.version>
+
+        <lombok.version>1.18.12</lombok.version>
+
+        <!-- <curator.version>5.0.0</curator.version>-->
+
+        <curator.version>4.0.1</curator.version>
+        <hystrix.version>1.5.18</hystrix.version>
+
+        <zip4j.version>1.3.1</zip4j.version>
+        <lz4.version>1.6.0</lz4.version>
+        <sevenz4j.version>9.20-2.00beta</sevenz4j.version>
+
+        <jcuda.version>10.1.0</jcuda.version>
+        <jarslink.version>1.6.1.20180301</jarslink.version>
+
+        <h2.version>1.4.200</h2.version>
+        <hsqldb.version>2.5.0</hsqldb.version>
+        <mysql.version>8.0.17</mysql.version>
+        <oracle.version>10.2.0.4.0</oracle.version>
+        <sqlite.version>3.31.1</sqlite.version>
+        <druid.version>1.1.21</druid.version>
+        <hibernate.version>5.3.10.Final</hibernate.version>
+
+        <leveldb.version>0.12</leveldb.version>
+        <mapdb.version>3.0.8</mapdb.version>
+        <neo4j.version>4.0.4</neo4j.version>
+
+        <jooq.version>3.13.1</jooq.version>
+        <mybatis.version>3.5.4</mybatis.version>
+
+        <httpclient.version>4.5.12</httpclient.version>
+        <httpasyncclient.version>4.1.4</httpasyncclient.version>
+
+        <solr.version>8.5.1</solr.version>
+        <redis.version>3.1.0</redis.version>
+        <kafka.version>2.3.0</kafka.version>
+        <elasticsearch.version>7.8.1</elasticsearch.version>
+        <elasticsearch7.version>7.2.0</elasticsearch7.version>
+        <elasticsearch6.version>6.8.1</elasticsearch6.version>
+        <elasticsearch5.version>5.6.16</elasticsearch5.version>
+        <elasticsearch5-transport.version>5.5.1</elasticsearch5-transport.version>
+
+        <ssh.verson>2.2.0</ssh.verson>
+
+        <vertx.version>3.8.5</vertx.version>
+
+        <bytebuddy.version>1.9.13</bytebuddy.version>
+        <asm.version>7.1</asm.version>
+        <javassist.version>3.27.0-GA</javassist.version>
+        <snakeyaml.version>1.26</snakeyaml.version>
+
+        <slf4j.version>1.7.30</slf4j.version>
+
+        <okhttp.version>4.7.2</okhttp.version>
+        <reflections.version>0.9.12</reflections.version>
+
+        <yaml.version>1.26</yaml.version>
+        <dom4j.version>2.1.3</dom4j.version>
+        <ini.version>r6</ini.version>
+        <easypoi.version>2.2.6</easypoi.version>
+
+        <netty.version>4.1.50.Final</netty.version>
+        <netty-socketio.version>1.7.18</netty-socketio.version>
+
+        <resteasy.version>3.0.7.Final</resteasy.version>
+        <itextpdf.version>5.5.13.1</itextpdf.version>
+
+        <io.searchbox.jest.version>6.3.1</io.searchbox.jest.version>
+        <!-- 2.18.1 -->
+        <fast-classpath-scanner.version>4.0.0-beta-7</fast-classpath-scanner.version>
+        <classgraph.version>4.8.78</classgraph.version>
+
+        <freemarker.version>2.3.30</freemarker.version>
+        <tensorflow.version>1.15.0</tensorflow.version>
+
+        <utils-base.version>1.0</utils-base.version>
+        <utils-http.version>1.0</utils-http.version>
+        <utils-tools.version>1.0</utils-tools.version>
+        <utils-netx.version>1.0</utils-netx.version>
+        <utils-nets.version>1.0</utils-nets.version>
+        <utils-net-extension-okhttp.version>1.0</utils-net-extension-okhttp.version>
+        <utils-originator-processor.version>1.0</utils-originator-processor.version>
+    </properties>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.14.3</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <modules>
+        <module>utils-remote</module>
+
+        <module>utils-tools</module>
+        <module>utils-tools-extension-spring</module>
+        <module>utils-tools-extension-cache-caffeine</module>
+        <module>utils-tools-extension-cache-ehcache</module>
+
+        <module>utils-http</module>
+        <module>utils-http-extension-okhttp</module>
+        <module>utils-http-extension-httpclient</module>
+
+        <module>utils-unified-interface</module>
+        <module>utils-tools-extension-token</module>
+        <module>utils-tools-extension-office</module>
+        <module>utils-tools-extension-template</module>
+        <module>utils-tools-extension-fegin</module>
+
+        <module>utils-example</module>
+
+        <module>utils-netx</module>
+        <module>utils-netx-extension-zookeeper</module>
+        <module>utils-netx-extension-nacos</module>
+        <module>utils-netx-extension-kafka</module>
+        <module>utils-netx-extension-redis</module>
+        <module>utils-netx-extension-elasticsearch</module>
+        <module>utils-netx-extension-redisson</module>
+        <module>utils-netx-extension-sftp</module>
+        <module>utils-netx-extension-solr</module>
+        <module>utils-netx-extension-rpc-dubbo</module>
+        <module>utils-netx-extension-rpc-sofa</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <configuration>
+                            <source>8</source>
+                            <target>8</target>
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

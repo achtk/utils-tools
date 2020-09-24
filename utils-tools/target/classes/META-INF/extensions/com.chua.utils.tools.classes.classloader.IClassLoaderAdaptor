@@ -1,0 +1,2 @@
+jar=com.chua.utils.tools.classes.classloader.JarClassLoaderAdaptor
+springboot=com.chua.utils.tools.classes.classloader.SpringBootClassLoaderAdaptor

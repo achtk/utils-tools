@@ -1,0 +1,5 @@
+{
+  "file": {
+    "window":["*Windows*", "*Users*", "*System*", "*ProgramData*", "*\\$*", "*Settings*"]
+  }
+}

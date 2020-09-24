@@ -1,0 +1,2 @@
+sofa-producer=com.chua.utils.netx.rpc.sofa.SofaProvider
+sofa-consumer=com.chua.utils.netx.rpc.sofa.SofaConsumer

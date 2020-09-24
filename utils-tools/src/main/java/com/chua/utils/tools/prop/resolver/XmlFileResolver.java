@@ -1,0 +1,122 @@
+package com.chua.utils.tools.prop.resolver;
+
+import com.chua.utils.tools.prop.mapper.FileMapper;
+import com.chua.utils.tools.function.Converter;
+import com.chua.utils.tools.function.NoneConverter;
+import com.google.common.collect.HashMultimap;
+import org.w3c.dom.*;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * yaml解析
+ * @author CH
+ */
+public class XmlFileResolver implements IFileResolver {
+
+    private HashMultimap hashMultimap = HashMultimap.create();
+
+    @Override
+    public void stream(InputStream inputStream) {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setValidating(false);
+        documentBuilderFactory.setIgnoringComments(true);
+        try {
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            documentBuilder.setEntityResolver(new EntityResolver() {
+                @Override
+                public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+                    if (systemId.endsWith("dtd")) {
+                        return new InputSource(new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>".getBytes()));
+                    }
+                    return null;
+                }
+            });
+
+
+            Document document = documentBuilder.parse(inputStream);
+            Element element = document.getDocumentElement();
+            checkAttribute("", element.getAttributes());
+            checkElement("", element.getChildNodes());
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 解析节点
+     *
+     * @param prefix     前缀
+     * @param childNodes 节点
+     */
+    private void checkElement(String prefix, NodeList childNodes) {
+        int length = childNodes.getLength();
+        if (length == 1) {
+            Node node = childNodes.item(0);
+            hashMultimap.put(prefix + "." + node.getNodeName(), node.getNodeValue());
+            return;
+        }
+        String newPrefix;
+        for (int i = 0; i < length; i++) {
+            Node node = childNodes.item(i);
+            short nodeType = node.getNodeType();
+           // if (node instanceof DeferredTextImpl) {
+             //   continue;
+           // }
+            newPrefix = prefix + "." + node.getNodeName();
+            checkAttribute(newPrefix, node.getAttributes());
+            checkElement(newPrefix, node.getChildNodes());
+        }
+    }
+
+    /**
+     * 解析属性
+     *
+     * @param prefix     前缀
+     * @param attributes 属性
+     */
+    private void checkAttribute(String prefix, NamedNodeMap attributes) {
+        int length = attributes.getLength();
+        if (length == 0) {
+            return;
+        }
+
+        for (int i = 0; i < length; i++) {
+            Node node = attributes.item(i);
+            hashMultimap.put(prefix + "." + node.getNodeName(), node.getNodeValue());
+        }
+    }
+
+    @Override
+    public FileMapper analysis(Converter converter) {
+        if (null == hashMultimap) {
+            return null;
+        }
+        if (null == converter) {
+            converter = new NoneConverter();
+        }
+        HashMultimap<String, Object> hashMultimap = HashMultimap.create();
+        FileMapper fileMapper = new FileMapper();
+        fileMapper.setHashMultimap(hashMultimap);
+
+        Set<Map.Entry<String, Object>> entries = this.hashMultimap.entries();
+        for (Map.Entry<String, Object> entry : entries) {
+            hashMultimap.put(entry.getKey(), converter.doBackward(entry.getValue()));
+        }
+        return fileMapper;
+    }
+
+    @Override
+    public String[] suffixes() {
+        return new String[]{"properties"};
+    }
+}
