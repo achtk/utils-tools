@@ -1,4 +1,0 @@
-elasticsearch-sync=com.chua.utils.netx.elasticsearch.interfaces.ElasticSearchSyncFactory
-elasticsearch-async=com.chua.utils.netx.elasticsearch.interfaces.ElasticSearchAsyncFactory
-elasticsearch=com.chua.utils.netx.elasticsearch.interfaces.ElasticSearchAsyncFactory
-es=com.chua.utils.netx.elasticsearch.interfaces.ElasticSearchAsyncFactory
