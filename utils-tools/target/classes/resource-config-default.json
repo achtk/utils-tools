@@ -1,4 +1,0 @@
-{
-  "thread": 10,
-  "dbname": "${user.home}/filecache.db"
-}

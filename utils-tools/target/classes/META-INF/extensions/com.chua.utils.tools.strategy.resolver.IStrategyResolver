@@ -1,7 +1,0 @@
-cache=com.chua.utils.tools.strategy.resolver.CacheStrategyResolver
-async=com.chua.utils.tools.strategy.resolver.AsyncStrategyResolver
-limit=com.chua.utils.tools.strategy.resolver.LimitStrategyResolver
-proxy=com.chua.utils.tools.strategy.resolver.ProxyStrategyResolver
-retry=com.chua.utils.tools.strategy.resolver.RetryLimitStrategyResolver
-retry_condition=com.chua.utils.tools.strategy.resolver.RetryConditionStrategyResolver
-timeout=com.chua.utils.tools.strategy.resolver.TimeStrategyResolver

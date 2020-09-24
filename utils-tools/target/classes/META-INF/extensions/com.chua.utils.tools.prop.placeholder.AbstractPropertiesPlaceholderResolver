@@ -1,2 +1,0 @@
-system=com.chua.utils.tools.prop.placeholder.SystemPropertiesPlaceholderResolver
-default=com.chua.utils.tools.prop.placeholder.DefaultPropertiesPlaceholderResolver
