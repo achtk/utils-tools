@@ -1,2 +1,0 @@
-ftp=com.chua.utils.netx.ftp.utils.FtpFactory
-sftp=com.chua.utils.netx.ftp.utils.SftpFactory
