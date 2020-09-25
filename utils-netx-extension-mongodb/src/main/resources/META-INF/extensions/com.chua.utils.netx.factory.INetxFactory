@@ -1,0 +1,1 @@
+mongo=com.chua.utils.netx.mongodb.factory.MongodbFactory
