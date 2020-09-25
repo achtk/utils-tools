@@ -1,0 +1,2 @@
+es=com.chua.utils.netx.elasticsearch.spring.factory.ElasticSearchFactory
+elasticsearch=com.chua.utils.netx.elasticsearch.spring.factory.ElasticSearchFactory
