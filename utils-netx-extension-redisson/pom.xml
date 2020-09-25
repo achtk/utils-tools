@@ -19,9 +19,15 @@
         </dependency>
 
         <dependency>
-            <groupId>com.cgy</groupId>
+            <groupId>com.chua</groupId>
             <artifactId>utils-netx</artifactId>
             <version>${utils-netx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-unified-interface</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

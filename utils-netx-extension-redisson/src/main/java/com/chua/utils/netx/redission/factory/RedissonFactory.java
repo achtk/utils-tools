@@ -1,9 +1,9 @@
 package com.chua.utils.netx.redission.factory;
 
-import com.cgy.utils.base.bool.BooleanHelper;
-import com.cgy.utils.base.map.MapHelper;
-import com.cgy.utils.netx.configurator.NetxProperties;
-import com.cgy.utils.netx.factory.INetxFactory;
+import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.MapHelper;
 import com.google.common.base.Strings;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;

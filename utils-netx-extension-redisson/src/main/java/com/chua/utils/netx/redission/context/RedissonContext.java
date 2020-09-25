@@ -1,7 +1,7 @@
 package com.chua.utils.netx.redission.context;
 
-import com.cgy.utils.netx.configurator.NetxProperties;
-import com.cgy.utils.netx.factory.INetxFactory;
+import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.netx.redission.factory.RedissonFactory;
 import com.google.common.base.Strings;
 import org.redisson.api.RedissonClient;
