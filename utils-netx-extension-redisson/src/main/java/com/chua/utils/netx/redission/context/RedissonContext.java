@@ -15,13 +15,11 @@ import java.util.concurrent.locks.Lock;
 public class RedissonContext {
     private final INetxFactory redissionFactory;
     private final RedissonClient redissonClient;
-    private NetxProperties netxProperties;
     private static final String ANY_LOCK = "anyLock";
 
 
     public RedissonContext(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
-        this.redissionFactory = new RedissonFactory();
+        this.redissionFactory = new RedissonFactory(netxProperties);
         this.redissionFactory.configure(netxProperties);
         this.redissonClient = (RedissonClient) this.redissionFactory.client();
     }

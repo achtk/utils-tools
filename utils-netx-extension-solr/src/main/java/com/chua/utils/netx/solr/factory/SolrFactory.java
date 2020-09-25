@@ -3,8 +3,7 @@ package com.chua.utils.netx.solr.factory;
 import com.chua.unified.function.IFunction;
 import com.chua.unified.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -22,6 +21,8 @@ import java.util.*;
  * @since 2020/8/5 12:52
  */
 @Slf4j
+@NoArgsConstructor
+@RequiredArgsConstructor
 public abstract class SolrFactory implements INetxFactory<SolrClient> {
 
     /**
@@ -37,6 +38,7 @@ public abstract class SolrFactory implements INetxFactory<SolrClient> {
     protected static final String DEFAULT_COLLECTION = "Collection";
     private static final String FIELD_COLLEACTION = "collection";
 
+    @NonNull
     protected NetxProperties netxProperties;
 
     @Getter

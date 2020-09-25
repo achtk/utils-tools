@@ -5,13 +5,19 @@ import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.chua.unified.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * nacos客户端工具类
  * @author CH
  */
+@RequiredArgsConstructor
+@NoArgsConstructor
 public class NacosConfigFactory implements INetxFactory<ConfigService> {
 
+    @NonNull
     private NetxProperties netxProperties;
     private ConfigService configService;
     private static final String DEFAULT_GROUP = "DEFAULT_GROUP";

@@ -39,15 +39,13 @@ public class RedisAsyncContext {
     private final String EX = "EX";
 
     private final INetxFactory redisAsyncFactory;
-    private NetxProperties netxProperties;
 
     private RedisAdvancedClusterAsyncCommands<String, String> clusterAsyncCommands;
     private RedisAsyncCommands<String, String> redisAsyncCommands;
 
 
     public RedisAsyncContext(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
-        this.redisAsyncFactory = new RedisAsyncFactory();
+        this.redisAsyncFactory = new RedisAsyncFactory(netxProperties);
         this.redisAsyncFactory.configure(netxProperties);
         Object client = this.redisAsyncFactory.client();
         if(client instanceof RedisAsyncCommands) {

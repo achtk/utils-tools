@@ -5,13 +5,19 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.chua.unified.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * nacos客户端工具类
  * @author CH
  */
+@RequiredArgsConstructor
+@NoArgsConstructor
 public class NacosNamingFactory implements INetxFactory<NamingService> {
 
+    @NonNull
     private NetxProperties netxProperties;
     private NamingService namingService;
     private static final String DEFAULT_CLUSTER_NAME = "DEFAULT_CLUSTER_NAME";

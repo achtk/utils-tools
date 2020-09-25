@@ -5,6 +5,9 @@ import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.tools.common.MapHelper;
 import com.google.common.base.Joiner;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -28,8 +31,11 @@ import static org.apache.curator.framework.imps.CuratorFrameworkState.STARTED;
  * @since 2020/8/5 11:39
  */
 @Slf4j
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class ZookeeperFactory implements INetxFactory<CuratorFramework> {
 
+    @NonNull
     private NetxProperties netxProperties;
     private CuratorFramework curatorFramework;
     /**

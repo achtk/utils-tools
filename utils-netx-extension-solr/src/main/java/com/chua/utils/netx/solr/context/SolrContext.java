@@ -30,17 +30,15 @@ import java.util.Map;
  */
 public class SolrContext {
 
-    private NetxProperties netxProperties;
     private INetxFactory netxFactory;
     private SolrClient solrClient;
 
     public SolrContext(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
         String[] host = netxProperties.getHost();
         if(BooleanHelper.hasLength(host, 2)) {
-            this.netxFactory = new CloudSolrFactory();
+            this.netxFactory = new CloudSolrFactory(netxProperties);
         } else {
-            this.netxFactory = new SingleSolrFactory();
+            this.netxFactory = new SingleSolrFactory(netxProperties);
         }
         this.netxFactory.configure(netxProperties);
         this.solrClient = (SolrClient) this.netxFactory.client();

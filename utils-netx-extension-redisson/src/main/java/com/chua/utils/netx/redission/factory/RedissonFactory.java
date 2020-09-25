@@ -5,6 +5,9 @@ import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.MapHelper;
 import com.google.common.base.Strings;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.ClusterServersConfig;
@@ -20,9 +23,12 @@ import java.util.concurrent.locks.Lock;
  * @className RedissonFactory
  * @since 2020/7/27 20:14
  */
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class RedissonFactory implements AutoCloseable, INetxFactory<RedissonClient> {
 
     private static final String ANY_LOCK = "anyLock";
+    @NonNull
     private NetxProperties netxProperties;
     private RedissonClient redissonClient;
 

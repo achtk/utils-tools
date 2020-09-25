@@ -27,17 +27,11 @@ import java.util.List;
 public class ZookeeperContext {
 
     private final CuratorFramework curatorFramework;
-    private ZookeeperFactory zookeeperFactory;
-    private INetxFactory<ZookeeperFactory> factory;
-    private ZookeeperConsumer zookeeperConsumer;
-    private NetxProperties netxProperties;
+    private INetxFactory<CuratorFramework> zookeeperFactory;
 
     public ZookeeperContext(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
-        this.zookeeperConsumer = new ZookeeperConsumer();
-        this.zookeeperConsumer.initialConfiguration(netxProperties);
-        this.factory = this.zookeeperConsumer.factory();
-        this.curatorFramework = (CuratorFramework) this.factory.client();
+        this.zookeeperFactory = new ZookeeperFactory(netxProperties);
+        this.curatorFramework = this.zookeeperFactory.client();
     }
     /**
      * 创建临时节点

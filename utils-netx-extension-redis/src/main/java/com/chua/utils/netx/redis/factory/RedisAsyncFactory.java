@@ -10,6 +10,9 @@ import com.lambdaworks.redis.api.async.RedisAsyncCommands;
 import com.lambdaworks.redis.cluster.RedisClusterClient;
 import com.lambdaworks.redis.cluster.api.StatefulRedisClusterConnection;
 import com.lambdaworks.redis.cluster.api.async.RedisAdvancedClusterAsyncCommands;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 
@@ -21,10 +24,13 @@ import java.util.ArrayList;
  * @className RedistAsyncFactory
  * @since 2020/6/1 23:32
  */
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class RedisAsyncFactory implements INetxFactory {
 
     private RedisAdvancedClusterAsyncCommands<String, String> clusterAsyncCommands;
     private RedisAsyncCommands<String, String> redisAsyncCommands;
+    @NonNull
     private NetxProperties netxProperties;
 
     @Override

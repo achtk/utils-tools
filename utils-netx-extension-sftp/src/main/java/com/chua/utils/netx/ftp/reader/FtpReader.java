@@ -1,7 +1,7 @@
 package com.chua.utils.netx.ftp.reader;
 
-import com.cgy.utils.base.common.SizeHelper;
 import com.chua.utils.netx.ftp.utils.Downloader;
+import com.chua.utils.tools.common.SizeHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 

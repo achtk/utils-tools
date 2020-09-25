@@ -29,15 +29,12 @@ public class NacosContext {
     private final NamingService namingService;
     private final ConfigService configService;
 
-    private NetxProperties netxProperties;
-
     private NacosConfigFactory nacosConfigFactory;
     private NacosNamingFactory nacosNamingFactory;
 
     public NacosContext(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
-        this.nacosNamingFactory = new NacosNamingFactory();
-        this.nacosConfigFactory = new NacosConfigFactory();
+        this.nacosNamingFactory = new NacosNamingFactory(netxProperties);
+        this.nacosConfigFactory = new NacosConfigFactory(netxProperties);
 
         this.nacosNamingFactory.configure(netxProperties);
         this.nacosConfigFactory.configure(netxProperties);

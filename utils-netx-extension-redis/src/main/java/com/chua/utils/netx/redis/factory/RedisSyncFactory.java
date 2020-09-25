@@ -10,6 +10,7 @@ import com.lambdaworks.redis.api.sync.RedisCommands;
 import com.lambdaworks.redis.cluster.RedisClusterClient;
 import com.lambdaworks.redis.cluster.api.StatefulRedisClusterConnection;
 import com.lambdaworks.redis.cluster.api.sync.RedisAdvancedClusterCommands;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 
@@ -20,10 +21,15 @@ import java.util.ArrayList;
  * @className RedistSyncFactory
  * @since 2020/6/1 23:32
  */
+@NoArgsConstructor
 public class RedisSyncFactory implements INetxFactory {
     private RedisAdvancedClusterCommands<String, String> clusterCommands;
     private RedisCommands<String, String> redisCommands;
     private NetxProperties netxProperties;
+
+    public RedisSyncFactory(NetxProperties netxProperties) {
+        this.netxProperties = netxProperties;
+    }
 
     @Override
     public void configure(NetxProperties netxProperties) {

@@ -1,6 +1,9 @@
 package com.chua.utils.netx.solr.factory;
 
+import com.chua.unified.properties.NetxProperties;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
@@ -17,9 +20,14 @@ import java.util.Optional;
 @Getter
 @Setter
 @Slf4j
+@RequiredArgsConstructor
 public class CloudSolrFactory extends SolrFactory {
 
 	private CloudSolrClient cloudSolrClient;
+
+	public CloudSolrFactory(NetxProperties netxProperties) {
+		super(netxProperties);
+	}
 
 	@Override
 	public void start() {

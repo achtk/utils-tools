@@ -18,9 +18,12 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 public class SingleSolrFactory extends SolrFactory {
 
 	private HttpSolrClient httpSolrClient;
-	private NetxProperties netxProperties;
 
-	@Override
+	public SingleSolrFactory(NetxProperties netxProperties) {
+		super(netxProperties);
+	}
+
+    @Override
 	public void configure(NetxProperties netxProperties) {
 		this.netxProperties = netxProperties;
 	}
