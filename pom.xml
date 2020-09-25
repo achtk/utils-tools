@@ -31,6 +31,8 @@
         <commons-vfs2.version>2.6.0</commons-vfs2.version>
         <commons-compress.version>1.18</commons-compress.version>
 
+        <spring-boot-starter-data-mongodb.version>2.3.3.RELEASE</spring-boot-starter-data-mongodb.version>
+
         <spring-jdbc.version>5.2.6.RELEASE</spring-jdbc.version>
         <spring-core.version>5.2.6.RELEASE</spring-core.version>
         <spring-aop.version>5.2.6.RELEASE</spring-aop.version>
@@ -193,12 +195,14 @@
         <module>utils-netx-extension-nacos</module>
         <module>utils-netx-extension-kafka</module>
         <module>utils-netx-extension-redis</module>
+        <module>utils-netx-extension-elasticsearch-spring</module>
         <module>utils-netx-extension-elasticsearch</module>
         <module>utils-netx-extension-redisson</module>
         <module>utils-netx-extension-sftp</module>
         <module>utils-netx-extension-solr</module>
         <module>utils-netx-extension-rpc-dubbo</module>
         <module>utils-netx-extension-rpc-sofa</module>
+        <module>utils-netx-extension-mongodb</module>
     </modules>
 
     <build>
