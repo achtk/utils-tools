@@ -2,12 +2,16 @@ package com.chua.utils.tools.spring.bean;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.entity.AnnotationInfoProperties;
+import com.chua.utils.tools.entity.GetterSetterProperties;
 import com.chua.utils.tools.spring.entity.BeanLoader;
 import com.chua.utils.tools.spring.enums.BeanStatus;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -24,11 +28,12 @@ import java.util.Map;
 
 /**
  * BeanFactory处理工厂
+ *
  * @author CH
  * @date 2020-09-26
  */
 @RequiredArgsConstructor
-public class BeanFactoryBeanFactory implements IBeanFactory{
+public class BeanFactoryBeanFactory implements IBeanFactory {
 
     @NonNull
     private BeanFactory beanFactory;
@@ -78,7 +83,7 @@ public class BeanFactoryBeanFactory implements IBeanFactory{
         BeanLoader<T> beanLoader = BeanLoader.newLoader();
 
         String[] namesForType = getBeanNamesForType(tClass);
-        if(!BooleanHelper.hasLength(namesForType)) {
+        if (!BooleanHelper.hasLength(namesForType)) {
             return null;
         }
         for (String s : namesForType) {
@@ -89,7 +94,7 @@ public class BeanFactoryBeanFactory implements IBeanFactory{
                 beanLoader.throwable(s, BeanStatus.OTHER_ABNORMAL_INFORMATION);
                 continue;
             }
-            if(null == bean) {
+            if (null == bean) {
                 beanLoader.throwable(s, BeanStatus.BEAN_NOT_EXIST);
                 continue;
             }
@@ -105,7 +110,7 @@ public class BeanFactoryBeanFactory implements IBeanFactory{
 
     @Override
     public BeanLoader<Object> getBeansFromAnnotation(Class<? extends Annotation> aClass) {
-        Map<String, Object> annotation =  beanFactory instanceof DefaultListableBeanFactory ? ((DefaultListableBeanFactory) beanFactory).getBeansWithAnnotation(aClass) : null;
+        Map<String, Object> annotation = beanFactory instanceof DefaultListableBeanFactory ? ((DefaultListableBeanFactory) beanFactory).getBeansWithAnnotation(aClass) : null;
         BeanLoader<Object> beanLoader = BeanLoader.newLoader();
         beanLoader.addAll(annotation);
         return beanLoader;
@@ -113,13 +118,13 @@ public class BeanFactoryBeanFactory implements IBeanFactory{
 
     @Override
     public <T> Map<String, T> getBeanMap(Class<T> tClass) {
-        return  beanFactory instanceof DefaultListableBeanFactory ? ((DefaultListableBeanFactory) beanFactory).getBeansOfType(tClass) : null;
+        return beanFactory instanceof DefaultListableBeanFactory ? ((DefaultListableBeanFactory) beanFactory).getBeansOfType(tClass) : null;
     }
 
     @Override
     public String unRegisterBean(@NonNull String beanName) {
-        if(containsBean(beanName)) {
-            if(beanFactory instanceof DefaultListableBeanFactory) {
+        if (containsBean(beanName)) {
+            if (beanFactory instanceof DefaultListableBeanFactory) {
                 ((DefaultListableBeanFactory) beanFactory).removeBeanDefinition(beanName);
                 return beanName;
             }
@@ -131,6 +136,8 @@ public class BeanFactoryBeanFactory implements IBeanFactory{
     public String registerBean(String beanName, @NotNull Class<?> beanClass, @NonNull Map<String, Object> classParams) {
         //获取所有属性名称
         Map<String, Class> fields = doAnalysisBeanFields(beanClass);
+        //Getter and Setter分析
+        beanClass = doAnalysisGetterSetter(beanClass);
         //创建 BeanDefinitionBuilder
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanClass);
         //从上下文解析属性
@@ -145,47 +152,75 @@ public class BeanFactoryBeanFactory implements IBeanFactory{
         String name = uniqueBeanName(beanName);
 
         BeanDefinitionHolder beanDefinitionHolder = new BeanDefinitionHolder(beanDefinitionBuilder.getBeanDefinition(), name);
-        if(beanFactory instanceof DefaultListableBeanFactory) {
+        if (beanFactory instanceof DefaultListableBeanFactory) {
             BeanDefinitionReaderUtils.registerBeanDefinition(beanDefinitionHolder, (BeanDefinitionRegistry) beanFactory);
             return name;
         }
         return null;
     }
+
+    /**
+     * Getter and Setter分析
+     *
+     * @param beanClass 类
+     */
+    private Class<?> doAnalysisGetterSetter(Class<?> beanClass) {
+        try {
+            GetterSetterProperties getterAndSetter = ClassHelper.doAnalyzeGetterAndSetter(beanClass, true, new AnnotationInfoProperties(Autowired.class.getName(), 1, "*"));
+            if (getterAndSetter.isEmpty()) {
+                return beanClass;
+            }
+            return getterAndSetter.getRecordClass();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+        return beanClass;
+    }
+
     /**
      * 从上下文解析属性
+     *
      * @param classParams
      * @param fields
      */
     private void doAnalysisBeanFromApplication(Map<String, Object> classParams, Map<String, Class> fields) {
         for (Map.Entry<String, Class> entry : fields.entrySet()) {
             Object o = classParams.get(entry.getKey());
-            if(!classParams.containsKey(entry.getKey()) || null == o) {
+            if (!classParams.containsKey(entry.getKey()) || null == o) {
                 Object o1 = doFieldAnalysisFromApplication(entry.getKey(), entry.getValue());
                 classParams.put(entry.getKey(), o1);
             }
         }
     }
+
     /**
      * 通过名称/类型查找注册bean
+     *
      * @param name 名称
      * @param type 类型
      * @return
      */
     private Object doFieldAnalysisFromApplication(String name, Class type) {
-        if(String.class.getName().equals(type.getName())) {
+        if (String.class.getName().equals(type.getName())) {
             return null;
         }
-        if(containsBean(name) && beanFactory instanceof DefaultListableBeanFactory) {
+        if (containsBean(name) && beanFactory instanceof DefaultListableBeanFactory) {
             BeanDefinition beanDefinition = ((DefaultListableBeanFactory) beanFactory).getBeanDefinition(name);
             return ClassHelper.forObject(beanDefinition.getBeanClassName());
         }
 
-        if(beanFactory instanceof DefaultListableBeanFactory) {
+        if (beanFactory instanceof DefaultListableBeanFactory) {
+            DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
             try {
-                BeanDefinition beanDefinition = ((DefaultListableBeanFactory) beanFactory).getBeanDefinition(type.getName());
+                BeanDefinition beanDefinition = defaultListableBeanFactory.getBeanDefinition(type.getName());
                 return ClassHelper.forObject(beanDefinition.getBeanClassName());
             } catch (Throwable e) {
-                e.printStackTrace();
+                Map beans = defaultListableBeanFactory.getBeansOfType(type);
+                for (Object value : beans.values()) {
+                    if (value.getClass().isAssignableFrom(type)) {
+                        return value;
+                    }
+                }
             }
         }
 
