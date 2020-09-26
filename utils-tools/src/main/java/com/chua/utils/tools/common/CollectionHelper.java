@@ -326,7 +326,7 @@ public class CollectionHelper {
      * @return
      */
     public static <T> Collection<T> ifNull(final Collection<T> source, final Collection<T> defaultTarget) {
-        return null == source ? source : defaultTarget;
+        return null != source ? source : defaultTarget;
     }
 
     /**
@@ -341,7 +341,7 @@ public class CollectionHelper {
      * @return
      */
     public static <K, V> Map<K, V> ifNull(final Map<K, V> source, final Map<K, V> defaultTarget) {
-        return null == source ? source : defaultTarget;
+        return null != source ? source : defaultTarget;
     }
 
     /**
@@ -375,9 +375,9 @@ public class CollectionHelper {
     }
 
     /**
-     *
-     * @param item
-     * @param items
+     * 笛卡尔积
+     * @param item 第一个数据集
+     * @param items 第二个数据集
      * @param <T>
      * @return
      */
@@ -477,5 +477,24 @@ public class CollectionHelper {
         }
 
         return (T[]) sources.toArray();
+    }
+
+    /**
+     * 返回第一个有效的数据
+     * @param <T>
+     * @param collection 数据集合
+     * @return
+     */
+    public static <T>T findFirstOne(Collection<T> collection) {
+        return FinderHelper.firstElement(collection);
+    }
+    /**
+     * 返回第一个有效的数据
+     * @param <T>
+     * @param collection 数据集合
+     * @return
+     */
+    public static <T>T findLastOne(Collection<T> collection) {
+        return FinderHelper.lastElement(collection);
     }
 }

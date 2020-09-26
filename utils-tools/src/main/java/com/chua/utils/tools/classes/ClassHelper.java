@@ -4,12 +4,19 @@ import com.chua.utils.tools.common.ArraysHelper;
 import com.chua.utils.tools.common.Assert;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.entity.*;
 import com.chua.utils.tools.function.MethodMatcher;
 import com.chua.utils.tools.proxy.JavassistProxyAgent;
 import com.chua.utils.tools.proxy.ProxyAgent;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import javassist.*;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.FieldInfo;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.cglib.beans.BeanGenerator;
 import net.sf.cglib.beans.BeanMap;
@@ -27,23 +34,17 @@ import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
 
 /**
  * class工具
+ *
  * @author CH
  */
 @Slf4j
-public class ClassHelper {
-
-    private static List<String> primitiveNames;
-    private static List<Class> primitiveTypes;
-    private static List<String> primitiveDescriptors;
-
-    private static final String JAVASSIST_SUFFIX = "$javassist";
-
-    private static final Method[] NO_METHODS = {};
+public class ClassHelper extends ClassInfoHelper {
 
     private static final Field[] NO_FIELDS = {};
 
@@ -70,6 +71,7 @@ public class ClassHelper {
         }
         return ClassLoader.getSystemClassLoader();
     }
+
     /**
      * 获取类所有属性名称
      *
@@ -91,6 +93,7 @@ public class ClassHelper {
 
         return fields;
     }
+
     /**
      * 获取对象的属性
      *
@@ -112,7 +115,7 @@ public class ClassHelper {
             Field needField = null;
             for (Field field : fields) {
                 if (!name.equals(field.getName())) {
-                   continue;
+                    continue;
                 }
                 needField = field;
                 break;
@@ -126,6 +129,7 @@ public class ClassHelper {
 
         return null;
     }
+
     /**
      * 获取字段
      *
@@ -153,7 +157,7 @@ public class ClassHelper {
             Field[] fields = getDeclaredFields(searchType);
             for (Field field : fields) {
                 if (!name.equals(field.getName())) {
-                   continue;
+                    continue;
                 }
                 return field;
             }
@@ -203,6 +207,7 @@ public class ClassHelper {
         }
         return result;
     }
+
     /**
      * 获取类的类加载器
      *
@@ -225,6 +230,7 @@ public class ClassHelper {
         ClassLoader classLoader = aClass.getClassLoader();
         return forName(qualifiedClassName, classLoader);
     }
+
     /**
      * 获取简单名字
      * <p>ClassHelper.getSimpleClassName("java.lang.String") = String</p>
@@ -343,6 +349,7 @@ public class ClassHelper {
         MethodFactory methodFactory = new MethodFactory(ctClass, interfaces);
         return methodFactory.makeClass();
     }
+
     /**
      * 是否包含类
      *
@@ -368,6 +375,7 @@ public class ClassHelper {
             return false;
         }
     }
+
     /**
      * 是否为父类子类
      *
@@ -389,6 +397,7 @@ public class ClassHelper {
     public static boolean isAssignableFrom(final Class<?> value, final String parentClass) {
         return null == value || StringHelper.isBlank(parentClass) ? false : isAssignableFrom(value, ClassHelper.forName(parentClass));
     }
+
     /**
      * 是否为父类子类
      *
@@ -446,6 +455,7 @@ public class ClassHelper {
         }
         return null;
     }
+
     /**
      * 字符串转类对象
      *
@@ -560,6 +570,7 @@ public class ClassHelper {
         }
         return null;
     }
+
     /**
      * 获取默认类加载器
      * <p>
@@ -600,11 +611,12 @@ public class ClassHelper {
         Class<?> aClass = forName(className, classLoaders);
         return (T) forObject(aClass);
     }
+
     /**
      * 实例化类
      *
      * @param className    类名
-     * @param tClass  类型
+     * @param tClass       类型
      * @param classLoaders 类加载器(默认当前线程类加载器)
      * @return
      */
@@ -643,6 +655,7 @@ public class ClassHelper {
     public static <T> T forObject(String className) {
         return forObject(className, getDefaultClassLoader());
     }
+
     /**
      * 获取类对象
      *
@@ -687,6 +700,7 @@ public class ClassHelper {
                 return null;
         }
     }
+
     /**
      * 实例化类
      * <p>
@@ -760,7 +774,7 @@ public class ClassHelper {
     private static <T> Class<? extends T> addNoParamConstructor(Class<? extends T> aClass) {
         try {
             String name = aClass.getName();
-            ClassPool classPool = ClassPool.getDefault();
+            ClassPool classPool = getClassPool();
             CtClass oldClass = classPool.get(name);
             String newName = name + JAVASSIST_SUFFIX;
             try {
@@ -831,6 +845,7 @@ public class ClassHelper {
         }
         return sets;
     }
+
     /**
      * 判断接口实现或者子类
      *
@@ -861,29 +876,6 @@ public class ClassHelper {
             }
         }
         return false;
-    }
-
-    public static List<String> getPrimitiveNames() {
-        initPrimitives();
-        return primitiveNames;
-    }
-
-    private static List<Class> getPrimitiveTypes() {
-        initPrimitives();
-        return primitiveTypes;
-    }
-
-    private static List<String> getPrimitiveDescriptors() {
-        initPrimitives();
-        return primitiveDescriptors;
-    }
-
-    private static void initPrimitives() {
-        if (primitiveNames == null) {
-            primitiveNames = Lists.newArrayList("boolean", "char", "byte", "short", "int", "long", "float", "double", "void");
-            primitiveTypes = Lists.<Class>newArrayList(boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class, void.class);
-            primitiveDescriptors = Lists.newArrayList("Z", "C", "B", "S", "I", "J", "F", "D", "V");
-        }
     }
 
     /**
@@ -917,13 +909,15 @@ public class ClassHelper {
         }
         return result;
     }
+
     /**
      * 添加方法
-     * @param aClass 类
+     *
+     * @param aClass      类
      * @param methodInfos 字段
      * @return
      */
-    public static <T>T addMethod(final Class<T> aClass, final MethodMatcher methodMatcher, final MethodInfo... methodInfos) throws Throwable {
+    public static <T> T addMethod(final Class<T> aClass, final MethodMatcher methodMatcher, final MethodInfo... methodInfos) throws Throwable {
         InterfaceMaker interfaceMaker = new InterfaceMaker();
 
         for (MethodInfo methodInfo : methodInfos) {
@@ -947,13 +941,15 @@ public class ClassHelper {
         return (T) enhancer.create();
 
     }
+
     /**
      * 添加字段
+     *
      * @param aClass 类
      * @param fields 字段
      * @return
      */
-    public static <T>T addField(Class<T> aClass, final Map<String, Class> fields) {
+    public static <T> T addField(Class<T> aClass, final Map<String, Class> fields) {
         BeanGenerator generator = new BeanGenerator();
         generator.setSuperclass(aClass);
         for (Map.Entry<String, Class> entry : fields.entrySet()) {
@@ -962,6 +958,7 @@ public class ClassHelper {
         return (T) generator.create();
 
     }
+
     /**
      * 异常转化为字符串
      *
@@ -1086,4 +1083,61 @@ public class ClassHelper {
         BeanMap beanMap = BeanMap.create(obj);
         return beanMap.get(name);
     }
+
+    /**
+     * Getter and Setter分析
+     *
+     * @param beanClass 类
+     */
+    public static GetterSetterProperties doAnalyzeGetterAndSetter(Class<?> beanClass, final boolean autocomplete, final AnnotationInfoProperties... annotationInfoProperties) throws Throwable {
+        GetterSetterProperties result = GetterSetterProperties.of();
+
+        ClassPool classPool = getClassPool();
+        CtClass ctClass = classPool.get(beanClass.getName());
+        //类信息
+        ClassInfoProperties classInfoProperties = new ClassInfoProperties();
+        //获取缺失的方法
+        Set<MethodInfoProperties> methodInfoProperties = Sets.newHashSet();
+        //获取缺失属性信息
+        Set<FieldInfoProperties> fieldInfoProperties = Sets.newHashSet();
+
+        classInfoProperties.setMethodInfoProperties(methodInfoProperties);
+        classInfoProperties.setFieldInfoProperties(fieldInfoProperties);
+        //获取所有字段
+        CtField[] fields = ctClass.getDeclaredFields();
+        for (CtField field : fields) {
+            //是否缺失方法
+            AtomicBoolean missMethod = new AtomicBoolean(false);
+
+            GetterSetterProperties.GetterSetterStatus status = GetterSetterProperties.newStatus();
+
+            String fieldName = field.getName();
+            String newFieldName = StringHelper.firstUpperCase(fieldName);
+            String getterMethod = GETTER + newFieldName;
+            String setterMethod = SETTER + newFieldName;
+            try {
+                ctClass.getDeclaredMethod(getterMethod);
+            } catch (NotFoundException e) {
+                if (autocomplete) {
+                    methodInfoProperties.add(MethodInfoProperties.builder().name(getterMethod).content("{return " + fieldName + ";}").returnType(field.getType().getName()).build());
+                }
+                status.setGetter(false);
+            }
+            try {
+                ctClass.getDeclaredMethod(setterMethod);
+            } catch (NotFoundException e) {
+                if (autocomplete) {
+                    methodInfoProperties.add(MethodInfoProperties.builder().parameterTypes(new Class[]{forName(field.getType().getName())}).name(setterMethod).content("{this." + fieldName + " = " + fieldName + ";}").returnType(CtClass.voidType.getName()).build());
+                }
+                status.setSetter(false);
+            }
+            result.put(fieldName, status);
+        }
+
+
+        Class<?> aClass = makeClassInfoForClass(beanClass, classInfoProperties, annotationInfoProperties);
+        result.record(aClass);
+        return result;
+    }
+
 }
