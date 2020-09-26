@@ -4,6 +4,7 @@ import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.function.MethodIntercept;
 import com.google.common.collect.*;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -14,6 +15,7 @@ import static com.chua.utils.tools.constant.StringConstant.EXTENSION_NULL;
 
 /**
  * Map工具类
+ *
  * @author CH
  */
 public class MapHelper {
@@ -349,13 +351,14 @@ public class MapHelper {
         }
         for (String key : keys) {
             Object objects = objects(key, maps);
-            if(null == objects) {
+            if (null == objects) {
                 continue;
             }
             return objects;
         }
         return null;
     }
+
     /**
      * 返回Object类型
      *
@@ -390,7 +393,7 @@ public class MapHelper {
         }
         for (String key : keys) {
             Object objects = objects(key, maps);
-            if(null == objects) {
+            if (null == objects) {
                 continue;
             }
             return objects;
@@ -480,10 +483,33 @@ public class MapHelper {
         final Object objects = objects(key, maps);
         return null == objects ? defaultValue : objects.toString();
     }
+
     /**
      * 返回 String 类型
      *
-     * @param keys          关键词
+     * @param keys 关键词
+     * @param maps
+     * @return
+     */
+    public static final String strings(final List<String> keys, final Properties... maps) {
+        return strings(keys, null, maps);
+    }
+
+    /**
+     * 返回 String 类型
+     *
+     * @param keys 关键词
+     * @param maps
+     * @return
+     */
+    public static final String strings(final List<String> keys, final Map<String, Object>... maps) {
+        return strings(keys, null, maps);
+    }
+
+    /**
+     * 返回 String 类型
+     *
+     * @param keys         关键词
      * @param defaultValue 默认值
      * @param maps
      * @return
@@ -505,10 +531,11 @@ public class MapHelper {
         final Object objects = objects(key, maps);
         return null == objects ? defaultValue : objects.toString();
     }
+
     /**
      * 返回 String 类型
      *
-     * @param keys          关键词
+     * @param keys         关键词
      * @param defaultValue 默认值
      * @param maps
      * @return
@@ -528,11 +555,12 @@ public class MapHelper {
     public static final int ints(final String key, final Properties... maps) {
         return ints(key, -1, maps);
     }
+
     /**
      * 返回 int 类型
      *
      * @param maps 原始数据
-     * @param keys  关键词
+     * @param keys 关键词
      * @return
      */
     public static final int ints(final List<String> keys, final Properties... maps) {
@@ -1081,6 +1109,41 @@ public class MapHelper {
     }
 
     /**
+     * 返回Object[]类型
+     *
+     * @param maps 原始数据
+     * @param key  关键词
+     * @return
+     */
+    public static <T> Object[] arrays(final String key, final Map<String, Object>... maps) {
+        Object objects = objects(key, maps);
+        if (null == objects) {
+            return new Object[0];
+        }
+        if(objects instanceof Array) {
+            return (Object[]) objects;
+        }
+        return new Object[0];
+    }
+    /**
+     * 返回Object[]类型
+     *
+     * @param maps 原始数据
+     * @param key  关键词
+     * @return
+     */
+    public static String[] stringArrays(final String key, final Map<String, Object>... maps) {
+        Object objects = objects(key, maps);
+        if (null == objects) {
+            return  ArraysHelper.emptyStringArray();
+        }
+        if(BooleanHelper.isArray(objects)) {
+            Object obj = FinderHelper.firstElement((Object[]) objects);
+            return obj instanceof String ? (String[]) objects : ArraysHelper.emptyStringArray();
+        }
+        return  ArraysHelper.emptyStringArray();
+    }
+    /**
      * 返回List类型
      *
      * @param maps 原始数据
@@ -1458,8 +1521,9 @@ public class MapHelper {
 
     /**
      * 是否包含数据
+     *
      * @param source 元数据
-     * @param index 索引
+     * @param index  索引
      * @return
      */
     public static boolean containerKey(Map<String, MethodIntercept> source, String index) {

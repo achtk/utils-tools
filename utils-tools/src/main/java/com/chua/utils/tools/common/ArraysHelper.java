@@ -12,6 +12,8 @@ import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
  */
 public class ArraysHelper {
 
+    private static final String[] EMPTY_ARRAY = new String[0];
+
     /**
      * 数组初始化
      *
@@ -534,6 +536,23 @@ public class ArraysHelper {
      */
     public static <T>T firstElement(T[] arrays) {
         return BooleanHelper.hasLength(arrays) ? arrays[0] : null;
+    }
+
+    /**
+     * 空数组
+     * @param componentType 数据类型
+     * @return
+     */
+    public static <T>T[] emptyArray(Class<T> componentType) {
+        return (T[]) Array.newInstance(componentType, 0);
+    }
+
+    /**
+     * 空数组
+     * @return
+     */
+    public static String[] emptyStringArray() {
+        return EMPTY_ARRAY;
     }
 
     /**

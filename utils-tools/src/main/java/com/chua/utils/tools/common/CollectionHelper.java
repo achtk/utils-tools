@@ -465,4 +465,17 @@ public class CollectionHelper {
             fileResolvers.addAll(fileResolvers1);
         }
     }
+
+    /**
+     * 集合转数组
+     * @param sources 数据源
+     * @return
+     */
+    public static <T>T[] toArray(List<T> sources) {
+        if(!BooleanHelper.hasLength(sources)) {
+            return null;
+        }
+
+        return (T[]) sources.toArray();
+    }
 }

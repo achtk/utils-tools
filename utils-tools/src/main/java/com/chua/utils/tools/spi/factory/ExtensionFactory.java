@@ -67,7 +67,7 @@ public class ExtensionFactory {
      * <tr>
      *   <td>1</td>
      *   <td>com.chua.utils.tools.spi.processor.ScanProcessor</td>
-     *   <td>扫描所有的子类.@see com.cgy.utils.base.resource.FastResourceHelper</td>
+     *   <td>扫描所有的子类.@see com.chua.utils.tools.resource.FastResourceHelper</td>
      * </tr>
      *
      * <tr>
