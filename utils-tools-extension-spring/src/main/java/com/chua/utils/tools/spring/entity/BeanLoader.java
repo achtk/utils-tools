@@ -1,6 +1,8 @@
 package com.chua.utils.tools.spring.entity;
 
+import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.exceptions.NotSupportedException;
 import com.chua.utils.tools.spring.enums.BeanStatus;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -8,6 +10,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 
 /**
@@ -21,7 +27,13 @@ public class BeanLoader<T> {
     /**
      * 加载的对象
      */
-    private HashMultimap<String, T> beans = HashMultimap.create();
+    private HashMultimap<Class, T> beans = HashMultimap.create();
+
+    /**
+     * 加载的对象
+     */
+    private HashMultimap<String, T> beansComparison = HashMultimap.create();
+
     /**
      * 异常信息
      */
@@ -51,24 +63,28 @@ public class BeanLoader<T> {
      * @param entity 数据
      * @return
      */
-    public synchronized BeanLoader<T> add(T entity) {
+    public synchronized BeanLoader<T> add(Class name, T entity) {
         if (null == entity) {
             return this;
         }
-        beans.put(entity.getClass().getName(), entity);
+        beans.put(name, entity);
+        beansComparison.put(name.getName(), entity);
         return this;
     }
     /**
      * 添加bean
+     *
+     * @param aClass
      * @param params 数据
      * @return
      */
-    public synchronized BeanLoader<T> addAll(Map<String, T> params) {
+    public synchronized BeanLoader<T> addAll(Class<? extends Annotation> aClass, Map<String, T> params) {
         if (null == params) {
             return this;
         }
         for (Map.Entry<String, T> entry : params.entrySet()) {
-            beans.put(entry.getKey(), entry.getValue());
+            beans.put(aClass, entry.getValue());
+            beansComparison.put(aClass.getName(), entry.getValue());
         }
         return this;
     }
@@ -87,7 +103,7 @@ public class BeanLoader<T> {
      * @return
      */
     public Collection<T> get(final String name) {
-        return Strings.isNullOrEmpty(name) ? Collections.emptyList() : beans.get(name);
+        return Strings.isNullOrEmpty(name) ? Collections.emptyList() : beansComparison.get(name);
     }
 
     /**
@@ -101,4 +117,25 @@ public class BeanLoader<T> {
         return FinderHelper.firstElement(beans.values());
     }
 
+    /**
+     * 代理bean
+     * @param aClass
+     * @return
+     * @throws NotSupportedException
+     */
+    public T proxy(Class<?> aClass) {
+        if(null == aClass) {
+            return null;
+        }
+
+        if(!aClass.isInterface()) {
+            return (T) ClassHelper.forObject(aClass);
+        }
+        return (T) Proxy.newProxyInstance(ClassHelper.getDefaultClassLoader(), new Class[]{aClass}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                return null;
+            }
+        });
+    }
 }

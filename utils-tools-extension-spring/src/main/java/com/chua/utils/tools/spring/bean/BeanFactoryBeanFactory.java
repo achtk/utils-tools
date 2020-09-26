@@ -98,7 +98,7 @@ public class BeanFactoryBeanFactory implements IBeanFactory {
                 beanLoader.throwable(s, BeanStatus.BEAN_NOT_EXIST);
                 continue;
             }
-            beanLoader.add(bean);
+            beanLoader.add(tClass, bean);
         }
         return beanLoader;
     }
@@ -112,7 +112,7 @@ public class BeanFactoryBeanFactory implements IBeanFactory {
     public BeanLoader<Object> getBeansFromAnnotation(Class<? extends Annotation> aClass) {
         Map<String, Object> annotation = beanFactory instanceof DefaultListableBeanFactory ? ((DefaultListableBeanFactory) beanFactory).getBeansWithAnnotation(aClass) : null;
         BeanLoader<Object> beanLoader = BeanLoader.newLoader();
-        beanLoader.addAll(annotation);
+        beanLoader.addAll(aClass, annotation);
         return beanLoader;
     }
 

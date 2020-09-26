@@ -7,9 +7,7 @@ import com.chua.utils.tools.spring.entity.BeanLoader;
 import com.chua.utils.tools.spring.entity.MappingEntity;
 import com.chua.utils.tools.spring.mapping.RequestMappingHandlerMappingFactory;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
@@ -25,14 +23,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * applicationContext
@@ -93,7 +88,7 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
         }
         BeanLoader<T> beanLoader = BeanLoader.newLoader();
         for (String s : beanNamesForType) {
-            beanLoader.add(getBean(s, tClass));
+            beanLoader.add(tClass, getBean(s, tClass));
         }
         return beanLoader;
     }
@@ -105,7 +100,7 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
         }
         try {
             Map<String, Object> annotation = applicationContext.getBeansWithAnnotation(aClass);
-            return BeanLoader.newLoader().addAll(annotation);
+            return BeanLoader.newLoader().addAll(aClass, annotation);
         } catch (Throwable e) {
         }
         return null;
@@ -167,7 +162,7 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
             if(null == bean) {
                 continue;
             }
-            beanLoader.add(bean);
+            beanLoader.add(tClass, bean);
         }
         return beanLoader;
     }
