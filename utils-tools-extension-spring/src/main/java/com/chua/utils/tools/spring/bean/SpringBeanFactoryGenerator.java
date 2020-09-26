@@ -26,20 +26,21 @@ import java.util.Set;
  * @since 1.0
  */
 @Slf4j
-public class SpringApplicationClassControl {
+public class SpringBeanFactoryGenerator {
 
     @Getter
     private IBeanFactory beanFactory;
 
-    public SpringApplicationClassControl(ApplicationContext applicationContext) {
+
+    public SpringBeanFactoryGenerator(ApplicationContext applicationContext) {
         this.beanFactory = new ApplicationContextBeanFactory(applicationContext);
     }
 
-    public SpringApplicationClassControl(ApplicationContext applicationContext, BeanDefinitionRegistry beanDefinitionRegistry) {
+    public SpringBeanFactoryGenerator(ApplicationContext applicationContext, BeanDefinitionRegistry beanDefinitionRegistry) {
         this.beanFactory = new BeanDefinitionBeanFactory(applicationContext, beanDefinitionRegistry);
     }
 
-    public SpringApplicationClassControl(BeanDefinitionRegistry beanDefinitionRegistry) {
+    public SpringBeanFactoryGenerator(BeanDefinitionRegistry beanDefinitionRegistry) {
         this.beanFactory = new BeanDefinitionBeanFactory(null, beanDefinitionRegistry);
     }
 

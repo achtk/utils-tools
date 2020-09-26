@@ -3,12 +3,15 @@ package com.chua.utils.tools.spring.bean;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.spring.entity.BeanLoader;
 import com.chua.utils.tools.spring.entity.MappingEntity;
 import com.chua.utils.tools.spring.mapping.RequestMappingHandlerMappingFactory;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -36,13 +39,11 @@ import java.util.Set;
  * @author CH
  * @since 1.0
  */
+@RequiredArgsConstructor
 public class ApplicationContextBeanFactory implements IBeanFactory {
 
+    @NonNull
     private final ApplicationContext applicationContext;
-
-    public ApplicationContextBeanFactory(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
 
     /**
@@ -82,7 +83,7 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
     }
 
     @Override
-    public <T> Set<T> getBeans(Class<T> tClass)  {
+    public <T> BeanLoader<T> getBeans(Class<T> tClass)  {
         if(null == tClass) {
             return null;
         }
@@ -90,20 +91,21 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
         if(!BooleanHelper.hasLength(beanNamesForType)) {
             return null;
         }
-        Set<T> result = Sets.newHashSet();
+        BeanLoader<T> beanLoader = BeanLoader.newLoader();
         for (String s : beanNamesForType) {
-            result.add(getBean(s, tClass));
+            beanLoader.add(getBean(s, tClass));
         }
-        return result;
+        return beanLoader;
     }
 
     @Override
-    public Map<String, Object> getBeansFromAnnotation(Class<? extends Annotation> aClass) {
+    public BeanLoader<Object> getBeansFromAnnotation(Class<? extends Annotation> aClass) {
         if(null == aClass) {
             return null;
         }
         try {
-            return applicationContext.getBeansWithAnnotation(aClass);
+            Map<String, Object> annotation = applicationContext.getBeansWithAnnotation(aClass);
+            return BeanLoader.newLoader().addAll(annotation);
         } catch (Throwable e) {
         }
         return null;
@@ -154,20 +156,20 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
      * @return
      */
     @Override
-    public <T> Set<T> getBeanForType(Class<T> tClass) throws BeansException {
+    public <T> BeanLoader<T> getBeanForType(Class<T> tClass) throws BeansException {
         String[] beanNamesForType =  getBeanNamesForType(tClass);
         if(null == beanNamesForType) {
-            return ImmutableSet.of();
+            return BeanLoader.newLoader();
         }
-        Set<T> sets = new HashSet<>(beanNamesForType.length);
+        BeanLoader<T> beanLoader = BeanLoader.newLoader();
         for (String s : beanNamesForType) {
             T bean = applicationContext.getBean(s, tClass);
             if(null == bean) {
                 continue;
             }
-            sets.add(bean);
+            beanLoader.add(bean);
         }
-        return sets;
+        return beanLoader;
     }
     @Override
     public <T> Map<String, T> getBeanMap(Class<T> tClass) {
@@ -183,6 +185,19 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
             result.put(s, getBean(s, tClass));
         }
         return result;
+    }
+
+    @Override
+    public String unRegisterBean(@NonNull String beanName) {
+        if(!containsBean(beanName)) {
+            return null;
+        }
+        AutowireCapableBeanFactory autowireCapableBeanFactory = applicationContext.getAutowireCapableBeanFactory();
+        if(!(autowireCapableBeanFactory instanceof DefaultListableBeanFactory)) {
+            return null;
+        }
+        ((DefaultListableBeanFactory) autowireCapableBeanFactory).removeBeanDefinition(beanName);
+        return beanName;
     }
 
     @Override
@@ -286,20 +301,6 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
             return beanName;
         }
         return null;
-    }
-
-    /**
-     * 获取唯一值
-     *
-     * @param beanName               bean名称
-     * @return
-     */
-    public String uniqueBeanName(@NotBlank String beanName) {
-        int cnt = 0;
-        while (applicationContext.containsBeanDefinition(beanName)) {
-            beanName += "#" + (cnt++);
-        }
-        return beanName;
     }
 
     /**

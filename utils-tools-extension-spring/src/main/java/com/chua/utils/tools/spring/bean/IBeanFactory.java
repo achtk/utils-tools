@@ -1,17 +1,18 @@
 package com.chua.utils.tools.spring.bean;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.spring.entity.BeanLoader;
+import lombok.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.core.env.Environment;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * bean工厂
@@ -19,12 +20,12 @@ import java.util.Set;
  * @author CH
  * @since 1.0
  */
-public interface IBeanFactory {
+interface IBeanFactory {
     /**
      *
      * @return
      */
-    public Environment environment();
+    Environment environment();
     /**
      * 注册controller
      *
@@ -32,7 +33,7 @@ public interface IBeanFactory {
      * @param prefix 前缀
      * @return
      */
-    public String registerController(@NotNull Object entity, String prefix);
+    String registerController(@NonNull Object entity, String prefix);
     /**
      * 获取bean
      * @param name 名称
@@ -40,7 +41,7 @@ public interface IBeanFactory {
      * @return
      * @throws BeansException
      */
-    public <T>T getBean(final String name) throws BeansException;
+    <T>T getBean(final String name) throws BeansException;
     /**
      * 获取bean
      * @param classes 名称
@@ -48,7 +49,7 @@ public interface IBeanFactory {
      * @return
      * @throws BeansException
      */
-    public <T>T getBean(final Class<T> classes) throws BeansException;
+    <T>T getBean(final Class<T> classes) throws BeansException;
 
     /**
      * 获取bean
@@ -58,20 +59,20 @@ public interface IBeanFactory {
      * @return
      * @throws BeansException
      */
-    public <T>T getBean(final String name, final Class<T> tClass) throws BeansException;
+    <T>T getBean(final String name, final Class<T> tClass) throws BeansException;
 
     /**
      * 是否包含Bean
      * @param tClass
      * @return
      */
-    public boolean containsBean(final Class<?> tClass);
+    boolean containsBean(final Class<?> tClass);
     /**
      * 是否包含Bean
      * @param name
      * @return
      */
-    public boolean containsBean(final String name);
+    boolean containsBean(final String name);
 
     /**
      * 获取bean名称
@@ -79,27 +80,27 @@ public interface IBeanFactory {
      * @param <T>
      * @return
      */
-    public <T> String[] getBeanNamesForType(Class<T> tClass);
+    <T> String[] getBeanNamesForType(Class<T> tClass);
     /**
      * 查询该类型的所有bean
      * @param tClass 类型
      * @return
      */
-    public <T> Set<T> getBeanForType(Class<T> tClass) throws BeansException;
+    <T> BeanLoader<T> getBeanForType(Class<T> tClass) throws BeansException;
     /**
      * 获取所有bean
      * @param tClass
      * @param <T>
      * @return
      */
-    public <T> Set<T> getBeans(Class<T> tClass);
+    <T> BeanLoader<T> getBeans(Class<T> tClass);
 
     /**
      * 通过注解获取Bean
      * @param aClass
      * @return
      */
-    public Map<String, Object> getBeansFromAnnotation(Class<? extends Annotation> aClass);
+    BeanLoader<Object> getBeansFromAnnotation(Class<? extends Annotation> aClass);
     /**
      *
      * 获取类中的属性
@@ -107,24 +108,59 @@ public interface IBeanFactory {
      * @param <T>
      * @return
      */
-    public <T> Map<String, T> getBeanMap(Class<T> tClass);
-
+    <T> Map<String, T> getBeanMap(Class<T> tClass);
     /**
      * 删除Bean
      *
-     * @param beanClass
+     * @param beanName bean名称
      * @return
      */
-    public String removeBean(@NotNull Class<?> beanClass);
+    String unRegisterBean(@NonNull String beanName);
 
     /**
      * 注册Bean
      *
      * @param beanName  名称
      * @param beanClass 类
+     * @param classParams 参数
      * @return
      */
-    public String registerBean(@Nullable String beanName, @NotNull Class<?> beanClass, @Nullable final Map<String, Object> classParams);
+    String registerBean(@NonNull String beanName, @NonNull Class<?> beanClass, @NonNull final Map<String, Object> classParams);
+
+    /**
+     * 生成bean名称，防止重名使用
+     * @param beanName bean名称
+     * @return
+     */
+    default String uniqueBeanName(@NotBlank String beanName) {
+        int cnt = 0;
+        while (containsBean(beanName)) {
+            beanName += "#" + (cnt++);
+        }
+        return beanName;
+    }
+    /**
+     * 删除Bean
+     *
+     * @param beanClass bean类
+     * @return
+     */
+    default String removeBean(@NonNull Class<?> beanClass) {
+        String name = beanClass.getName();
+        String bean = unRegisterBean(name);
+        if (null == bean) {
+            bean = unRegisterBean(StringHelper.firstLowerCase(name));
+        }
+        if (null == bean) {
+            name = beanClass.getSimpleName();
+            bean = unRegisterBean(name);
+        }
+        if (null == bean) {
+            name = beanClass.getSimpleName();
+            bean = unRegisterBean(StringHelper.firstLowerCase(name));
+        }
+        return bean;
+    }
     /**
      * <p>不存在注册Bean</p>
      * <p>存在不注册</p>
@@ -133,7 +169,7 @@ public interface IBeanFactory {
      * @param beanClass 类
      * @return
      */
-    default public String ifNotContainerRegisterBean(@Nullable String beanName, @NotNull Class<?> beanClass, @Nullable final Map<String, Object> classParams) {
+    default String ifNotContainerRegisterBean(@NonNull String beanName, @NonNull Class<?> beanClass, @NonNull final Map<String, Object> classParams) {
         if(containsBean(beanName)) {
             return beanName;
         }
@@ -149,7 +185,7 @@ public interface IBeanFactory {
      * @param entity 对象
      * @return
      */
-    default public <T> String ifNotContainerRegisterBean(@NotNull String beanName, @NotNull T entity, @Nullable final Map<String, Object> classParams) {
+    default <T> String ifNotContainerRegisterBean(@NonNull String beanName, @NonNull T entity, @NonNull final Map<String, Object> classParams) {
         if(null == entity) {
             return null;
         }
@@ -166,7 +202,7 @@ public interface IBeanFactory {
      * @param entity 对象
      * @return
      */
-    default public <T> String ifNotContainerRegisterBean(@NotNull String beanName, @NotNull T entity) {
+    default <T> String ifNotContainerRegisterBean(@NonNull String beanName, @NonNull T entity) {
         if(null == entity) {
             return null;
         }
@@ -180,7 +216,7 @@ public interface IBeanFactory {
      * @param entity 对象
      * @return
      */
-    default public <T> String ifNotContainerRegisterBean(@NotNull T entity) {
+    default <T> String ifNotContainerRegisterBean(@NonNull T entity) {
         if(null == entity) {
             return null;
         }
@@ -194,7 +230,7 @@ public interface IBeanFactory {
      * @param entity 对象
      * @return
      */
-    default public <T> String ifNotContainerRegisterBean(@NotNull T entity, @Nullable final Map<String, Object> classParams) {
+    default <T> String ifNotContainerRegisterBean(@NonNull T entity, @NonNull final Map<String, Object> classParams) {
         if(null == entity) {
             return null;
         }
@@ -211,7 +247,7 @@ public interface IBeanFactory {
      * @param beanClass 类
      * @return
      */
-    default public String registerBean(@Nullable String beanName, @NotNull Class<?> beanClass) {
+    default String registerBean(@NonNull String beanName, @NonNull Class<?> beanClass) {
         return registerBean(beanName, beanClass, new HashMap<>());
     }
     /**
@@ -220,15 +256,15 @@ public interface IBeanFactory {
      * @param beanClass 类
      * @return
      */
-    default public String registerBean(@NotNull Class<?> beanClass) {
+    default String registerBean(@NonNull Class<?> beanClass) {
         return registerBean(beanClass.getName(), beanClass, new HashMap<>());
     }
     /**
      * 分析类属性
      *
-     * @param beanClass
+     * @param beanClass 类型
      */
-    default public Map<String, Class> doAnalysisBeanFields(Class<?> beanClass) {
+    default Map<String, Class> doAnalysisBeanFields(Class<?> beanClass) {
         Map<String, Class> fieldsAndType = new HashMap<>();
         Field[] fields = beanClass.getDeclaredFields();
         for (Field field : fields) {
