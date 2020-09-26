@@ -20,7 +20,7 @@ import java.util.function.Predicate;
  */
 public class JwtTokenAdaptor implements ITokenAdaptor {
 
-    private static final String SECRET = "com.cgy.utils";
+    private static final String SECRET = "com.chua.utils";
 
     @Override
     public String token(TokenConfig tokenConfig) throws Exception {
