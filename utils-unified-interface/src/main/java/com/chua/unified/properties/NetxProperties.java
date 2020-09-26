@@ -25,6 +25,7 @@ public class NetxProperties extends Properties {
     public static final String CONFIG_FIELD_MAX_CONNECTION = "maxConnection";
     public static final String CONFIG_FIELD_PATH = "path";
     public static final String CONFIG_FIELD_SESSION_TIMEOUT = "sessionTimeout";
+    public static final String CONFIG_FIELD_DATABASE_NAME = "databaseName";
     /**
      * 主机
      */
@@ -49,6 +50,10 @@ public class NetxProperties extends Properties {
      * 连接超时
      */
     private int connectTimeout = 10000;
+    /**
+     * 数据库名称
+     */
+    private String databaseName = "db";
     /**
      * 最大连接数
      */
@@ -143,5 +148,6 @@ public class NetxProperties extends Properties {
         this.retry = retry;
         this.put(CONFIG_FIELD_RETRY, retry);
     }
+
 
 }
