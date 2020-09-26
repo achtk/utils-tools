@@ -75,7 +75,7 @@ public class BeanFactoryBeanFactory implements IBeanFactory{
 
     @Override
     public <T> BeanLoader<T> getBeanForType(Class<T> tClass) throws BeansException {
-        BeanLoader<T> beanLoader = new BeanLoader<>();
+        BeanLoader<T> beanLoader = BeanLoader.newLoader();
 
         String[] namesForType = getBeanNamesForType(tClass);
         if(!BooleanHelper.hasLength(namesForType)) {
@@ -106,7 +106,7 @@ public class BeanFactoryBeanFactory implements IBeanFactory{
     @Override
     public BeanLoader<Object> getBeansFromAnnotation(Class<? extends Annotation> aClass) {
         Map<String, Object> annotation =  beanFactory instanceof DefaultListableBeanFactory ? ((DefaultListableBeanFactory) beanFactory).getBeansWithAnnotation(aClass) : null;
-        BeanLoader<Object> beanLoader = new BeanLoader<>();
+        BeanLoader<Object> beanLoader = BeanLoader.newLoader();
         beanLoader.addAll(annotation);
         return beanLoader;
     }
