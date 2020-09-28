@@ -43,6 +43,7 @@ public class ReturnBean<T> {
     public static <T>ReturnBean<T> okReturnBean(final T data) {
         return (ReturnBean<T>) ReturnBean.builder().code(200).data(data).build();
     }
+
     /**
      *
      * @param <T>

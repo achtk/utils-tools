@@ -130,6 +130,15 @@ public class ByteHelper {
         Charset charset = Charset.forName(charsetName);
         return data.getBytes(charset);
     }
+    /**
+     * 将字符串按照charsetName编码格式的字节数组
+     * @param data 字符串
+     * @param charsetName 编码格式
+     * @return
+     */
+    public static byte[] getBytes(String data, Charset charset) {
+        return data.getBytes(charset);
+    }
 
     /**
      * 获取限制长度的字节数组

@@ -2,6 +2,7 @@ package com.chua.utils.netx.redis.jedis.context;
 
 import com.chua.unified.properties.NetxProperties;
 import com.chua.utils.netx.redis.jedis.factory.JedisFactory;
+import com.chua.utils.tools.classes.ClassHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class JedisContext implements AutoCloseable {
      * @return
      */
     private byte[] serialize(Object object) {
+        object = serializeObj(object);
         ObjectOutputStream oos = null;
         ByteArrayOutputStream baos = null;
         try {
@@ -59,6 +61,21 @@ public class JedisContext implements AutoCloseable {
         return null;
     }
 
+    /**
+     * 序列化对象
+     * @param obj 对象
+     * @return
+     */
+    private Object serializeObj(final Object obj) {
+        if(Serializable.class.isAssignableFrom(obj.getClass())) {
+            return obj;
+        }
+        try {
+            return ClassHelper.addInterface(obj, Serializable.class);
+        } catch (Throwable throwable) {
+            return obj;
+        }
+    }
     /**
      * 将byte[] -->Object
      *

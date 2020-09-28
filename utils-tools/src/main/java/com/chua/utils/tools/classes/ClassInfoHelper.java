@@ -1,6 +1,7 @@
 package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.CollectionHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.entity.*;
@@ -774,5 +775,34 @@ public class ClassInfoHelper {
         Map<String, Map> memberValues = getFieldValue(invocationHandler, "memberValues", Map.class);
         Map map = memberValues.get("memberValues");
         return (T) map.get(fieldName);
+    }
+
+    /**
+     * 添加接口
+     * @param obj 对象
+     * @param interfaces 接口
+     */
+    public static <T>T addInterface(T obj, Class... interfaces) throws Throwable {
+        if(null == obj || !BooleanHelper.hasLength(interfaces)) {
+            return obj;
+        }
+        ClassPool classPool = getClassPool();
+        List<CtClass> newInterfaceSet = new ArrayList<>();
+        Class<?> aClass = obj.getClass();
+        for (Class anInterface : interfaces) {
+            if(null == anInterface || anInterface.isAssignableFrom(aClass)) {
+                continue;
+            }
+            newInterfaceSet.add(classPool.get(anInterface.getName()));
+        }
+        if(!BooleanHelper.hasLength(newInterfaceSet)) {
+            return obj;
+        }
+        CtClass ctClass = classPool.get(aClass.getName());
+        ctClass.setName(aClass.getName() + JAVASSIST_SUFFIX);
+        for (CtClass ctClass1 : newInterfaceSet) {
+            ctClass.addInterface(ctClass1);
+        }
+        return (T) ClassHelper.forObject(ctClass.toClass());
     }
 }

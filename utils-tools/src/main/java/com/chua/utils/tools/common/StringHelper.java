@@ -1,6 +1,7 @@
 package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.function.IPreMatcher;
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -19,6 +20,7 @@ import static com.chua.utils.tools.constant.StringConstant.*;
 
 /**
  * 字符串工具类
+ *
  * @author CH
  */
 public class StringHelper {
@@ -918,13 +920,13 @@ public class StringHelper {
      *     StringHelper.join({1: 1, 2: 2}, "=", "&") = "1=1&2=2"
      * </pre>
      *
-     * @param bodyer 数据
+     * @param bodyer            数据
      * @param keyValueDelimiter key-value分隔符
-     * @param itemDelimiter 数据分隔符
+     * @param itemDelimiter     数据分隔符
      * @return String.
      */
     public static String join(Map<String, Object> bodyer, String keyValueDelimiter, String itemDelimiter) {
-        if(!BooleanHelper.hasLength(bodyer)) {
+        if (!BooleanHelper.hasLength(bodyer)) {
             return "";
         }
         StringBuilder stringBuilder = new StringBuilder();
@@ -1013,7 +1015,7 @@ public class StringHelper {
      * StringHelper.subAndEndstring("/test/@", "/", "@") = "test/"
      * </p>
      *
-     * @param source    源数据
+     * @param source       源数据
      * @param subSeparator 分隔符
      * @param endSeparator 分隔符
      * @return
@@ -1025,7 +1027,7 @@ public class StringHelper {
 
         final int subIndex = source.indexOf(subSeparator);
         final int endIndex = source.indexOf(endSeparator);
-        if(subIndex >= endIndex) {
+        if (subIndex >= endIndex) {
             return "";
         }
         return subIndex > -1 ? source.substring(subIndex + 1, endIndex) : source;
@@ -1118,6 +1120,7 @@ public class StringHelper {
         final int index = source.lastIndexOf(separator);
         return index > -1 ? replace + source.substring(index + 1) : source;
     }
+
     /**
      * 获取 separator 前面字符
      * <p>
@@ -1160,6 +1163,7 @@ public class StringHelper {
         final int index = source.indexOf(separator);
         return index > -1 ? source.substring(0, index) + replace : source;
     }
+
     /**
      * 获取 separator 前面字符
      * <p>
@@ -1207,6 +1211,7 @@ public class StringHelper {
 
     /**
      * 是否有文本
+     *
      * @param str
      * @return
      */
@@ -1232,6 +1237,7 @@ public class StringHelper {
 
     /**
      * stringbuffer截取
+     *
      * @param stringBuffer
      * @param index
      * @return
@@ -1242,11 +1248,12 @@ public class StringHelper {
 
     /**
      * 获取字符串
+     *
      * @param names
      * @return
      */
     public static String defineString(Collection<?> names) {
-        if(BooleanHelper.hasLength(names)) {
+        if (BooleanHelper.hasLength(names)) {
             StringBuffer sb = new StringBuffer();
             for (Object name : names) {
                 sb.append(",").append(name);
@@ -1258,6 +1265,7 @@ public class StringHelper {
 
     /**
      * object 转String
+     *
      * @param key 索引
      * @return
      */
@@ -1270,17 +1278,18 @@ public class StringHelper {
      * <pre>
      *     lineToHump("T_TABLE") = tTable
      * </pre>
+     *
      * @param source 元数据
      * @return
      */
-    public static String lineToHump(final String source){
-        if(StringHelper.isBlank(source)) {
+    public static String lineToHump(final String source) {
+        if (StringHelper.isBlank(source)) {
             return source;
         }
         String sourceStr = source.toLowerCase();
         Matcher matcher = LINE_PATTERN.matcher(sourceStr);
         StringBuffer sb = new StringBuffer();
-        while(matcher.find()){
+        while (matcher.find()) {
             matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
         }
         matcher.appendTail(sb);
@@ -1292,80 +1301,90 @@ public class StringHelper {
      * <pre>
      *     humpToLine2("tTable") = T_TABLE
      * </pre>
+     *
      * @param source 元数据
      * @return
      */
-    public static String humpToLine(final String source){
-        if(isBlank(source)) {
+    public static String humpToLine(final String source) {
+        if (isBlank(source)) {
             return source;
         }
         return humpToLine2(source).toUpperCase();
     }
+
     /**
      * 驼峰转下划线
      * <pre>
      *     humpToLine2("tTable") = t_table
      * </pre>
+     *
      * @param source 元数据
      * @return
      */
-    public static String humpToLine2(final String source){
+    public static String humpToLine2(final String source) {
         return humpToLine2(source, "_");
     }
+
     /**
      * 驼峰转自定义
      * <pre>
      *     humpToLine2("tTable") = t_table
      * </pre>
+     *
      * @param source 元数据
      * @return
      */
-    public static String humpToLine2(final String source, final String seq){
-        if(isBlank(source)) {
+    public static String humpToLine2(final String source, final String seq) {
+        if (isBlank(source)) {
             return source;
         }
         Matcher matcher = HUMP_PATTERN.matcher(source);
         StringBuffer sb = new StringBuffer();
-        while(matcher.find()){
+        while (matcher.find()) {
             matcher.appendReplacement(sb, seq + matcher.group(0).toLowerCase());
         }
         matcher.appendTail(sb);
         return sb.toString();
     }
+
     /**
      * 驼峰转下划线
      * <pre>
      *     humpToMin("tTable") = T-TABLE
      * </pre>
+     *
      * @param source 元数据
      * @return
      */
-    public static String humpToMin(final String source){
-        if(isBlank(source)) {
+    public static String humpToMin(final String source) {
+        if (isBlank(source)) {
             return source;
         }
         return humpToMin2(source).toUpperCase();
     }
+
     /**
      * 驼峰转减号
      * <pre>
      *     humpToMin2("tTable") = t-table
      * </pre>
+     *
      * @param source 元数据
      * @return
      */
-    public static String humpToMin2(final String source){
-        if(isBlank(source)) {
+    public static String humpToMin2(final String source) {
+        if (isBlank(source)) {
             return source;
         }
         Matcher matcher = HUMP_PATTERN.matcher(source);
         StringBuffer sb = new StringBuffer();
-        while(matcher.find()){
-            matcher.appendReplacement(sb, "-"+matcher.group(0).toLowerCase());
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, "-" + matcher.group(0).toLowerCase());
         }
         matcher.appendTail(sb);
         return sb.toString();
     }
+
     /**
      * 删除空格
      * <pre>
@@ -1374,12 +1393,14 @@ public class StringHelper {
      * StringHelper.deleteWhitespace("abc")        = "abc"
      * StringHelper.deleteWhitespace("   ab  c  ") = "abc"
      * </pre>
+     *
      * @param source 元数据
      * @return
      */
     public static String trimWhite(String source) {
         return deleteWhitespace(source);
     }
+
     /**
      * 删除空格
      * <pre>
@@ -1388,6 +1409,7 @@ public class StringHelper {
      * StringHelper.deleteWhitespace("abc")        = "abc"
      * StringHelper.deleteWhitespace("   ab  c  ") = "abc"
      * </pre>
+     *
      * @param source 元数据
      * @return
      */
@@ -1411,20 +1433,21 @@ public class StringHelper {
 
     /**
      * 通配符转正则
+     *
      * @param wildcard
      */
     public static String wildcard2RegEx(final String wildcard) {
-        if(StringHelper.isBlank(wildcard)) {
+        if (StringHelper.isBlank(wildcard)) {
             return wildcard;
         }
 
         String newWildcard = wildcard;
-        newWildcard = newWildcard.replace('.','#');
-        newWildcard = newWildcard.replaceAll("#","\\\\.");
-        newWildcard = newWildcard.replace('*','#');
-        newWildcard = newWildcard.replaceAll("#",".*");
-        newWildcard = newWildcard.replace('?','#');
-        newWildcard = newWildcard.replaceAll("#",".?");
+        newWildcard = newWildcard.replace('.', '#');
+        newWildcard = newWildcard.replaceAll("#", "\\\\.");
+        newWildcard = newWildcard.replace('*', '#');
+        newWildcard = newWildcard.replaceAll("#", ".*");
+        newWildcard = newWildcard.replace('?', '#');
+        newWildcard = newWildcard.replaceAll("#", ".?");
 
         return "^" + newWildcard + "$";
     }
@@ -1449,6 +1472,7 @@ public class StringHelper {
 
     /**
      * 获取启动pid
+     *
      * @return
      */
     public static String getPid() {
@@ -1458,12 +1482,13 @@ public class StringHelper {
 
     /**
      * 分隔符开头移除该信息
-     * @param source 数据
+     *
+     * @param source    数据
      * @param separator 分隔符
      * @return
      */
     public static String startsWithAndEmpty(String source, String separator) {
-        if(isEmpty(source) || isEmpty(separator)) {
+        if (isEmpty(source) || isEmpty(separator)) {
             return source;
         }
 
@@ -1472,6 +1497,7 @@ public class StringHelper {
 
     /**
      * 压缩字符串
+     *
      * @param source 元数据
      * @return
      */
@@ -1482,6 +1508,7 @@ public class StringHelper {
 
     /**
      * 压缩字符串
+     *
      * @param source 元数据
      * @return
      */
@@ -1491,6 +1518,7 @@ public class StringHelper {
 
     /**
      * 解压字符串
+     *
      * @param source 元数据
      * @return
      */
@@ -1501,6 +1529,7 @@ public class StringHelper {
 
     /**
      * 解压字符串
+     *
      * @param source 元数据
      * @return
      */
@@ -1510,9 +1539,10 @@ public class StringHelper {
 
     /**
      * 字符串转数组
-     * @param str 字符串
-     * @param delimiters 分隔符
-     * @param trimTokens 去空格
+     *
+     * @param str               字符串
+     * @param delimiters        分隔符
+     * @param trimTokens        去空格
      * @param ignoreEmptyTokens 忽略空值
      * @return
      */
@@ -1536,6 +1566,7 @@ public class StringHelper {
         }
         return toStringArray(tokens);
     }
+
     /**
      * 获取两字符串的相似度
      */
@@ -1942,7 +1973,13 @@ public class StringHelper {
      * @return
      */
     public static String toString(final Object value) {
-        return null == value ? EMPTY : value.toString();
+        if(null == value) {
+            return EMPTY;
+        }
+        if(value instanceof byte[]) {
+            return toString((byte[]) value, Charsets.UTF_8);
+        }
+        return value.toString();
     }
 
     /**
@@ -1951,9 +1988,22 @@ public class StringHelper {
      *     StringHelper.toString("") == ""
      *     StringHelper.toString("2") == "2"
      * </pre>
+     *
      * @since 1.0.0
      */
     public static String toString(byte[] bytes, String charsetName) throws UnsupportedEncodingException {
+        return charsetName == null ? new String(bytes) : new String(bytes, charsetName);
+    }
+    /**
+     * <pre>
+     *     StringHelper.toString(null) == ""
+     *     StringHelper.toString("") == ""
+     *     StringHelper.toString("2") == "2"
+     * </pre>
+     *
+     * @since 1.0.0
+     */
+    public static String toString(byte[] bytes, Charset charsetName) {
         return charsetName == null ? new String(bytes) : new String(bytes, charsetName);
     }
 
@@ -2240,6 +2290,7 @@ public class StringHelper {
     public static String trim(final String srcValue) {
         return null == srcValue ? EXTENSION_EMPTY : srcValue.trim();
     }
+
     /**
      * 去除空格
      * <pre>
@@ -2251,12 +2302,13 @@ public class StringHelper {
      * </pre>
      *
      * @param srcValue 源数据
-     * @param reg 正则
+     * @param reg      正则
      * @return
      */
     public static String trim(String srcValue, String reg) {
         return null == srcValue || null == reg ? EXTENSION_EMPTY : srcValue.replaceAll(reg, EXTENSION_EMPTY);
     }
+
     /**
      * 去除空格
      * <pre>
@@ -2402,15 +2454,15 @@ public class StringHelper {
      *
      * @param str 源数据
      *            <pre>
-     *                                                        StringHelper.stripToEmpty(null)     = ""
-     *                                                        StringHelper.stripToEmpty("")       = ""
-     *                                                        StringHelper.stripToEmpty("   ")    = ""
-     *                                                        StringHelper.stripToEmpty("abc")    = "abc"
-     *                                                        StringHelper.stripToEmpty("  abc")  = "abc"
-     *                                                        StringHelper.stripToEmpty("abc  ")  = "abc"
-     *                                                        StringHelper.stripToEmpty(" abc ")  = "abc"
-     *                                                        StringHelper.stripToEmpty(" ab c ") = "ab c"
-     *                                                        </pre>
+     *                                                                   StringHelper.stripToEmpty(null)     = ""
+     *                                                                   StringHelper.stripToEmpty("")       = ""
+     *                                                                   StringHelper.stripToEmpty("   ")    = ""
+     *                                                                   StringHelper.stripToEmpty("abc")    = "abc"
+     *                                                                   StringHelper.stripToEmpty("  abc")  = "abc"
+     *                                                                   StringHelper.stripToEmpty("abc  ")  = "abc"
+     *                                                                   StringHelper.stripToEmpty(" abc ")  = "abc"
+     *                                                                   StringHelper.stripToEmpty(" ab c ") = "ab c"
+     *                                                                   </pre>
      * @return
      */
     public static String stripToEmpty(final String str) {
@@ -2782,7 +2834,8 @@ public class StringHelper {
      * StringHelper.substringBefore("abc", "")    = ""
      * StringHelper.substringBefore("abc", null)  = "abc"
      * </pre>
-     * @param str 源数据
+     *
+     * @param str       源数据
      * @param separator 分隔符
      * @return
      */
@@ -2812,7 +2865,8 @@ public class StringHelper {
      * StringHelper.substringAfter("abc", "")    = ""
      * StringHelper.substringAfter("abc", null)  = "abc"
      * </pre>
-     * @param str 源数据
+     *
+     * @param str       源数据
      * @param separator 分隔符
      * @return
      */
@@ -2829,6 +2883,7 @@ public class StringHelper {
         }
         return str.substring(pos + separator.length());
     }
+
     /**
      * 从开始位置到结束位置截取字符串
      * <pre>
@@ -2922,6 +2977,7 @@ public class StringHelper {
             return sb.toString();
         }
     }
+
     /**
      * 默认逗号分隔的字符串
      *
@@ -2952,5 +3008,45 @@ public class StringHelper {
         return sb.length() > 0 ? sb.substring(0, sb.length() - separator.length()) : EMPTY;
     }
 
-    
+    /**
+     * 数组转十六进制
+     *
+     * @param source 数据源
+     * @return
+     */
+    public static String toHexString(byte[] source) {
+        if (null == source) {
+            return EMPTY;
+        }
+        String strHex = "";
+        StringBuilder sb = new StringBuilder("");
+        for (int n = 0; n < source.length; n++) {
+            strHex = Integer.toHexString(source[n] & 0xFF);
+            // 每个字节由两个字符表示，位数不够，高位补0
+            sb.append((strHex.length() == 1) ? "0" + strHex : strHex);
+        }
+        return sb.toString().trim();
+    }
+    /**
+     * 数组转十六进制
+     *
+     * @param hex 数据源
+     * @return
+     */
+    public static byte[] fromHexString(String hex) {
+        if (null == hex) {
+            return new byte[0];
+        }
+        int m = 0, n = 0;
+        // 每两个字符描述一个字节
+        int byteLen = hex.length() / 2;
+        byte[] ret = new byte[byteLen];
+        for (int i = 0; i < byteLen; i++) {
+            m = i * 2 + 1;
+            n = m + 1;
+            int intVal = Integer.decode("0x" + hex.substring(i * 2, m) + hex.substring(m, n));
+            ret[i] = Byte.valueOf((byte)intVal);
+        }
+        return ret;
+    }
 }

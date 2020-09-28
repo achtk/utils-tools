@@ -6,3 +6,4 @@ sha384=com.chua.utils.tools.encrypt.Sha384Encrypt
 sha512=com.chua.utils.tools.encrypt.Sha512Encrypt
 des=com.chua.utils.tools.encrypt.DesEncrypt
 aes=com.chua.utils.tools.encrypt.AesEncrypt
+desede=com.chua.utils.tools.encrypt.DESedeEncrypt
