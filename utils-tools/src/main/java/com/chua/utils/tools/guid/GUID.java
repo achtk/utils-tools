@@ -23,14 +23,14 @@ public class GUID {
 
     private static SecureRandom mySecureRand;
 
-    private static String s_id;
+    private static String sId;
 
     static {
         mySecureRand = new SecureRandom();
         long secureInitializer = mySecureRand.nextLong();
         myRand = new Random(secureInitializer);
         try {
-            s_id = InetAddress.getLocalHost().toString();
+            sId = InetAddress.getLocalHost().toString();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -74,7 +74,7 @@ public class GUID {
                 rand = myRand.nextLong();
             }
 
-            sbValueBeforeMD5.append(s_id);
+            sbValueBeforeMD5.append(sId);
             sbValueBeforeMD5.append(":");
             sbValueBeforeMD5.append(Long.toString(time));
             sbValueBeforeMD5.append(":");
