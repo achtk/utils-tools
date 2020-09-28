@@ -2,6 +2,7 @@ package com.chua.unified.properties;
 
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.Properties;
  * @since 1.0
  */
 @Getter
+@Slf4j
 public class NetxProperties extends Properties {
     public static final String CONFIG_FIELD_RETRY = "retry";
     public static final String CONFIG_FIELD_HOST = "host";
@@ -86,6 +88,9 @@ public class NetxProperties extends Properties {
      * @param host
      */
     public void addHost(String host) {
+        if(null == host) {
+            throw new IllegalArgumentException("[host] cannot be empty");
+        }
         if(!this.containsKey(CONFIG_FIELD_HOST)) {
             this.put(CONFIG_FIELD_HOST, host);
             this.host = new String[] {host};

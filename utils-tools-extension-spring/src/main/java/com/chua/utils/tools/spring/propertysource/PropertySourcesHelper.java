@@ -45,7 +45,7 @@ public class PropertySourcesHelper {
             for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) source).entrySet()) {
                 value = entry.getValue();
                 if (ClassHelper.isAssignableFrom(value, "org.springframework.boot.origin.OriginTrackedValue")) {
-                    value = ClassHelper.getProperty(value, "value");
+                    value = ClassHelper.getFieldByName(value, "value");
                 }
                 properties.put(entry.getKey(), ObjectHelper.defaultIfNull(value, "").toString());
             }

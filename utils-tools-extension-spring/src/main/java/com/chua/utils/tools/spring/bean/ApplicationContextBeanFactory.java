@@ -5,6 +5,7 @@ import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.spring.entity.BeanLoader;
 import com.chua.utils.tools.spring.entity.MappingEntity;
+import com.chua.utils.tools.spring.environment.EnvironmentFactory;
 import com.chua.utils.tools.spring.mapping.RequestMappingHandlerMappingFactory;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -45,8 +46,8 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
      * 获取环境变量
      */
     @Override
-    public Environment environment() {
-        return null == applicationContext ? null : applicationContext.getEnvironment();
+    public EnvironmentFactory environmentFactory() {
+        return new EnvironmentFactory(applicationContext);
     }
 
     @Override

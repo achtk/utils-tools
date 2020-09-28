@@ -3,6 +3,7 @@ package com.chua.utils.tools.spring.bean;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.spring.entity.BeanLoader;
+import com.chua.utils.tools.spring.environment.EnvironmentFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
@@ -36,8 +37,8 @@ public class BeanDefinitionBeanFactory implements IBeanFactory {
     private BeanDefinitionRegistry beanDefinitionRegistry;
 
     @Override
-    public Environment environment() {
-        throw new NotSupportedException("");
+    public EnvironmentFactory environmentFactory() {
+        return new EnvironmentFactory(beanDefinitionRegistry);
     }
 
     @Override
@@ -125,6 +126,7 @@ public class BeanDefinitionBeanFactory implements IBeanFactory {
         BeanDefinitionReaderUtils.registerBeanDefinition(beanDefinitionHolder, beanDefinitionRegistry);
         return name;
     }
+
 
     /**
      * 从上下文解析属性

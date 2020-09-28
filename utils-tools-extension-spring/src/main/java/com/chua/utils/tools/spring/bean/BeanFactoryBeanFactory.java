@@ -2,14 +2,17 @@ package com.chua.utils.tools.spring.bean;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.CollectionHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.entity.AnnotationInfoProperties;
 import com.chua.utils.tools.entity.GetterSetterProperties;
 import com.chua.utils.tools.spring.entity.BeanLoader;
 import com.chua.utils.tools.spring.enums.BeanStatus;
+import com.chua.utils.tools.spring.environment.EnvironmentFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -18,13 +21,17 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.support.ResourceEditorRegistrar;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertyResolver;
+import org.springframework.web.context.support.StandardServletEnvironment;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.NotSupportedException;
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * BeanFactory处理工厂
@@ -39,8 +46,25 @@ public class BeanFactoryBeanFactory implements IBeanFactory {
     private BeanFactory beanFactory;
 
     @Override
-    public Environment environment() {
-        throw new NotSupportedException("");
+    public EnvironmentFactory environmentFactory() {
+        EnvironmentFactory environmentFactory = new EnvironmentFactory();
+        if(!(beanFactory instanceof DefaultListableBeanFactory)) {
+            return environmentFactory;
+        }
+        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
+        Set<PropertyEditorRegistrar> propertyEditorRegistrars = defaultListableBeanFactory.getPropertyEditorRegistrars();
+        Set<ResourceEditorRegistrar> resourceEditorRegistrars = CollectionHelper.filter(propertyEditorRegistrars, ResourceEditorRegistrar.class);
+        for (ResourceEditorRegistrar resourceEditorRegistrar : resourceEditorRegistrars) {
+            PropertyResolver propertyResolver = ClassHelper.getOnlyFieldValue(resourceEditorRegistrar, PropertyResolver.class);
+            if(null == propertyResolver) {
+                return environmentFactory;
+            }
+            if(!(propertyResolver instanceof StandardServletEnvironment)) {
+                return environmentFactory;
+            }
+            environmentFactory.absorb((StandardServletEnvironment) propertyResolver);
+        }
+        return environmentFactory;
     }
 
     @Override

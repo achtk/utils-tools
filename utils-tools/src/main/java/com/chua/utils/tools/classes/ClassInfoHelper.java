@@ -8,6 +8,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import javassist.*;
+import javassist.Modifier;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
@@ -16,9 +17,7 @@ import javassist.bytecode.MethodInfo;
 import net.sf.cglib.beans.BeanMap;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
@@ -40,13 +39,7 @@ public class ClassInfoHelper {
     private static List<Class> primitiveTypes;
     private static List<String> primitiveDescriptors;
 
-    private static final Method[] NO_METHODS = {};
-
-    private static final Field[] NO_FIELDS = {};
-
-    private static final Map<Class<?>, Field[]> DECLARED_FIELDS_CACHE = new ConcurrentHashMap<>(256);
-
-    private static final Map<Class<?>, Method[]> CLASS_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>(256);
+    private static final Map<Object, Map<String, Object>> DECLARED_FIELDS_CACHE = new ConcurrentHashMap<>(256);
 
     public static List<String> getPrimitiveNames() {
         initPrimitives();
@@ -529,18 +522,14 @@ public class ClassInfoHelper {
             return Collections.emptyMap();
         }
         Map<String, T> result = new HashMap<>();
-        Class<?> aClass = obj.getClass();
+        List<Field> fieldByType = null;
         if (Strings.isNullOrEmpty(fieldName)) {
-            List<Field> fieldByType = getFieldByType(obj, fieldType);
-            for (Field field : fieldByType) {
-                doDataAnalysis(result, obj, fieldName, field);
-            }
-            return result;
+           fieldByType = getFieldByType(obj, fieldType);
+        } else {
+            fieldByType = getFieldByName(obj, fieldName);
         }
-        try {
-            Field field = aClass.getDeclaredField(fieldName);
+        for (Field field : fieldByType) {
             doDataAnalysis(result, obj, fieldName, field);
-        } catch (NoSuchFieldException e) {
         }
         return result;
     }
@@ -587,6 +576,30 @@ public class ClassInfoHelper {
             }
             aClass = aClass.getSuperclass();
         }
+        return result;
+    }
+
+    /**
+     * 获取所有字段
+     *
+     * @param obj 对象
+     * @return
+     */
+    public static Map<String, Object> getAllFields(final Object obj) {
+        if (DECLARED_FIELDS_CACHE.containsKey(obj)) {
+            return DECLARED_FIELDS_CACHE.get(obj);
+        }
+        Map<String, Object> result = new HashMap<>();
+        List<Field> fieldByName = getFieldByName(obj, "*");
+        for (Field field : fieldByName) {
+            field.setAccessible(true);
+            try {
+                result.put(field.getName(), field.get(obj));
+            } catch (IllegalAccessException e) {
+                continue;
+            }
+        }
+        DECLARED_FIELDS_CACHE.put(obj, result);
         return result;
     }
 
@@ -648,6 +661,9 @@ public class ClassInfoHelper {
             return result;
         }
 
+        if(!beanMap.containsKey(fieldName)) {
+            return result;
+        }
         Object o = beanMap.get(fieldName);
         try {
             result.put(fieldName, (T) o);
@@ -742,5 +758,21 @@ public class ClassInfoHelper {
         }
 
         return result;
+    }
+
+    /**
+     * 获取注解的值
+     *
+     * @param annotation 直接
+     * @param fieldName  字段
+     */
+    public static <T>T getAnnotationValue(final Annotation annotation, final String fieldName, final Class<T> type) {
+        if (null == annotation) {
+            return null;
+        }
+        InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
+        Map<String, Map> memberValues = getFieldValue(invocationHandler, "memberValues", Map.class);
+        Map map = memberValues.get("memberValues");
+        return (T) map.get(fieldName);
     }
 }
