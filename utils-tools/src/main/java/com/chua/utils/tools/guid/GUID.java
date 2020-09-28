@@ -15,9 +15,9 @@ import java.util.Random;
  */
 public class GUID {
 
-    public String valueBeforeMD5 = "";
+    public static volatile String valueBeforeMD5 = "";
 
-    public String valueAfterMD5 = "";
+    public static volatile String valueAfterMD5 = "";
 
     private static Random myRand;
 
@@ -38,15 +38,10 @@ public class GUID {
     }
 
     /**
-     *
+     * 随机生成GUID码
      */
-    public GUID() {
-        getRandomGUID(false);
-    }
-
-
-    public GUID(boolean secure) {
-        getRandomGUID(secure);
+    public static GUID randomGUID() {
+        return randomGUID(false);
     }
 
     /**
@@ -54,7 +49,7 @@ public class GUID {
      *
      * @param secure
      */
-    private void getRandomGUID(boolean secure) {
+    public static GUID randomGUID(boolean secure) {
         MessageDigest md5 = null;
         StringBuffer sbValueBeforeMD5 = new StringBuffer();
 
@@ -98,6 +93,7 @@ public class GUID {
         } catch (Exception e) {
             System.out.println("Error:" + e);
         }
+        return new GUID();
     }
 
     /*

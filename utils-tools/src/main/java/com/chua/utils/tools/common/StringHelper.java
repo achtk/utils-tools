@@ -1,6 +1,7 @@
 package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.function.IPreMatcher;
+import com.chua.utils.tools.guid.GUID;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -773,6 +774,14 @@ public class StringHelper {
      */
     public static String uuid() {
         return uuid(false);
+    }
+    /**
+     * jdk uuid
+     *
+     * @return
+     */
+    public static String guid() {
+        return GUID.randomGUID().toString();
     }
 
     /**
