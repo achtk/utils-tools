@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>utils-netx-extension-redis</artifactId>
+    <artifactId>utils-netx-extension-lettuce</artifactId>
     <dependencies>
         <dependency>
             <groupId>com.chua</groupId>
