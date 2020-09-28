@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 /**
  * @author CH
  */
-public class HttpExample {
+public class HttpTest {
 
     @Test
     public void testNewGet() {

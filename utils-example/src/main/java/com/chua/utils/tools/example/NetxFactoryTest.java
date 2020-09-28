@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 /**
  * @author CH
  */
-public class NetxFactoryExample {
+public class NetxFactoryTest {
 
     @Test
     public void testNetxFactory() {
