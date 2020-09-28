@@ -5,6 +5,8 @@ import com.google.common.base.Charsets;
 import com.google.gson.*;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 
 import java.io.*;
 import java.lang.reflect.Modifier;
@@ -425,5 +427,96 @@ public class JsonHelper {
         return GSON_GLOBAL_CONFIG.toJson(obj);
     }
 
-
+    /**
+     * 通过xpath获取json
+     * @param json 数据
+     * @param xpath xpath
+     * @param tClass 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>T xpath(final String json, final String xpath, final Class<T> tClass) {
+        return JsonPath.parse(json).read(xpath, tClass);
+    }
+    /**
+     * 通过xpath获取json
+     * @param inputStream 数据
+     * @param xpath xpath
+     * @param tClass 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>T xpath(final InputStream inputStream, final String xpath, final Class<T> tClass) {
+        return JsonPath.parse(inputStream).read(xpath, tClass);
+    }
+    /**
+     * 通过xpath获取json
+     * @param file 数据
+     * @param xpath xpath
+     * @param tClass 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>T xpath(final File file, final String xpath, final Class<T> tClass) throws IOException {
+        return JsonPath.parse(file).read(xpath, tClass);
+    }
+    /**
+     * 通过xpath获取json
+     * @param url 数据
+     * @param xpath xpath
+     * @param tClass 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>T xpath(final URL url, final String xpath, final Class<T> tClass) throws IOException {
+        return JsonPath.parse(url).read(xpath, tClass);
+    }
+    /**
+     * 通过xpath修改json
+     * @param inputStream 数据
+     * @param xpath xpath
+     * @param value 类型
+     * @return
+     */
+    public static void xpath(final InputStream inputStream, final String xpath, final Object value) {
+        DocumentContext documentContext = JsonPath.parse(inputStream);
+        JsonPath jsonPath = JsonPath.compile(xpath);
+        documentContext.set(jsonPath, value);
+    }
+    /**
+     * 通过xpath修改json
+     * @param file 数据
+     * @param xpath xpath
+     * @param value 类型
+     * @return
+     */
+    public static void xpath(final File file, final String xpath, final Object value) throws IOException {
+        DocumentContext documentContext = JsonPath.parse(file);
+        JsonPath jsonPath = JsonPath.compile(xpath);
+        documentContext.set(jsonPath, value);
+    }
+    /**
+     * 通过xpath修改json
+     * @param url 数据
+     * @param xpath xpath
+     * @param value 类型
+     * @return
+     */
+    public static void xpath(final URL url, final String xpath, final Object value) throws IOException {
+        DocumentContext documentContext = JsonPath.parse(url);
+        JsonPath jsonPath = JsonPath.compile(xpath);
+        documentContext.set(jsonPath, value);
+    }
+    /**
+     * 通过xpath修改json
+     * @param json 数据
+     * @param xpath xpath
+     * @param value 类型
+     * @return
+     */
+    public static void xpath(final String json, final String xpath, final Object value) {
+        DocumentContext documentContext = JsonPath.parse(json);
+        JsonPath jsonPath = JsonPath.compile(xpath);
+        documentContext.set(jsonPath, value);
+    }
 }
