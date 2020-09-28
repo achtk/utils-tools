@@ -41,7 +41,8 @@ public class BeanLoader<T> {
 
     /**
      * 添加异常信息
-     * @param name bean名称
+     *
+     * @param name       bean名称
      * @param beanStatus 导致原因
      * @return
      */
@@ -49,8 +50,10 @@ public class BeanLoader<T> {
         this.throwable.put(name, beanStatus);
         return this;
     }
+
     /**
      * 添加异常信息
+     *
      * @param name bean名称
      * @return
      */
@@ -58,8 +61,10 @@ public class BeanLoader<T> {
         this.throwable.put(name, BeanStatus.BEAN_NOT_EXIST);
         return this;
     }
+
     /**
      * 添加bean
+     *
      * @param entity 数据
      * @return
      */
@@ -71,6 +76,7 @@ public class BeanLoader<T> {
         beansComparison.put(name.getName(), entity);
         return this;
     }
+
     /**
      * 添加bean
      *
@@ -91,6 +97,7 @@ public class BeanLoader<T> {
 
     /**
      * 获取所有bean
+     *
      * @return
      */
     public Collection<T> toCollection() {
@@ -99,6 +106,7 @@ public class BeanLoader<T> {
 
     /**
      * 根据名称获取bean
+     *
      * @param name 名称
      * @return
      */
@@ -108,10 +116,11 @@ public class BeanLoader<T> {
 
     /**
      * 返回有效的第一个实体
+     *
      * @return
      */
     public T findOne() {
-        if(beans.isEmpty()) {
+        if (beans.isEmpty()) {
             return null;
         }
         return FinderHelper.firstElement(beans.values());
@@ -119,21 +128,27 @@ public class BeanLoader<T> {
 
     /**
      * 代理bean
+     *
      * @param aClass
      * @return
      * @throws NotSupportedException
      */
     public T proxy(Class<?> aClass) {
-        if(null == aClass) {
+        if (null == aClass) {
             return null;
         }
 
-        if(!aClass.isInterface()) {
+        if (!aClass.isInterface()) {
             return (T) ClassHelper.forObject(aClass);
         }
-        return (T) Proxy.newProxyInstance(ClassHelper.getDefaultClassLoader(), new Class[]{aClass}, new InvocationHandler() {
+        return (T) Proxy.newProxyInstance(ClassHelper.getDefaultClassLoader(), new Class[]{ aClass }, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                Collection<T> tCollection = beans.get(method.getDeclaringClass());
+                for (T t : tCollection) {
+                    Class<T> tClass = (Class<T>) t.getClass();
+                    Method tMethod = tClass.getMethod(method.getName(), method.getParameterTypes());
+                }
                 return null;
             }
         });
