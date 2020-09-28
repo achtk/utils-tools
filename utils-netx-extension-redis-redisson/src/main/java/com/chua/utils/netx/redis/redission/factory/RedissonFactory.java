@@ -8,6 +8,7 @@ import com.google.common.base.Strings;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.ClusterServersConfig;
@@ -23,6 +24,7 @@ import java.util.concurrent.locks.Lock;
  * @className RedissonFactory
  * @since 2020/7/27 20:14
  */
+@Slf4j
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class RedissonFactory implements AutoCloseable, INetxFactory<RedissonClient> {
@@ -61,6 +63,7 @@ public class RedissonFactory implements AutoCloseable, INetxFactory<RedissonClie
 
     @Override
     public void start() {
+        log.info(">>>>>>>>>>> RedissonFactory Starting to connect");
         String[] addresses = netxProperties.getHost();
         Config config = new Config();
 
@@ -87,7 +90,13 @@ public class RedissonFactory implements AutoCloseable, INetxFactory<RedissonClie
                 clusterServersConfig.setScanInterval(MapHelper.ints("scanInterval", netxProperties));
             }
 
-            this.redissonClient = Redisson.create(config);
+            try {
+                this.redissonClient = Redisson.create(config);
+                log.info(">>>>>>>>>>> RedissonFactory connection complete.");
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.info(">>>>>>>>>>> RedissonFactory connection activation failed.");
+            }
         } else if(BooleanHelper.hasLength(addresses)){
 
             SingleServerConfig single = config.useSingleServer().setAddress(addresses[0]).setClientName("single");
@@ -103,7 +112,13 @@ public class RedissonFactory implements AutoCloseable, INetxFactory<RedissonClie
                 single.setUsername(netxProperties.getUsername());
             }
 
-            this.redissonClient = Redisson.create(config);
+            try {
+                this.redissonClient = Redisson.create(config);
+                log.info(">>>>>>>>>>> RedissonFactory connection complete.");
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.info(">>>>>>>>>>> RedissonFactory connection activation failed.");
+            }
         }
     }
 

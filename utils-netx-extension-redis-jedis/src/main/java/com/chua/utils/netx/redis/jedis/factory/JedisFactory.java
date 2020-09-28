@@ -42,6 +42,7 @@ public class JedisFactory implements INetxFactory<ShardedJedisPool> {
 
     @Override
     public void start() {
+        log.info(">>>>>>>>>>> JedisFactory Starting to connect");
         if (shardedJedisPool != null) {
             return;
         }
@@ -59,7 +60,9 @@ public class JedisFactory implements INetxFactory<ShardedJedisPool> {
         }
 
         if (shardedJedisPool == null) {
-            throw new NullPointerException(">>>>>>>>>>> xxl-sso, JedisUtil.ShardedJedisPool is null.");
+            log.info(">>>>>>>>>>> JedisFactory connection activation failed.");
+        } else {
+            log.info(">>>>>>>>>>> JedisFactory connection complete.");
         }
     }
 

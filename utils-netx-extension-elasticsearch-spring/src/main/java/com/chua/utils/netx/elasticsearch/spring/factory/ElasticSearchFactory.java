@@ -8,6 +8,7 @@ import com.chua.utils.tools.common.PropertiesHelper;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
@@ -35,6 +36,7 @@ import static com.chua.unified.properties.NetxProperties.CONFIG_FIELD_READ_TIMEO
  *
  * @author CH
  */
+@Slf4j
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class ElasticSearchFactory implements INetxFactory<AbstractElasticsearchTemplate> {
@@ -74,6 +76,7 @@ public class ElasticSearchFactory implements INetxFactory<AbstractElasticsearchT
      * @return
      */
     private AbstractElasticsearchTemplate getElasticsearchTemplate() {
+        log.info(">>>>>>>>>>> ElasticSearchFactory Starting to connect");
         RestClientBuilder.RequestConfigCallback requestConfigCallback = getRequestConfigCallback();
         RestClientBuilder.HttpClientConfigCallback httpClientConfigCallback = getHttpClientConfigCallback();
 
@@ -82,7 +85,14 @@ public class ElasticSearchFactory implements INetxFactory<AbstractElasticsearchT
         restClientBuilder.setHttpClientConfigCallback(httpClientConfigCallback);
 
         RestHighLevelClient restHighLevelClient = new RestHighLevelClient(restClientBuilder);
-        return new ElasticsearchRestTemplate(restHighLevelClient);
+        try {
+            log.info(">>>>>>>>>>> ElasticSearchFactory connection complete.");
+            return new ElasticsearchRestTemplate(restHighLevelClient);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info(">>>>>>>>>>> ElasticSearchFactory connection activation failed.");
+        }
+        return null;
     }
 
     /**

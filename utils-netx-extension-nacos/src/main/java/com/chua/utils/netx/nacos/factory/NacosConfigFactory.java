@@ -8,11 +8,13 @@ import com.chua.utils.netx.factory.INetxFactory;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * nacos客户端工具类
  * @author CH
  */
+@Slf4j
 @RequiredArgsConstructor
 @NoArgsConstructor
 public class NacosConfigFactory implements INetxFactory<ConfigService> {
@@ -40,12 +42,14 @@ public class NacosConfigFactory implements INetxFactory<ConfigService> {
 
     @Override
     public void start() {
+        log.info(">>>>>>>>>>> NacosConfigFactory Starting to connect");
         try {
             this.configService = NacosFactory.createConfigService(netxProperties);
+            log.info(">>>>>>>>>>> NacosConfigFactory connection complete.");
         } catch (NacosException e) {
             e.printStackTrace();
+            log.info(">>>>>>>>>>> NacosConfigFactory connection activation failed.");
         }
-
     }
 
     @Override

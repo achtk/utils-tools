@@ -31,16 +31,24 @@ public class CloudSolrFactory extends SolrFactory {
 
 	@Override
 	public void start() {
+		log.info(">>>>>>>>>>> SolrFactory Starting to connect");
+
 		String[] hosts = netxProperties.getHost();
 
-		this.cloudSolrClient =
-				new CloudSolrClient.Builder(Arrays.asList(hosts), Optional.of("/solr"))
-						.withConnectionTimeout(netxProperties.getConnectionTimeout())
-						.withSocketTimeout(netxProperties.getReadTimeout()).build();
+		try {
+			this.cloudSolrClient =
+					new CloudSolrClient.Builder(Arrays.asList(hosts), Optional.of("/solr"))
+							.withConnectionTimeout(netxProperties.getConnectionTimeout())
+							.withSocketTimeout(netxProperties.getReadTimeout()).build();
 
-		this.cloudSolrClient.setDefaultCollection(SolrFactory.DEFAULT_COLLECTION);
+			this.cloudSolrClient.setDefaultCollection(SolrFactory.DEFAULT_COLLECTION);
 
-		setSolrClient(cloudSolrClient);
+			setSolrClient(cloudSolrClient);
+			log.info(">>>>>>>>>>> SolrFactory connection complete.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.info(">>>>>>>>>>> SolrFactory connection activation failed.");
+		}
 
 	}
 

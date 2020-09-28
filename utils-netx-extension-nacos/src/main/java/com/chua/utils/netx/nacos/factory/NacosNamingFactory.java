@@ -8,11 +8,13 @@ import com.chua.utils.netx.factory.INetxFactory;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * nacos客户端工具类
  * @author CH
  */
+@Slf4j
 @RequiredArgsConstructor
 @NoArgsConstructor
 public class NacosNamingFactory implements INetxFactory<NamingService> {
@@ -40,10 +42,13 @@ public class NacosNamingFactory implements INetxFactory<NamingService> {
 
     @Override
     public void start() {
+        log.info(">>>>>>>>>>> NacosNamingFactory Starting to connect");
         try {
             this.namingService = NacosFactory.createNamingService(netxProperties);
+            log.info(">>>>>>>>>>> NacosNamingFactory connection complete.");
         } catch (NacosException e) {
             e.printStackTrace();
+            log.info(">>>>>>>>>>> NacosNamingFactory connection activation failed.");
         }
 
     }

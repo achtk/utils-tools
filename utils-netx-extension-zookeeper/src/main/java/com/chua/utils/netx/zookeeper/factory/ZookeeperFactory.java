@@ -56,6 +56,8 @@ public class ZookeeperFactory implements INetxFactory<CuratorFramework> {
 
     @Override
     public void start() {
+        log.info(">>>>>>>>>>> ZookeeperFactory Starting to connect");
+
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
         builder.connectString(Joiner.on(",").join(netxProperties.getHost()));
 
@@ -76,10 +78,10 @@ public class ZookeeperFactory implements INetxFactory<CuratorFramework> {
         this.curatorFramework.getConnectionStateListenable().addListener(new ConnectionStateListener() {
             @Override
             public void stateChanged(CuratorFramework client, ConnectionState newState) {
-                log.info("等待连接");
+                log.info("Zookeeper waiting for connection");
                 state.set(newState.isConnected());
                 if (newState.isConnected()) {
-                    log.info("连接成功...");
+                    log.info("Zookeeper connection succeeded...");
                     countDownLatch.countDown();
                 }
             }
@@ -90,10 +92,10 @@ public class ZookeeperFactory implements INetxFactory<CuratorFramework> {
             if (!await) {
                 close();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.info(">>>>>>>>>>> ZookeeperFactory connection complete.");
         } catch (Exception e) {
             e.printStackTrace();
+            log.info(">>>>>>>>>>> ZookeeperFactory connection activation failed.");
         }
     }
 

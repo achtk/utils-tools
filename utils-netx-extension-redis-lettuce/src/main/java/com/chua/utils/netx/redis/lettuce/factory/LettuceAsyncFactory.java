@@ -13,6 +13,7 @@ import com.lambdaworks.redis.cluster.api.async.RedisAdvancedClusterAsyncCommands
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,7 @@ import java.util.ArrayList;
  * @className RedistAsyncFactory
  * @since 2020/6/1 23:32
  */
+@Slf4j
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class LettuceAsyncFactory implements INetxFactory {
@@ -45,6 +47,7 @@ public class LettuceAsyncFactory implements INetxFactory {
 
     @Override
     public void start() {
+        log.info(">>>>>>>>>>> LettuceAsyncFactory Starting to connect");
         String[] hosts = netxProperties.getHost();
         ArrayList<RedisURI> list = new ArrayList<>();
         if (hosts.length > 1) {
@@ -52,12 +55,24 @@ public class LettuceAsyncFactory implements INetxFactory {
                 list.add(RedisURI.create(s));
             }
             RedisClusterClient client = RedisClusterClient.create(list);
-            StatefulRedisClusterConnection<String, String> connect = client.connect();
-            this.clusterAsyncCommands = connect.async();
+            try {
+                StatefulRedisClusterConnection<String, String> connect = client.connect();
+                this.clusterAsyncCommands = connect.async();
+                log.info(">>>>>>>>>>> LettuceAsyncFactory connection complete.");
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.info(">>>>>>>>>>> LettuceAsyncFactory connection activation failed.");
+            }
         } else if (BooleanHelper.hasLength(hosts)) {
             RedisClient client = RedisClient.create(hosts[0]);
-            StatefulRedisConnection<String, String> connect = client.connect();
-            this.redisAsyncCommands = connect.async();
+            try {
+                StatefulRedisConnection<String, String> connect = client.connect();
+                this.redisAsyncCommands = connect.async();
+                log.info(">>>>>>>>>>> LettuceAsyncFactory connection complete.");
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.info(">>>>>>>>>>> LettuceAsyncFactory connection activation failed.");
+            }
         }
     }
 

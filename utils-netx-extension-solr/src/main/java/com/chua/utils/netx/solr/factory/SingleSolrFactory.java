@@ -33,12 +33,19 @@ public class SingleSolrFactory extends SolrFactory {
 	 */
 	@Override
 	public void start() {
+		log.info(">>>>>>>>>>> SolrFactory Starting to connect");
 		String[] hosts = netxProperties.getHost();
-		this.httpSolrClient = new HttpSolrClient.Builder(hosts[0])
-					.withConnectionTimeout(netxProperties.getConnectionTimeout())
-					.withSocketTimeout(netxProperties.getReadTimeout()).build();
+		try {
+			this.httpSolrClient = new HttpSolrClient.Builder(hosts[0])
+						.withConnectionTimeout(netxProperties.getConnectionTimeout())
+						.withSocketTimeout(netxProperties.getReadTimeout()).build();
 
-		setSolrClient(httpSolrClient);
+			setSolrClient(httpSolrClient);
+			log.info(">>>>>>>>>>> SolrFactory connection complete.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.info(">>>>>>>>>>> SolrFactory connection activation failed.");
+		}
 	}
 
 }

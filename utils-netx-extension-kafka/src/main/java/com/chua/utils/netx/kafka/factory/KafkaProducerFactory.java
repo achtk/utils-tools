@@ -4,6 +4,7 @@ import com.chua.unified.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -14,6 +15,7 @@ import java.util.Properties;
  * kafka生产者
  * @author CH
  */
+@Slf4j
 @RequiredArgsConstructor
 public class KafkaProducerFactory<K, V> implements AutoCloseable, INetxFactory<KafkaProducer> {
 
@@ -45,6 +47,8 @@ public class KafkaProducerFactory<K, V> implements AutoCloseable, INetxFactory<K
 
     @Override
     public void start() {
+        log.info(">>>>>>>>>>> KafkaProducerFactory Starting to connect");
+
         Properties props = new Properties();
         // 是否启用自动提交，默认true
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
@@ -55,7 +59,13 @@ public class KafkaProducerFactory<K, V> implements AutoCloseable, INetxFactory<K
         // 服务器ip:端口号，集群用逗号分隔
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, netxProperties.getHost());
 
-        this.kafkaProducer = new KafkaProducer(props);
+        try {
+            this.kafkaProducer = new KafkaProducer(props);
+            log.info(">>>>>>>>>>> KafkaProducerFactory connection complete.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info(">>>>>>>>>>> KafkaProducerFactory connection activation failed.");
+        }
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.tools.common.FinderHelper;
 import com.mongodb.*;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
  * mongodb工厂
  * @author CH
  */
+@Slf4j
 @NoArgsConstructor
 public class MongodbFactory implements INetxFactory<MongoTemplate>  {
 
@@ -54,13 +56,21 @@ public class MongodbFactory implements INetxFactory<MongoTemplate>  {
      * @return MongoTemplate
      */
     private MongoTemplate startMongoTemplate() {
-        MongoClientOptions.Builder mongoBuilder = new MongoClientOptions.Builder();
-        mongoBuilder.connectTimeout(netxProperties.getConnectTimeout());
-        mongoBuilder.minConnectionsPerHost(1);
+        log.info(">>>>>>>>>>> MongodbFactory Starting to connect");
+        try {
+            MongoClientOptions.Builder mongoBuilder = new MongoClientOptions.Builder();
+            mongoBuilder.connectTimeout(netxProperties.getConnectTimeout());
+            mongoBuilder.minConnectionsPerHost(1);
 
-        ConnectionString connectionString = new ConnectionString(getMongoUri());
-        MongoDatabaseFactory mongoDbFactory = new SimpleMongoClientDatabaseFactory(connectionString);
-        return new MongoTemplate(mongoDbFactory);
+            ConnectionString connectionString = new ConnectionString(getMongoUri());
+            MongoDatabaseFactory mongoDbFactory = new SimpleMongoClientDatabaseFactory(connectionString);
+            log.info(">>>>>>>>>>> MongodbFactory connection complete.");
+            return new MongoTemplate(mongoDbFactory);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info(">>>>>>>>>>> MongodbFactory connection activation failed.");
+        }
+        return null;
     }
 
     /**
