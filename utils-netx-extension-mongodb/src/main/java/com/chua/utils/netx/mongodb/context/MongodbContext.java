@@ -85,16 +85,9 @@ public class MongodbContext {
         return this.mongoTemplate.execute(collectionName, action);
     }
 
-
-    public SessionScoped withSession(ClientSessionOptions sessionOptions) {
-        return this.mongoTemplate.withSession(sessionOptions);
-    }
-
-
     public <T> CloseableIterator<T> stream(Query query, Class<T> entityType) {
         return this.mongoTemplate.stream(query, entityType);
     }
-
 
     public <T> CloseableIterator<T> stream(Query query, Class<T> entityType, String collectionName) {
         return this.mongoTemplate.stream(query, entityType, collectionName);
