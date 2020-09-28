@@ -1,10 +1,12 @@
 package com.chua.utils.tools.common;
 
+import com.chua.utils.tools.classes.ClassHelper;
 import com.google.common.base.Preconditions;
 import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -194,6 +196,31 @@ public class BeansHelper {
 
         BeanMap beanMap = BeanMap.create(object);
         beanMap.putAll(properties);
+        return (T) beanMap.getBean();
+    }
+
+    /**
+     * 集合转对象
+     * @param tClass 类
+     * @param source 数据
+     * @param <T>
+     * @return
+     */
+    public static <T> T setProperty(Class<T> tClass, List<String> source) {
+        if(null == tClass) {
+            return null;
+        }
+        if(!BooleanHelper.hasLength(source)) {
+            return ClassHelper.forObject(tClass);
+        }
+        BeanMap beanMap = BeanMap.create(ClassHelper.forObject(tClass));
+        Field[] fields = tClass.getDeclaredFields();
+
+        int max = Math.min(fields.length, source.size());
+        for (int i = 0; i < max; i++) {
+            Field field = fields[i];
+            beanMap.put(field.getName(), source.get(i));
+        }
         return (T) beanMap.getBean();
     }
 }

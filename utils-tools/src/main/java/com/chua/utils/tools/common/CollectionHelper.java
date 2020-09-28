@@ -2,6 +2,7 @@ package com.chua.utils.tools.common;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -9,6 +10,7 @@ import java.util.*;
 
 /**
  * 集合工具类
+ *
  * @author CH
  */
 public class CollectionHelper {
@@ -19,18 +21,21 @@ public class CollectionHelper {
      * CollectorsHelper.isBlank(new HashMap())  = false
      * </pre>
      * 是否有内容
+     *
      * @param collection
      * @return
      */
     public static <V> Boolean isBlank(Collection<V> collection) {
         return !BooleanHelper.hasLength(collection);
     }
+
     /**
      * <pre>
      * CollectorsHelper.isBlank(null)     = true
      * CollectorsHelper.isBlank(new HashMap())  = true
      * </pre>
      * 是否有内容
+     *
      * @param kvMap
      * @return
      */
@@ -45,18 +50,21 @@ public class CollectionHelper {
      * CollectorsHelper.isEmpty(new ArrayList())  = false
      * </pre>
      * 是否有内容
+     *
      * @param collection
      * @return
      */
     public static <V> Boolean isEmpty(Collection<V> collection) {
         return null == collection;
     }
+
     /**
      * <pre>
      * CollectorsHelper.isEmpty(null)     = true
      * CollectorsHelper.isEmpty(new HashMap())  = false
      * </pre>
      * 是否有内容
+     *
      * @param kvMap
      * @return
      */
@@ -71,11 +79,12 @@ public class CollectionHelper {
      * CollectorsHelper.of("")     = List
      * </pre>
      * 初始化集合
+     *
      * @param items
      * @param <E>
      * @return
      */
-    public static <E>ImmutableList<E> form(E... items) {
+    public static <E> ImmutableList<E> form(E... items) {
         return null == items ? ImmutableList.<E>of() : ImmutableList.<E>builder().add(items).build();
     }
 
@@ -85,41 +94,45 @@ public class CollectionHelper {
      *     CollectorsHelper.size(new ArrayList()) = 0
      * </pre>
      * 获取长度
+     *
      * @param collection
      * @return
      */
-    public static <E>int size(Collection<E> collection) {
+    public static <E> int size(Collection<E> collection) {
         return isEmpty(collection) ? 0 : collection.size();
     }
+
     /**
      * <pre>
      *     CollectorsHelper.size(null) = 0
      *     CollectorsHelper.size(new HashMap()) = 0
      * </pre>
      * 获取长度
+     *
      * @param kvMap
      * @return
      */
-    public static <K, V>int size(Map<K, V> kvMap) {
+    public static <K, V> int size(Map<K, V> kvMap) {
         return isEmpty(kvMap) ? 0 : kvMap.size();
     }
 
     /**
      * 过滤元素
+     *
      * @param list
      * @param predicate
      * @param <E>
      */
     public static <E> Collection<E> filter(Collection<E> list, Predicate<E> predicate) {
-        if(isBlank(list)) {
+        if (isBlank(list)) {
             return list;
         }
-        if(null == predicate) {
+        if (null == predicate) {
             return list;
         }
         List<E> result = new ArrayList<>();
         for (E e : list) {
-            if(predicate.test(e)) {
+            if (predicate.test(e)) {
                 result.add(e);
             }
         }
@@ -128,45 +141,48 @@ public class CollectionHelper {
 
     /**
      * 获取源数据不同数据
+     *
      * @param source 源数据
      * @param target 比对数据
      * @param <E>
      * @return
      */
     public static <E> Collection<E> difference(Collection<E> source, Collection<E> target) {
-        if(isBlank(source) || isBlank(target)) {
+        if (isBlank(source) || isBlank(target)) {
             return source;
         }
         Set<E> set = new HashSet<>();
         Iterator<E> iterator = source.iterator();
         E elem = null;
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             elem = iterator.next();
-            if(!target.contains(elem)) {
+            if (!target.contains(elem)) {
                 set.add(elem);
             }
         }
 
         return set;
     }
+
     /**
      * 获取源数据相同数据
+     *
      * @param source 源数据
      * @param target 比对数据
      * @param <E>
      * @return
      */
     public static <E> Collection<E> same(Collection<E> source, Collection<E> target) {
-        if(isBlank(source) || isBlank(target)) {
+        if (isBlank(source) || isBlank(target)) {
             return source;
         }
         Set<E> set = new HashSet<>();
         Iterator<E> iterator = source.iterator();
 
         E elem = null;
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             elem = iterator.next();
-            if(target.contains(elem)) {
+            if (target.contains(elem)) {
                 set.add(elem);
             }
         }
@@ -175,71 +191,81 @@ public class CollectionHelper {
 
     /**
      * 获取值
+     *
      * @param collection
      * @param index
      */
     public static <E> E get(Collection<E> collection, int index) {
-        if(isBlank(collection) || collection.size() < index) {
+        if (isBlank(collection) || collection.size() < index) {
             return null;
         }
 
         int cnt = 0;
         Iterator<E> iterator = collection.iterator();
-        while(iterator.hasNext()) {
-            if(cnt ++ != index) {
+        while (iterator.hasNext()) {
+            if (cnt++ != index) {
                 continue;
             }
             return iterator.next();
         }
         return null;
     }
+
     /**
      * 获取值
+     *
      * @param objectMap
      * @param key
      */
     public static String get(Map<String, Object> objectMap, String key) {
         return get(objectMap, key, null);
     }
+
     /**
      * 获取值
+     *
      * @param objectMap
      * @param key
      */
     public static <E> E get(Map<String, Object> objectMap, String key, E defaultValue) {
-        if(isBlank(objectMap) || !objectMap.containsKey(key)) {
+        if (isBlank(objectMap) || !objectMap.containsKey(key)) {
             return defaultValue;
         }
         Object o = objectMap.get(key);
-        if(o == null) {
+        if (o == null) {
             return defaultValue;
         }
-        return (E)o;
+        return (E) o;
     }
 
     /**
      * 转字符串
+     *
      * @param collection 集合
      * @return
      */
     public static String toString(Collection collection) {
         return null == collection ? "[]" : "[" + Joiner.on(",").join(collection.iterator()) + "]";
     }
+
     /**
      * 转字符串
+     *
      * @param array 数组
      * @return
      */
-    public static <T>String toString(T[] array) {
+    public static <T> String toString(T[] array) {
         return null == array ? "[]" : "[" + Joiner.on(",").join(array) + "]";
     }
+
     /**
      * 转字符串
+     *
      * @param array 数组
      * @return
      */
     public static String toString(byte[] array) {
-        if(null == array) {
+        if (null == array) {
             return "[]";
         }
         StringBuffer sb = new StringBuffer(array.length);
@@ -251,26 +277,29 @@ public class CollectionHelper {
 
     /**
      * 转字符串
+     *
      * @param map 集合
      * @return
      */
     public static String toString(Map map) {
         return null == map ? "{}" : JsonHelper.toJson(map);
     }
+
     /**
      * 获取索引位置
-     * @param source 源数据
+     *
+     * @param source  源数据
      * @param element 节点
      * @return
      */
     public static int indexOf(Collection<String> source, String element) {
-        if(!BooleanHelper.hasLength(source) || StringHelper.isBlank(element)) {
+        if (!BooleanHelper.hasLength(source) || StringHelper.isBlank(element)) {
             return -1;
         }
         int index = -1;
         for (String item : source) {
-            ++ index;
-            if(element.equals(item)) {
+            ++index;
+            if (element.equals(item)) {
                 return index;
             }
         }
@@ -279,18 +308,19 @@ public class CollectionHelper {
 
     /**
      * 获取索引位置
-     * @param source 源数据
+     *
+     * @param source  源数据
      * @param element 节点
      * @return
      */
     public static int indexOf(Map<String, Object> source, String element) {
-        if(!BooleanHelper.hasLength(source) || StringHelper.isBlank(element)) {
+        if (!BooleanHelper.hasLength(source) || StringHelper.isBlank(element)) {
             return -1;
         }
         int index = -1;
         for (String item : source.keySet()) {
-            ++ index;
-            if(element.equals(item)) {
+            ++index;
+            if (element.equals(item)) {
                 return index;
             }
         }
@@ -299,18 +329,21 @@ public class CollectionHelper {
 
     /**
      * 获取第一个元素
+     *
      * @param params
      * @return
      */
-    public static <T>T firstElement(final Map<String, T> params) {
+    public static <T> T firstElement(final Map<String, T> params) {
         return FinderHelper.firstElement(params);
     }
+
     /**
      * 获取第一个元素
+     *
      * @param list
      * @return
      */
-    public static <T>T firstElement(final Collection<T> list) {
+    public static <T> T firstElement(final Collection<T> list) {
         return FinderHelper.firstElement(list);
     }
 
@@ -321,7 +354,7 @@ public class CollectionHelper {
      * ifNull([""], ["NULL"])    = [""]
      * </pre>
      *
-     * @param source 源数据
+     * @param source        源数据
      * @param defaultTarget 默认数组
      * @return
      */
@@ -336,7 +369,7 @@ public class CollectionHelper {
      * ifNull({}, {1:1})    = {}
      * </pre>
      *
-     * @param source 源数据
+     * @param source        源数据
      * @param defaultTarget 默认数组
      * @return
      */
@@ -351,7 +384,7 @@ public class CollectionHelper {
      * ifNull([""], ["NULL"])    = [""]
      * </pre>
      *
-     * @param source 源数据
+     * @param source        源数据
      * @param defaultTarget 默认数组
      * @return
      */
@@ -366,7 +399,7 @@ public class CollectionHelper {
      * ifNull({}, {1:1})    = {1:1}
      * </pre>
      *
-     * @param source 源数据
+     * @param source        源数据
      * @param defaultTarget 默认数组
      * @return
      */
@@ -376,17 +409,18 @@ public class CollectionHelper {
 
     /**
      * 笛卡尔积
-     * @param item 第一个数据集
+     *
+     * @param item  第一个数据集
      * @param items 第二个数据集
      * @param <T>
      * @return
      */
     public static <T> List<String> descartes(List<T> item, List<T>... items) {
-        if(!BooleanHelper.hasAllLength(items)) {
+        if (!BooleanHelper.hasAllLength(items)) {
             return null;
         }
         List<List<T>> str = null;
-        if(null == item || item.isEmpty()) {
+        if (null == item || item.isEmpty()) {
             str = new ArrayList<>();
             for (List<T> ts : items) {
                 str.add(ts);
@@ -416,14 +450,14 @@ public class CollectionHelper {
 
             for (int i = 0; i < ts.size(); i++) {
                 for (int j = 0; j < loop; j++) {
-                    if(myIndex == ts.size()) {
+                    if (myIndex == ts.size()) {
                         myIndex = 0;
                     }
                     for (int k = 0; k < itemLoop; k++) {
-                        result[index] = (null == result[index] ? "" : result[index] + ",") + ((String)ts.get(myIndex));
-                        index ++;
+                        result[index] = (null == result[index] ? "" : result[index] + ",") + ((String) ts.get(myIndex));
+                        index++;
                     }
-                    myIndex ++;
+                    myIndex++;
                 }
             }
         }
@@ -432,13 +466,14 @@ public class CollectionHelper {
 
     /**
      * 合并数据
+     *
      * @param source 数据1
-     * @param items 数据2
+     * @param items  数据2
      * @return
      */
-    public static <T>List<T> merge(final List<T> source, final T... items) {
+    public static <T> List<T> merge(final List<T> source, final T... items) {
         List<T> result = ObjectHelper.firstNonNull(source, new ArrayList<>());
-        if(!BooleanHelper.hasLength(items)) {
+        if (!BooleanHelper.hasLength(items)) {
             return result;
         }
 
@@ -448,31 +483,34 @@ public class CollectionHelper {
 
         return result;
     }
+
     /**
      * 合并两个数据
-     * @param fileResolvers 元数据1
+     *
+     * @param fileResolvers  元数据1
      * @param fileResolvers1 元数据2
      */
-    public static <T>void add(Collection<T> fileResolvers, Collection<T> fileResolvers1) {
-        if(null == fileResolvers) {
-            if(fileResolvers instanceof Set) {
+    public static <T> void add(Collection<T> fileResolvers, Collection<T> fileResolvers1) {
+        if (null == fileResolvers) {
+            if (fileResolvers instanceof Set) {
                 fileResolvers = new HashSet<>();
             } else {
                 fileResolvers = new ArrayList<>();
             }
         }
-        if(null != fileResolvers1) {
+        if (null != fileResolvers1) {
             fileResolvers.addAll(fileResolvers1);
         }
     }
 
     /**
      * 集合转数组
+     *
      * @param sources 数据源
      * @return
      */
-    public static <T>T[] toArray(List<T> sources) {
-        if(!BooleanHelper.hasLength(sources)) {
+    public static <T> T[] toArray(List<T> sources) {
+        if (!BooleanHelper.hasLength(sources)) {
             return null;
         }
 
@@ -481,20 +519,124 @@ public class CollectionHelper {
 
     /**
      * 返回第一个有效的数据
+     *
      * @param <T>
      * @param collection 数据集合
      * @return
      */
-    public static <T>T findFirstOne(Collection<T> collection) {
+    public static <T> T findFirstOne(Collection<T> collection) {
         return FinderHelper.firstElement(collection);
     }
+
     /**
      * 返回第一个有效的数据
+     *
      * @param <T>
      * @param collection 数据集合
      * @return
      */
-    public static <T>T findLastOne(Collection<T> collection) {
+    public static <T> T findLastOne(Collection<T> collection) {
         return FinderHelper.lastElement(collection);
+    }
+
+    /**
+     * 清空集合数据
+     *
+     * @param source 集合
+     */
+    public static synchronized <T> void clear(List<T> source) {
+        if (null == source) {
+            source = new ArrayList<>();
+            return;
+        }
+        if (!BooleanHelper.hasLength(source)) {
+            return;
+        }
+        source.clear();
+    }
+
+    /**
+     * 清空集合数据
+     *
+     * @param source 集合
+     */
+    public static synchronized <T> void clear(Set<T> source) {
+        if (null == source) {
+            source = new HashSet<>();
+            return;
+        }
+        if (!BooleanHelper.hasLength(source)) {
+            return;
+        }
+        source.clear();
+    }
+
+    /**
+     * 清空集合数据
+     *
+     * @param source 集合
+     */
+    public static synchronized <K, V> void clear(Map<K, V> source) {
+        if (null == source) {
+            source = new HashMap<>();
+            return;
+        }
+        if (!BooleanHelper.hasLength(source)) {
+            return;
+        }
+        source.clear();
+    }
+
+    /**
+     * 集合转对象
+     *
+     * @param source    数据
+     * @param delimiter 分隔符
+     * @param tClass    类型
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> toEntity(List<String> source, String delimiter, Class<T> tClass) {
+        if(null == tClass) {
+            return null;
+        }
+        if(!BooleanHelper.hasLength(source)) {
+            return Collections.emptyList();
+        }
+
+        List<T> result = new ArrayList<>(source.size());
+        for (String item : source) {
+            List<String> strings = Splitter.on(StringHelper.defaultIfBlank(delimiter, ",")).trimResults().omitEmptyStrings().splitToList(item);
+            T entity = BeansHelper.setProperty(tClass, strings);
+            if(null == entity) {
+                continue;
+            }
+            result.add(entity);
+        }
+        return result;
+
+    }
+
+    /**
+     * 如果集合为null返回空集合，反之返回原始数据
+     * @param source 集合
+     * @return
+     */
+    public static <T>List<T> forEmpty(final List<T> source) {
+        if(null == source) {
+            return Collections.emptyList();
+        }
+        return source;
+    }
+    /**
+     * 如果集合为null返回空集合，反之返回原始数据
+     * @param source 集合
+     * @return
+     */
+    public static <T>Set<T> forEmpty(final Set<T> source) {
+        if(null == source) {
+            return Collections.emptySet();
+        }
+        return source;
     }
 }

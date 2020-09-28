@@ -56,6 +56,22 @@ public class ReturnBean<T> {
      * @param <T>
      * @return
      */
+    public static <T>ReturnBean<T> tokenFailedReturnBean() {
+        return (ReturnBean<T>) ReturnBean.builder().code(426).message("Failed to apply for token").build();
+    }
+    /**
+     *
+     * @param <T>
+     * @return
+     */
+    public static <T>ReturnBean<T> unauthorizedReturnBean() {
+        return (ReturnBean<T>) ReturnBean.builder().code(401).message("Unauthorized").build();
+    }
+    /**
+     *
+     * @param <T>
+     * @return
+     */
     public static <T>ReturnBean<T> throwableReturnBean() {
         return (ReturnBean<T>) ReturnBean.builder().code(500).build();
     }
