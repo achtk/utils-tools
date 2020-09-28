@@ -136,6 +136,7 @@
 
         <freemarker.version>2.3.30</freemarker.version>
         <tensorflow.version>1.15.0</tensorflow.version>
+        <jedis.version>3.3.0</jedis.version>
 
         <utils-base.version>1.0</utils-base.version>
         <utils-http.version>1.0</utils-http.version>
@@ -194,10 +195,11 @@
         <module>utils-netx-extension-zookeeper</module>
         <module>utils-netx-extension-nacos</module>
         <module>utils-netx-extension-kafka</module>
-        <module>utils-netx-extension-redis</module>
         <module>utils-netx-extension-elasticsearch-spring</module>
         <module>utils-netx-extension-elasticsearch</module>
-        <module>utils-netx-extension-redisson</module>
+        <module>utils-netx-extension-redis-lettuce</module>
+        <module>utils-netx-extension-redis-redisson</module>
+        <module>utils-netx-extension-redis-jedis</module>
         <module>utils-netx-extension-sftp</module>
         <module>utils-netx-extension-solr</module>
         <module>utils-netx-extension-rpc-dubbo</module>
