@@ -639,4 +639,25 @@ public class CollectionHelper {
         }
         return source;
     }
+
+    /**
+     * 过滤类型数据
+     * @param source 数据源
+     * @param type 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>Set<T> filter(Collection<?> source, Class<T> type) {
+        if(!BooleanHelper.hasLength(source)) {
+            return Collections.emptySet();
+        }
+        Set<T> result = new HashSet<>(source.size());
+        for (Object o : source) {
+            if(!o.getClass().isAssignableFrom(type)) {
+                continue;
+            }
+            result.add((T) o);
+        }
+        return result;
+    }
 }

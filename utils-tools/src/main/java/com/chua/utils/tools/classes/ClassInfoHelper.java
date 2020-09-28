@@ -1,20 +1,25 @@
 package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.entity.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import javassist.*;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
 import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
+import net.sf.cglib.beans.BeanMap;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 
 /**
  * 类信息处理工厂
@@ -33,9 +38,13 @@ public class ClassInfoHelper {
     private static List<Class> primitiveTypes;
     private static List<String> primitiveDescriptors;
 
-
     private static final Method[] NO_METHODS = {};
 
+    private static final Field[] NO_FIELDS = {};
+
+    private static final Map<Class<?>, Field[]> DECLARED_FIELDS_CACHE = new ConcurrentHashMap<>(256);
+
+    private static final Map<Class<?>, Method[]> CLASS_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>(256);
 
     public static List<String> getPrimitiveNames() {
         initPrimitives();
@@ -111,12 +120,13 @@ public class ClassInfoHelper {
 
     /**
      * 类添加注解
+     *
      * @param ctClass
      * @param classPool
      * @param annotationInfoProperties
      */
     private static void makeClassAnnotationInfo(CtClass ctClass, ClassPool classPool, AnnotationInfoProperties[] annotationInfoProperties) {
-        if(!BooleanHelper.hasLength(annotationInfoProperties)) {
+        if (!BooleanHelper.hasLength(annotationInfoProperties)) {
             return;
         }
 
@@ -141,7 +151,8 @@ public class ClassInfoHelper {
 
     /**
      * 修饰注解
-     * @param ctMethod 方法
+     *
+     * @param ctMethod                 方法
      * @param ctClass
      * @param classPool
      * @param annotationInfoProperties
@@ -173,7 +184,7 @@ public class ClassInfoHelper {
     /**
      * 修饰注解
      *
-     * @param ctField 字段
+     * @param ctField                  字段
      * @param ctClass
      * @param classPool
      * @param annotationInfoProperties
@@ -185,6 +196,10 @@ public class ClassInfoHelper {
         ClassFile classFile = ctClass.getClassFile();
         ConstPool constPool = classFile.getConstPool();
         FieldInfo fieldInfo = ctField.getFieldInfo();
+        int modifiers = ctField.getModifiers();
+        if (!Modifier.isPrivate(modifiers)) {
+            return;
+        }
         // 属性附上注解
         AnnotationsAttribute fieldAttr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
         for (AnnotationInfoProperties annotationInfoProperty : annotationInfoProperties) {
@@ -271,6 +286,10 @@ public class ClassInfoHelper {
         ClassFile classFile = ctClass.getClassFile();
         ConstPool constPool = classFile.getConstPool();
         FieldInfo fieldInfo = ctField.getFieldInfo();
+        int modifiers = ctField.getModifiers();
+        if (!Modifier.isPrivate(modifiers)) {
+            return;
+        }
         // 属性附上注解
         AnnotationsAttribute fieldAttr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
         if (BooleanHelper.hasLength(annotations)) {
@@ -298,7 +317,7 @@ public class ClassInfoHelper {
                     classPool.get(methodInfoProperty.getReturnType()),
                     methodInfoProperty.getName(),
                     transferCtClass(methodInfoProperty.getParameterTypes(), classPool), ctClass);
-            if(BooleanHelper.hasLength(methodInfoProperty.getAnnotations())) {
+            if (BooleanHelper.hasLength(methodInfoProperty.getAnnotations())) {
                 makeMethodAnnotationInfo(ctClass, ctMethod, classPool, methodInfoProperty.getAnnotations());
             }
             ctMethod.setBody(methodInfoProperty.getContent());
@@ -308,6 +327,7 @@ public class ClassInfoHelper {
 
     /**
      * 方法添加注解
+     *
      * @param ctClass
      * @param ctMethod
      * @param classPool
@@ -358,5 +378,279 @@ public class ClassInfoHelper {
         }
 
         return ctClasses;
+    }
+
+    /**
+     * Getter and Setter分析
+     *
+     * @param beanClass 类
+     */
+    public static GetterSetterProperties doAnalyzeGetterAndSetter(Class<?> beanClass, final boolean autocomplete, final AnnotationInfoProperties... annotationInfoProperties) throws Throwable {
+        GetterSetterProperties result = GetterSetterProperties.of();
+
+        ClassPool classPool = getClassPool();
+        CtClass ctClass = classPool.get(beanClass.getName());
+        //类信息
+        ClassInfoProperties classInfoProperties = new ClassInfoProperties();
+        //获取缺失的方法
+        Set<MethodInfoProperties> methodInfoProperties = Sets.newHashSet();
+        //获取缺失属性信息
+        Set<FieldInfoProperties> fieldInfoProperties = Sets.newHashSet();
+
+        classInfoProperties.setMethodInfoProperties(methodInfoProperties);
+        classInfoProperties.setFieldInfoProperties(fieldInfoProperties);
+        //获取所有字段
+        CtField[] fields = ctClass.getDeclaredFields();
+        for (CtField field : fields) {
+            //是否缺失方法
+            //AtomicBoolean missMethod = new AtomicBoolean(false);
+
+            GetterSetterProperties.GetterSetterStatus status = GetterSetterProperties.newStatus();
+
+            String fieldName = field.getName();
+            String newFieldName = StringHelper.firstUpperCase(fieldName);
+            String getterMethod = GETTER + newFieldName;
+            String setterMethod = SETTER + newFieldName;
+            try {
+                ctClass.getDeclaredMethod(getterMethod);
+            } catch (NotFoundException e) {
+                if (autocomplete) {
+                    methodInfoProperties.add(MethodInfoProperties.builder().name(getterMethod).content("{return " + fieldName + ";}").returnType(field.getType().getName()).build());
+                }
+                status.setGetter(false);
+            }
+            try {
+                ctClass.getDeclaredMethod(setterMethod);
+            } catch (NotFoundException e) {
+                if (autocomplete) {
+                    methodInfoProperties.add(MethodInfoProperties.builder().parameterTypes(new Class[]{ClassHelper.forName(field.getType().getName())}).name(setterMethod).content("{this." + fieldName + " = " + fieldName + ";}").returnType(CtClass.voidType.getName()).build());
+                }
+                status.setSetter(false);
+            }
+            result.put(fieldName, status);
+        }
+
+
+        Class<?> aClass = makeClassInfoForClass(beanClass, classInfoProperties, annotationInfoProperties);
+        result.record(aClass);
+        return result;
+    }
+
+    /**
+     * 获取字段值
+     *
+     * @param obj       对象
+     * @param fieldName 字段名称
+     * @param fieldType 字段值
+     * @return
+     */
+    public static <T> T getOnlyFieldValue(Object obj, String fieldName, Class<T> fieldType) {
+        Map<String, T> fieldValue = getFieldValue(obj, fieldName, fieldType);
+        return fieldValue.isEmpty() ? null : FinderHelper.firstElement(fieldValue.values());
+    }
+
+    /**
+     * 获取字段值
+     *
+     * @param obj       对象
+     * @param fieldName 字段名称
+     * @return
+     */
+    public static <T> T getOnlyFieldValue(Object obj, String fieldName) {
+        Map<String, T> fieldValue = getFieldValue(obj, fieldName);
+        return fieldValue.isEmpty() ? null : FinderHelper.firstElement(fieldValue.values());
+    }
+
+    /**
+     * 获取字段值
+     *
+     * @param obj       对象
+     * @param fieldType 字段值
+     * @return
+     */
+    public static <T> T getOnlyFieldValue(Object obj, Class<T> fieldType) {
+        Map<String, T> fieldValue = getFieldValue(obj, fieldType);
+        return fieldValue.isEmpty() ? null : FinderHelper.firstElement(fieldValue.values());
+    }
+
+    /**
+     * 获取字段值
+     *
+     * @param obj       对象
+     * @param fieldType 字段值
+     * @return
+     */
+    public static <T> Map<String, T> getFieldValue(Object obj, Class<T> fieldType) {
+        return getFieldValue(obj, null, fieldType);
+    }
+
+    /**
+     * 获取字段值
+     *
+     * @param obj       对象
+     * @param fieldName 字段名称
+     * @return
+     */
+    public static <T> Map<String, T> getFieldValue(Object obj, String fieldName) {
+        return getFieldValue(obj, fieldName, null);
+    }
+
+    /**
+     * 获取字段值
+     *
+     * @param obj       对象
+     * @param fieldName 字段名称
+     * @param fieldType 字段值
+     * @return
+     */
+    public static <T> Map<String, T> getFieldValue(Object obj, String fieldName, Class<T> fieldType) {
+        if (null == obj) {
+            return null;
+        }
+        Map<String, T> stringTMap = doProcessingThroughBeanMap(obj, fieldName, fieldType);
+        if (stringTMap.isEmpty()) {
+            return doProcessingThroughReflection(obj, fieldName, fieldType);
+        }
+        return stringTMap;
+    }
+
+    /**
+     * 通过反射获取字段值
+     *
+     * @param obj       属性
+     * @param fieldName 字段名称
+     * @param fieldType 字段值
+     * @return
+     */
+    public static <T> Map<String, T> doProcessingThroughReflection(Object obj, String fieldName, Class<T> fieldType) {
+        if (null == obj) {
+            return Collections.emptyMap();
+        }
+        Map<String, T> result = new HashMap<>();
+        Class<?> aClass = obj.getClass();
+        if (Strings.isNullOrEmpty(fieldName)) {
+            List<Field> fieldByType = getFieldByType(obj, fieldType);
+            for (Field field : fieldByType) {
+                doDataAnalysis(result, obj, fieldName, field);
+            }
+            return result;
+        }
+        try {
+            Field field = aClass.getDeclaredField(fieldName);
+            doDataAnalysis(result, obj, fieldName, field);
+        } catch (NoSuchFieldException e) {
+        }
+        return result;
+    }
+
+    /**
+     * 字段信息分析
+     *
+     * @param result    数据结果集合
+     * @param obj       原始对象
+     * @param fieldName 字段名称
+     * @param field     字段
+     * @param <T>
+     */
+    private static <T> void doDataAnalysis(Map<String, T> result, final Object obj, final String fieldName, Field field) {
+        field.setAccessible(true);
+        try {
+            Object o = field.get(obj);
+            result.put(field.getName(), (T) o);
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * 通过类型获取字段
+     *
+     * @param obj       对象
+     * @param fieldType 类型
+     * @param <T>
+     * @return
+     */
+    public static <T> List<Field> getFieldByType(final Object obj, final Class<T> fieldType) {
+        if (null == obj || null == fieldType) {
+            return null;
+        }
+        List<Field> result = new ArrayList<>();
+        Class<?> aClass = obj.getClass();
+        while (null != aClass && !Object.class.getName().equals(aClass.getName())) {
+            Field[] fields = aClass.getDeclaredFields();
+            for (Field field : fields) {
+                if (!field.getType().isAssignableFrom(fieldType)) {
+                    continue;
+                }
+                result.add(field);
+            }
+            aClass = aClass.getSuperclass();
+        }
+        return result;
+    }
+
+    /**
+     * 通过类型获取字段
+     *
+     * @param obj  对象
+     * @param name 对象名称
+     * @param <T>
+     * @return
+     */
+    public static <T> List<Field> getFieldByName(final Object obj, final String name) {
+        if (null == obj || Strings.isNullOrEmpty(name)) {
+            return null;
+        }
+        List<Field> result = new ArrayList<>();
+        Class<?> aClass = obj.getClass();
+        while (null != aClass && !Object.class.getName().equals(aClass.getName())) {
+            Field[] fields = aClass.getDeclaredFields();
+            for (Field field : fields) {
+                if (!StringHelper.wildcardMatch(field.getName(), name)) {
+                    continue;
+                }
+                result.add(field);
+            }
+            aClass = aClass.getSuperclass();
+        }
+        return result;
+    }
+
+    /**
+     * 通过cglib获取字段值
+     *
+     * @param obj       属性
+     * @param fieldName 字段名称
+     * @param fieldType 字段值
+     * @return
+     */
+    public static <T> Map<String, T> doProcessingThroughBeanMap(Object obj, String fieldName, Class<T> fieldType) {
+        if (null == obj) {
+            return Collections.emptyMap();
+        }
+        Map<String, T> result = new HashMap<>();
+        BeanMap beanMap = BeanMap.create(obj);
+
+        if (Strings.isNullOrEmpty(fieldName)) {
+            beanMap.forEach(new BiConsumer() {
+                @Override
+                public void accept(Object o, Object o2) {
+                    if (null == o2) {
+                        return;
+                    }
+                    try {
+                        result.put(o.toString(), (T) o2);
+                    } catch (Exception e) {
+                    }
+                }
+            });
+            return result;
+        }
+
+        Object o = beanMap.get(fieldName);
+        try {
+            result.put(fieldName, (T) o);
+        } catch (Exception e) {
+        }
+        return result;
     }
 }

@@ -1,9 +1,6 @@
 package com.chua.utils.tools.classes;
 
-import com.chua.utils.tools.common.ArraysHelper;
-import com.chua.utils.tools.common.Assert;
-import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.common.*;
 import com.chua.utils.tools.entity.*;
 import com.chua.utils.tools.function.MethodMatcher;
 import com.chua.utils.tools.proxy.JavassistProxyAgent;
@@ -13,10 +10,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import javassist.*;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.FieldInfo;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.cglib.beans.BeanGenerator;
 import net.sf.cglib.beans.BeanMap;
@@ -34,7 +27,7 @@ import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
 
@@ -45,12 +38,6 @@ import static com.chua.utils.tools.constant.StringConstant.*;
  */
 @Slf4j
 public class ClassHelper extends ClassInfoHelper {
-
-    private static final Field[] NO_FIELDS = {};
-
-    private static final Map<Class<?>, Field[]> DECLARED_FIELDS_CACHE = new ConcurrentHashMap<>(256);
-
-    private static final Map<Class<?>, Method[]> CLASS_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>(256);
 
     /**
      * 得到当前ClassLoader
@@ -70,142 +57,6 @@ public class ClassHelper extends ClassInfoHelper {
             }
         }
         return ClassLoader.getSystemClassLoader();
-    }
-
-    /**
-     * 获取类所有属性名称
-     *
-     * @param sourceClass 类
-     */
-    public static List<String> getFields(Class<?> sourceClass) {
-        if (null == sourceClass) {
-            return null;
-        }
-
-        List<String> fields = new ArrayList<>();
-        Field[] declaredFields = sourceClass.getDeclaredFields();
-
-        if (BooleanHelper.hasLength(declaredFields)) {
-            for (Field declaredField : declaredFields) {
-                fields.add(declaredField.getName());
-            }
-        }
-
-        return fields;
-    }
-
-    /**
-     * 获取对象的属性
-     *
-     * @param obj  类
-     * @param name 属性名
-     * @return
-     */
-    public static Field getFields(Object obj, String name) {
-        if (null == obj || StringHelper.isBlank(name)) {
-            return null;
-        }
-
-        Class<?> aClass = obj.getClass();
-        while (!"Object".equalsIgnoreCase(aClass.getSimpleName())) {
-            Field[] fields = aClass.getDeclaredFields();
-            if (!BooleanHelper.hasLength(fields)) {
-                continue;
-            }
-            Field needField = null;
-            for (Field field : fields) {
-                if (!name.equals(field.getName())) {
-                    continue;
-                }
-                needField = field;
-                break;
-            }
-
-            if (null != needField) {
-                return needField;
-            }
-            aClass = aClass.getSuperclass();
-        }
-
-        return null;
-    }
-
-    /**
-     * 获取字段
-     *
-     * @param object 对象/类
-     * @param name   字段名
-     * @return
-     */
-    public static Field forField(final Object object, final String name) {
-        return forField(object instanceof Class ? object : object.getClass(), name);
-    }
-
-    /**
-     * 获取字段
-     *
-     * @param clazz 类
-     * @param name  字段名
-     * @return
-     */
-    public static Field forField(final Class<?> clazz, final String name) {
-        if (null == name) {
-            return null;
-        }
-        Class<?> searchType = clazz;
-        while (Object.class != searchType && searchType != null) {
-            Field[] fields = getDeclaredFields(searchType);
-            for (Field field : fields) {
-                if (!name.equals(field.getName())) {
-                    continue;
-                }
-                return field;
-            }
-            searchType = searchType.getSuperclass();
-        }
-        return null;
-    }
-
-    /**
-     * 获取属性值
-     *
-     * @param aClass   类
-     * @param name     属性名称
-     * @param mapClass 返回类型
-     */
-    public static <T> T forFieldValue(final Class<?> aClass, final String name, final Class<T> mapClass) throws InstantiationException, IllegalAccessException {
-        Field field = forField(aClass, name);
-        return forFieldValue(field, aClass.newInstance(), mapClass);
-    }
-
-    /**
-     * 获取属性值
-     *
-     * @param field    属性
-     * @param mapClass 返回类型
-     */
-    public static <T> T forFieldValue(final Field field, final Object obj, final Class<T> mapClass) throws IllegalAccessException {
-        if (null == field) {
-            return null;
-        }
-        field.setAccessible(true);
-        return (T) field.get(obj);
-    }
-
-    /**
-     * 获取类所有字段
-     *
-     * @param clazz 类
-     * @return
-     */
-    private static Field[] getDeclaredFields(final Class<?> clazz) {
-        Assert.notNull(clazz, "Class must not be null");
-        Field[] result = DECLARED_FIELDS_CACHE.get(clazz);
-        if (result == null) {
-            result = clazz.getDeclaredFields();
-            DECLARED_FIELDS_CACHE.put(clazz, (result.length == 0 ? NO_FIELDS : result));
-        }
-        return result;
     }
 
     /**
@@ -467,55 +318,6 @@ public class ClassHelper extends ClassInfoHelper {
         return forName(typeName, classLoaders.toArray(new ClassLoader[classLoaders.size()]));
     }
 
-    /**
-     * 字符串转类对象
-     *
-     * @param typeName     类名
-     * @param params       属性参数
-     * @param classLoaders 类加载器
-     * @return
-     */
-    public static <T> T forName(final String typeName, final Map<String, Object> params, ClassLoader... classLoaders) {
-        Class<?> aClass = forName(typeName, classLoaders);
-
-        Object object = forObject(aClass);
-        if (null == object) {
-            return null;
-        }
-
-        Map<String, Object> fields = fieldsSuperMaps(object);
-        BeanMap beanMap = BeanMap.create(object);
-        beanMap.putAll(params);
-
-        return (T) beanMap.getBean();
-    }
-
-    /**
-     * 获取对象的字段以及值
-     *
-     * @param obj 对象
-     */
-    public static <T> Map<String, Object> fieldsSuperMaps(final T obj) {
-        return null == obj ? null : fieldsSuperMaps(obj.getClass(), obj);
-    }
-
-    /**
-     * 获取对象的字段以及值
-     *
-     * @param tClass 类
-     * @param obj    对象
-     */
-    public static Map<String, java.lang.Object> fieldsSuperMaps(Class<?> tClass, final Object obj) {
-        Map<String, java.lang.Object> map = new HashMap<>();
-        while (!CLASS_OBJECT.equals(tClass.getSimpleName().toLowerCase())) {
-            Map<String, java.lang.Object> map1 = fieldsClassMaps(tClass, obj);
-            if (null != map1) {
-                map.putAll(map1);
-            }
-            tClass = tClass.getSuperclass();
-        }
-        return map;
-    }
 
 
     /**
@@ -879,38 +681,6 @@ public class ClassHelper extends ClassInfoHelper {
     }
 
     /**
-     * 获取类的字段以及值
-     * <p>
-     * 获取类的属性以及值, 但是排除<b>final</b><b>strict</b><b>native</b><b>synchronized</b>修饰的属性
-     * </p>
-     *
-     * @param tClass 对象
-     */
-    private static <T> Map<String, Object> fieldsClassMaps(final Class<?> tClass, final T t) {
-        if (null == t) {
-            return null;
-        }
-        final Map<String, Object> result = new HashMap<>();
-        final Field[] fields = tClass.getDeclaredFields();
-        for (Field field : fields) {
-            if (Modifier.isStatic(field.getModifiers())
-                    || Modifier.isFinal(field.getModifiers())
-                    || Modifier.isStrict(field.getModifiers())
-                    || Modifier.isNative(field.getModifiers())
-                    || Modifier.isSynchronized(field.getModifiers())) {
-                continue;
-            }
-            try {
-                field.setAccessible(true);
-                result.put(field.getName(), field.get(t));
-            } catch (IllegalAccessException e) {
-                continue;
-            }
-        }
-        return result;
-    }
-
-    /**
      * 添加方法
      *
      * @param aClass      类
@@ -1069,75 +839,5 @@ public class ClassHelper extends ClassInfoHelper {
                 : className, true, Thread.currentThread().getContextClassLoader());
     }
 
-    /**
-     * 获取对象中的属性值
-     *
-     * @param obj  对象
-     * @param name 属性名称
-     * @return
-     */
-    public static Object getProperty(final Object obj, final String name) {
-        if (null == obj || StringHelper.isBlank(name)) {
-            return null;
-        }
-        BeanMap beanMap = BeanMap.create(obj);
-        return beanMap.get(name);
-    }
-
-    /**
-     * Getter and Setter分析
-     *
-     * @param beanClass 类
-     */
-    public static GetterSetterProperties doAnalyzeGetterAndSetter(Class<?> beanClass, final boolean autocomplete, final AnnotationInfoProperties... annotationInfoProperties) throws Throwable {
-        GetterSetterProperties result = GetterSetterProperties.of();
-
-        ClassPool classPool = getClassPool();
-        CtClass ctClass = classPool.get(beanClass.getName());
-        //类信息
-        ClassInfoProperties classInfoProperties = new ClassInfoProperties();
-        //获取缺失的方法
-        Set<MethodInfoProperties> methodInfoProperties = Sets.newHashSet();
-        //获取缺失属性信息
-        Set<FieldInfoProperties> fieldInfoProperties = Sets.newHashSet();
-
-        classInfoProperties.setMethodInfoProperties(methodInfoProperties);
-        classInfoProperties.setFieldInfoProperties(fieldInfoProperties);
-        //获取所有字段
-        CtField[] fields = ctClass.getDeclaredFields();
-        for (CtField field : fields) {
-            //是否缺失方法
-            AtomicBoolean missMethod = new AtomicBoolean(false);
-
-            GetterSetterProperties.GetterSetterStatus status = GetterSetterProperties.newStatus();
-
-            String fieldName = field.getName();
-            String newFieldName = StringHelper.firstUpperCase(fieldName);
-            String getterMethod = GETTER + newFieldName;
-            String setterMethod = SETTER + newFieldName;
-            try {
-                ctClass.getDeclaredMethod(getterMethod);
-            } catch (NotFoundException e) {
-                if (autocomplete) {
-                    methodInfoProperties.add(MethodInfoProperties.builder().name(getterMethod).content("{return " + fieldName + ";}").returnType(field.getType().getName()).build());
-                }
-                status.setGetter(false);
-            }
-            try {
-                ctClass.getDeclaredMethod(setterMethod);
-            } catch (NotFoundException e) {
-                if (autocomplete) {
-                    methodInfoProperties.add(MethodInfoProperties.builder().parameterTypes(new Class[]{forName(field.getType().getName())}).name(setterMethod).content("{this." + fieldName + " = " + fieldName + ";}").returnType(CtClass.voidType.getName()).build());
-                }
-                status.setSetter(false);
-            }
-            result.put(fieldName, status);
-        }
-
-
-        Class<?> aClass = makeClassInfoForClass(beanClass, classInfoProperties, annotationInfoProperties);
-        result.record(aClass);
-        return result;
-    }
 
 }
