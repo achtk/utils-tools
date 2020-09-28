@@ -15,8 +15,10 @@ import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
 import net.sf.cglib.beans.BeanMap;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
@@ -651,6 +653,94 @@ public class ClassInfoHelper {
             result.put(fieldName, (T) o);
         } catch (Exception e) {
         }
+        return result;
+    }
+
+
+    /**
+     * 获取所有方法名称
+     *
+     * @param tClass 方法
+     * @param <T>
+     * @return
+     */
+    public static <T> List<String> getAllMethodNames(Class<T> tClass) {
+        if (null == tClass) {
+            return Collections.emptyList();
+        }
+        List<String> methods = new ArrayList<>();
+        Method[] declaredMethods = tClass.getDeclaredMethods();
+        for (Method method : declaredMethods) {
+            methods.add(method.getName());
+        }
+
+        return methods;
+    }
+
+    /**
+     * 方法拆解
+     * <p>
+     * 拆解方法中的注解，参数，基础信息等
+     * </p>
+     * 返回信息包含下列信息: <br />
+     * <table border=1 cellpadding=5>
+     *     <thead>
+     *         <tr>
+     *             <td>字段</td>
+     *             <td>描述</td>
+     *         </tr>
+     *     </thead>
+     *     <tbody>
+     *         <tr>
+     *             <td>method.name</td>
+     *             <td>方法名</td>
+     *         </tr>
+     *         <tr>
+     *             <td>method.return</td>
+     *             <td>返回值类型</td>
+     *         </tr>
+     *         <tr>
+     *             <td>method.annotation[index]</td>
+     *             <td>注解名称(类型)</td>
+     *         </tr>
+     *         <tr>
+     *             <td>method.parameter[index].name</td>
+     *             <td>参数名称</td>
+     *         </tr>
+     *         <tr>
+     *             <td>method.parameter[index].type</td>
+     *             <td>参数类型</td>
+     *         </tr>
+     *     </tbody>
+     * </table>
+     *
+     * @param method 方法
+     * @return
+     */
+    public static Map<String, Object> disassembleForMethod(final Method method) {
+        if (null == method) {
+            return null;
+        }
+        Map<String, Object> result = new HashMap<>();
+        //获取方法名
+        result.put("method.name", method.getName());
+        //获取方法返回值
+        result.put("method.return", method.getReturnType().getName());
+        //获取所有注解
+        Annotation[] annotations = method.getDeclaredAnnotations();
+
+        for (int i = 0; i < annotations.length; i++) {
+            Annotation annotation = annotations[i];
+            result.put("method.annotation[" + i + "].name", annotation.annotationType().getName());
+        }
+        //获取方法参数
+        Parameter[] parameters = method.getParameters();
+        for (int i = 0; i < parameters.length; i++) {
+            Parameter parameter = parameters[i];
+            result.put("method.parameter[" + i + "].name", parameter.getName());
+            result.put("method.parameter[" + i + "].type", parameter.getType().getName());
+        }
+
         return result;
     }
 }
