@@ -3,7 +3,6 @@ package com.chua.utils.netx.zookeeper.context;
 import com.chua.unified.function.IConsumer;
 import com.chua.unified.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
-import com.chua.utils.netx.zookeeper.consumer.ZookeeperConsumer;
 import com.chua.utils.netx.zookeeper.factory.ZookeeperFactory;
 import com.chua.utils.tools.common.ByteHelper;
 import com.google.common.base.Charsets;
@@ -24,14 +23,15 @@ import java.util.List;
  * @author CH
  */
 @Slf4j
-public class ZookeeperContext {
+public class ZookeeperContext implements AutoCloseable {
 
     private final CuratorFramework curatorFramework;
-    private INetxFactory<CuratorFramework> zookeeperFactory;
+    private INetxFactory<CuratorFramework> netxFactory;
 
     public ZookeeperContext(NetxProperties netxProperties) {
-        this.zookeeperFactory = new ZookeeperFactory(netxProperties);
-        this.curatorFramework = this.zookeeperFactory.client();
+        this.netxFactory = new ZookeeperFactory(netxProperties);
+        this.netxFactory.start();
+        this.curatorFramework = this.netxFactory.client();
     }
     /**
      * 创建临时节点
@@ -165,6 +165,13 @@ public class ZookeeperContext {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @Override
+    public void close() throws Exception {
+        if(null != this.netxFactory) {
+            netxFactory.close();
         }
     }
 }

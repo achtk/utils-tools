@@ -2,6 +2,8 @@ package com.chua.utils.netx.kafka.factory;
 
 import com.chua.unified.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -9,11 +11,14 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import java.util.Properties;
 
 /**
+ * kafka消费者
  * @author CH
  */
+@RequiredArgsConstructor
 public class KafkaConsumerFactory implements AutoCloseable, INetxFactory<KafkaConsumer> {
 
     private KafkaConsumer kafkaConsumer;
+    @NonNull
     private NetxProperties netxProperties;
 
     @Override

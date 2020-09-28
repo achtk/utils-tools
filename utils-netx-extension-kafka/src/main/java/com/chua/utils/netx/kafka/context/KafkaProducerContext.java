@@ -23,16 +23,16 @@ public class KafkaProducerContext implements AutoCloseable{
 
     public KafkaProducerContext(NetxProperties netxProperties) {
         this.netxProperties = netxProperties;
-        this.kafkaProducerFactory = new KafkaProducerFactory();
-        this.kafkaProducerFactory.configure(netxProperties);
+        this.kafkaProducerFactory = new KafkaProducerFactory(netxProperties);
+        this.kafkaProducerFactory.start();
         this.kafkaProducer = this.kafkaProducerFactory.client();
         this.executorService = ThreadHelper.newCachedThreadPool();
     }
 
     public KafkaProducerContext(NetxProperties netxProperties, final int core) {
         this.netxProperties = netxProperties;
-        this.kafkaProducerFactory = new KafkaProducerFactory();
-        this.kafkaProducerFactory.configure(netxProperties);
+        this.kafkaProducerFactory = new KafkaProducerFactory(netxProperties);
+        this.kafkaProducerFactory.start();
         this.kafkaProducer = this.kafkaProducerFactory.client();
         this.executorService = ThreadHelper.newFixedThreadExecutor(core);
     }
@@ -77,6 +77,10 @@ public class KafkaProducerContext implements AutoCloseable{
         if(null != this.executorService) {
             this.executorService.shutdown();
             this.executorService.shutdownNow();
+        }
+
+        if(null != kafkaProducerFactory) {
+            kafkaProducerFactory.close();
         }
     }
 }

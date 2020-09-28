@@ -1,0 +1,3 @@
+lettuce-async=com.chua.utils.netx.redis.lettuce.factory.LettuceAsyncFactory
+lettuce-sync=com.chua.utils.netx.redis.lettuce.factory.LettuceSyncFactory
+lettuce=com.chua.utils.netx.redis.lettuce.factory.LettuceSyncFactory

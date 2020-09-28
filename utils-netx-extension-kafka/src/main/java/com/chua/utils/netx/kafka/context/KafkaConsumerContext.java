@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutorService;
  * kafka消费者
  * @author CH
  */
-public class KafkaConsumerContext implements AutoCloseable{
+public class KafkaConsumerContext implements AutoCloseable {
 
     private final KafkaConsumerFactory kafkaConsumerFactory;
     private final KafkaConsumer kafkaConsumer;
@@ -24,16 +24,16 @@ public class KafkaConsumerContext implements AutoCloseable{
 
     public KafkaConsumerContext(NetxProperties netxProperties) {
         this.netxProperties = netxProperties;
-        this.kafkaConsumerFactory = new KafkaConsumerFactory();
-        this.kafkaConsumerFactory.configure(netxProperties);
+        this.kafkaConsumerFactory = new KafkaConsumerFactory(netxProperties);
+        this.kafkaConsumerFactory.start();
         this.kafkaConsumer = this.kafkaConsumerFactory.client();
         this.executorService = ThreadHelper.newCachedThreadPool();
     }
 
     public KafkaConsumerContext(NetxProperties netxProperties, final int core) {
         this.netxProperties = netxProperties;
-        this.kafkaConsumerFactory = new KafkaConsumerFactory();
-        this.kafkaConsumerFactory.configure(netxProperties);
+        this.kafkaConsumerFactory = new KafkaConsumerFactory(netxProperties);
+        this.kafkaConsumerFactory.start();
         this.kafkaConsumer = this.kafkaConsumerFactory.client();
         this.executorService = ThreadHelper.newFixedThreadExecutor(core);
     }
@@ -74,6 +74,10 @@ public class KafkaConsumerContext implements AutoCloseable{
         if(null != this.executorService) {
             this.executorService.shutdown();
             this.executorService.shutdownNow();
+        }
+
+        if(null != this.kafkaConsumerFactory) {
+            kafkaConsumerFactory.close();
         }
     }
 }

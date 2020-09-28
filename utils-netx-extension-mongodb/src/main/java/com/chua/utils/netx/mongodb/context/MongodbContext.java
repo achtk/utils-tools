@@ -3,7 +3,6 @@ package com.chua.utils.netx.mongodb.context;
 import com.chua.unified.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.netx.mongodb.factory.MongodbFactory;
-import com.mongodb.ClientSessionOptions;
 import com.mongodb.ReadPreference;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
@@ -35,14 +34,15 @@ import java.util.Set;
  *
  * @author CH
  */
-public class MongodbContext {
+public class MongodbContext implements AutoCloseable {
 
     private final MongoTemplate mongoTemplate;
-    private final INetxFactory<MongoTemplate> mongoFactory;
+    private final INetxFactory<MongoTemplate> netxFactory;
 
     public MongodbContext(NetxProperties netxProperties) {
-        this.mongoFactory = new MongodbFactory(netxProperties);
-        this.mongoTemplate = this.mongoFactory.client();
+        this.netxFactory = new MongodbFactory(netxProperties);
+        this.netxFactory.start();
+        this.mongoTemplate = this.netxFactory.client();
     }
 
 
@@ -521,5 +521,12 @@ public class MongodbContext {
 
     public <T> ExecutableUpdateOperation.ExecutableUpdate<T> update(Class<T> domainType) {
         return this.mongoTemplate.update(domainType);
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (null != this.netxFactory) {
+            netxFactory.close();
+        }
     }
 }

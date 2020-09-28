@@ -18,7 +18,7 @@ import java.util.List;
  * es上线文
  * @author CH
  */
-public class ElasticSearchContext {
+public class ElasticSearchContext implements AutoCloseable {
 
     private NetxProperties netxProperties;
     private final INetxFactory<AbstractElasticsearchTemplate> netxFactory;
@@ -217,5 +217,12 @@ public class ElasticSearchContext {
 
     public <T> SearchHitsIterator<T> searchForStream(Query query, Class<T> clazz, IndexCoordinates index) {
         return this.elasticsearchTemplate.searchForStream(query, clazz, index);
+    }
+
+    @Override
+    public void close() throws Exception {
+        if(null != this.netxFactory) {
+            netxFactory.close();
+        }
     }
 }

@@ -28,7 +28,7 @@ import java.util.Map;
  * 单例solr上下文
  * @author CH
  */
-public class SolrContext {
+public class SolrContext implements AutoCloseable {
 
     private INetxFactory netxFactory;
     private SolrClient solrClient;
@@ -40,7 +40,7 @@ public class SolrContext {
         } else {
             this.netxFactory = new SingleSolrFactory(netxProperties);
         }
-        this.netxFactory.configure(netxProperties);
+        this.netxFactory.start();
         this.solrClient = (SolrClient) this.netxFactory.client();
     }
 
@@ -197,5 +197,12 @@ public class SolrContext {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void close() throws Exception {
+        if(null != this.netxFactory) {
+            netxFactory.close();
+        }
     }
 }

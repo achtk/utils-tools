@@ -21,7 +21,7 @@ import java.util.Properties;
  * nacos上下文
  * @author CH
  */
-public class NacosContext {
+public class NacosContext implements AutoCloseable{
 
     private static final String DEFAULT_GROUP = "DEFAULT_GROUP";
     private static final int DEFAULT_TIME_OUT = 3000;
@@ -36,8 +36,8 @@ public class NacosContext {
         this.nacosNamingFactory = new NacosNamingFactory(netxProperties);
         this.nacosConfigFactory = new NacosConfigFactory(netxProperties);
 
-        this.nacosNamingFactory.configure(netxProperties);
-        this.nacosConfigFactory.configure(netxProperties);
+        this.nacosNamingFactory.start();
+        this.nacosConfigFactory.start();
 
         this.namingService = this.nacosNamingFactory.client();
         this.configService = this.nacosConfigFactory.client();
@@ -185,4 +185,13 @@ public class NacosContext {
         this.namingService.registerInstance(dataId, group, ip, port, data);
     }
 
+    @Override
+    public void close() throws Exception {
+        if(null != this.nacosConfigFactory) {
+            nacosConfigFactory.close();
+        }
+        if(null != this.nacosNamingFactory) {
+            nacosNamingFactory.close();
+        }
+    }
 }
