@@ -3,6 +3,7 @@ package com.chua.utils.tools.example;
 import com.chua.utils.http.entity.HttpClientResponse;
 import com.chua.utils.http.http.IHttpClientFactory;
 import com.chua.utils.http.stream.AbstractHttpClientStream;
+import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.spi.extension.ExtensionLoader;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import org.testng.annotations.Test;
