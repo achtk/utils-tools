@@ -573,5 +573,19 @@ public class ListHelper {
         return null == source1 ? Collections.emptyList() : source1;
     }
 
-
+    /**
+     * list toString
+     * @param item 数据
+     * @return
+     */
+    public static String toString(List item) {
+        if(!BooleanHelper.hasLength(item)) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Object o : item) {
+            sb.append(",").append(null == o ? "null": o.toString());
+        }
+        return "[" + sb.substring(1) + "]";
+    }
 }
