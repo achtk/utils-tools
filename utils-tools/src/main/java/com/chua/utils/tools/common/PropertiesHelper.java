@@ -180,7 +180,7 @@ public class PropertiesHelper {
      * @param source 数据源
      * @return
      */
-    public static PropertiesLoader propertiesLoader(final Map<String, Object> source) {
+    public static PropertiesLoader map2Properties(final Map<String, Object> source) {
         if(!BooleanHelper.hasLength(source)) {
             return null;
         }

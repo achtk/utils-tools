@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractPropertiesProducer {
 
     private ConcurrentHashMap<String, Properties> source = new ConcurrentHashMap<>();
-    private PropertiesConfiguration configuration;
     private static final PropertiesConfiguration DEFAULT_PROPERTIES_CONFIGURATION = new PropertiesConfiguration();
+    private PropertiesConfiguration configuration = DEFAULT_PROPERTIES_CONFIGURATION;
     private static final Properties DEFAULT_PROPERTIES = new Properties();
 
     public AbstractPropertiesProducer() {
@@ -33,7 +33,18 @@ public abstract class AbstractPropertiesProducer {
         }
         this.configuration = null == configuration ? DEFAULT_PROPERTIES_CONFIGURATION : configuration;
     }
-
+    /**
+     * 删除数据
+     *
+     * @param name       名称
+     * @return
+     */
+    public synchronized AbstractPropertiesProducer remove(final String name) {
+        if (null != name) {
+            this.source.remove(name);
+        }
+        return this;
+    }
     /**
      * 添加数据
      *
@@ -593,7 +604,7 @@ public abstract class AbstractPropertiesProducer {
             if (!containsKeyByConfiguration(properties, key)) {
                 continue;
             }
-            return properties.getProperty(key);
+            return properties.get(key);
         }
         return null;
     }

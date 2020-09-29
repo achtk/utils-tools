@@ -2,7 +2,9 @@ package com.chua.utils.tools.common.loader;
 
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.common.properties.AbstractPropertiesProducer;
+import com.google.common.base.Strings;
 
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -46,8 +48,27 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
      * @param properties 数据
      * @return
      */
-    public PropertiesLoader set(final Properties properties) {
+    public PropertiesLoader add(final Properties properties) {
         if (null != properties) {
+            this.put(StringHelper.uuid(), properties);
+        }
+        return this;
+    }
+    /**
+     * 吸收数据
+     *
+     * @param objectMap 数据
+     * @return
+     */
+    public PropertiesLoader add(final Map<String, Object> objectMap) {
+        if (null != objectMap) {
+            Properties properties = new Properties();
+            for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
+                if(Strings.isNullOrEmpty(entry.getKey()) || null == entry.getValue()) {
+                    continue;
+                }
+                properties.put(entry.getKey(), entry.getValue());
+            }
             this.put(StringHelper.uuid(), properties);
         }
         return this;
@@ -60,7 +81,7 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
      * @param name       名称
      * @return
      */
-    public PropertiesLoader set(final String name, final Properties properties) {
+    public PropertiesLoader add(final String name, final Properties properties) {
         if (null != properties) {
             this.put(StringHelper.defaultIfBlank(name, StringHelper.uuid()), properties);
         }
