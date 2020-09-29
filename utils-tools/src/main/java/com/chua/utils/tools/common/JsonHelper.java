@@ -201,6 +201,19 @@ public class JsonHelper {
         return null;
     }
     /**
+     * 对象转对象
+     * @param obj 对象
+     * @param tClass 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>T fromObject(final Object obj, final Class<T> tClass) {
+        if(null == obj) {
+            return null;
+        }
+        return fromJson(toJson(obj), tClass);
+    }
+    /**
      * 文件转对象
      * @param url 文件
      * @param tClass 类型
