@@ -7,10 +7,7 @@ import net.sf.cglib.beans.BeanMap;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author CH
@@ -222,5 +219,17 @@ public class BeansHelper {
             beanMap.put(field.getName(), source.get(i));
         }
         return (T) beanMap.getBean();
+    }
+
+    /**
+     * 获取属性
+     * @param obj 对象
+     * @return
+     */
+    public static Map<String, Object> getAttributes(Object obj) {
+        Map<String, Object> result = new HashMap<>();
+        BeanMap beanMap = BeanMap.create(obj);
+        result.putAll(beanMap);
+        return result;
     }
 }

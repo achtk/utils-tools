@@ -1,19 +1,19 @@
 package com.chua.utils.tools.entity;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+
+import java.io.Serializable;
 
 /**
  * 返回对象
  * @author CH
  */
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
-public class ReturnBean<T> {
+public class ReturnBean<T> implements Serializable {
 
-    private static final ReturnBean NONE_RETURN_BEAN = ReturnBean.builder().code(200).build();
     /**
      * 状态码
      */
@@ -26,78 +26,9 @@ public class ReturnBean<T> {
      * 提示信息
      */
     private String message;
+    /**
+     * timestamp
+     */
+    private long timestamp = System.currentTimeMillis();
 
-    /**
-     *
-     * @param <T>
-     * @return
-     */
-    public static <T>ReturnBean<T> noneBean() {
-        return NONE_RETURN_BEAN;
-    }
-    /**
-     *
-     * @param <T>
-     * @return
-     */
-    public static <T>ReturnBean<T> okReturnBean(final T data) {
-        return (ReturnBean<T>) ReturnBean.builder().code(200).data(data).build();
-    }
-
-    /**
-     *
-     * @param <T>
-     * @return
-     */
-    public static <T>ReturnBean<T> badRequestReturnBean(final String message) {
-        return (ReturnBean<T>) ReturnBean.builder().code(400).message(message).build();
-    }
-    /**
-     *
-     * @param <T>
-     * @return
-     */
-    public static <T>ReturnBean<T> tokenFailedReturnBean() {
-        return (ReturnBean<T>) ReturnBean.builder().code(426).message("Failed to apply for token").build();
-    }
-    /**
-     *
-     * @param <T>
-     * @return
-     */
-    public static <T>ReturnBean<T> unauthorizedReturnBean() {
-        return (ReturnBean<T>) ReturnBean.builder().code(401).message("Unauthorized").build();
-    }
-    /**
-     *
-     * @param <T>
-     * @return
-     */
-    public static <T>ReturnBean<T> throwableReturnBean() {
-        return (ReturnBean<T>) ReturnBean.builder().code(500).build();
-    }
-    /**
-     *
-     * @param <T>
-     * @return
-     */
-    public static <T>ReturnBean<T> throwableReturnBean(final String message) {
-        return (ReturnBean<T>) ReturnBean.builder().code(500).message(message).build();
-    }
-    /**
-     *
-     * @param <T>
-     * @return
-     */
-    public static <T>ReturnBean<T> throwableReturnBean(final Throwable throwable) {
-        return throwableReturnBean(null, throwable);
-    }
-    /**
-     *
-     * @param <T>
-     * @return
-     */
-    public static <T>ReturnBean<T> throwableReturnBean(final T data, final Throwable throwable) {
-        return (ReturnBean<T>) ReturnBean.builder().code(500).data(data).message(null == throwable ? "" : throwable.getMessage()).build();
-    }
 }
