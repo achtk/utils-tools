@@ -13,10 +13,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ServerConfig<T> {
     /**
-     * 类/接口
-     */
-    private Class<T> tClass;
-    /**
      * 重复次数
      */
     private int retry = 3;
@@ -28,10 +24,6 @@ public class ServerConfig<T> {
      * 读取超时
      */
     private int readTimeoutMillis = 3500;
-
-    public ServerConfig(Class<T> tClass) {
-        this.tClass = tClass;
-    }
 
     public int getRetry(int defaultRetry) {
         return retry > 0 ? retry : defaultRetry;
