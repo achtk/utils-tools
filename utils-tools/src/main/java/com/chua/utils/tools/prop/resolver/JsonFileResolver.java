@@ -20,7 +20,7 @@ public class JsonFileResolver implements IFileResolver {
 
     @Override
     public void stream(InputStream inputStream) {
-        this.properties = JsonHelper.loadJson(inputStream, Properties.class);
+        this.properties = JsonHelper.fromJson(inputStream, Properties.class);
     }
 
     @Override

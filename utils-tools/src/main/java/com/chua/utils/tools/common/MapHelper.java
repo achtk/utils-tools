@@ -184,7 +184,7 @@ public class MapHelper {
             return newMap();
         }
 
-        return JsonHelper.toMapStringObject(values);
+        return JsonHelper.fromJson2Map(values);
     }
 
     /**

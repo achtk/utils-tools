@@ -208,7 +208,7 @@ public class CfgOptions {
         List<CfgFile> cfgFiles = new ArrayList<>();
         while (resources.hasMoreElements()) {
             URL url =  resources.nextElement();
-            Map map = JsonHelper.toEntity(url, Map.class);
+            Map map = JsonHelper.fromJson(url, Map.class);
             CfgFile cfgFile = new CfgFile(url, MapHelper.ints(SYSTEM_PRIORITY_PROP, 0, map), map);
             cfgFiles.add(cfgFile);
         }
@@ -332,7 +332,7 @@ public class CfgOptions {
      */
     private static Map doAnalysisLocationFile(String master) {
         try(InputStreamReader isr = new InputStreamReader(new FileInputStream(master), CHARSET_UTF_8)) {
-            return JsonHelper.toEntity(isr, Map.class);
+            return JsonHelper.fromJson(isr, Map.class);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -360,7 +360,7 @@ public class CfgOptions {
                 // 读取每一个文件
                 URL url = urls.nextElement();
                 try (InputStreamReader input = new InputStreamReader(url.openStream(), "utf-8")){
-                    Map map = JsonHelper.toEntity(input, Map.class);
+                    Map map = JsonHelper.fromJson(input, Map.class);
                     //获取排序字段
                     Integer order = null;
                     if(null != orderName) {
