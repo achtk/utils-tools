@@ -38,6 +38,8 @@ public class NetHelper {
     public static final Pattern IPV4_PATTERN = Pattern
             .compile(
                     "^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
+    private static String HTTP = "http://";
+    private static String HTTPS = "https://";
 
     /**
      * 是否本地地址 127.x.x.x 或者 localhost
@@ -315,5 +317,21 @@ public class NetHelper {
         }
         String[] strings = host.split(":");
         return NumberHelper.toInt(strings[1]);
+    }
+
+    /**
+     * 去除重复 /
+     * @param uri uri
+     * @return
+     */
+    public static String removeDuplicateSymbols(String uri) {
+        if(null == uri) {
+            return "";
+        }
+        String newUri = uri.replace("\\", "/").replaceAll("//", "/");
+        if(newUri.startsWith(HTTPS)) {
+            return newUri;
+        }
+        return newUri.startsWith(HTTP) ? newUri : HTTP + newUri;
     }
 }

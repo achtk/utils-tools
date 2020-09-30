@@ -139,6 +139,22 @@ public class EnvironmentFactory {
         }
         return null;
     }
+    /**
+     * 获取变量值
+     *
+     * @param key 索引
+     * @return
+     */
+    public String tryGetProperty(final String key) {
+        for (Environment environment : environments) {
+            if (!tryContainsProperty(key)) {
+                continue;
+            }
+            String newKey = StringHelper.humpToLine2(key, "-").toLowerCase();
+            return environment.containsProperty(key) ? environment.getProperty(key) : environment.getProperty(newKey);
+        }
+        return null;
+    }
 
     /**
      * 获取变量值
@@ -315,6 +331,29 @@ public class EnvironmentFactory {
     public boolean containsProperty(final String key) {
         for (Environment environment : environments) {
             if(environment.containsProperty(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * 尝试查询所有包含索引的数据
+     * <p>首先采用默认方式</p>
+     * <p>其次采用-风格</p>
+     *
+     * @param key 索引
+     * @return
+     */
+    public boolean tryContainsProperty(final String key) {
+        for (Environment environment : environments) {
+            if(environment.containsProperty(key)) {
+                return true;
+            }
+        }
+
+        String newKey = StringHelper.humpToLine2(key, "-").toLowerCase();
+        for (Environment environment : environments) {
+            if(environment.containsProperty(newKey)) {
                 return true;
             }
         }

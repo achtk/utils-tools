@@ -3,6 +3,7 @@ package com.chua.utils.tools.cache;
 import com.chua.utils.tools.action.ActionListener;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.config.CacheProperties;
+import com.chua.utils.tools.manager.ICacheManager;
 import com.google.common.cache.*;
 import lombok.Getter;
 
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * guava缓存
  * @author CH
  */
-public class GuavaCacheProvider<K, T> implements ICacheProvider<K, T> {
+public class GuavaCacheProvider<K, T> implements ICacheProvider<K, T>, ICacheManager<K, T> {
 
     @Getter
     private Cache<K, T> cache;
@@ -86,6 +87,21 @@ public class GuavaCacheProvider<K, T> implements ICacheProvider<K, T> {
         }
         cache.put(name, value);
         return value;
+    }
+
+    @Override
+    public T getValue(K key) {
+        return get(key);
+    }
+
+    @Override
+    public void remove(K key) {
+        remove(key);
+    }
+
+    @Override
+    public void clear() {
+        removeAll();
     }
 
     @Override
