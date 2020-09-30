@@ -1,14 +1,11 @@
 package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.common.loader.PropertiesLoader;
-import com.chua.utils.tools.function.impl.PropertiesJsonDataTransfrom;
-import com.google.common.collect.HashMultimap;
+import com.chua.utils.tools.function.impl.YamlPropertiesDataTransform;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * properties工具类
@@ -188,20 +185,7 @@ public class PropertiesHelper {
         if(!BooleanHelper.hasLength(source)) {
             return null;
         }
-        Properties properties = new Properties();
-        for (Map.Entry<String, Object> entry : source.entrySet()) {
-            Object value = entry.getValue();
-            String key = entry.getKey();
-            if(value instanceof List) {
-                listIntoProperties(key, (List<Object>) value, properties);
-                continue;
-            }
-            if(value instanceof Map) {
-                mapIntoProperties(key, (Map<String, Object>) value, properties);
-                continue;
-            }
-            properties.put(key, value);
-        }
+        Properties properties = new YamlPropertiesDataTransform().transFrom(JsonHelper.toJson(source));
         return PropertiesLoader.newLoader(properties);
     }
 
@@ -211,59 +195,7 @@ public class PropertiesHelper {
      * @return
      */
     public static Map<String, Object> properties2Yaml(final Properties properties) {
-        return JsonHelper.fromJson2Map(new PropertiesJsonDataTransfrom().transfrom(properties));
+        return JsonHelper.fromJson2Map(new YamlPropertiesDataTransform().transTo(properties));
     }
 
-
-    /**
-     * list渲染到properties
-     * @param key 上层索引
-     * @param value 上层数据
-     * @param properties properties
-     */
-    private static void mapIntoProperties(String key, Map<String, Object> value, Properties properties) {
-        if (!BooleanHelper.hasLength(value)) {
-            return;
-        }
-        for (Map.Entry<String, Object> entry : value.entrySet()) {
-            String key1 = entry.getKey();
-            Object value1 = entry.getValue();
-            String newKey = key + DOT + key1;
-            if(value1 instanceof List) {
-                listIntoProperties(newKey, (List<Object>) value1, properties);
-                continue;
-            }
-            if(value1 instanceof Map) {
-                mapIntoProperties(newKey, (Map<String, Object>) value1, properties);
-                continue;
-            }
-
-            properties.put(newKey, value1);
-        }
-    }
-    /**
-     * list渲染到properties
-     * @param key 上层索引
-     * @param value 上层数据
-     * @param properties properties
-     */
-    private static void listIntoProperties(String key, List<Object> value, Properties properties) {
-        if(!BooleanHelper.hasLength(value)) {
-            return;
-        }
-
-        for (int i = 0; i < value.size(); i++) {
-            Object item = value.get(i);
-            String newKey = key + "[" + i + "]";
-            if(item instanceof List) {
-                properties.put(newKey, JsonHelper.toJson(item));
-                continue;
-            }
-            if(item instanceof Map) {
-                properties.put(newKey, JsonHelper.toJson(item));
-                continue;
-            }
-            properties.put(newKey, item);
-        }
-    }
 }

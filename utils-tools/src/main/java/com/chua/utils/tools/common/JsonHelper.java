@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Charsets;
 
 import java.io.*;
@@ -27,6 +29,8 @@ public class JsonHelper {
      * 对象绑定
      */
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
+    private static final ObjectMapper XML_OBJECT_MAPPER = new ObjectMapper(new XmlFactory());
     private static JavaType MAP_STRING_OBJECT_TYPE = null;
     private static TypeFactory TYPE_FACTORY = null;
 
@@ -37,6 +41,14 @@ public class JsonHelper {
         OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         //忽略对象不存在属性异常
         OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        //忽略空对象转化异常
+        YAML_OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        //忽略对象不存在属性异常
+        YAML_OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        //忽略空对象转化异常
+        XML_OBJECT_MAPPER.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        //忽略对象不存在属性异常
+        XML_OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         //OBJECT_MAPPER.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
 
     }
@@ -166,6 +178,26 @@ public class JsonHelper {
     }
     /**
      * 流转对象
+     * @param inputStream 流
+     * @param tClass 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>T fromYamlJson(final InputStream inputStream, final Class<T> tClass) {
+        return fromYamlJson(new InputStreamReader(inputStream, Charsets.UTF_8), tClass);
+    }
+    /**
+     * 流转对象
+     * @param inputStream 流
+     * @param tClass 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>T fromXmlJson(final InputStream inputStream, final Class<T> tClass) {
+        return fromXmlJson(new InputStreamReader(inputStream, Charsets.UTF_8), tClass);
+    }
+    /**
+     * 流转对象
      * @param inputStreamReader 流
      * @param tClass 类型
      * @param <T>
@@ -174,6 +206,40 @@ public class JsonHelper {
     public static <T>T fromJson(final InputStreamReader inputStreamReader, final Class<T> tClass) {
         try {
             return OBJECT_MAPPER.readValue(inputStreamReader, tClass);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            IOHelper.closeQuietly(inputStreamReader);
+        }
+        return null;
+    }
+    /**
+     * 流转对象
+     * @param inputStreamReader 流
+     * @param tClass 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>T fromYamlJson(final InputStreamReader inputStreamReader, final Class<T> tClass) {
+        try {
+            return YAML_OBJECT_MAPPER.readValue(inputStreamReader, tClass);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            IOHelper.closeQuietly(inputStreamReader);
+        }
+        return null;
+    }
+    /**
+     * 流转对象
+     * @param inputStreamReader 流
+     * @param tClass 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>T fromXmlJson(final InputStreamReader inputStreamReader, final Class<T> tClass) {
+        try {
+            return YAML_OBJECT_MAPPER.readValue(inputStreamReader, tClass);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -195,6 +261,44 @@ public class JsonHelper {
         }
         try {
             return fromJson(new FileInputStream(file), tClass);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 文件转对象
+     * @param file 文件
+     * @param tClass 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>T fromYamlJson(final File file, final Class<T> tClass) {
+        if(null == file) {
+            return null;
+        }
+        try {
+            return fromYamlJson(new FileInputStream(file), tClass);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 文件转对象
+     * @param file 文件
+     * @param tClass 类型
+     * @param <T>
+     * @return
+     */
+    public static <T>T fromXmlJson(final File file, final Class<T> tClass) {
+        if(null == file) {
+            return null;
+        }
+        try {
+            return fromXmlJson(new FileInputStream(file), tClass);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
