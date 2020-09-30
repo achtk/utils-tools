@@ -6,6 +6,7 @@ import com.chua.utils.tools.common.loader.PropertiesLoader;
 import org.testng.annotations.Test;
 
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author CH
@@ -26,9 +27,10 @@ public class PropertiesHelperTest {
                 "}";
 
         Map<String, Object> objectMap = JsonHelper.fromJson2Map(json);
-        PropertiesLoader propertiesLoader = PropertiesHelper.map2Properties(objectMap);
-        propertiesLoader.add(objectMap);
-        propertiesLoader.mapStringObjects("spring");
-        System.out.println(propertiesLoader);
+        PropertiesLoader propertiesLoader = PropertiesHelper.yaml2Properties(objectMap);
+        System.out.println(propertiesLoader.asMapIfOnly());
+
+        Map<String, Object> map = PropertiesHelper.properties2Yaml(propertiesLoader.asMapIfOnly());
+        System.out.println(map);
     }
 }

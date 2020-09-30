@@ -1,11 +1,13 @@
 package com.chua.utils.tools.common.loader;
 
+import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.common.properties.AbstractPropertiesProducer;
 import com.google.common.base.Strings;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * property处理器
@@ -86,6 +88,24 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
             this.put(StringHelper.defaultIfBlank(name, StringHelper.uuid()), properties);
         }
         return this;
+    }
+
+    /**
+     * 获取map
+     * @param name 名称
+     * @return
+     */
+    public Properties asMap(final String name) {
+        ConcurrentHashMap<String, Properties> concurrentHashMap = allMap();
+        return concurrentHashMap.get(name);
+    }
+    /**
+     * 获取map
+     * @return
+     */
+    public Properties asMapIfOnly() {
+        ConcurrentHashMap<String, Properties> concurrentHashMap = allMap();
+        return concurrentHashMap.size() == 1 ? FinderHelper.firstElement(concurrentHashMap) : null;
     }
 
 }

@@ -672,4 +672,13 @@ public abstract class AbstractPropertiesProducer {
     protected <T> boolean whetherToIgnoreWhenNull(T source) {
         return null == source && configuration.isCollectionIgnoresNull();
     }
+
+    /**
+     * 获取所有Map
+     * @return
+     */
+    protected ConcurrentHashMap<String, Properties> allMap() {
+        return source;
+    }
+
 }
