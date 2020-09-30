@@ -1,6 +1,7 @@
 package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.common.loader.PropertiesLoader;
+import com.chua.utils.tools.function.impl.PropertiesJsonDataTransfrom;
 import com.google.common.collect.HashMultimap;
 
 import java.util.HashMap;
@@ -210,56 +211,9 @@ public class PropertiesHelper {
      * @return
      */
     public static Map<String, Object> properties2Yaml(final Properties properties) {
-        if(!BooleanHelper.hasLength(properties)) {
-            return null;
-        }
-        HashMultimap<String, Object> hashMultimap = HashMultimap.create();
-        HashMultimap<String, Object> level2Cache = HashMultimap.create();
-
-        CopyOnWriteArrayList cache = new CopyOnWriteArrayList<>();
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            String key = entry.getKey().toString();
-            Object value = entry.getValue();
-            int index = key.indexOf(".");
-            if(index == -1) {
-                hashMultimap.put(key, value);
-                continue;
-            }
-            String startKey = key.substring(0, index);
-            String newKey = key.substring(index + 1);
-            if(newKey.endsWith("]")) {
-                cache.add(newKey);
-            }
-            continueProcessing(newKey, value, level2Cache);
-            hashMultimap.put(startKey, level2Cache);
-        }
-        return null;
+        return JsonHelper.fromJson2Map(new PropertiesJsonDataTransfrom().transfrom(properties));
     }
 
-    /**
-     * 深度处理
-     * @param key
-     * @param value
-     * @param level2Cache
-     * @return
-     */
-    private static void continueProcessing(String key, Object value, HashMultimap<String, Object> level2Cache) {
-        if(key.endsWith("]")) {
-            int index = key.indexOf("[");
-            key = key.substring(0, index);
-        }
-        int index = key.indexOf(".");
-        if(index == -1) {
-            level2Cache.put(key, value);
-            return;
-        }
-
-        String startKey = key.substring(0, index);
-        String newKey = key.substring(0, index);
-        HashMultimap<String, Object> levelMoreCache = HashMultimap.create();
-        continueProcessing(newKey, value, levelMoreCache);
-        level2Cache.put(startKey, levelMoreCache);
-    }
 
     /**
      * list渲染到properties
