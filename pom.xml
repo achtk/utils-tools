@@ -39,6 +39,7 @@
         <spring-aop.version>5.2.6.RELEASE</spring-aop.version>
         <spring-context.version>5.2.6.RELEASE</spring-context.version>
         <spring-webmvc.version>5.2.6.RELEASE</spring-webmvc.version>
+        <spring-expression.version>5.2.6.RELEASE</spring-expression.version>
         <spring-web.version>5.2.6.RELEASE</spring-web.version>
         <spring-retry.version>1.3.0</spring-retry.version>
 
