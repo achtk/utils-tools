@@ -31,7 +31,7 @@ public class JsonHelper {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
     private static final ObjectMapper XML_OBJECT_MAPPER = new ObjectMapper(new XmlFactory());
-    private static JavaType MAP_STRING_OBJECT_TYPE = null;
+    public static JavaType MAP_STRING_OBJECT_TYPE = null;
     private static TypeFactory TYPE_FACTORY = null;
 
     static {

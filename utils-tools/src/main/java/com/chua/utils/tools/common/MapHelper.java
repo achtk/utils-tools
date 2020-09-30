@@ -1159,7 +1159,7 @@ public class MapHelper {
             List<Object> items = (List<Object>) objects;
             if (items.size() > 0) {
                 Object o = items.get(0);
-                if (o.getClass().getName().equals(type.getName())) {
+                if (type.isAssignableFrom(o.getClass())) {
                     return (List<T>) objects;
                 }
             }

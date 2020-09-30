@@ -1,6 +1,9 @@
 package com.chua.utils.tools.common.properties;
 
+import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.google.common.collect.Sets;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -568,6 +571,25 @@ public abstract class AbstractPropertiesProducer {
     }
 
     /**
+     * 匹配并替換
+     * @param key 索引
+     * @param newValue 新值
+     */
+    public void wildcardMatchAndReplace(final String key, final Object newValue) {
+        Properties properties = wildcardMatch(key);
+        if(!BooleanHelper.hasLength(properties)) {
+            return;
+        }
+        for (Map.Entry<Object, Object> objectEntry : properties.entrySet()) {
+            for (Map.Entry<String, Properties> entry : source.entrySet()) {
+                if(!entry.getValue().containsKey(objectEntry.getKey())) {
+                    continue;
+                }
+                entry.getValue().put(objectEntry.getKey(), newValue);
+            }
+        }
+    }
+    /**
      * 获取对象
      *
      * @param keys 索引
@@ -601,10 +623,11 @@ public abstract class AbstractPropertiesProducer {
         }
 
         for (String key : keys) {
-            if (!containsKeyByConfiguration(properties, key)) {
+            Set<String> newKey = containsKeyByConfiguration(properties, key);
+            if (null == newKey) {
                 continue;
             }
-            return properties.get(key);
+            return properties.get(FinderHelper.firstElement(newKey));
         }
         return null;
     }
@@ -623,10 +646,13 @@ public abstract class AbstractPropertiesProducer {
 
         Properties result = new Properties();
         for (String key : keys) {
-            if (!containsKeyByConfiguration(properties, key)) {
+            Set<String> newKey = containsKeyByConfiguration(properties, key);
+            if (!BooleanHelper.hasLength(newKey)) {
                 continue;
             }
-            result.put(key, properties.getProperty(key));
+            for (String s : newKey) {
+                result.put(s, properties.getProperty(s));
+            }
         }
         return result;
     }
@@ -638,17 +664,18 @@ public abstract class AbstractPropertiesProducer {
      * @param key
      * @return
      */
-    protected boolean containsKeyByConfiguration(Properties properties, String key) {
+    protected Set<String> containsKeyByConfiguration(Properties properties, String key) {
         if (!configuration.isAllowFuzzyMatching()) {
-            return properties.containsKey(key);
+            return properties.containsKey(key) ? Sets.newHashSet(key) : null;
         }
+        Set<String> result = Sets.newHashSet();
         for (Object o : properties.keySet()) {
             if (!StringHelper.wildcardMatch(o.toString(), key)) {
                 continue;
             }
-            return true;
+            result.add(o.toString());
         }
-        return false;
+        return result;
     }
 
     /**
