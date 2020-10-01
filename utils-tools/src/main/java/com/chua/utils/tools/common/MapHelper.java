@@ -2,6 +2,9 @@ package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.function.MethodIntercept;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.*;
 
 import java.lang.reflect.Array;
@@ -269,6 +272,32 @@ public class MapHelper {
         }
         if (null != key) {
             t.put(key, value);
+        }
+    }
+
+    /**
+     * 添加集合
+     * <pre>
+     *     MapHelper.putAll({}, null) = {}
+     *     MapHelper.putAll({}, {1: 1}) = {1: 1}
+     *     MapHelper.putAll(null, {}) = {}
+     *     MapHelper.putAll(null, null) = {}
+     * </pre>
+     *
+     * @param source 原数据
+     * @param target 目标数据
+     */
+    public static synchronized  <K, V> void putAll(HashMultimap<K, V> source, final Map<K, V> target) {
+        if (BooleanHelper.isEmpty(source)) {
+            source = HashMultimap.create();
+        }
+
+        if (BooleanHelper.isEmpty(target)) {
+            return;
+        }
+
+        for (Map.Entry<K, V> entry : target.entrySet()) {
+            source.put(entry.getKey(), entry.getValue());
         }
     }
 
@@ -1120,11 +1149,12 @@ public class MapHelper {
         if (null == objects) {
             return new Object[0];
         }
-        if(objects instanceof Array) {
+        if (objects instanceof Array) {
             return (Object[]) objects;
         }
         return new Object[0];
     }
+
     /**
      * 返回Object[]类型
      *
@@ -1135,14 +1165,15 @@ public class MapHelper {
     public static String[] stringArrays(final String key, final Map<String, Object>... maps) {
         Object objects = objects(key, maps);
         if (null == objects) {
-            return  ArraysHelper.emptyStringArray();
+            return ArraysHelper.emptyStringArray();
         }
-        if(BooleanHelper.isArray(objects)) {
+        if (BooleanHelper.isArray(objects)) {
             Object obj = FinderHelper.firstElement((Object[]) objects);
             return obj instanceof String ? (String[]) objects : ArraysHelper.emptyStringArray();
         }
-        return  ArraysHelper.emptyStringArray();
+        return ArraysHelper.emptyStringArray();
     }
+
     /**
      * 返回List类型
      *
@@ -1529,5 +1560,4 @@ public class MapHelper {
     public static boolean containerKey(Map<String, MethodIntercept> source, String index) {
         return null != source && source.containsKey(index);
     }
-
 }

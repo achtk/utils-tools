@@ -99,7 +99,17 @@ public class ReturnBeanBuilder<T> implements Serializable {
     public static <T>ReturnBean<T> throwableReturnBean(final T data, final Throwable throwable) {
         return (ReturnBean<T>) builder().code(500).data(data).message(null == throwable ? "" : throwable.getMessage()).build();
     }
-    
+
+    public static ReturnBean<Boolean> falseReturnBean(int code) {
+        Builder<Boolean> objectBuilder = builder();
+        return objectBuilder.code(code).data(false).build();
+    }
+
+    public static ReturnBean<Boolean> trueReturnBean(int code) {
+        Builder<Boolean> objectBuilder = builder();
+        return objectBuilder.code(code).data(true).build();
+    }
+
     @Setter
     @Accessors(fluent = true)
     private static class Builder<T> {

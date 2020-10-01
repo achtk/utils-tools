@@ -1158,7 +1158,7 @@ public class BooleanHelper {
      * @param length 索引
      * @return
      */
-    public static <T> boolean gte(final List<T> source, final int length) {
+    public static <T> boolean gteLength(final Collection<T> source, final int length) {
         return hasLength(source) ? source.size() >= length : length <= 0;
 
     }
@@ -1177,7 +1177,7 @@ public class BooleanHelper {
      * @param length 长度
      * @return
      */
-    public static <T> boolean gt(final List<T> source, final int length) {
+    public static <T> boolean gtLength(final Collection<T> source, final int length) {
         return hasLength(source) ? source.size() > length : length < 0;
     }
 
@@ -1195,7 +1195,7 @@ public class BooleanHelper {
      * @param length 长度
      * @return
      */
-    public static <T> boolean lte(final List<T> source, final int length) {
+    public static <T> boolean lteLength(final Collection<T> source, final int length) {
         return hasLength(source) ? source.size() <= length : length >= 0;
 
     }
@@ -1214,7 +1214,7 @@ public class BooleanHelper {
      * @param length 长度
      * @return
      */
-    public static <T> boolean lt(final List<T> source, final int length) {
+    public static <T> boolean ltLength(final Collection<T> source, final int length) {
         return hasLength(source) ? source.size() < length : length > 0;
     }
 
@@ -1230,7 +1230,7 @@ public class BooleanHelper {
      * @param length 长度
      * @return
      */
-    public static <T> boolean eq(final List<T> source, final int length) {
+    public static <T> boolean eqLength(final Collection<T> source, final int length) {
         return hasLength(source) ? source.size() == length : length <= 0;
     }
 
@@ -1246,8 +1246,8 @@ public class BooleanHelper {
      * @param length 长度
      * @return
      */
-    public static <T> boolean neq(final List<T> source, final int length) {
-        return !eq(source, length);
+    public static <T> boolean neqLength(final Collection<T> source, final int length) {
+        return !eqLength(source, length);
     }
 
     /**

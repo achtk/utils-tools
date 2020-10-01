@@ -588,4 +588,19 @@ public class ListHelper {
         }
         return "[" + sb.substring(1) + "]";
     }
+
+    /**
+     * listMap 转map
+     * @param source 数据
+     * @return
+     */
+    public static HashMultimap<String, Object> listMap2Map(Collection<Map<String, Object>> source) {
+        HashMultimap<String, Object> result = HashMultimap.create();
+        for (Map<String, Object> objectMap : source) {
+            for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
+    }
 }

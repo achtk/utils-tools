@@ -28,7 +28,7 @@ public class JsonHelper {
     /**
      * 对象绑定
      */
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final ObjectMapper YAML_OBJECT_MAPPER = new ObjectMapper(new YAMLFactory());
     private static final ObjectMapper XML_OBJECT_MAPPER = new ObjectMapper(new XmlFactory());
     public static JavaType MAP_STRING_OBJECT_TYPE = null;

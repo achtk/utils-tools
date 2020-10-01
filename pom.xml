@@ -22,6 +22,8 @@
         <commons-logging.version>1.2</commons-logging.version>
         <commons-net.version>3.6</commons-net.version>
         <jackson-version>2.9.9.3</jackson-version>
+        <jackson-dataformat-yaml-version>2.9.9</jackson-dataformat-yaml-version>
+        <jackson-dataformat-xml-version>2.9.9</jackson-dataformat-xml-version>
         <commons-cli.version>1.4</commons-cli.version>
         <commons-compress.version>1.20</commons-compress.version>
         <commons-math3.version>3.6.1</commons-math3.version>
@@ -207,6 +209,7 @@
         <module>utils-netx-extension-rpc-dubbo</module>
         <module>utils-netx-extension-rpc-sofa</module>
         <module>utils-netx-extension-mongodb</module>
+        <module>utils-spider</module>
     </modules>
 
     <build>
