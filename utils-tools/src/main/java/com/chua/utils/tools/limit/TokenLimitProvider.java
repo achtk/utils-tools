@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class TokenLimitProvider implements ILimiterProvider {
 
     private static final ConcurrentHashMap<String, RateLimiter> RATE_LIMITER_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
-
+    private static final int DEFAULT_SIZE = 10;
     @Override
     public ILimiterProvider newLimiter(String name, int size) {
         RATE_LIMITER_CONCURRENT_HASH_MAP.put(name, RateLimiter.create(size));
@@ -31,7 +31,8 @@ public class TokenLimitProvider implements ILimiterProvider {
     public boolean tryAcquire(String name) {
         RateLimiter rateLimiter = RATE_LIMITER_CONCURRENT_HASH_MAP.get(name);
         if(null == rateLimiter) {
-            throw new NullPointerException();
+            newLimiter(name, DEFAULT_SIZE);
+            return tryAcquire(name);
         }
         return rateLimiter.tryAcquire();
     }
@@ -40,7 +41,8 @@ public class TokenLimitProvider implements ILimiterProvider {
     public boolean tryAcquire(String name, long time) {
         RateLimiter rateLimiter = RATE_LIMITER_CONCURRENT_HASH_MAP.get(name);
         if(null == rateLimiter) {
-            throw new NullPointerException();
+            newLimiter(name, DEFAULT_SIZE);
+            return tryAcquire(name);
         }
         return rateLimiter.tryAcquire(time, TimeUnit.MICROSECONDS);
     }
@@ -49,7 +51,8 @@ public class TokenLimitProvider implements ILimiterProvider {
     public boolean tryAcquire(String name, long time, TimeUnit timeUnit) {
         RateLimiter rateLimiter = RATE_LIMITER_CONCURRENT_HASH_MAP.get(name);
         if(null == rateLimiter) {
-            throw new NullPointerException();
+            newLimiter(name, DEFAULT_SIZE);
+            return tryAcquire(name);
         }
         return rateLimiter.tryAcquire(time, timeUnit);
     }
@@ -57,5 +60,10 @@ public class TokenLimitProvider implements ILimiterProvider {
     @Override
     public boolean tryGet() {
         return false;
+    }
+
+    @Override
+    public boolean containGroup(String group) {
+        return RATE_LIMITER_CONCURRENT_HASH_MAP.containsKey(group);
     }
 }
