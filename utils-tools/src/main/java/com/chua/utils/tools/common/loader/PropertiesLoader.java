@@ -1,6 +1,7 @@
 package com.chua.utils.tools.common.loader;
 
 import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.common.properties.AbstractPropertiesProducer;
 import com.google.common.base.Strings;
@@ -56,6 +57,22 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
         }
         return this;
     }
+
+    /**
+     * 吸收数据
+     *
+     * @param propertiesLoader 数据
+     * @return
+     */
+    public PropertiesLoader add(final PropertiesLoader propertiesLoader) {
+        if (null != propertiesLoader) {
+            ConcurrentHashMap<String, Properties> concurrentHashMap = propertiesLoader.allMap();
+            for (Map.Entry<String, Properties> entry : concurrentHashMap.entrySet()) {
+                this.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return this;
+    }
     /**
      * 吸收数据
      *
@@ -64,13 +81,7 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
      */
     public PropertiesLoader add(final Map<String, Object> objectMap) {
         if (null != objectMap) {
-            Properties properties = new Properties();
-            for (Map.Entry<String, Object> entry : objectMap.entrySet()) {
-                if(Strings.isNullOrEmpty(entry.getKey()) || null == entry.getValue()) {
-                    continue;
-                }
-                properties.put(entry.getKey(), entry.getValue());
-            }
+            Properties properties = MapHelper.properties(objectMap);
             this.put(StringHelper.uuid(), properties);
         }
         return this;

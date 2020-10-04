@@ -13,14 +13,14 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyEditorRegistrar;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
+import org.springframework.beans.factory.support.*;
 import org.springframework.beans.support.ResourceEditorRegistrar;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertyResolver;
@@ -40,7 +40,7 @@ import java.util.Set;
  * @date 2020-09-26
  */
 @RequiredArgsConstructor
-public class BeanFactoryBeanFactory implements IBeanFactory {
+public class BeanFactoryBeanFactory implements IBeanFactory, SingletonBeanRegistry {
 
     @NonNull
     private BeanFactory beanFactory;
@@ -48,7 +48,7 @@ public class BeanFactoryBeanFactory implements IBeanFactory {
     @Override
     public EnvironmentFactory environmentFactory() {
         EnvironmentFactory environmentFactory = new EnvironmentFactory();
-        if(!(beanFactory instanceof DefaultListableBeanFactory)) {
+        if (!(beanFactory instanceof DefaultListableBeanFactory)) {
             return environmentFactory;
         }
         DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
@@ -56,10 +56,10 @@ public class BeanFactoryBeanFactory implements IBeanFactory {
         Set<ResourceEditorRegistrar> resourceEditorRegistrars = CollectionHelper.filter(propertyEditorRegistrars, ResourceEditorRegistrar.class);
         for (ResourceEditorRegistrar resourceEditorRegistrar : resourceEditorRegistrars) {
             PropertyResolver propertyResolver = ClassHelper.getOnlyFieldValue(resourceEditorRegistrar, PropertyResolver.class);
-            if(null == propertyResolver) {
+            if (null == propertyResolver) {
                 return environmentFactory;
             }
-            if(!(propertyResolver instanceof StandardServletEnvironment)) {
+            if (!(propertyResolver instanceof StandardServletEnvironment)) {
                 return environmentFactory;
             }
             environmentFactory.absorb((StandardServletEnvironment) propertyResolver);
@@ -249,6 +249,66 @@ public class BeanFactoryBeanFactory implements IBeanFactory {
         }
 
         return null;
+    }
+
+    /**
+     * @param bean
+     * @throws BeanDefinitionStoreException
+     */
+    public void registerSingleton(Object bean) throws BeanDefinitionStoreException {
+        if (null == bean) {
+            return;
+        }
+        registerSingleton(bean.getClass().getName(), bean);
+    }
+
+    @Override
+    public void registerSingleton(String beanName, Object bean) throws BeanDefinitionStoreException {
+        if (!(beanFactory instanceof DefaultListableBeanFactory)) {
+            return;
+        }
+        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
+        defaultListableBeanFactory.registerSingleton(beanName, bean);
+    }
+
+    @Override
+    public Object getSingleton(String beanName) {
+        if (!(beanFactory instanceof DefaultListableBeanFactory)) {
+            return null;
+        }
+        return ((DefaultListableBeanFactory) beanFactory).getSingleton(beanName);
+    }
+
+    @Override
+    public boolean containsSingleton(String beanName) {
+        if (!(beanFactory instanceof DefaultListableBeanFactory)) {
+            return false;
+        }
+        return ((DefaultListableBeanFactory) beanFactory).containsSingleton(beanName);
+    }
+
+    @Override
+    public String[] getSingletonNames() {
+        if (!(beanFactory instanceof DefaultListableBeanFactory)) {
+            return null;
+        }
+        return ((DefaultListableBeanFactory) beanFactory).getSingletonNames();
+    }
+
+    @Override
+    public int getSingletonCount() {
+        if (!(beanFactory instanceof DefaultListableBeanFactory)) {
+            return 0;
+        }
+        return ((DefaultListableBeanFactory) beanFactory).getSingletonCount();
+    }
+
+    @Override
+    public Object getSingletonMutex() {
+        if (!(beanFactory instanceof DefaultListableBeanFactory)) {
+            return null;
+        }
+        return ((DefaultListableBeanFactory) beanFactory).getSingletonMutex();
     }
 
 }

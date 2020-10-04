@@ -168,7 +168,26 @@ public class MapHelper {
 
         Properties properties = new Properties();
         for (Map.Entry<K, V> entry : source.entrySet()) {
-            properties.put(entry.getKey().toString(), ObjectHelper.defaultIfNull(entry.getValue(), ""));
+            V value = entry.getValue();
+            K key = entry.getKey();
+            if(null == key) {
+                continue;
+            }
+            String newKey = key.toString();
+            Object newValue = null;
+            if(value instanceof List) {
+                newValue = null == value ? Collections.emptyList() : entry.getValue();
+            }
+            if(value instanceof Map) {
+                newValue = null == value ? Collections.emptyMap() : entry.getValue();
+            }
+            if(value instanceof Set) {
+                newValue = null == value ? Collections.emptySet() : entry.getValue();
+            }
+            if(null == newValue) {
+                continue;
+            }
+            properties.put(newKey, newValue) ;
         }
         return properties;
     }

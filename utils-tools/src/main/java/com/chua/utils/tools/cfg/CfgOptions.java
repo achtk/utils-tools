@@ -4,6 +4,7 @@ import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.common.TypeHelper;
+import com.chua.utils.tools.common.loader.PropertiesLoader;
 import com.chua.utils.tools.options.IOptions;
 import com.chua.utils.tools.prop.placeholder.AbstractPropertiesPlaceholderResolver;
 import com.chua.utils.tools.prop.placeholder.PropertiesPlaceholderFactory;
@@ -26,6 +27,7 @@ import static com.chua.utils.tools.constant.StringConstant.*;
 /**
  * <p>配置项解析</p>
  * <p>只解析json</p>
+ *
  * @author CH
  * @since 1.0
  */
@@ -36,6 +38,7 @@ public class CfgOptions {
 
     /**
      * 初始化cfg信息
+     *
      * @param master 文件名称
      * @return
      */
@@ -44,8 +47,7 @@ public class CfgOptions {
         cfgConfig.setMaster(master);
         return new IOptions() {
             @Override
-            public ConcurrentMap<String, Object> values()
-            {
+            public ConcurrentMap<String, Object> values() {
                 return initialCfg(cfgConfig);
             }
         };
@@ -53,6 +55,7 @@ public class CfgOptions {
 
     /**
      * 初始化cfg信息
+     *
      * @param cfgConfig 文件名称
      * @return
      */
@@ -67,6 +70,19 @@ public class CfgOptions {
 
     /**
      * 初始化cfg信息
+     *
+     * @param cfgConfig 文件名称
+     * @return
+     */
+    public static PropertiesLoader cfgLoader(CfgConfig cfgConfig) {
+        PropertiesLoader propertiesLoader = PropertiesLoader.newLoader();
+        propertiesLoader.add(initialCfg(cfgConfig));
+        return propertiesLoader;
+    }
+
+    /**
+     * 初始化cfg信息
+     *
      * @param cfgConfig 文件名称
      * @return
      */
@@ -76,14 +92,14 @@ public class CfgOptions {
 
         String master = cfgConfig.getMaster();
         ConcurrentHashMap<String, Object> concurrentHashMap = CACHE.get(master);
-        if(null != concurrentHashMap) {
+        if (null != concurrentHashMap) {
             return concurrentHashMap;
         }
         File file = new File(master);
 
         Map masterCfg = null;
         //本地文件存在
-        if(file.exists()) {
+        if (file.exists()) {
             log.info("检测到本地文件[{}]", master);
             masterCfg = doAnalysisLocationFile(master);
         } else {
@@ -94,7 +110,7 @@ public class CfgOptions {
             }
         }
 
-        if(null == masterCfg) {
+        if (null == masterCfg) {
             log.warn("未找到对应的配置");
         }
 
@@ -113,7 +129,7 @@ public class CfgOptions {
 
         if (null != masterCfg && null != cfgConfig.getSlaverKey()) {
             Object o = masterCfg.get(cfgConfig.getSlaverKey());
-            if(null == o) {
+            if (null == o) {
                 return cfg;
             }
             String strings = o.toString();
@@ -126,19 +142,19 @@ public class CfgOptions {
                 }
             }
         }
-        if(!SPI_CONFIG_DEFAULT.equals(master)) {
+        if (!SPI_CONFIG_DEFAULT.equals(master)) {
             String env = MapHelper.strings(SYSTEM_PLACEHOLDER_PROP, "system", cfg);
             AbstractPropertiesPlaceholderResolver extension = ExtensionFactory.getExtensionLoader(AbstractPropertiesPlaceholderResolver.class).getExtension(env);
             PropertiesPlaceholderFactory propertiesPlaceholderFactory = PropertiesPlaceholderFactory.newBuilder().dataMapper(cfg).addResolver(extension).build();
 
             for (Map.Entry<String, Object> entry : cfg.entrySet()) {
                 Object value = entry.getValue();
-                if(value instanceof List) {
-                    value = doPlaceholderListAnalyze((List)value, propertiesPlaceholderFactory);
-                } else if(value instanceof Map) {
-                    value = doPlaceholderMapAnalyze((Map)value, propertiesPlaceholderFactory);
+                if (value instanceof List) {
+                    value = doPlaceholderListAnalyze((List) value, propertiesPlaceholderFactory);
+                } else if (value instanceof Map) {
+                    value = doPlaceholderMapAnalyze((Map) value, propertiesPlaceholderFactory);
                 } else {
-                    if(extension.isMatcher(value + "")) {
+                    if (extension.isMatcher(value + "")) {
                         value = extension.analyze(value.toString());
                     }
                 }
@@ -154,6 +170,7 @@ public class CfgOptions {
 
     /**
      * 处理Map占位符
+     *
      * @param value
      * @param propertiesPlaceholderFactory
      * @return
@@ -162,10 +179,10 @@ public class CfgOptions {
         Map result = new HashMap();
         for (Map.Entry<Object, Object> entry : value.entrySet()) {
             Object value1 = entry.getValue();
-            if(value1 instanceof List) {
-                value1 = doPlaceholderListAnalyze((List)value1, propertiesPlaceholderFactory);
-            } else if(value1 instanceof Map) {
-                value1 = doPlaceholderMapAnalyze((Map)value1, propertiesPlaceholderFactory);
+            if (value1 instanceof List) {
+                value1 = doPlaceholderListAnalyze((List) value1, propertiesPlaceholderFactory);
+            } else if (value1 instanceof Map) {
+                value1 = doPlaceholderMapAnalyze((Map) value1, propertiesPlaceholderFactory);
             } else {
                 value1 = propertiesPlaceholderFactory.placeholder(value1);
             }
@@ -178,16 +195,17 @@ public class CfgOptions {
 
     /**
      * 处理List占位符
+     *
      * @param value
      * @return
      */
     private static List doPlaceholderListAnalyze(List value, PropertiesPlaceholderFactory propertiesPlaceholderFactory) {
         List result = new ArrayList();
         for (Object o : value) {
-            if(o instanceof List) {
-                result.add(doPlaceholderListAnalyze((List)o, propertiesPlaceholderFactory));
-            } else if(o instanceof Map) {
-                result.add(doPlaceholderMapAnalyze((Map)o, propertiesPlaceholderFactory));
+            if (o instanceof List) {
+                result.add(doPlaceholderListAnalyze((List) o, propertiesPlaceholderFactory));
+            } else if (o instanceof Map) {
+                result.add(doPlaceholderMapAnalyze((Map) o, propertiesPlaceholderFactory));
             } else {
                 result.add(propertiesPlaceholderFactory.placeholder(o));
             }
@@ -199,7 +217,9 @@ public class CfgOptions {
 
     /**
      * 解析classpath文件
+     *
      * @param master
+     * @param classLoader 类加载器
      * @return
      */
     private static Map doAnalysisClasspathFile(final String master, final ClassLoader classLoader) throws IOException {
@@ -207,8 +227,11 @@ public class CfgOptions {
         Enumeration<URL> resources = classLoader.getResources(master);
         List<CfgFile> cfgFiles = new ArrayList<>();
         while (resources.hasMoreElements()) {
-            URL url =  resources.nextElement();
+            URL url = resources.nextElement();
             Map map = JsonHelper.fromJson(url, Map.class);
+            if (null == map) {
+                continue;
+            }
             CfgFile cfgFile = new CfgFile(url, MapHelper.ints(SYSTEM_PRIORITY_PROP, 0, map), map);
             cfgFiles.add(cfgFile);
         }
@@ -229,6 +252,7 @@ public class CfgOptions {
 
     /**
      * 合并结果
+     *
      * @param result
      * @param cfgFile
      */
@@ -236,21 +260,23 @@ public class CfgOptions {
         Map<Object, Object> map = cfgFile.getMap();
         for (Map.Entry<Object, Object> entry : map.entrySet()) {
             Object sourceValue = entry.getValue();
-            if(sourceValue instanceof Double) {
+            if (sourceValue instanceof Double) {
                 sourceValue = TypeHelper.toInt(entry.getValue(), 0);
             }
             Object targetValue = result.get(entry.getKey());
-            if(sourceValue instanceof List || targetValue instanceof List) {
+            if (sourceValue instanceof List || targetValue instanceof List) {
                 combineList(result, entry.getKey(), entry.getValue());
-            } else if(sourceValue instanceof Map || targetValue instanceof Map) {
+            } else if (sourceValue instanceof Map || targetValue instanceof Map) {
                 combineMap(result, entry.getKey(), entry.getValue());
             } else {
                 result.put(entry.getKey(), entry.getValue());
             }
         }
     }
+
     /**
      * 合并 map
+     *
      * @param result
      * @param key
      * @param sourceValue
@@ -258,17 +284,17 @@ public class CfgOptions {
     private static void combineMap(Map result, Object key, Object sourceValue) {
         Object targetValue = result.get(key);
 
-        if(null == sourceValue && null == targetValue) {
+        if (null == sourceValue && null == targetValue) {
             return;
         }
 
-        if(sourceValue instanceof Map && targetValue instanceof Map) {
+        if (sourceValue instanceof Map && targetValue instanceof Map) {
             Map sourceValueList = null != sourceValue ? (Map) sourceValue : Collections.emptyMap();
             Map targetValueList = null != targetValue ? (Map) targetValue : Collections.emptyMap();
 
             targetValueList.putAll(sourceValueList);
             result.put(key, targetValueList);
-        } else if(sourceValue instanceof Map && !(targetValue instanceof Map)) {
+        } else if (sourceValue instanceof Map && !(targetValue instanceof Map)) {
             Map sourceValueList = null != sourceValue ? (Map) sourceValue : Collections.emptyMap();
             try {
                 sourceValueList.put(targetValue, targetValue);
@@ -289,6 +315,7 @@ public class CfgOptions {
 
     /**
      * 合并list
+     *
      * @param result
      * @param key
      * @param sourceValue
@@ -296,29 +323,29 @@ public class CfgOptions {
     private static void combineList(Map result, Object key, Object sourceValue) {
         Object targetValue = result.get(key);
 
-        if(null == sourceValue && null == targetValue) {
+        if (null == sourceValue && null == targetValue) {
             return;
         }
 
-        if(sourceValue instanceof List && targetValue instanceof List) {
+        if (sourceValue instanceof List && targetValue instanceof List) {
             List sourceValueList = null != sourceValue ? (List) sourceValue : Collections.emptyList();
             List targetValueList = null != targetValue ? (List) targetValue : Collections.emptyList();
 
-            if(null != sourceValueList) {
+            if (null != sourceValueList) {
                 targetValueList.addAll(sourceValueList);
             }
 
             result.put(key, targetValueList);
-        } else if(sourceValue instanceof List && !(targetValue instanceof List)) {
+        } else if (sourceValue instanceof List && !(targetValue instanceof List)) {
             List sourceValueList = null != sourceValue ? (List) sourceValue : Collections.emptyList();
 
-            if(null != targetValue) {
+            if (null != targetValue) {
                 sourceValueList.add(targetValue);
             }
             result.put(key, sourceValueList);
         } else {
             List targetValueList = null != targetValue ? (List) targetValue : Collections.emptyList();
-            if(null != sourceValue) {
+            if (null != sourceValue) {
                 targetValueList.add(sourceValue);
             }
             result.put(key, targetValueList);
@@ -327,11 +354,12 @@ public class CfgOptions {
 
     /**
      * 解析本地文件
+     *
      * @param master
      * @return
      */
     private static Map doAnalysisLocationFile(String master) {
-        try(InputStreamReader isr = new InputStreamReader(new FileInputStream(master), CHARSET_UTF_8)) {
+        try (InputStreamReader isr = new InputStreamReader(new FileInputStream(master), CHARSET_UTF_8)) {
             return JsonHelper.fromJson(isr, Map.class);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -345,7 +373,7 @@ public class CfgOptions {
     /**
      * 加载自定义配置文件
      *
-     * @param fileName 文件名
+     * @param fileName  文件名
      * @param cfg
      * @param orderName
      * @throws IOException 加载异常
@@ -359,11 +387,11 @@ public class CfgOptions {
             while (urls.hasMoreElements()) {
                 // 读取每一个文件
                 URL url = urls.nextElement();
-                try (InputStreamReader input = new InputStreamReader(url.openStream(), "utf-8")){
+                try (InputStreamReader input = new InputStreamReader(url.openStream(), "utf-8")) {
                     Map map = JsonHelper.fromJson(input, Map.class);
                     //获取排序字段
                     Integer order = null;
-                    if(null != orderName) {
+                    if (null != orderName) {
                         order = (Integer) map.get(orderName);
                     }
                     allFile.add(new CfgFile(url, order == null ? 0 : order, map));

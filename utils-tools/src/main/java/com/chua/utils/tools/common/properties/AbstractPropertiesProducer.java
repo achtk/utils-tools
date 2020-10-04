@@ -1,8 +1,12 @@
 package com.chua.utils.tools.common.properties;
 
+import com.chua.utils.tools.cfg.CfgConfig;
+import com.chua.utils.tools.cfg.CfgOptions;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.common.loader.PropertiesLoader;
 import com.google.common.collect.Sets;
 
 import java.util.*;
@@ -36,10 +40,11 @@ public abstract class AbstractPropertiesProducer {
         }
         this.configuration = null == configuration ? DEFAULT_PROPERTIES_CONFIGURATION : configuration;
     }
+
     /**
      * 删除数据
      *
-     * @param name       名称
+     * @param name 名称
      * @return
      */
     public synchronized AbstractPropertiesProducer remove(final String name) {
@@ -48,6 +53,7 @@ public abstract class AbstractPropertiesProducer {
         }
         return this;
     }
+
     /**
      * 添加数据
      *
@@ -136,7 +142,57 @@ public abstract class AbstractPropertiesProducer {
     }
 
     /**
-     * 获取 set
+     * 获取 map
+     *
+     * @param defaultValue 默认值
+     * @param keyClass     类型
+     * @param valueClass   类型
+     * @param keys         索引
+     * @return
+     */
+    public <K, V> Map<K, V> mapIgnore(final Map<K, V> defaultValue, final Class<K> keyClass, final Class<V> valueClass, final String... keys) {
+        Object objects = objects(defaultValue, keys);
+        return objects instanceof Map ? (Map<K, V>) objects : defaultValue;
+    }
+
+    /**
+     * 获取 map
+     *
+     * @param keyClass   类型
+     * @param valueClass 类型
+     * @param keys       索引
+     * @return
+     */
+    public <K, V> Map<K, V> mapIgnore(final Class<K> keyClass, final Class<V> valueClass, final String... keys) {
+        Object objects = objects(Collections.emptyMap(), keys);
+        return objects instanceof Map ? (Map<K, V>) objects : Collections.emptyMap();
+    }
+
+    /**
+     * 获取 map
+     *
+     * @param valueClass 类型
+     * @param keys       索引
+     * @return
+     */
+    public <V> Map<String, V> mapStringIgnore(final Class<V> valueClass, final String... keys) {
+        Object objects = objects(Collections.emptyMap(), keys);
+        return objects instanceof Map ? (Map<String, V>) objects : Collections.emptyMap();
+    }
+
+    /**
+     * 获取 map
+     *
+     * @param keys 索引
+     * @return
+     */
+    public Map<String, Object> mapIgnore(final String... keys) {
+        Object objects = objects(Collections.emptyMap(), keys);
+        return objects instanceof Map ? (Map<String, Object>) objects : Collections.emptyMap();
+    }
+
+    /**
+     * 获取 map
      *
      * @param defaultValue 默认值
      * @param keyClass     类型
@@ -227,7 +283,7 @@ public abstract class AbstractPropertiesProducer {
             }
 
             for (Object o : value) {
-                if (!whetherToIgnoreWhenNull(o)) {
+                if (whetherToIgnoreWhenNull(o)) {
                     result.add(null);
                     continue;
                 }
@@ -309,6 +365,42 @@ public abstract class AbstractPropertiesProducer {
      * @param keys         索引
      * @return
      */
+    public <T> List<T> listIgnore(final List<T> defaultValue, final Class<T> tClass, final String... keys) {
+        Object objects = objects(defaultValue, keys);
+        return objects instanceof List ? (List<T>) objects : Collections.emptyList();
+    }
+
+    /**
+     * 获取 list
+     *
+     * @param tClass 类型
+     * @param keys   索引
+     * @return
+     */
+    public <T> List<T> listIgnore(final Class<T> tClass, final String... keys) {
+        Object objects = objects(null, keys);
+        return objects instanceof List ? (List<T>) objects : null;
+    }
+
+    /**
+     * 获取 list
+     *
+     * @param keys 索引
+     * @return
+     */
+    public List<String> listIgnore(final String... keys) {
+        Object objects = objects(null, keys);
+        return objects instanceof List ? (List<String>) objects : null;
+    }
+
+    /**
+     * 获取 list
+     *
+     * @param defaultValue 默认值
+     * @param tClass       类型
+     * @param keys         索引
+     * @return
+     */
     public <T> List<T> lists(final List<T> defaultValue, final Class<T> tClass, final String... keys) {
         Object objects = objects(defaultValue, keys);
 
@@ -323,7 +415,7 @@ public abstract class AbstractPropertiesProducer {
             }
 
             for (Object o : value) {
-                if (!whetherToIgnoreWhenNull(o)) {
+                if (whetherToIgnoreWhenNull(o)) {
                     result.add(null);
                     continue;
                 }
@@ -572,23 +664,25 @@ public abstract class AbstractPropertiesProducer {
 
     /**
      * 匹配并替換
-     * @param key 索引
+     *
+     * @param key      索引
      * @param newValue 新值
      */
     public void wildcardMatchAndReplace(final String key, final Object newValue) {
         Properties properties = wildcardMatch(key);
-        if(!BooleanHelper.hasLength(properties)) {
+        if (!BooleanHelper.hasLength(properties)) {
             return;
         }
         for (Map.Entry<Object, Object> objectEntry : properties.entrySet()) {
             for (Map.Entry<String, Properties> entry : source.entrySet()) {
-                if(!entry.getValue().containsKey(objectEntry.getKey())) {
+                if (!entry.getValue().containsKey(objectEntry.getKey())) {
                     continue;
                 }
                 entry.getValue().put(objectEntry.getKey(), newValue);
             }
         }
     }
+
     /**
      * 获取对象
      *
@@ -702,10 +796,16 @@ public abstract class AbstractPropertiesProducer {
 
     /**
      * 获取所有Map
+     *
      * @return
      */
     protected ConcurrentHashMap<String, Properties> allMap() {
         return source;
     }
 
+    public void cfgLoader(CfgConfig cfgConfig) {
+        ConcurrentHashMap<String, Object> initialCfg = CfgOptions.initialCfg(cfgConfig);
+        Properties properties = MapHelper.properties(initialCfg);
+        put(StringHelper.uuid(), properties);
+    }
 }

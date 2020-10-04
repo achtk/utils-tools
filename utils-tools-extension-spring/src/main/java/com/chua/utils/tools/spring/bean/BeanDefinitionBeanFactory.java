@@ -2,18 +2,18 @@ package com.chua.utils.tools.spring.bean;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.spring.definition.BeanDefinitionFactory;
 import com.chua.utils.tools.spring.entity.BeanLoader;
 import com.chua.utils.tools.spring.environment.EnvironmentFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
@@ -27,6 +27,7 @@ import java.util.Set;
 
 /**
  * BeanDefinitionFactory处理工厂
+ *
  * @author CH
  * @since 1.0
  */
@@ -98,7 +99,7 @@ public class BeanDefinitionBeanFactory implements IBeanFactory {
 
     @Override
     public String unRegisterBean(@NonNull String beanName) {
-        if(containsBean(beanName)) {
+        if (containsBean(beanName)) {
             beanDefinitionRegistry.removeBeanDefinition(beanName);
             return beanName;
         }
@@ -130,29 +131,32 @@ public class BeanDefinitionBeanFactory implements IBeanFactory {
 
     /**
      * 从上下文解析属性
+     *
      * @param classParams
      * @param fields
      */
     private void doAnalysisBeanFromApplication(Map<String, Object> classParams, Map<String, Class> fields) {
         for (Map.Entry<String, Class> entry : fields.entrySet()) {
             Object o = classParams.get(entry.getKey());
-            if(!classParams.containsKey(entry.getKey()) || null == o) {
+            if (!classParams.containsKey(entry.getKey()) || null == o) {
                 Object o1 = doFieldAnalysisFromApplication(entry.getKey(), entry.getValue());
                 classParams.put(entry.getKey(), o1);
             }
         }
     }
+
     /**
      * 通过名称/类型查找注册bean
+     *
      * @param name 名称
      * @param type 类型
      * @return
      */
     private Object doFieldAnalysisFromApplication(String name, Class type) {
-        if(String.class.getName().equals(type.getName())) {
+        if (String.class.getName().equals(type.getName())) {
             return null;
         }
-        if(containsBean(name)) {
+        if (containsBean(name)) {
             BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(name);
             return ClassHelper.forObject(beanDefinition.getBeanClassName());
         }
@@ -166,4 +170,5 @@ public class BeanDefinitionBeanFactory implements IBeanFactory {
 
         return null;
     }
+
 }

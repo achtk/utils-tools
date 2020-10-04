@@ -20,6 +20,7 @@ import static com.chua.utils.tools.common.UrlHelper.JAR_URL_SEPARATOR;
 import static com.chua.utils.tools.constant.StringConstant.*;
 
 /**
+ * 资源对象
  * @author CH
  */
 @Getter
@@ -81,7 +82,11 @@ public class Resource implements Serializable {
             return annotations;
         }
         if(null != this.classes) {
-            this.annotations = this.classes.getDeclaredAnnotations();
+            try {
+                this.annotations = this.classes.getDeclaredAnnotations();
+            } catch (Exception e) {
+                this.annotations = new Annotation[0];
+            }
         }
         return this.annotations;
     }
