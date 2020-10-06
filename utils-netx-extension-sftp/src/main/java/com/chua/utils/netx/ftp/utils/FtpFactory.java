@@ -1,6 +1,6 @@
 package com.chua.utils.netx.ftp.utils;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.netx.ftp.handler.FtpFileHandler;
 import com.chua.utils.netx.ftp.reader.FtpReader;

@@ -1,6 +1,6 @@
 package com.chua.utils.netx.kafka.context;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.kafka.factory.KafkaProducerFactory;
 import com.chua.utils.tools.common.ThreadHelper;
 import org.apache.kafka.clients.producer.KafkaProducer;

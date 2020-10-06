@@ -3,7 +3,7 @@ package com.chua.utils.netx.nacos.factory;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.exception.NacosException;
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

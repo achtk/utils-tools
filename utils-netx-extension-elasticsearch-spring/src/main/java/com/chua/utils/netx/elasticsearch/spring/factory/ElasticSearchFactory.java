@@ -1,10 +1,10 @@
 package com.chua.utils.netx.elasticsearch.spring.factory;
 
-import com.chua.unified.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.CollectionHelper;
 import com.chua.utils.tools.common.PropertiesHelper;
+import com.chua.utils.tools.properties.NetxProperties;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -12,24 +12,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.search.suggest.SuggestBuilder;
-import org.springframework.data.elasticsearch.core.*;
-import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
-import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
-import org.springframework.data.elasticsearch.core.query.*;
-import org.springframework.data.util.CloseableIterator;
+import org.springframework.data.elasticsearch.core.AbstractElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.chua.unified.properties.NetxProperties.*;
-import static com.chua.unified.properties.NetxProperties.CONFIG_FIELD_READ_TIMEOUT;
+import static com.chua.utils.tools.properties.NetxProperties.*;
+import static com.chua.utils.tools.properties.NetxProperties.CONFIG_FIELD_READ_TIMEOUT;
 
 /**
  * Elasticsearch Factory

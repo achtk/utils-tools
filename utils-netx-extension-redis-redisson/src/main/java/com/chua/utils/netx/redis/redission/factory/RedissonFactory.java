@@ -1,6 +1,6 @@
 package com.chua.utils.netx.redis.redission.factory;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.MapHelper;

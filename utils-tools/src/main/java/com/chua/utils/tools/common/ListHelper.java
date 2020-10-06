@@ -1,6 +1,6 @@
 package com.chua.utils.tools.common;
 
-import com.chua.unified.function.ListComparator;
+import com.chua.utils.tools.function.ListComparator;
 import com.google.common.collect.*;
 
 import java.io.File;

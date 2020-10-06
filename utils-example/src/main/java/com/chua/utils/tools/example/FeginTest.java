@@ -1,6 +1,6 @@
 package com.chua.utils.tools.example;
 
-import com.chua.unified.interfaces.IRemoteCallFactory;
+import com.chua.utils.tools.interfaces.IRemoteCallFactory;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.example.interfaces.ITokenService;
 import com.chua.utils.tools.fegin.FeginRemoteCallFactory;

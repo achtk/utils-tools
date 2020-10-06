@@ -1,10 +1,9 @@
 package com.chua.utils.netx.zookeeper.consumer;
 
-
-import com.chua.unified.properties.NetxProperties;
 import com.chua.utils.netx.consumer.INetxConsumer;
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.netx.zookeeper.factory.ZookeeperFactory;
+import com.chua.utils.tools.properties.NetxProperties;
 
 /**
  * zk 消费者

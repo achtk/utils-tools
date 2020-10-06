@@ -1,6 +1,6 @@
 package com.chua.utils.netx.redis.lettuce.context;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.netx.redis.lettuce.factory.LettuceSyncFactory;
 import com.google.common.base.Preconditions;

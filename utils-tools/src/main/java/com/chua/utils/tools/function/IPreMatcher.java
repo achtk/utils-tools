@@ -12,5 +12,5 @@ public interface IPreMatcher<I> {
      * @param item
      * @return
      */
-    public I matcher(Matcher item);
+    I matcher(Matcher item);
 }

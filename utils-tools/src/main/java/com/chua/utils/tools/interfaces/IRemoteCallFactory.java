@@ -1,6 +1,7 @@
-package com.chua.unified.interfaces;
+package com.chua.utils.tools.interfaces;
 
-import com.chua.unified.configure.ServerConfig;
+
+import com.chua.utils.tools.properties.ServerConfig;
 
 /**
  * 远程调用工厂

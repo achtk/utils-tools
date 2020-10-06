@@ -1,6 +1,6 @@
 package com.chua.utils.netx.zookeeper.factory;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.tools.common.MapHelper;
 import com.google.common.base.Joiner;

@@ -1,4 +1,4 @@
-package com.chua.unified.properties;
+package com.chua.utils.tools.properties;
 
 
 import java.util.Properties;

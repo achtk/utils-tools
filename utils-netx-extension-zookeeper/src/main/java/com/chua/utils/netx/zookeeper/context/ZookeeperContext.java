@@ -1,7 +1,7 @@
 package com.chua.utils.netx.zookeeper.context;
 
-import com.chua.unified.function.IConsumer;
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.function.IConsumer;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.netx.zookeeper.factory.ZookeeperFactory;
 import com.chua.utils.tools.common.ByteHelper;

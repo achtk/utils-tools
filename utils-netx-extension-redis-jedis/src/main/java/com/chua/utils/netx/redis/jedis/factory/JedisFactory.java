@@ -1,6 +1,6 @@
 package com.chua.utils.netx.redis.jedis.factory;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.tools.common.MapHelper;
 import lombok.NonNull;

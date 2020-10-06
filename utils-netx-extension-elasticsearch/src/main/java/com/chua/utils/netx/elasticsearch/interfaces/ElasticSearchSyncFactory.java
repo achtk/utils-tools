@@ -1,6 +1,6 @@
 package com.chua.utils.netx.elasticsearch.interfaces;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.elasticsearch.action.CallBack;
 import com.chua.utils.netx.elasticsearch.condition.Condition;
 import com.chua.utils.netx.elasticsearch.config.IndexConfig;

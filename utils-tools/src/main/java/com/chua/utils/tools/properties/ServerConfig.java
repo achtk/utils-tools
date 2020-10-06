@@ -1,4 +1,4 @@
-package com.chua.unified.configure;
+package com.chua.utils.tools.properties;
 
 import lombok.Getter;
 import lombok.Setter;

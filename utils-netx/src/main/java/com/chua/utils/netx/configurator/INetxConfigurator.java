@@ -1,6 +1,6 @@
 package com.chua.utils.netx.configurator;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 
 /**
  * 配置配置

@@ -1,6 +1,6 @@
 package com.chua.utils.netx.mongodb.context;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.netx.mongodb.factory.MongodbFactory;
 import com.mongodb.ReadPreference;

@@ -1,8 +1,8 @@
 package com.chua.utils.netx.solr.context;
 
-import com.chua.unified.function.IFunction;
-import com.chua.unified.properties.NetxProperties;
-import com.chua.unified.properties.QueryProperties;
+import com.chua.utils.tools.function.IFunction;
+import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.QueryProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.netx.solr.factory.CloudSolrFactory;
 import com.chua.utils.netx.solr.factory.SingleSolrFactory;

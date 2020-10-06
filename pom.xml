@@ -187,7 +187,6 @@
         <module>utils-http-extension-okhttp</module>
         <module>utils-http-extension-httpclient</module>
 
-        <module>utils-unified-interface</module>
         <module>utils-tools-extension-token</module>
         <module>utils-tools-extension-office</module>
         <module>utils-tools-extension-template</module>
@@ -225,7 +224,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.8.1</version>
                 <executions>
                     <execution>
                         <id>default-compile</id>

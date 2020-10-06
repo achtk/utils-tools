@@ -1,12 +1,11 @@
 package com.chua.utils.tools.encrypt;
 
-import com.chua.unified.environment.IEnvironmentProducer;
 import com.chua.utils.tools.common.ByteHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.function.producer.IEnvironmentProducer;
 import com.chua.utils.tools.spi.Spi;
 import com.google.common.base.Charsets;
 
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;

@@ -1,6 +1,6 @@
 package com.chua.utils.netx.factory;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 
 /**
  * 消费工厂

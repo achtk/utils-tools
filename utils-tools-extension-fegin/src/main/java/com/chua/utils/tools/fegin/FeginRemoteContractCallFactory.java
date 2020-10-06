@@ -1,8 +1,8 @@
 package com.chua.utils.tools.fegin;
 
-import com.chua.unified.configure.ServerConfig;
-import com.chua.unified.interfaces.IRemoteCallFactory;
+import com.chua.utils.tools.interfaces.IRemoteCallFactory;
 import com.chua.utils.tools.fegin.contract.FeginContract;
+import com.chua.utils.tools.properties.ServerConfig;
 import feign.Feign;
 import feign.Request;
 import feign.Retryer;

@@ -1,6 +1,6 @@
 package com.chua.utils.netx.elasticsearch.spring.context;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.elasticsearch.spring.factory.ElasticSearchFactory;
 import com.chua.utils.netx.factory.INetxFactory;
 import org.elasticsearch.action.search.SearchResponse;
@@ -11,7 +11,6 @@ import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.*;
 import org.springframework.data.util.CloseableIterator;
 
-import java.net.NetworkInterface;
 import java.util.List;
 
 /**

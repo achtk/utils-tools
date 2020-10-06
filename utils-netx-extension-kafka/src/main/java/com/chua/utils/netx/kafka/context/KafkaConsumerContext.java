@@ -1,7 +1,7 @@
 package com.chua.utils.netx.kafka.context;
 
-import com.chua.unified.function.IConsumer;
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.function.IConsumer;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.kafka.factory.KafkaConsumerFactory;
 import com.chua.utils.tools.common.ThreadHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecords;

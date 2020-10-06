@@ -1,6 +1,6 @@
 package com.chua.utils.netx.kafka.factory;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

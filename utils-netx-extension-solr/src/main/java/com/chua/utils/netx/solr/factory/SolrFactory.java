@@ -1,7 +1,7 @@
 package com.chua.utils.netx.solr.factory;
 
-import com.chua.unified.function.IFunction;
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.function.IFunction;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.factory.INetxFactory;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;

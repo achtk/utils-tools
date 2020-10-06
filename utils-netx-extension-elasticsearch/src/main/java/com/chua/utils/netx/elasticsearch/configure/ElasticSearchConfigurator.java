@@ -1,6 +1,6 @@
 package com.chua.utils.netx.elasticsearch.configure;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.PropertiesHelper;
 import com.google.gson.GsonBuilder;
@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import static com.chua.unified.properties.NetxProperties.*;
+import static com.chua.utils.tools.properties.NetxProperties.*;
 
 
 /**

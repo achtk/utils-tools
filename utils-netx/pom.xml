@@ -14,12 +14,6 @@
     <dependencies>
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-unified-interface</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
             <artifactId>utils-tools</artifactId>
             <version>1.0</version>
         </dependency>

@@ -1,10 +1,9 @@
 package com.chua.utils.netx.redis.jedis.context;
 
-import com.chua.unified.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.redis.jedis.factory.JedisFactory;
 import com.chua.utils.tools.classes.ClassHelper;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
