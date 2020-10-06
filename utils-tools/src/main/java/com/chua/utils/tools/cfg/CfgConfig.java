@@ -7,6 +7,8 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.chua.utils.tools.constant.StringConstant.SYSTEM_PRIORITY_PROP;
+
 /**
  * cfg配置
  * @author CH
@@ -59,5 +61,9 @@ public class CfgConfig {
             slavers.add(string);
         }
         return this;
+    }
+
+    public String getOrder() {
+        return Strings.isNullOrEmpty(order) ? SYSTEM_PRIORITY_PROP : order;
     }
 }

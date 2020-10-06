@@ -11,6 +11,7 @@ import com.chua.utils.tools.prop.placeholder.PropertiesPlaceholderFactory;
 import com.chua.utils.tools.spi.common.SpiConfigs;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -118,6 +119,9 @@ public class CfgOptions {
 
         List<String> salvers = cfgConfig.getSlavers();
         String slaverName = cfgConfig.getSlaverName();
+        if (Strings.isNullOrEmpty(slaverName)) {
+            slaverName = master.replace(".default", "").replace("-default", "");
+        }
         for (String custom : salvers) {
             String path = custom.endsWith("/") ? custom + slaverName : custom + "/" + slaverName;
             try {
@@ -374,8 +378,8 @@ public class CfgOptions {
      * 加载自定义配置文件
      *
      * @param fileName  文件名
-     * @param cfg
-     * @param orderName
+     * @param cfg       配置项
+     * @param orderName 排序字段
      * @throws IOException 加载异常
      */
     private static void loadCustom(String fileName, ConcurrentHashMap<String, Object> cfg, String orderName) throws IOException {
