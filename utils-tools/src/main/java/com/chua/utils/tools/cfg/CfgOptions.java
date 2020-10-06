@@ -132,11 +132,11 @@ public class CfgOptions {
         }
 
         if (null != masterCfg && null != cfgConfig.getSlaverKey()) {
-            Object o = masterCfg.get(cfgConfig.getSlaverKey());
-            if (null == o) {
+            Object slaverKey = masterCfg.get(cfgConfig.getSlaverKey());
+            if (null == slaverKey) {
                 return cfg;
             }
-            String strings = o.toString();
+            String strings = slaverKey.toString();
             List<String> splitToList = Splitter.on(",").splitToList(strings);
             for (String s : splitToList) {
                 try {

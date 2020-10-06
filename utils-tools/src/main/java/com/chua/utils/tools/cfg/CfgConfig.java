@@ -1,6 +1,8 @@
 package com.chua.utils.tools.cfg;
 
+import com.chua.utils.tools.common.BooleanHelper;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,15 +38,20 @@ public class CfgConfig {
     private List<String> slavers = new ArrayList<>();
     /**
      * 次要配置文件名称
+     * <p>处理时和 @see #slavers 合并处理</p>
      */
     private String slaverName;
 
     /**
      * <p>次要配置文件名称</p>
      * <p>主要配置文件可以通过该属性去解析文件</p>
+     * <p>e.g.C://xx.json</p>
      */
     private String slaverKey;
-
+    /**
+     * 默认 slaver
+     */
+    private static final List<String> DEFAULT_SLAVERS = Lists.newArrayList("extension/", "META-INF/extension/");
     /**
      * 添加配置
      * @param strings
@@ -63,6 +70,18 @@ public class CfgConfig {
         return this;
     }
 
+    /**
+     * 文件目录
+     * @return
+     */
+    public List<String> getSlavers() {
+        return BooleanHelper.hasLength(slavers) ? slavers : DEFAULT_SLAVERS;
+    }
+
+    /**
+     * 获取排序字段
+     * @return
+     */
     public String getOrder() {
         return Strings.isNullOrEmpty(order) ? SYSTEM_PRIORITY_PROP : order;
     }
