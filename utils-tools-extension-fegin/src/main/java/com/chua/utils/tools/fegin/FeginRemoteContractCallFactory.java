@@ -1,11 +1,11 @@
 package com.chua.utils.tools.fegin;
 
-import com.chua.utils.tools.interfaces.IRemoteCallFactory;
-import com.chua.utils.tools.fegin.contract.FeginContract;
+import com.chua.utils.tools.fegin.target.ContractTarget;
 import com.chua.utils.tools.properties.ServerConfig;
 import feign.Feign;
 import feign.Request;
 import feign.Retryer;
+import feign.Target;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 
@@ -14,27 +14,28 @@ import feign.jackson.JacksonEncoder;
  * @author CH
  * @date 2020-09-29
  */
-public class FeginRemoteContractCallFactory implements IRemoteCallFactory {
+public class FeginRemoteContractCallFactory extends FeginRemoteCallFactory {
 
+    public FeginRemoteContractCallFactory() {
+    }
+
+    public FeginRemoteContractCallFactory(String serverUrl) {
+        super(serverUrl);
+    }
+
+    public FeginRemoteContractCallFactory(ServerConfig serverConfig, String serverUrl) {
+        super(serverConfig, serverUrl);
+    }
 
     @Override
     public <T> T target(Class<T> tClass, String serverUrl, ServerConfig serverConfig) {
         Feign.Builder builder = Feign.builder()
                 .encoder(new JacksonEncoder())
-                .contract(new FeginContract())
                 .decoder(new JacksonDecoder())
                 .options(new Request.Options(serverConfig.getConnectTimeoutMillis(1000), serverConfig.getReadTimeoutMillis(3500)))
                 .retryer(new Retryer.Default(100, 2000, serverConfig.getRetry(3)));
-        return builder.target(tClass, serverUrl);
+        Target<T> target = new ContractTarget(tClass, serverUrl);
+        return builder.target(target);
     }
 
-    @Override
-    public <T> T target(Class<T> tClass, String serverUrl) {
-        return null;
-    }
-
-    @Override
-    public <T> T target(Class<T> tClass) {
-        return null;
-    }
 }
