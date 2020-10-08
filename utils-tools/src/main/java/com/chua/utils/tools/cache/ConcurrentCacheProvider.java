@@ -23,7 +23,7 @@ public class ConcurrentCacheProvider<K, V> implements ICacheProvider<K, V>, ICac
     }
 
     @Override
-    public boolean container(String name) {
+    public boolean container(K name) {
         return cache.containsKey(name);
     }
 

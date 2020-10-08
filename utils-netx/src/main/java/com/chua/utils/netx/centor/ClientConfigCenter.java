@@ -1,6 +1,7 @@
 package com.chua.utils.netx.centor;
 
 import com.chua.utils.tools.handler.Handler;
+import com.chua.utils.tools.handler.HandlerResolver;
 import com.chua.utils.tools.handler.ThrowableHandler;
 import com.chua.utils.tools.properties.NetxProperties;
 
@@ -21,9 +22,9 @@ public interface ClientConfigCenter extends AutoCloseable {
 	/**
 	 * 连接
 	 * @throws Throwable
-	 * @param handlers 动作
+	 * @param handlerResolver 动作
 	 */
-	void connect(List<Handler> handlers) throws Throwable;
+	void connect(HandlerResolver handlerResolver) throws Throwable;
 
 	/**
 	 * 关闭

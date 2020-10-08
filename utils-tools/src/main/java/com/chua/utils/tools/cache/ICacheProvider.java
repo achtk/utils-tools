@@ -22,7 +22,7 @@ public interface ICacheProvider<K, T> {
      * @param name 索引
      * @return
      */
-    boolean container(String name);
+    boolean container(K name);
     /**
      * 获取所有数据
      * @return

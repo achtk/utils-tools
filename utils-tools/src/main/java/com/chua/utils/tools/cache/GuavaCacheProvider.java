@@ -66,7 +66,7 @@ public class GuavaCacheProvider<K, T> implements ICacheProvider<K, T>, ICacheMan
     }
 
     @Override
-    public boolean container(String name) {
+    public boolean container(K name) {
         return null != name && null != cache && null != cache.getIfPresent(name);
     }
 

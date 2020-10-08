@@ -1,7 +1,7 @@
 package com.chua.utils.tools.properties;
 
 
-import com.chua.utils.tools.options.TcpOptions;
+import com.chua.utils.tools.common.NetHelper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,6 +19,7 @@ import java.util.Properties;
 @Slf4j
 public class NetxProperties extends Properties implements StatelessProperties {
     public static final String CONFIG_FIELD_RETRY = "retry";
+    public static final int DEFAULT_CONFIG_FIELD_RETRY = 3;
     public static final String CONFIG_FIELD_PORT = "port";
     public static final String CONFIG_FIELD_HOST = "host";
     public static final String CONFIG_FIELD_PASSWORD = "password";
@@ -30,6 +31,7 @@ public class NetxProperties extends Properties implements StatelessProperties {
     public static final String CONFIG_FIELD_PATH = "path";
     public static final String CONFIG_FIELD_SESSION_TIMEOUT = "sessionTimeout";
     public static final String CONFIG_FIELD_DATABASE_NAME = "databaseName";
+    private static final String DEFAULT_HOST = "localhost";
     /**
      * 主机
      */
@@ -80,8 +82,18 @@ public class NetxProperties extends Properties implements StatelessProperties {
     private String path;
     private Object t;
 
+    public static final NetxProperties newProperty(String host) {
+        NetxProperties netxProperties = new NetxProperties();
+        netxProperties.setHost(host);
+        return netxProperties;
+    }
+
     public void setHost(String host) {
-        this.host = new String[] {host};
+        this.host = new String[] { host };
+        if(host.indexOf(":") != -1) {
+            int port = NetHelper.getPort(host);
+            setPort(port);
+        }
         this.put(CONFIG_FIELD_HOST, this.host);
     }
 
@@ -96,9 +108,9 @@ public class NetxProperties extends Properties implements StatelessProperties {
      */
     public String getHostifOnly() {
         if(null == host) {
-            return TcpOptions.DEFAULT_HOST;
+            return DEFAULT_HOST;
         }
-        return host.length == 1 ? host[0] : TcpOptions.DEFAULT_HOST;
+        return host.length == 1 ? host[0] : DEFAULT_HOST;
     }
     /**
      *
@@ -169,6 +181,10 @@ public class NetxProperties extends Properties implements StatelessProperties {
     public void setRetry(int retry) {
         this.retry = retry;
         this.put(CONFIG_FIELD_RETRY, retry);
+    }
+
+    public int getRetry() {
+        return retry < 0 ? DEFAULT_CONFIG_FIELD_RETRY : retry;
     }
 
     public void setPort(int port) {

@@ -471,7 +471,15 @@ public class JsonHelper {
 	 * @return
 	 */
 	public static <T> T fromJson(final byte[] bytes, final Class<T> tClass) {
-		return null == bytes || null == tClass ? null : fromJson(bytes, tClass);
+		if (null == bytes || null == tClass) {
+			return null;
+		}
+		try {
+			return OBJECT_MAPPER.readValue(bytes, tClass);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**

@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * 集合工具类
@@ -659,5 +660,19 @@ public class CollectionHelper {
             result.add((T) o);
         }
         return result;
+    }
+
+    /**
+     * 循环集合(自动判空)
+     * @param source 数据
+     * @param consumer 回调
+     */
+    public static <Item>void forEach(Collection<Item> source, Consumer<Item> consumer) {
+        if(!BooleanHelper.hasLength(source) || null == consumer) {
+            return;
+        }
+        for (Item item : source) {
+            consumer.accept(item);
+        }
     }
 }

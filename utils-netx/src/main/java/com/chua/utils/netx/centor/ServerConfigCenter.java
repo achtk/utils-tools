@@ -1,6 +1,7 @@
 package com.chua.utils.netx.centor;
 
 import com.chua.utils.tools.handler.Handler;
+import com.chua.utils.tools.handler.HandlerResolver;
 import com.chua.utils.tools.handler.ThrowableHandler;
 import com.chua.utils.tools.properties.NetxProperties;
 
@@ -22,9 +23,8 @@ public interface ServerConfigCenter<T> {
 	/**
 	 * 启动
 	 * @throws Throwable
-	 * @param handlers 处理
 	 */
-	void start(List<Handler> handlers) throws Throwable;
+	void start(HandlerResolver resolver) throws Throwable;
 
 	/**
 	 * 停止

@@ -66,7 +66,7 @@ public class EhcacheCacheProvider<K, T> implements ICacheProvider<K, T> {
     }
 
     @Override
-    public boolean container(String name) {
+    public boolean container(K name) {
         return null == name ? false : cache.containsKey(name);
     }
 
