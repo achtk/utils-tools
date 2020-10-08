@@ -4,7 +4,6 @@ import com.chua.utils.netx.centor.ServerConfigCenter;
 import com.chua.utils.netx.vertx.result.AsyncServerResultHandler;
 import com.chua.utils.netx.vertx.result.ResultHandler;
 import com.chua.utils.netx.vertx.util.NetSocketUtil;
-import com.chua.utils.tools.common.BeansHelper;
 import com.chua.utils.tools.handler.Handler;
 import com.chua.utils.tools.handler.HandlerResolver;
 import com.chua.utils.tools.handler.ThrowableHandler;
