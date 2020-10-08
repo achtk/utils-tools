@@ -20,7 +20,7 @@ public class TcpClientTest {
 		netxProperties.setPort(43577);
 		netxProperties.setHost("218.75.14.162");
 		ClientConfigCenter clientConfigCenter = new VertxNetClientConfigurationCenter(netxProperties);
-		clientConfigCenter.connect(Lists.newArrayList(new DemoDataWriteHandler(), new DemoDataReaderHandler()));
+		//clientConfigCenter.connect(Lists.newArrayList(new DemoDataWriteHandler(), new DemoDataReaderHandler()));
 	}
 
 	private static class DemoDataWriteHandler implements DataWriteHandler {
