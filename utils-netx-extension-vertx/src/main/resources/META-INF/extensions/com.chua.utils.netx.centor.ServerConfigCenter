@@ -1,0 +1,2 @@
+tcp-server=com.chua.utils.netx.centor.ServerConfigCenter
+sockjs-server=com.chua.utils.netx.vertx.ws.VertxWsServerConfigurationCenter
