@@ -78,7 +78,11 @@ public class ZookeeperContext implements AutoCloseable {
             } catch (IllegalArgumentException e) {
             }
         }
-
+        Stat stat = this.curatorFramework.checkExists().forPath(node);
+        if(null != stat) {
+            log.info("节点[{}]已存在", node);
+            return;
+        }
         ACLBackgroundPathAndBytesable<String> withMode = this.curatorFramework.create().creatingParentsIfNeeded().withMode(createMode);
         if (!Strings.isNullOrEmpty(data)) {
             withMode.forPath(node, ByteHelper.getBytes(data));

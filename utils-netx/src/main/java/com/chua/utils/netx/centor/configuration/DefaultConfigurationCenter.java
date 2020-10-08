@@ -10,10 +10,7 @@ import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.properties.NetxProperties;
 import com.google.common.base.Strings;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -47,38 +44,23 @@ public class DefaultConfigurationCenter implements ConfigurationCenter {
 		centerConfigCache.remove(name);
 	}
 
-	@Override
-	public Object getValue(String name, String key) {
-		if(centerConfigCache.container(name)) {
-			return null;
-		}
-		CenterConfig centerConfig = centerConfigCache.get(name);
-		return centerConfig.getValue(key);
-	}
 
 	@Override
-	public Map<String, Object> getValue(String key) {
+	public List<CenterConfig> getCenterConfigs(String key) {
 		if(null == key) {
-			return Collections.emptyMap();
+			return Collections.emptyList();
 		}
-		Map<String, Object> result = new HashMap<>();
+		List<CenterConfig> result = new ArrayList<>();
 		ConcurrentMap<String, CenterConfig> asMap = centerConfigCache.asMap();
 		for (Map.Entry<String, CenterConfig> entry : asMap.entrySet()) {
-			result.put(entry.getKey(), entry.getValue().getValue(key));
+			result.add(entry.getValue());
 		}
 		return result;
 	}
 
 	@Override
-	public Properties get(String key) {
-		Map<String, Object> value = getValue(key);
-		return MapHelper.toProperties(value);
-	}
-
-	@Override
-	public Object getIfOnly(String key) {
-		Map<String, Object> map = getValue(key);
-		return map.size() == 1 ? FinderHelper.firstElement(map.values()) : null;
+	public CenterConfig getConfig(String name) {
+		return centerConfigCache.get(name);
 	}
 
 	@Override

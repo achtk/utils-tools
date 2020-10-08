@@ -4,18 +4,15 @@ import com.chua.utils.netx.centor.ConfigurationCenter;
 import com.chua.utils.netx.entity.CenterConfig;
 import com.chua.utils.netx.zookeeper.context.ZookeeperContext;
 import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.properties.NetxProperties;
 import com.google.common.base.Strings;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * zookeeper数据中台
@@ -23,6 +20,7 @@ import java.util.Properties;
  * @date 2020-10-07
  */
 @Slf4j
+@NoArgsConstructor
 @RequiredArgsConstructor
 public class ZookeeperConfigurationCenter implements ConfigurationCenter {
 
@@ -48,7 +46,7 @@ public class ZookeeperConfigurationCenter implements ConfigurationCenter {
 		if(zookeeperContext.exist(newKey)) {
 			zookeeperContext.delete(newKey);
 		}
-		zookeeperContext.createEphemeral(newKey, JsonHelper.toJson(centerConfig.getProperties()));
+		zookeeperContext.createEphemeral(newKey, JsonHelper.toJson(centerConfig));
 	}
 
 	@Override
@@ -67,8 +65,8 @@ public class ZookeeperConfigurationCenter implements ConfigurationCenter {
 			register(centerConfig);
 			return;
 		}
-		getValue(name);
-		zookeeperContext.createEphemeral(newKey, JsonHelper.toJson(centerConfig.getProperties()));
+		getCenterConfigs(name);
+		zookeeperContext.createEphemeral(newKey, JsonHelper.toJson(centerConfig));
 	}
 
 	@Override
@@ -84,49 +82,40 @@ public class ZookeeperConfigurationCenter implements ConfigurationCenter {
 	}
 
 	@Override
-	public Map<String, Object> getValue(String key) {
+	public List<CenterConfig> getCenterConfigs(String key) {
 		List<String> children = zookeeperContext.getChildren(configName);
 		if(!BooleanHelper.hasLength(children)) {
 			return null;
 		}
-		Map<String, Object> result = new HashMap<>();
+		List<CenterConfig> centerConfigs = new ArrayList<>(children.size());
 		for (String child : children) {
-			result.put(child, getValue(child, key));
+			CenterConfig centerConfig = getConfig(child);
+			if(null == centerConfig) {
+				continue;
+			}
+			if(!centerConfig.isContainer(key)) {
+				continue;
+			}
+			centerConfigs.add(centerConfig);
 		}
-		return result;
+
+		Collections.sort(centerConfigs, new Comparator<CenterConfig>() {
+			@Override
+			public int compare(CenterConfig o1, CenterConfig o2) {
+				return o1.getOrder() - o2.getOrder() > 0 ? -1 : 1;
+			}
+		});
+		return centerConfigs;
 	}
 
 	@Override
-	public Properties get(String name) {
+	public CenterConfig getConfig(String name) {
 		if(Strings.isNullOrEmpty(name)) {
 			return null;
 		}
 		byte[] bytes = zookeeperContext.queryForString(configName + "/" + name);
-		try {
-			return JsonHelper.fromJson(bytes, Properties.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	@Override
-	public Object getValue(String name, String key) {
-		if(Strings.isNullOrEmpty(name)) {
-			return null;
-		}
-		byte[] bytes = zookeeperContext.queryForString(configName + "/" + name);
-		Map<String, Object> objectMap = JsonHelper.fromJson2Map(bytes);
-		if(!BooleanHelper.hasLength(objectMap)) {
-			return null;
-		}
-		return null;
-	}
-
-	@Override
-	public Object getIfOnly(String key) {
-		Map<String, Object> map = getValue(key);
-		return map.size() == 1 ? FinderHelper.firstElement(map.values()) : null;
+		CenterConfig centerConfig = JsonHelper.fromJson(bytes, CenterConfig.class);
+		return centerConfig;
 	}
 
 	@Override

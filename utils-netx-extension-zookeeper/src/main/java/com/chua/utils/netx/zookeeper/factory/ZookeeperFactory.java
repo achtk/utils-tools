@@ -69,9 +69,7 @@ public class ZookeeperFactory implements INetxFactory<CuratorFramework> {
             builder.connectionTimeoutMs(MapHelper.ints(NetxProperties.CONFIG_FIELD_CONNECTION_TIMEOUT, netxProperties));
         }
 
-        if (MapHelper.isValid(NetxProperties.CONFIG_FIELD_RETRY, netxProperties)) {
-            builder.retryPolicy(new RetryNTimes(MapHelper.ints(NetxProperties.CONFIG_FIELD_RETRY, netxProperties), 1000));
-        }
+        builder.retryPolicy(new RetryNTimes(MapHelper.ints(NetxProperties.CONFIG_FIELD_RETRY, netxProperties), 1000));
         CountDownLatch countDownLatch = new CountDownLatch(1);
         this.curatorFramework = builder.build();
         this.curatorFramework.start();
