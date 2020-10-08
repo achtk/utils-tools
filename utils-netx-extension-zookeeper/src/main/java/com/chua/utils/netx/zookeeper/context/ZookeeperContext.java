@@ -15,6 +15,7 @@ import org.apache.curator.framework.recipes.cache.TreeCache;
 import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
 import org.apache.curator.framework.recipes.cache.TreeCacheListener;
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.data.Stat;
 
 import java.util.List;
 
@@ -116,6 +117,14 @@ public class ZookeeperContext implements AutoCloseable {
     public byte[] queryForString(final String node, String defaultValue) {
         return query(node, null == defaultValue ? null : defaultValue.getBytes(Charsets.UTF_8));
     }
+    /**
+     * 获取节点
+     * @param node 节点名称
+     * @return
+     */
+    public byte[] queryForString(final String node) {
+        return queryForString(node, null);
+    }
 
     /**
      * 事件监听
@@ -172,6 +181,35 @@ public class ZookeeperContext implements AutoCloseable {
     public void close() throws Exception {
         if(null != this.netxFactory) {
             netxFactory.close();
+        }
+    }
+
+    /**
+     * 存在节点
+     * @param node 节点
+     * @return
+     */
+    public boolean exist(String node) {
+        try {
+            Stat stat = this.curatorFramework.checkExists().forPath(node);
+            return null != stat;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    /**
+     * 删除节点
+     * @param node 节点
+     * @return
+     */
+    public boolean delete(String node) {
+        try {
+            this.curatorFramework.delete().deletingChildrenIfNeeded().forPath(node);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

@@ -15,57 +15,57 @@ public interface ICacheProvider<K, T> {
      * @param cacheProperties
      * @return
      */
-    public ICacheProvider configure(CacheProperties cacheProperties);
+    ICacheProvider configure(CacheProperties cacheProperties);
 
     /**
      * 是否存在缓存
      * @param name 索引
      * @return
      */
-    public boolean container(String name);
+    boolean container(String name);
     /**
      * 获取所有数据
      * @return
      */
-    public ConcurrentMap<K, T> asMap();
+    ConcurrentMap<K, T> asMap();
     /**
      * 获取缓存
      * @param name 索引
      * @return
      */
-    public T get(K name);
+    T get(K name);
     /**
      * 保存缓存
      * @param name 索引
      * @param value 值
      */
-    public T put(K name, T value);
+    T put(K name, T value);
     /**
      * 更新缓存
      * @param name  索引
      * @param value 值
      */
-    public T update(K name, T value);
+    T update(K name, T value);
 
     /**
      * 删除缓存
      * @param name  索引
      */
-    public void remove(K... name);
+    void remove(K... name);
     /**
      * 删除缓存
      * @param name 索引
      */
-    public void remove(List<K> name);
+    void remove(List<K> name);
 
     /**
      * 清空
      */
-    public void removeAll();
+    void removeAll();
 
     /**
      * 缓存数量
      * @return
      */
-    public long size();
+    long size();
 }

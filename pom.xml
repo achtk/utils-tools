@@ -209,6 +209,7 @@
         <module>utils-netx-extension-rpc-sofa</module>
         <module>utils-netx-extension-mongodb</module>
         <module>utils-spider</module>
+        <module>utils-netx-extension-vertx</module>
     </modules>
 
     <build>

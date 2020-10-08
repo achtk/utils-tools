@@ -83,6 +83,85 @@ public class ClassHelper extends ClassInfoHelper {
     }
 
     /**
+     * 字符串转类对象
+     *
+     * @param typeName     类名
+     * @param classLoaders 类加载器
+     * @return
+     */
+    public static Class<?> forName(final String typeName, ClassLoader... classLoaders) {
+        if (StringHelper.isNotEmpty(typeName)) {
+            if (getPrimitiveNames().contains(typeName)) {
+                return getPrimitiveTypes().get(getPrimitiveNames().indexOf(typeName));
+            } else {
+                String type;
+                if (typeName.contains("[")) {
+                    int i = typeName.indexOf("[");
+                    type = typeName.substring(0, i);
+                    String array = typeName.substring(i).replace("]", "");
+
+                    if (getPrimitiveNames().contains(type)) {
+                        type = getPrimitiveDescriptors().get(getPrimitiveNames().indexOf(type));
+                    } else {
+                        type = "L" + type + ";";
+                    }
+
+                    type = array + type;
+                } else {
+                    type = typeName;
+                }
+
+                if (!BooleanHelper.hasLength(classLoaders)) {
+                    classLoaders = ArraysHelper.add(classLoaders, getDefaultClassLoader());
+                }
+
+                List<Throwable> reflectionsExceptions = Lists.newArrayList();
+                for (ClassLoader classLoader : classLoaders) {
+                    try {
+                        return Class.forName(type, false, classLoader);
+                    } catch (Throwable e) {
+                        reflectionsExceptions.add(e);
+                    }
+                }
+
+                if (log.isTraceEnabled()) {
+                    for (Throwable reflectionsException : reflectionsExceptions) {
+                        log.trace("could not get type for name " + typeName + " from any class loader", reflectionsException);
+                    }
+                }
+                return null;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取默认类加载器
+     * <p>
+     * 默认获取当前线程的类加载器<code>Thread.currentThread().getContextClassLoader()</code>
+     * </p>
+     *
+     * @return
+     */
+    public static ClassLoader getDefaultClassLoader() {
+        ClassLoader cl = null;
+        try {
+            cl = Thread.currentThread().getContextClassLoader();
+        } catch (Throwable ex) {
+        }
+        if (cl == null) {
+            cl = ClassHelper.class.getClassLoader();
+            if (cl == null) {
+                try {
+                    cl = ClassLoader.getSystemClassLoader();
+                } catch (Throwable ex) {
+                }
+            }
+        }
+        return cl;
+    }
+
+    /**
      * 获取简单名字
      * <p>ClassHelper.getSimpleClassName("java.lang.String") = String</p>
      *
@@ -205,6 +284,94 @@ public class ClassHelper extends ClassInfoHelper {
     }
 
     /**
+     * 通过默认类加载器转化类名为类
+     *
+     * @param className 类名
+     * @return
+     * @throws ClassNotFoundException
+     * @see #getDefaultClassLoader()
+     */
+    private static Class<?> forNameNoClassLoader(String className) throws ClassNotFoundException {
+        if (CLASS_BOOLEAN.equals(className)) {
+            return boolean.class;
+        }
+        if (CLASS_BYTE.equals(className)) {
+            return byte.class;
+        }
+        if (CLASS_CHAR.equals(className)) {
+            return char.class;
+        }
+        if (CLASS_SHORT.equals(className)) {
+            return short.class;
+        }
+        if (CLASS_INT.equals(className)) {
+            return int.class;
+        }
+        if (CLASS_LONG.equals(className)) {
+            return long.class;
+        }
+        if (CLASS_FLOAT.equals(className)) {
+            return float.class;
+        }
+        if (CLASS_DOUBLE.equals(className)) {
+            return double.class;
+        }
+        if ("boolean[]".equals(className)) {
+            return boolean[].class;
+        }
+        if ("byte[]".equals(className)) {
+            return byte[].class;
+        }
+        if ("char[]".equals(className)) {
+            return char[].class;
+        }
+        if ("short[]".equals(className)) {
+            return short[].class;
+        }
+        if ("int[]".equals(className)) {
+            return int[].class;
+        }
+        if ("long[]".equals(className)) {
+            return long[].class;
+        }
+        if ("float[]".equals(className)) {
+            return float[].class;
+        }
+        if ("double[]".equals(className)) {
+            return double[].class;
+        }
+        try {
+            return arrayForName(className);
+        } catch (ClassNotFoundException e) {
+            try {
+                return Class.forName(className, false, getDefaultClassLoader());
+            } catch (Exception e1) {
+                if (className.indexOf('.') != -1) {
+                    throw e;
+                }
+                try {
+                    return arrayForName("java.lang." + className);
+                } catch (ClassNotFoundException e2) {
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取数组类类
+     *
+     * @param className 数组类类名
+     * @return
+     * @throws ClassNotFoundException
+     */
+    private static Class<?> arrayForName(String className) throws ClassNotFoundException {
+        return Class.forName(className.endsWith("[]")
+                ? "[L" + className.substring(0, className.length() - 2) + ";"
+                : className, true, Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
      * 字符串转类对象
      *
      * @param typeName     类名
@@ -213,102 +380,6 @@ public class ClassHelper extends ClassInfoHelper {
      */
     public static Class<?> forName(final String typeName, List<ClassLoader> classLoaders) {
         return forName(typeName, classLoaders.toArray(new ClassLoader[classLoaders.size()]));
-    }
-
-
-
-    /**
-     * 字符串转类对象
-     *
-     * @param typeName     类名
-     * @param classLoaders 类加载器
-     * @return
-     */
-    public static Class<?> forName(final String typeName, ClassLoader... classLoaders) {
-        if (StringHelper.isNotEmpty(typeName)) {
-            if (getPrimitiveNames().contains(typeName)) {
-                return getPrimitiveTypes().get(getPrimitiveNames().indexOf(typeName));
-            } else {
-                String type;
-                if (typeName.contains("[")) {
-                    int i = typeName.indexOf("[");
-                    type = typeName.substring(0, i);
-                    String array = typeName.substring(i).replace("]", "");
-
-                    if (getPrimitiveNames().contains(type)) {
-                        type = getPrimitiveDescriptors().get(getPrimitiveNames().indexOf(type));
-                    } else {
-                        type = "L" + type + ";";
-                    }
-
-                    type = array + type;
-                } else {
-                    type = typeName;
-                }
-
-                if (!BooleanHelper.hasLength(classLoaders)) {
-                    classLoaders = ArraysHelper.add(classLoaders, getDefaultClassLoader());
-                }
-
-                List<Throwable> reflectionsExceptions = Lists.newArrayList();
-                for (ClassLoader classLoader : classLoaders) {
-                    try {
-                        return Class.forName(type, false, classLoader);
-                    } catch (Throwable e) {
-                        reflectionsExceptions.add(e);
-                    }
-                }
-
-                if (log.isTraceEnabled()) {
-                    for (Throwable reflectionsException : reflectionsExceptions) {
-                        log.trace("could not get type for name " + typeName + " from any class loader", reflectionsException);
-                    }
-                }
-                return null;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 获取默认类加载器
-     * <p>
-     * 默认获取当前线程的类加载器<code>Thread.currentThread().getContextClassLoader()</code>
-     * </p>
-     *
-     * @return
-     */
-    public static ClassLoader getDefaultClassLoader() {
-        ClassLoader cl = null;
-        try {
-            cl = Thread.currentThread().getContextClassLoader();
-        } catch (Throwable ex) {
-        }
-        if (cl == null) {
-            cl = ClassHelper.class.getClassLoader();
-            if (cl == null) {
-                try {
-                    cl = ClassLoader.getSystemClassLoader();
-                } catch (Throwable ex) {
-                }
-            }
-        }
-        return cl;
-    }
-
-    /**
-     * 实例化类
-     *
-     * @param className    类名
-     * @param classLoaders 类加载器(默认当前线程类加载器)
-     * @return
-     */
-    public static <T> T forObject(String className, ClassLoader... classLoaders) {
-        if (!BooleanHelper.hasLength(classLoaders)) {
-            classLoaders = new ClassLoader[]{getDefaultClassLoader()};
-        }
-        Class<?> aClass = forName(className, classLoaders);
-        return (T) forObject(aClass);
     }
 
     /**
@@ -325,79 +396,6 @@ public class ClassHelper extends ClassInfoHelper {
         }
         Class<?> aClass = forName(className, classLoaders);
         return (T) forObject(aClass);
-    }
-
-    /**
-     * 实例化类
-     *
-     * @param clazz        类
-     * @param classLoaders 类加载器(默认当前线程类加载器)
-     * @return
-     */
-    public static <T> T forObject(Class<?> clazz, ClassLoader... classLoaders) {
-        if (null == clazz) {
-            return null;
-        }
-        if (!BooleanHelper.hasLength(classLoaders)) {
-            classLoaders = new ClassLoader[]{getDefaultClassLoader()};
-        }
-        Class<?> aClass = forName(clazz.getName(), classLoaders);
-        return (T) forObject(aClass);
-    }
-
-    /**
-     * 实例化类
-     *
-     * @param className 类名
-     * @return
-     */
-    public static <T> T forObject(String className) {
-        return forObject(className, getDefaultClassLoader());
-    }
-
-    /**
-     * 获取类对象
-     *
-     * @param value  数据
-     * @param tClass 类
-     * @param <T>
-     * @return
-     */
-    public static <T> T forObject(final Object value, final Class<T> tClass) {
-        if (null == value) {
-            return null;
-        }
-        if (null == tClass) {
-            return (T) value.toString();
-        }
-
-        String simpleName = tClass.getSimpleName().toLowerCase();
-        switch (simpleName) {
-            case "string":
-                return (T) value.toString();
-            case "long":
-                return (T) Long.valueOf(value.toString());
-            case "int":
-                return (T) Integer.valueOf(value.toString());
-            case "integer":
-                return (T) Integer.valueOf(value.toString());
-            case "float":
-                return (T) Float.valueOf(value.toString());
-            case "boolean":
-                return (T) Boolean.valueOf(value.toString());
-            case "double":
-                return (T) Double.valueOf(value.toString());
-            case "byte":
-                return (T) Byte.valueOf(value.toString());
-            case "char":
-                return (T) value;
-            case "short":
-                return (T) Short.valueOf(value.toString());
-            case "bigdecimal":
-                return (T) new BigDecimal(value.toString());
-            default:
-                return null;
-        }
     }
 
     /**
@@ -526,6 +524,93 @@ public class ClassHelper extends ClassInfoHelper {
         return tryCheckClassName;
     }
 
+    /**
+     * 实例化类
+     *
+     * @param clazz        类
+     * @param classLoaders 类加载器(默认当前线程类加载器)
+     * @return
+     */
+    public static <T> T forObject(Class<?> clazz, ClassLoader... classLoaders) {
+        if (null == clazz) {
+            return null;
+        }
+        if (!BooleanHelper.hasLength(classLoaders)) {
+            classLoaders = new ClassLoader[]{getDefaultClassLoader()};
+        }
+        Class<?> aClass = forName(clazz.getName(), classLoaders);
+        return (T) forObject(aClass);
+    }
+
+    /**
+     * 实例化类
+     *
+     * @param className 类名
+     * @return
+     */
+    public static <T> T forObject(String className) {
+        return forObject(className, getDefaultClassLoader());
+    }
+
+    /**
+     * 实例化类
+     *
+     * @param className    类名
+     * @param classLoaders 类加载器(默认当前线程类加载器)
+     * @return
+     */
+    public static <T> T forObject(String className, ClassLoader... classLoaders) {
+        if (!BooleanHelper.hasLength(classLoaders)) {
+            classLoaders = new ClassLoader[]{getDefaultClassLoader()};
+        }
+        Class<?> aClass = forName(className, classLoaders);
+        return (T) forObject(aClass);
+    }
+
+    /**
+     * 获取类对象
+     *
+     * @param value  数据
+     * @param tClass 类
+     * @param <T>
+     * @return
+     */
+    public static <T> T forObject(final Object value, final Class<T> tClass) {
+        if (null == value) {
+            return null;
+        }
+        if (null == tClass) {
+            return (T) value.toString();
+        }
+
+        String simpleName = tClass.getSimpleName().toLowerCase();
+        switch (simpleName) {
+            case "string":
+                return (T) value.toString();
+            case "long":
+                return (T) Long.valueOf(value.toString());
+            case "int":
+                return (T) Integer.valueOf(value.toString());
+            case "integer":
+                return (T) Integer.valueOf(value.toString());
+            case "float":
+                return (T) Float.valueOf(value.toString());
+            case "boolean":
+                return (T) Boolean.valueOf(value.toString());
+            case "double":
+                return (T) Double.valueOf(value.toString());
+            case "byte":
+                return (T) Byte.valueOf(value.toString());
+            case "char":
+                return (T) value;
+            case "short":
+                return (T) Short.valueOf(value.toString());
+            case "bigdecimal":
+                return (T) new BigDecimal(value.toString());
+            default:
+                return null;
+        }
+    }
 
     /**
      * 将字符串集合转为类集合
@@ -575,94 +660,6 @@ public class ClassHelper extends ClassInfoHelper {
             }
         }
         return false;
-    }
-
-    /**
-     * 通过默认类加载器转化类名为类
-     *
-     * @param className 类名
-     * @return
-     * @throws ClassNotFoundException
-     * @see #getDefaultClassLoader()
-     */
-    private static Class<?> forNameNoClassLoader(String className) throws ClassNotFoundException {
-        if (CLASS_BOOLEAN.equals(className)) {
-            return boolean.class;
-        }
-        if (CLASS_BYTE.equals(className)) {
-            return byte.class;
-        }
-        if (CLASS_CHAR.equals(className)) {
-            return char.class;
-        }
-        if (CLASS_SHORT.equals(className)) {
-            return short.class;
-        }
-        if (CLASS_INT.equals(className)) {
-            return int.class;
-        }
-        if (CLASS_LONG.equals(className)) {
-            return long.class;
-        }
-        if (CLASS_FLOAT.equals(className)) {
-            return float.class;
-        }
-        if (CLASS_DOUBLE.equals(className)) {
-            return double.class;
-        }
-        if ("boolean[]".equals(className)) {
-            return boolean[].class;
-        }
-        if ("byte[]".equals(className)) {
-            return byte[].class;
-        }
-        if ("char[]".equals(className)) {
-            return char[].class;
-        }
-        if ("short[]".equals(className)) {
-            return short[].class;
-        }
-        if ("int[]".equals(className)) {
-            return int[].class;
-        }
-        if ("long[]".equals(className)) {
-            return long[].class;
-        }
-        if ("float[]".equals(className)) {
-            return float[].class;
-        }
-        if ("double[]".equals(className)) {
-            return double[].class;
-        }
-        try {
-            return arrayForName(className);
-        } catch (ClassNotFoundException e) {
-            try {
-                return Class.forName(className, false, getDefaultClassLoader());
-            } catch (Exception e1) {
-                if (className.indexOf('.') != -1) {
-                    throw e;
-                }
-                try {
-                    return arrayForName("java.lang." + className);
-                } catch (ClassNotFoundException e2) {
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 获取数组类类
-     *
-     * @param className 数组类类名
-     * @return
-     * @throws ClassNotFoundException
-     */
-    private static Class<?> arrayForName(String className) throws ClassNotFoundException {
-        return Class.forName(className.endsWith("[]")
-                ? "[L" + className.substring(0, className.length() - 2) + ";"
-                : className, true, Thread.currentThread().getContextClassLoader());
     }
 
 

@@ -161,7 +161,7 @@ public class MapHelper {
      * @param source 原始数据
      * @return
      */
-    public static <K, V> Properties properties(final Map<K, V> source) {
+    public static <K, V> Properties toProperties(final Map<K, V> source) {
         if (null == source) {
             return null;
         }

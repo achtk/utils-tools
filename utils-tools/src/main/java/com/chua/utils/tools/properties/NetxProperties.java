@@ -1,6 +1,7 @@
 package com.chua.utils.tools.properties;
 
 
+import com.chua.utils.tools.options.TcpOptions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,8 +17,9 @@ import java.util.Properties;
  */
 @Getter
 @Slf4j
-public class NetxProperties extends Properties {
+public class NetxProperties extends Properties implements StatelessProperties {
     public static final String CONFIG_FIELD_RETRY = "retry";
+    public static final String CONFIG_FIELD_PORT = "port";
     public static final String CONFIG_FIELD_HOST = "host";
     public static final String CONFIG_FIELD_PASSWORD = "password";
     public static final String CONFIG_FIELD_USERNAME = "username";
@@ -32,6 +34,10 @@ public class NetxProperties extends Properties {
      * 主机
      */
     private String[] host;
+    /**
+     * 端口
+     */
+    private int port;
     /**
      * 读取超时
      */
@@ -72,6 +78,7 @@ public class NetxProperties extends Properties {
      * 路径
      */
     private String path;
+    private Object t;
 
     public void setHost(String host) {
         this.host = new String[] {host};
@@ -83,6 +90,16 @@ public class NetxProperties extends Properties {
         this.put(CONFIG_FIELD_HOST, host);
     }
 
+    /**
+     * 当唯一值获取数据
+     * @return
+     */
+    public String getHostifOnly() {
+        if(null == host) {
+            return TcpOptions.DEFAULT_HOST;
+        }
+        return host.length == 1 ? host[0] : TcpOptions.DEFAULT_HOST;
+    }
     /**
      *
      * @param host
@@ -154,7 +171,18 @@ public class NetxProperties extends Properties {
         this.put(CONFIG_FIELD_RETRY, retry);
     }
 
+    public void setPort(int port) {
+        this.port = port;
+        this.put(CONFIG_FIELD_PORT, port);
+    }
 
+    @Override
+    public <T>T getEntity() {
+        return (T) t;
+    }
 
-
+    @Override
+    public <T>void setEntity(T t) {
+        this.t = t;
+    }
 }

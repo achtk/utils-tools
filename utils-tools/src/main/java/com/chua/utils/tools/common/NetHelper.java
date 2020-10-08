@@ -334,4 +334,17 @@ public class NetHelper {
         }
         return newUri.startsWith(HTTP) ? newUri : HTTP + newUri;
     }
+
+    /**
+     * 获取protocol
+     * @param address 地址
+     * @return
+     */
+	public static String getProtocol(String address) {
+	    if(Strings.isNullOrEmpty(address)) {
+	        return "";
+        }
+        int index = address.indexOf("://");
+	    return index == -1 ? "" : address.substring(0, index);
+    }
 }

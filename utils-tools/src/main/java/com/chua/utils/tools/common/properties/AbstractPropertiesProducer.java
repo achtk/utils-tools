@@ -6,7 +6,6 @@ import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.common.StringHelper;
-import com.chua.utils.tools.common.loader.PropertiesLoader;
 import com.google.common.collect.Sets;
 
 import java.util.*;
@@ -805,7 +804,7 @@ public abstract class AbstractPropertiesProducer {
 
     public void cfgLoader(CfgConfig cfgConfig) {
         ConcurrentHashMap<String, Object> initialCfg = CfgOptions.initialCfg(cfgConfig);
-        Properties properties = MapHelper.properties(initialCfg);
+        Properties properties = MapHelper.toProperties(initialCfg);
         put(StringHelper.uuid(), properties);
     }
 }

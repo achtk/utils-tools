@@ -20,6 +20,10 @@ import static com.chua.utils.tools.constant.StringConstant.SYSTEM_PRIORITY_PROP;
 @Setter
 public class CfgConfig {
     /**
+     * 默认 slaver
+     */
+    private static final List<String> DEFAULT_SLAVERS = Lists.newArrayList("extension/", "META-INF/extension/");
+    /**
      * 主要配置文件
      */
     private String master;
@@ -41,17 +45,13 @@ public class CfgConfig {
      * <p>处理时和 @see #slavers 合并处理</p>
      */
     private String slaverName;
-
     /**
      * <p>次要配置文件名称</p>
      * <p>主要配置文件可以通过该属性去解析文件</p>
      * <p>e.g.C://xx.json</p>
      */
     private String slaverKey;
-    /**
-     * 默认 slaver
-     */
-    private static final List<String> DEFAULT_SLAVERS = Lists.newArrayList("extension/", "META-INF/extension/");
+
     /**
      * 添加配置
      * @param strings

@@ -4,7 +4,6 @@ import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.common.properties.AbstractPropertiesProducer;
-import com.google.common.base.Strings;
 
 import java.util.Map;
 import java.util.Properties;
@@ -81,7 +80,7 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
      */
     public PropertiesLoader add(final Map<String, Object> objectMap) {
         if (null != objectMap) {
-            Properties properties = MapHelper.properties(objectMap);
+            Properties properties = MapHelper.toProperties(objectMap);
             this.put(StringHelper.uuid(), properties);
         }
         return this;
