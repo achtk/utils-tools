@@ -1,33 +1,20 @@
 package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.common.*;
-import com.chua.utils.tools.entity.*;
-import com.chua.utils.tools.function.MethodMatcher;
 import com.chua.utils.tools.proxy.JavassistProxyAgent;
 import com.chua.utils.tools.proxy.ProxyAgent;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import javassist.*;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.cglib.beans.BeanGenerator;
-import net.sf.cglib.beans.BeanMap;
-import net.sf.cglib.core.Signature;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.InterfaceMaker;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ConfigurationBuilder;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiConsumer;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
 
@@ -662,5 +649,18 @@ public class ClassHelper extends ClassInfoHelper {
         return false;
     }
 
+    /**
+     * 获取子类
+     * @param <T>
+     * @param tClass 类
+     * @return
+     */
+    public static <T> Set<Class<? extends T>> getSubTypesOf(Class<T> tClass) {
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+        configurationBuilder.addScanners(new SubTypesScanner());
+        configurationBuilder.setClassLoaders(new ClassLoader[]{getDefaultClassLoader()});
+        Reflections reflections = new Reflections(configurationBuilder);
+        return reflections.getSubTypesOf(tClass);
+    }
 
 }
