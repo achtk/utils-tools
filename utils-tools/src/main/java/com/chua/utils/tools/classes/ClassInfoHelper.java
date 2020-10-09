@@ -1,9 +1,6 @@
 package com.chua.utils.tools.classes;
 
-import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.common.CollectionHelper;
-import com.chua.utils.tools.common.FinderHelper;
-import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.common.*;
 import com.chua.utils.tools.entity.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -17,6 +14,7 @@ import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
 import net.sf.cglib.beans.BeanMap;
 
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
@@ -35,12 +33,21 @@ public class ClassInfoHelper {
     protected static final String SETTER = "set";
     protected static final String JAVASSIST_SUFFIX = "$javassist";
 
+    protected static final Class<?>[] EMPTY_CLASS_ARRAY = new Class<?>[0];
+
+    protected static final Method[] EMPTY_METHOD_ARRAY = new Method[0];
+
+    protected static final Field[] EMPTY_FIELD_ARRAY = new Field[0];
+
+    protected static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+
 
     private static List<String> primitiveNames;
     private static List<Class> primitiveTypes;
     private static List<String> primitiveDescriptors;
 
     private static final Map<Object, Map<String, Object>> DECLARED_FIELDS_CACHE = new ConcurrentHashMap<>(256);
+    private static final Map<Class<?>, Field[]> declaredFieldsCache = new ConcurrentHashMap<>(256);
 
     public static List<String> getPrimitiveNames() {
         initPrimitives();
@@ -805,4 +812,54 @@ public class ClassInfoHelper {
         }
         return (T) ClassHelper.forObject(ctClass.toClass());
     }
+
+    /**
+     * getDeclaredFields
+     * @param clazz
+     * @return
+     */
+    protected static Field[] getDeclaredFields(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
+        Field[] result = declaredFieldsCache.get(clazz);
+        if (result == null) {
+            try {
+                result = clazz.getDeclaredFields();
+                declaredFieldsCache.put(clazz, (result.length == 0 ? EMPTY_FIELD_ARRAY : result));
+            }
+            catch (Throwable ex) {
+                throw new IllegalStateException("Failed to introspect Class [" + clazz.getName() +
+                        "] from ClassLoader [" + clazz.getClassLoader() + "]", ex);
+            }
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @param clazz
+     * @param fc
+     */
+    public static void doWithLocalFields(Class<?> clazz, FieldCallback fc) {
+        for (Field field : getDeclaredFields(clazz)) {
+            try {
+                fc.doWith(field);
+            }
+            catch (IllegalAccessException ex) {
+                throw new IllegalStateException("Not allowed to access field '" + field.getName() + "': " + ex);
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    public interface FieldCallback {
+
+        /**
+         * Perform an operation using the given field.
+         * @param field the field to operate on
+         */
+        void doWith(Field field) throws IllegalArgumentException, IllegalAccessException;
+    }
+
 }
