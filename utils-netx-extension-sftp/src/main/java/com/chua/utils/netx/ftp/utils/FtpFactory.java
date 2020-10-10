@@ -642,7 +642,7 @@ public class FtpFactory implements INetxFactory<FTPClient> {
 
         String parentPath = FileHelper.getParentPath(local);
         Collection<File> files = FileHelper.listSelfFolders(local);
-        ListHelper.sortByLength((List<File>) files);
+      //  ListHelper.sortByLength((List<File>) files);
         for (File file : files) {
             String replace = file.getPath().replace(parentPath, "").replace("\\", "/");
             replace = StringHelper.noRepeatSlash(remote + replace);
