@@ -14,49 +14,14 @@ import java.util.Set;
  * 代理对象
  * @author CH
  */
-public abstract class ProxyAgent<T> {
-
-    private static final Set<String> SKIP = new HashSet<>();
-    static {
-        SKIP.add("toString");
-    }
-    /**
-     * 映射代理
-     */
-    @Getter
-    private ProxyMapper proxyMapper;
-    /**
-     * 类
-     */
-    @Getter
-    private Class<T> source;
-
-    /**
-     * 方法以及拦截器
-     */
-    private Map<String, MethodIntercept> methodInterceptMap = new HashMap<>();
-
-    public ProxyAgent(Class<T> source) {
-        this.source = source;
-    }
-
-    public ProxyAgent(Class<T> source, ProxyMapper proxyMapper) {
-        this.source = source;
-        this.proxyMapper = proxyMapper;
-    }
-
-    public ProxyAgent(Class<T> source, MethodIntercept methodIntercept) {
-        this.source = source;
-        ProxyMapper proxyMapper = new ProxyMapper();
-        proxyMapper.addMethodIntercept("*", methodIntercept);
-        this.proxyMapper = proxyMapper;
-    }
+public interface ProxyAgent<T> {
 
     /**
      * 代理
+     * @param tClass 代理接口/类
      * @return
      */
-    abstract public T newProxy();
+    T newProxy(Class<T> tClass);
 
     /**
      * 执行方法
@@ -68,5 +33,5 @@ public abstract class ProxyAgent<T> {
      * @return
      * @throws Throwable
      */
-    abstract public Object invoker(ProxyMapper proxyMapper, Object obj, Method method, Object[] args, Object... proxy) throws Throwable;
+    Object invoker(ProxyMapper proxyMapper, Object obj, Method method, Object[] args, Object... proxy) throws Throwable;
 }

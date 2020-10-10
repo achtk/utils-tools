@@ -1,5 +1,6 @@
 package com.chua.utils.tools.classes;
 
+import com.chua.utils.tools.classes.reflections.ReflectionsHelper;
 import com.chua.utils.tools.common.*;
 import com.chua.utils.tools.proxy.JavassistProxyAgent;
 import com.chua.utils.tools.proxy.ProxyAgent;
@@ -24,7 +25,7 @@ import static com.chua.utils.tools.constant.StringConstant.*;
  * @author CH
  */
 @Slf4j
-public class ClassHelper extends ReflectHelper {
+public class ClassHelper extends ReflectionsHelper {
 
     /**
      * 得到当前ClassLoader
@@ -380,8 +381,8 @@ public class ClassHelper extends ReflectHelper {
         }
 
         if (tClass.isInterface() || Modifier.isAbstract(tClass.getModifiers())) {
-            ProxyAgent abstractProxy = new JavassistProxyAgent(tClass);
-            return (T) abstractProxy.newProxy();
+            ProxyAgent abstractProxy = new JavassistProxyAgent();
+            return (T) abstractProxy.newProxy(tClass);
         }
 
 

@@ -1,14 +1,17 @@
 package com.chua.utils.tools.mapper;
 
+import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.function.MethodIntercept;
+import com.chua.utils.tools.loader.BalancerLoader;
 import com.google.common.base.Strings;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import com.google.common.collect.HashMultimap;
+import lombok.*;
 
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 
 /**
  * 代理映射
@@ -17,14 +20,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter
 @EqualsAndHashCode
 public class ProxyMapper {
+
     /**
      * 方法代理缓存
      */
-    private static final ConcurrentHashMap<String, MethodIntercept> METHOD_INTERCEPT_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
-    /**
-     * 方法代理缓存
-     */
-    private static final ConcurrentHashMap<String, String> METHOD_FUNCTIONS = new ConcurrentHashMap<>();
+    private static final HashMultimap<String, MethodIntercept> CACHE_INTERCEPT = HashMultimap.create();
 
     /**
      * 执行方法
@@ -36,7 +36,7 @@ public class ProxyMapper {
      * @throws Throwable
      */
     public static Object intercept(Object obj, Method method, Object[] args, Object proxy) throws Throwable {
-        method.setAccessible(true);
+        ClassHelper.methodAccessible(method);
         return method.invoke(obj, args);
     }
     /**
@@ -45,24 +45,11 @@ public class ProxyMapper {
      * @param methodIntercept 方法拦截器
      * @return
      */
-    public ProxyMapper addMethodIntercept(final String name, final MethodIntercept methodIntercept) {
+    public ProxyMapper addIntercept(final String name, final MethodIntercept methodIntercept) {
         if(Strings.isNullOrEmpty(name)) {
             return this;
         }
-        METHOD_INTERCEPT_CONCURRENT_HASH_MAP.put(name, methodIntercept);
-        return this;
-    }
-    /**
-     * 添加代理
-     * @param name 方法名
-     * @param methodIntercept 方法拦截器
-     * @return
-     */
-    public ProxyMapper addFunctionIntercept(final String name, final String methodIntercept) {
-        if(Strings.isNullOrEmpty(name)) {
-            return this;
-        }
-        METHOD_FUNCTIONS.put(name, methodIntercept);
+        CACHE_INTERCEPT.put(name, methodIntercept);
         return this;
     }
 
@@ -72,39 +59,34 @@ public class ProxyMapper {
      * @return boolean
      */
     public Boolean hasName(String name) {
-        MethodIntercept methodIntercept = tryToGetProxy(name);
-        if(null != methodIntercept) {
-            return true;
-        }
-        return tryToGetProxyString(name) != null;
+        return tryToGetProxy(name, null) != null;
     }
 
     /**
      * 尝试获取方法
      * @param name 方法名称
+     * @param balancerLoader
      * @return
      */
-    public MethodIntercept tryToGetProxy(String name) {
-        for (Map.Entry<String, MethodIntercept> entry : METHOD_INTERCEPT_CONCURRENT_HASH_MAP.entrySet()) {
-            if(!StringHelper.wildcardMatch(name, entry.getKey())) {
+    public MethodIntercept tryToGetProxy(String name, BalancerLoader balancerLoader) {
+        Set<String> keySet = CACHE_INTERCEPT.keySet();
+        for (String s : keySet) {
+            if(!StringHelper.wildcardMatch(name, s)) {
                 continue;
             }
-            return entry.getValue();
+            Set<MethodIntercept> methodIntercepts = CACHE_INTERCEPT.get(s);
+            if(null == balancerLoader) {
+                return FinderHelper.firstElement(methodIntercepts);
+            }
+            return (MethodIntercept) balancerLoader.balancer(methodIntercepts);
         }
         return null;
     }
+
     /**
-     * 尝试获取方法
-     * @param name 方法名称
-     * @return
+     * 获取所有方法代理
      */
-    public String tryToGetProxyString(String name) {
-        for (Map.Entry<String, String> entry : METHOD_FUNCTIONS.entrySet()) {
-            if(!StringHelper.wildcardMatch(name, entry.getKey())) {
-                continue;
-            }
-            return entry.getValue();
-        }
-        return null;
+    public void getAllInteceptor() {
+        return;
     }
 }

@@ -3,9 +3,12 @@ package com.chua.utils.tools.proxy;
 import com.chua.utils.tools.common.ObjectHelper;
 import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.function.MethodIntercept;
+import com.chua.utils.tools.loader.BalancerLoader;
+import com.chua.utils.tools.loader.RotationBalancerLoader;
 import com.chua.utils.tools.mapper.ProxyMapper;
 import com.google.common.base.Joiner;
 import javassist.*;
+import lombok.AllArgsConstructor;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -16,8 +19,10 @@ import java.util.regex.Pattern;
  * javassist 代理
  * @author CH
  */
-public class JavassistProxyAgent<T> extends ProxyAgent<T>{
-
+@AllArgsConstructor
+public class JavassistProxyAgent<T> implements ProxyAgent<T> {
+    private ProxyMapper proxyMapper;
+    private BalancerLoader balancerLoader = new RotationBalancerLoader();
     /**
      * 生成的代理对象名称前缀
      */
@@ -25,29 +30,17 @@ public class JavassistProxyAgent<T> extends ProxyAgent<T>{
 
     private static final Pattern ZX_PATTERN = Pattern.compile("byte|short|char|int");
 
-    public JavassistProxyAgent(Class<T> source) {
-        super(source);
-    }
-
-    public JavassistProxyAgent(Class<T> source, ProxyMapper proxyMapper) {
-        super(source, proxyMapper);
-    }
-
-    public JavassistProxyAgent(Class<T> source, MethodIntercept methodIntercept) {
-        super(source, methodIntercept);
-    }
-
 
     @Override
-    public T newProxy() {
+    public T newProxy(Class<T> tClass) {
         T proxyObject = null;
         try {
             ClassPool pool = ClassPool.getDefault();
-            CtClass ctClass = pool.makeClass(getSource().getName() + PROXYSUFFIX);
+            CtClass ctClass = pool.makeClass(tClass.getName() + PROXYSUFFIX);
             //创建代理类对象
             //设置代理类的接口
             //获取代理对象的接口类
-            CtClass interf = pool.getCtClass(getSource().getName());
+            CtClass interf = pool.getCtClass(tClass.getName());
             CtClass[] interfaces = new CtClass[]{interf};
             ctClass.setInterfaces(interfaces);
             //代理类的所有方法
@@ -70,7 +63,6 @@ public class JavassistProxyAgent<T> extends ProxyAgent<T>{
      * @return
      */
     private CtMethod makeMethod(CtMethod method, CtClass ctClass) throws NotFoundException, CannotCompileException {
-        ProxyMapper proxyMapper = getProxyMapper();
         if(null == proxyMapper) {
             return renderMethod(method, ctClass);
         }
@@ -79,7 +71,7 @@ public class JavassistProxyAgent<T> extends ProxyAgent<T>{
             return renderMethod(method, ctClass);
         }
 
-        MethodIntercept methodIntercept = proxyMapper.tryToGetProxy(methodName);
+        MethodIntercept methodIntercept = proxyMapper.tryToGetProxy(methodName, balancerLoader);
         String methodString = "";
         if(null != methodIntercept) {
             try {
@@ -87,8 +79,6 @@ public class JavassistProxyAgent<T> extends ProxyAgent<T>{
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }
-        } else {
-            methodString = proxyMapper.tryToGetProxyString(methodName);
         }
 
         if (methodString.indexOf("{") > -1) {

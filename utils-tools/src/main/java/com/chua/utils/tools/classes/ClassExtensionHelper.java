@@ -878,6 +878,17 @@ public class ClassExtensionHelper {
     }
 
     /**
+     * 方法 Accessible
+     * @param method 方法
+     */
+    public static void methodAccessible(Method method) {
+        if(null == method) {
+            return;
+        }
+        method.setAccessible(true);
+    }
+
+    /**
      *
      */
     public interface FieldCallback {

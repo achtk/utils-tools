@@ -13,6 +13,7 @@ public interface MethodIntercept {
      * @param obj 对象
      * @param method 方法
      * @param args 参数
+     * @exception Exception
      * @return
      */
     public Object invoke(Object obj, Method method, Object[] args, Object... proxy) throws Throwable;
