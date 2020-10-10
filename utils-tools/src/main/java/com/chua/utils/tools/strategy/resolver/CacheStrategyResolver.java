@@ -26,7 +26,7 @@ public class CacheStrategyResolver<T> implements IStrategyResolver<T> {
     @Override
     public T callee(StrategyProperties strategyProperties) {
         ProxyAgent proxyAgent = getProxy(strategyProperties);
-        return (T) proxyAgent.newProxy();
+        return (T) proxyAgent.newProxy(strategyProperties.getClasses());
     }
 
     /**

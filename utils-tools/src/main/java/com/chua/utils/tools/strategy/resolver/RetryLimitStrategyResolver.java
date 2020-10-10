@@ -26,7 +26,7 @@ public class RetryLimitStrategyResolver implements IStrategyResolver {
     @Override
     public Object callee(StrategyProperties strategyProperties) {
         ProxyAgent proxyAgent = getProxy(strategyProperties);
-        return proxyAgent.newProxy();
+        return proxyAgent.newProxy(strategyProperties.getClasses());
     }
 
     @Override

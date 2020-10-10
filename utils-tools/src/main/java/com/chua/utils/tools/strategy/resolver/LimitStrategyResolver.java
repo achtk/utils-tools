@@ -30,7 +30,7 @@ public class LimitStrategyResolver<T> implements IStrategyResolver<T> {
         limiterProvider.newLimiter(name, strategyProperties.getRetry());
 
         ProxyAgent proxyAgent = getProxy(strategyProperties);
-        return (T) proxyAgent.newProxy();
+        return (T) proxyAgent.newProxy(strategyProperties.getClasses());
     }
 
     @Override

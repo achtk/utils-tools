@@ -23,7 +23,7 @@ public class TimeStrategyResolver implements IStrategyResolver, AutoCloseable {
 
     @Override
     public Object callee(StrategyProperties strategyProperties) {
-        return getProxy(strategyProperties).newProxy();
+        return getProxy(strategyProperties).newProxy(strategyProperties.getClasses());
     }
 
     @Override

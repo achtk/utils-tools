@@ -25,7 +25,7 @@ public class AsyncStrategyResolver<T> implements IStrategyResolver<T>, Closeable
 
     @Override
     public T callee(StrategyProperties strategyProperties) {
-        return getProxy(strategyProperties).newProxy();
+        return (T) getProxy(strategyProperties).newProxy(strategyProperties.getClasses());
     }
 
     @Override
