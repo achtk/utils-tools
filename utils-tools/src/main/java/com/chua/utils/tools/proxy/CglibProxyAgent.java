@@ -3,8 +3,10 @@ package com.chua.utils.tools.proxy;
 import com.chua.utils.tools.function.MethodIntercept;
 import com.chua.utils.tools.loader.BalancerLoader;
 import com.chua.utils.tools.loader.RotationBalancerLoader;
+import com.chua.utils.tools.mapper.AllProxyMapper;
 import com.chua.utils.tools.mapper.ProxyMapper;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -17,11 +19,20 @@ import java.util.Set;
  * cglib 代理
  * @author CH
  */
-@AllArgsConstructor
 public class CglibProxyAgent<T> implements ProxyAgent<T> {
 
     private ProxyMapper proxyMapper;
     private BalancerLoader balancerLoader = new RotationBalancerLoader();
+
+    public CglibProxyAgent() {}
+    public CglibProxyAgent(MethodIntercept methodIntercept) {
+        this.proxyMapper = new AllProxyMapper(methodIntercept);
+    }
+
+    public CglibProxyAgent(ProxyMapper proxyMapper, BalancerLoader balancerLoader) {
+        this.proxyMapper = proxyMapper;
+        this.balancerLoader = balancerLoader;
+    }
 
     @Override
     public T newProxy(Class<T> source) {

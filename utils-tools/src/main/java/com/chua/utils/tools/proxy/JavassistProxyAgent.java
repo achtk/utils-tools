@@ -5,10 +5,12 @@ import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.function.MethodIntercept;
 import com.chua.utils.tools.loader.BalancerLoader;
 import com.chua.utils.tools.loader.RotationBalancerLoader;
+import com.chua.utils.tools.mapper.AllProxyMapper;
 import com.chua.utils.tools.mapper.ProxyMapper;
 import com.google.common.base.Joiner;
 import javassist.*;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -19,10 +21,19 @@ import java.util.regex.Pattern;
  * javassist 代理
  * @author CH
  */
-@AllArgsConstructor
 public class JavassistProxyAgent<T> implements ProxyAgent<T> {
     private ProxyMapper proxyMapper;
     private BalancerLoader balancerLoader = new RotationBalancerLoader();
+
+    public JavassistProxyAgent() {}
+    public JavassistProxyAgent(MethodIntercept methodIntercept) {
+        this.proxyMapper = new AllProxyMapper(methodIntercept);
+    }
+
+    public JavassistProxyAgent(ProxyMapper proxyMapper, BalancerLoader balancerLoader) {
+        this.proxyMapper = proxyMapper;
+        this.balancerLoader = balancerLoader;
+    }
     /**
      * 生成的代理对象名称前缀
      */
