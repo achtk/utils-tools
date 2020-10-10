@@ -1,6 +1,5 @@
 package com.chua.utils.tools.common;
 
-import com.chua.utils.tools.function.ListComparator;
 import com.google.common.collect.*;
 
 import java.io.File;
@@ -398,18 +397,6 @@ public class ListHelper {
         if (!isEmpty(files)) {
             Collections.sort(files, comparator);
         }
-    }
-
-    /**
-     * 排序
-     * <pre>
-     *     ListHelper.sortByLength([xxx, xxxx, xx]) = [xx, xxx, xxxx]
-     * </pre>
-     *
-     * @param files
-     */
-    public static void sortByLength(List<File> files) {
-        sort(files, ListComparator.LENGTH_COMPARATOR);
     }
 
     /**
