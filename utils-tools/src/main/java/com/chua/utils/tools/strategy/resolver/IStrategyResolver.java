@@ -24,7 +24,8 @@ public interface IStrategyResolver<T> {
      */
     default public ProxyAgent<T> getProxy(StrategyProperties strategyProperties) {
         Class aClass = strategyProperties.getClasses();
-        return new CglibProxyAgent<T>(aClass, methodIntercept(strategyProperties));
+        ProxyAgent<T> proxyAgent = new CglibProxyAgent<>(methodIntercept(strategyProperties));
+        return (ProxyAgent<T>) proxyAgent.newProxy(aClass);
     }
 
     /**
