@@ -1,7 +1,9 @@
 package com.chua.utils.tools.common;
 
 import java.lang.reflect.Array;
+import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
@@ -13,6 +15,8 @@ import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
 public class ArraysHelper {
 
     private static final String[] EMPTY_ARRAY = new String[0];
+
+    private static final ConcurrentHashMap<Class<?>, Object> CACHE_ARRAY = new ConcurrentHashMap<>();
 
     /**
      * 数组初始化
@@ -544,7 +548,12 @@ public class ArraysHelper {
      * @return
      */
     public static <T>T[] emptyArray(Class<T> componentType) {
-        return (T[]) Array.newInstance(componentType, 0);
+        if(CACHE_ARRAY.containsKey(componentType)) {
+            return (T[]) CACHE_ARRAY.get(componentType);
+        }
+        T[] result = (T[]) Array.newInstance(componentType, 0);
+        CACHE_ARRAY.put(componentType, result);
+        return result;
     }
 
     /**

@@ -24,7 +24,7 @@ import static com.chua.utils.tools.constant.StringConstant.*;
  * @author CH
  */
 @Slf4j
-public class ClassHelper extends ClassInfoHelper {
+public class ClassHelper extends ReflectHelper {
 
     /**
      * 得到当前ClassLoader
@@ -120,32 +120,6 @@ public class ClassHelper extends ClassInfoHelper {
             }
         }
         return null;
-    }
-
-    /**
-     * 获取默认类加载器
-     * <p>
-     * 默认获取当前线程的类加载器<code>Thread.currentThread().getContextClassLoader()</code>
-     * </p>
-     *
-     * @return
-     */
-    public static ClassLoader getDefaultClassLoader() {
-        ClassLoader cl = null;
-        try {
-            cl = Thread.currentThread().getContextClassLoader();
-        } catch (Throwable ex) {
-        }
-        if (cl == null) {
-            cl = ClassHelper.class.getClassLoader();
-            if (cl == null) {
-                try {
-                    cl = ClassLoader.getSystemClassLoader();
-                } catch (Throwable ex) {
-                }
-            }
-        }
-        return cl;
     }
 
     /**
@@ -649,18 +623,5 @@ public class ClassHelper extends ClassInfoHelper {
         return false;
     }
 
-    /**
-     * 获取子类
-     * @param <T>
-     * @param tClass 类
-     * @return
-     */
-    public static <T> Set<Class<? extends T>> getSubTypesOf(Class<T> tClass) {
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-        configurationBuilder.addScanners(new SubTypesScanner());
-        configurationBuilder.setClassLoaders(new ClassLoader[]{getDefaultClassLoader()});
-        Reflections reflections = new Reflections(configurationBuilder);
-        return reflections.getSubTypesOf(tClass);
-    }
 
 }

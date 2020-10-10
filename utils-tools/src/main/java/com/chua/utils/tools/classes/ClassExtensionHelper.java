@@ -27,7 +27,7 @@ import java.util.function.BiConsumer;
  * @author CH
  * @date 2020-09-26
  */
-public class ClassInfoHelper {
+public class ClassExtensionHelper {
 
     protected static final String GETTER = "get";
     protected static final String SETTER = "set";
@@ -848,6 +848,33 @@ public class ClassInfoHelper {
                 throw new IllegalStateException("Not allowed to access field '" + field.getName() + "': " + ex);
             }
         }
+    }
+
+
+    /**
+     * 获取默认类加载器
+     * <p>
+     * 默认获取当前线程的类加载器<code>Thread.currentThread().getContextClassLoader()</code>
+     * </p>
+     *
+     * @return
+     */
+    public static ClassLoader getDefaultClassLoader() {
+        ClassLoader cl = null;
+        try {
+            cl = Thread.currentThread().getContextClassLoader();
+        } catch (Throwable ex) {
+        }
+        if (cl == null) {
+            cl = ClassHelper.class.getClassLoader();
+            if (cl == null) {
+                try {
+                    cl = ClassLoader.getSystemClassLoader();
+                } catch (Throwable ex) {
+                }
+            }
+        }
+        return cl;
     }
 
     /**
