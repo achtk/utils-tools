@@ -1,19 +1,15 @@
 package com.chua.utils.tools.proxy;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.function.MethodIntercept;
+import com.chua.utils.tools.function.intercept.MethodIntercept;
 import com.chua.utils.tools.loader.BalancerLoader;
 import com.chua.utils.tools.loader.RotationBalancerLoader;
 import com.chua.utils.tools.mapper.AllProxyMapper;
 import com.chua.utils.tools.mapper.ProxyMapper;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Set;
 
 /**
  * jdk proxy

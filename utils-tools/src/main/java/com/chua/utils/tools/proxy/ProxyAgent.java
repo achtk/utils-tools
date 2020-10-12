@@ -1,14 +1,8 @@
 package com.chua.utils.tools.proxy;
 
-import com.chua.utils.tools.function.MethodIntercept;
 import com.chua.utils.tools.mapper.ProxyMapper;
-import lombok.Getter;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 代理对象

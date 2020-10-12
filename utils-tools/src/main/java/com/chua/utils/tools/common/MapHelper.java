@@ -1,10 +1,7 @@
 package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.function.MethodIntercept;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.chua.utils.tools.function.intercept.MethodIntercept;
 import com.google.common.collect.*;
 
 import java.lang.reflect.Array;
@@ -1576,7 +1573,7 @@ public class MapHelper {
      * @param index  索引
      * @return
      */
-    public static boolean containerKey(Map<String, MethodIntercept> source, String index) {
+    public static <K, V>boolean containerKey(Map<K, V> source, K index) {
         return null != source && source.containsKey(index);
     }
 }

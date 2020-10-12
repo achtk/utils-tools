@@ -2,7 +2,10 @@ package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.common.loader.PropertiesLoader;
 import com.chua.utils.tools.function.impl.YamlPropertiesDataTransform;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -12,6 +15,7 @@ import java.util.Properties;
  * @author CH
  * @since 1.0
  */
+@Slf4j
 public class PropertiesHelper {
     private static String DOT = ".";
 
@@ -198,4 +202,22 @@ public class PropertiesHelper {
         return JsonHelper.fromJson2Map(new YamlPropertiesDataTransform().transTo(properties));
     }
 
+    /**
+     * 获取prop
+     * @param text 字符串
+     * @return
+     */
+    public static Properties toProperties(String text) {
+        Properties properties = new Properties();
+        try {
+            if (StringHelper.hasText(text)) {
+                properties.load(new StringReader(text));
+            }
+        } catch (IOException e) {
+            if (log.isErrorEnabled()) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        return properties;
+    }
 }

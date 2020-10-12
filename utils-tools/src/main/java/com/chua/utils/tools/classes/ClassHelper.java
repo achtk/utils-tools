@@ -2,17 +2,13 @@ package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.classes.reflections.ReflectionsHelper;
 import com.chua.utils.tools.common.*;
-import com.chua.utils.tools.proxy.JavassistProxyAgent;
+import com.chua.utils.tools.proxy.CglibProxyAgent;
 import com.chua.utils.tools.proxy.ProxyAgent;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import javassist.*;
 import lombok.extern.slf4j.Slf4j;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ConfigurationBuilder;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
@@ -382,7 +378,7 @@ public class ClassHelper extends ReflectionsHelper {
         }
 
         if (tClass.isInterface() || Modifier.isAbstract(tClass.getModifiers())) {
-            ProxyAgent abstractProxy = new JavassistProxyAgent();
+            ProxyAgent abstractProxy = new CglibProxyAgent();
             return (T) abstractProxy.newProxy(tClass);
         }
 

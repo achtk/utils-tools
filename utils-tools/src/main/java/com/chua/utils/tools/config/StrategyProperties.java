@@ -1,7 +1,7 @@
 package com.chua.utils.tools.config;
 
 import com.chua.utils.tools.action.ActionListener;
-import com.chua.utils.tools.function.MethodIntercept;
+import com.chua.utils.tools.function.intercept.MethodIntercept;
 import com.chua.utils.tools.handler.AgencyHandler;
 import com.google.common.base.Predicate;
 import lombok.Getter;

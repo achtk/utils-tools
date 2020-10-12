@@ -232,4 +232,12 @@ public class BeansHelper {
         result.putAll(beanMap);
         return result;
     }
+    /**
+     * 获取属性
+     * @param obj 对象
+     * @return
+     */
+    public static Map<String, Object> toMap(Object obj) {
+        return getAttributes(obj);
+    }
 }
