@@ -135,9 +135,45 @@ public class ZookeeperContext implements AutoCloseable {
      * @param node
      * @param consumer
      */
-    public void monitor(String node, IConsumer<TreeCacheEvent> consumer) {
+    public void addListener(String node, IConsumer<TreeCacheEvent> consumer) {
         TreeCache treeCache = new TreeCache(this.curatorFramework, node);
         treeCache.getListenable().addListener(new TreeCacheListener() {
+            @Override
+            public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
+                ChildData eventData = event.getData();
+                if(null != consumer) {
+                    consumer.next(event);
+                }
+                switch (event.getType()) {
+                    case NODE_ADDED:
+                        log.warn(node + "节点添加" + eventData.getPath() + "\t添加数据为：" + new String(eventData.getData()));
+                        break;
+                    case NODE_UPDATED:
+                        log.warn(eventData.getPath() + "节点数据更新\t更新数据为：" + new String(eventData.getData()) + "\t版本为：" + eventData.getStat().getVersion());
+                        break;
+                    case NODE_REMOVED:
+                        log.warn(eventData.getPath() + "节点被删除");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        try {
+            treeCache.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * 事件监听
+     * @param node
+     * @param consumer
+     */
+    public void removeListener(String node, IConsumer<TreeCacheEvent> consumer) {
+        TreeCache treeCache = new TreeCache(this.curatorFramework, node);
+        treeCache.getListenable().removeListener(new TreeCacheListener() {
             @Override
             public void childEvent(CuratorFramework client, TreeCacheEvent event) throws Exception {
                 ChildData eventData = event.getData();
@@ -215,5 +251,13 @@ public class ZookeeperContext implements AutoCloseable {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * 服务器状态
+     * @return
+     */
+    public String getStatus() {
+        return this.curatorFramework.getState().toString();
     }
 }
