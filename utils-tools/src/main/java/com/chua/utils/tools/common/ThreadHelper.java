@@ -32,6 +32,9 @@ public class ThreadHelper {
     }
 
     /**
+     * 单例线程池
+     *
+     * @param name 线程池名称
      * @return
      */
     public static ExecutorService newSingleThreadExecutor(String name) {
@@ -43,6 +46,23 @@ public class ThreadHelper {
                 new LinkedBlockingQueue<Runnable>(),
                 newThreadFactory(name)
 
+        );
+    }
+
+    /**
+     * 单例线程池
+     *
+     * @param threadFactory 线程池
+     * @return
+     */
+    public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
+        return new ThreadPoolExecutor(
+                SINGLETON,
+                SINGLETON,
+                KEEP_ALIVE_TIME,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(),
+                threadFactory
         );
     }
 
@@ -117,6 +137,7 @@ public class ThreadHelper {
     }
 
     /**
+     * @param name 线程池名称
      * @return
      */
     public static ExecutorService newCachedThreadPool(final String name) {
@@ -124,17 +145,37 @@ public class ThreadHelper {
     }
 
     /**
+     * @param threadFactory 线程池
      * @return
      */
-    public static ScheduledExecutorService newScheduledThreadPoolExecutor(final int max) {
-        return new ScheduledThreadPoolExecutor(max, newThreadFactory(DEFAULT));
+    public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
+        return new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), threadFactory);
     }
 
     /**
+     * @param thread 线程数
      * @return
      */
-    public static ScheduledExecutorService newScheduledThreadPoolExecutor(final int max, final String name) {
-        return new ScheduledThreadPoolExecutor(max, newThreadFactory(name));
+    public static ScheduledExecutorService newScheduledThreadPoolExecutor(final int thread) {
+        return new ScheduledThreadPoolExecutor(thread, newThreadFactory(DEFAULT));
+    }
+
+    /**
+     * @param thread 线程数
+     * @param name   线程池名称
+     * @return
+     */
+    public static ScheduledExecutorService newScheduledThreadPoolExecutor(final int thread, final String name) {
+        return new ScheduledThreadPoolExecutor(thread, newThreadFactory(name));
+    }
+
+    /**
+     * @param thread        线程数
+     * @param threadFactory 线程池
+     * @return
+     */
+    public static ScheduledExecutorService newScheduledThreadPoolExecutor(final int thread, final ThreadFactory threadFactory) {
+        return new ScheduledThreadPoolExecutor(thread, threadFactory);
     }
 
     /**
@@ -166,6 +207,15 @@ public class ThreadHelper {
      */
     public static ExecutorService newFixedThreadExecutor(int thread, String name) {
         return Executors.newFixedThreadPool(thread, newThreadFactory(name));
+    }
+
+    /**
+     * @param thread        线程数
+     * @param threadFactory 线程池
+     * @return
+     */
+    public static ExecutorService newFixedThreadExecutor(int thread, ThreadFactory threadFactory) {
+        return Executors.newFixedThreadPool(thread, threadFactory);
     }
 
     /**

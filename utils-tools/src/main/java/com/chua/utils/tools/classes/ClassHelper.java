@@ -12,6 +12,7 @@ import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ConfigurationBuilder;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
@@ -624,5 +625,15 @@ public class ClassHelper extends ReflectionsHelper {
         return false;
     }
 
-
+    /**
+     * 解释类型
+     * @param declaredClass
+     * @param <T>
+     * @return
+     */
+    public static <T> Class<T> resolveGenericType(Class<?> declaredClass) {
+        ParameterizedType parameterizedType = (ParameterizedType) declaredClass.getGenericSuperclass();
+        Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+        return (Class<T>) actualTypeArguments[0];
+    }
 }

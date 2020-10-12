@@ -565,6 +565,14 @@ public class ArraysHelper {
     }
 
     /**
+     * 空字符串数组
+     * @return
+     */
+    public static String[] emptyString() {
+        return EMPTY_ARRAY;
+    }
+
+    /**
      * 是否包含重复值
      * @param array 数组
      * @return

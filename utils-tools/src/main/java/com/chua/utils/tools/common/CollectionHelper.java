@@ -6,6 +6,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
@@ -716,5 +717,22 @@ public class CollectionHelper {
         }
 
         return result;
+    }
+
+    /**
+     * 合并集合
+     * @param sources
+     * @param <E>
+     * @return
+     */
+    public static <E> Collection<E> combine(Collection<? extends E>... sources) {
+        if(!BooleanHelper.hasLength(sources)) {
+            return Collections.emptyList();
+        }
+        List<E> allElements = new ArrayList<>();
+        for (Collection<? extends E> e : sources) {
+            allElements.addAll(e);
+        }
+        return allElements;
     }
 }

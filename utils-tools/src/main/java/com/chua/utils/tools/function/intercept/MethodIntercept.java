@@ -1,4 +1,4 @@
-package com.chua.utils.tools.function;
+package com.chua.utils.tools.function.intercept;
 
 import java.lang.reflect.Method;
 
@@ -13,6 +13,7 @@ public interface MethodIntercept {
      * @param obj 对象
      * @param method 方法
      * @param args 参数
+     * @param proxy proxy
      * @exception Exception
      * @return
      */

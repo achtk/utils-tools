@@ -1,19 +1,15 @@
 package com.chua.utils.tools.proxy;
 
-import com.chua.utils.tools.function.MethodIntercept;
+import com.chua.utils.tools.function.intercept.MethodIntercept;
 import com.chua.utils.tools.loader.BalancerLoader;
 import com.chua.utils.tools.loader.RotationBalancerLoader;
 import com.chua.utils.tools.mapper.AllProxyMapper;
 import com.chua.utils.tools.mapper.ProxyMapper;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
-import java.util.Set;
 
 /**
  * cglib 代理

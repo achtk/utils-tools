@@ -1,6 +1,6 @@
 package com.chua.utils.tools.mapper;
 
-import com.chua.utils.tools.function.MethodIntercept;
+import com.chua.utils.tools.function.intercept.MethodIntercept;
 
 /**
  * 代理映射

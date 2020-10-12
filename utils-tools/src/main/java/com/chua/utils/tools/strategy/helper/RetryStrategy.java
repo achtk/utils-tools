@@ -158,7 +158,7 @@ public class RetryStrategy {
      * 返回值
      * @return
      */
-    private static <T>T call(final Retryer<T> retries, final IStrategyPolicy<T> retryPolicy) {
+    public static <T>T call(final Retryer<T> retries, final IStrategyPolicy<T> retryPolicy) {
         try {
             return retries.call(new Callable<T>() {
                 @Override

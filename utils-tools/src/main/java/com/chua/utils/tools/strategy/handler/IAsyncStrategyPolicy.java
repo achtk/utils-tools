@@ -4,7 +4,7 @@ package com.chua.utils.tools.strategy.handler;
  * 策略动作
  * @author CH
  */
-public interface IStrategyPolicy<T> {
+public interface IAsyncStrategyPolicy<T> {
     /**
      * 尝试
      *
@@ -54,14 +54,14 @@ public interface IStrategyPolicy<T> {
      *
      * </table>
      */
-    T policy();
+    void result(T result);
 
     /**
      * 失败
      * @param throwable 异常
      * @return
      */
-    T failure(Throwable throwable);
+    void failure(Throwable throwable);
 
     /**
      * 降级
@@ -69,5 +69,14 @@ public interface IStrategyPolicy<T> {
      */
     default T degrade() {
         return null;
+    }
+
+    /**
+     * 异常降级结果
+     * @param throwable 异常
+     */
+    default void degradeResult(Throwable throwable) {
+        result(degrade());
+        failure(throwable);
     }
 }

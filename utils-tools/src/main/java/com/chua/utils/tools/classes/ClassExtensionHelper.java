@@ -1,7 +1,10 @@
 package com.chua.utils.tools.classes;
 
+import com.chua.utils.tools.classes.callback.FieldCallback;
+import com.chua.utils.tools.classes.callback.MethodCallback;
 import com.chua.utils.tools.common.*;
 import com.chua.utils.tools.entity.*;
+import com.chua.utils.tools.filter.MethodFilter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -46,8 +49,12 @@ public class ClassExtensionHelper {
     private static List<Class> primitiveTypes;
     private static List<String> primitiveDescriptors;
 
+    public static final MethodFilter USER_DECLARED_METHODS = (method -> !method.isBridge() && !method.isSynthetic());
+
     private static final Map<Object, Map<String, Object>> DECLARED_FIELDS_CACHE = new ConcurrentHashMap<>(256);
     private static final Map<Class<?>, Field[]> declaredFieldsCache = new ConcurrentHashMap<>(256);
+    private static final Map<Class<?>, Method[]> declaredMethodsCache = new ConcurrentHashMap<>(256);
+
 
     public static List<String> getPrimitiveNames() {
         initPrimitives();
@@ -835,7 +842,7 @@ public class ClassExtensionHelper {
     }
 
     /**
-     *
+     * 字段查询
      * @param clazz
      * @param fc
      */
@@ -846,6 +853,59 @@ public class ClassExtensionHelper {
             }
             catch (IllegalAccessException ex) {
                 throw new IllegalStateException("Not allowed to access field '" + field.getName() + "': " + ex);
+            }
+        }
+    }
+    /**
+     * 方法回调
+     * @param clazz 类
+     * @param mc 方法回调
+     */
+    public static void doWithLocalMethods(Class<?> clazz, MethodCallback mc) {
+        Method[] methods = getDeclaredMethods(clazz, false);
+        for (Method method : methods) {
+            try {
+                mc.doWith(method);
+            }
+            catch (IllegalAccessException ex) {
+                throw new IllegalStateException("Not allowed to access method '" + method.getName() + "': " + ex);
+            }
+        }
+    }
+    /**
+     * 方法回调
+     * @param clazz 类
+     * @param mc 方法回调
+     */
+    public static void doWithMethods(Class<?> clazz, MethodCallback mc) {
+        doWithMethods(clazz, mc, null);
+    }
+    /**
+     * 方法回调
+     * @param clazz 类
+     * @param mc 方法回调
+     * @param mf 过滤回调
+     */
+    public static void doWithMethods(Class<?> clazz, MethodCallback mc, @Nullable MethodFilter mf) {
+        // Keep backing up the inheritance hierarchy.
+        Method[] methods = getDeclaredMethods(clazz, false);
+        for (Method method : methods) {
+            if (mf != null && !mf.matches(method)) {
+                continue;
+            }
+            try {
+                mc.doWith(method);
+            }
+            catch (IllegalAccessException ex) {
+                throw new IllegalStateException("Not allowed to access method '" + method.getName() + "': " + ex);
+            }
+        }
+        if (clazz.getSuperclass() != null && (mf != USER_DECLARED_METHODS || clazz.getSuperclass() != Object.class)) {
+            doWithMethods(clazz.getSuperclass(), mc, mf);
+        }
+        else if (clazz.isInterface()) {
+            for (Class<?> superIfc : clazz.getInterfaces()) {
+                doWithMethods(superIfc, mc, mf);
             }
         }
     }
@@ -889,15 +949,54 @@ public class ClassExtensionHelper {
     }
 
     /**
-     *
+     * 获取所有方法
+     * @param clazz 类
+     * @param defensive 是否拷贝
+     * @return
      */
-    public interface FieldCallback {
+    private static Method[] getDeclaredMethods(Class<?> clazz, boolean defensive) {
+        Assert.notNull(clazz, "Class must not be null");
+        Method[] result = declaredMethodsCache.get(clazz);
+        if (result == null) {
+            try {
+                Method[] declaredMethods = clazz.getDeclaredMethods();
+                List<Method> defaultMethods = findConcreteMethodsOnInterfaces(clazz);
+                if (defaultMethods != null) {
+                    result = new Method[declaredMethods.length + defaultMethods.size()];
+                    System.arraycopy(declaredMethods, 0, result, 0, declaredMethods.length);
+                    int index = declaredMethods.length;
+                    for (Method defaultMethod : defaultMethods) {
+                        result[index] = defaultMethod;
+                        index++;
+                    }
+                }
+                else {
+                    result = declaredMethods;
+                }
+                declaredMethodsCache.put(clazz, (result.length == 0 ? EMPTY_METHOD_ARRAY : result));
+            }
+            catch (Throwable ex) {
+                throw new IllegalStateException("Failed to introspect Class [" + clazz.getName() +
+                        "] from ClassLoader [" + clazz.getClassLoader() + "]", ex);
+            }
+        }
+        return (result.length == 0 || !defensive) ? result : result.clone();
+    }
 
-        /**
-         * Perform an operation using the given field.
-         * @param field the field to operate on
-         */
-        void doWith(Field field) throws IllegalArgumentException, IllegalAccessException;
+    @Nullable
+    private static List<Method> findConcreteMethodsOnInterfaces(Class<?> clazz) {
+        List<Method> result = null;
+        for (Class<?> ifc : clazz.getInterfaces()) {
+            for (Method ifcMethod : ifc.getMethods()) {
+                if (!java.lang.reflect.Modifier.isAbstract(ifcMethod.getModifiers())) {
+                    if (result == null) {
+                        result = new ArrayList<>();
+                    }
+                    result.add(ifcMethod);
+                }
+            }
+        }
+        return result;
     }
 
 }

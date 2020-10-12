@@ -1,5 +1,7 @@
 package com.chua.utils.tools.common;
 
+import com.google.common.base.Charsets;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -163,7 +165,7 @@ public class ByteHelper {
      * @return
      */
     public static byte[] getBytes(String data) {
-        return getBytes(data, GBK);
+        return getBytes(data, UTF8);
     }
 
     /**
@@ -863,6 +865,14 @@ public class ByteHelper {
      */
     public static String toString(byte[] attribute) {
         return null != attribute ? new String(attribute, UTF_8) : EXTENSION_EMPTY;
+    }
+    /**
+     * 字节数组转字符串
+     * @param attribute 原始数据
+     * @return
+     */
+    public static String toString(byte[] attribute, final Charset charset) {
+        return null != attribute ? new String(attribute, charset) : EXTENSION_EMPTY;
     }
 
 
