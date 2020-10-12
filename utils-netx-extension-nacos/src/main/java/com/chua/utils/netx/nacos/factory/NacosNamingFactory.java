@@ -44,6 +44,7 @@ public class NacosNamingFactory implements INetxFactory<NamingService> {
     public void start() {
         log.info(">>>>>>>>>>> NacosNamingFactory Starting to connect");
         try {
+            netxProperties.put("serverAddr", netxProperties.getHostifOnly());
             this.namingService = NacosFactory.createNamingService(netxProperties);
             log.info(">>>>>>>>>>> NacosNamingFactory connection complete.");
         } catch (NacosException e) {

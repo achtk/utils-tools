@@ -525,7 +525,21 @@ public class ClassHelper extends ReflectionsHelper {
         Class<?> aClass = forName(className, classLoaders);
         return (T) forObject(aClass);
     }
-
+    /**
+     * 获取类对象
+     *
+     * @param value  数据
+     * @param tClass 类
+     * @param <T>
+     * @return
+     */
+    public static <T> T forDefaultObject(final Object value, final Class<T> tClass) {
+        T forObject = forObject(value, tClass);
+        if(null == forObject) {
+            return forObject(tClass);
+        }
+        return forObject;
+    }
     /**
      * 获取类对象
      *

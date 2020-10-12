@@ -2,7 +2,7 @@ package com.chua.utils.tools.spring.environment;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.*;
-import com.chua.utils.tools.proxy.JavassistProxyAgent;
+import com.chua.utils.tools.proxy.CglibProxyAgent;
 import com.chua.utils.tools.proxy.ProxyAgent;
 import com.chua.utils.tools.spring.assembly.Assembly;
 import com.chua.utils.tools.spring.propertysource.PropertySourcesResolver;
@@ -197,8 +197,8 @@ public class EnvironmentFactory {
 
         T t = null;
         if (entityClass.isInterface() || Modifier.isAbstract(entityClass.getModifiers())) {
-            ProxyAgent proxy = new JavassistProxyAgent(entityClass);
-            t = (T) proxy.newProxy();
+            ProxyAgent proxy = new CglibProxyAgent();
+            t = (T) proxy.newProxy(entityClass);
         } else {
             try {
                 t = entityClass.newInstance();

@@ -6,6 +6,7 @@ import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.netx.zookeeper.factory.ZookeeperFactory;
 import com.chua.utils.tools.common.ByteHelper;
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -93,6 +94,25 @@ public class ZookeeperContext implements AutoCloseable {
 
     /**
      * 获取节点
+     * @param parent 节点名称
+     * @param child 节点名称
+     * @return
+     */
+    public byte[] query(final String parent, final String... child) {
+        String newKey = parent;
+        String join = Joiner.on("/").skipNulls().join(child);
+        if(!Strings.isNullOrEmpty(join)) {
+            newKey += "/" + join;
+        }
+        try {
+            return this.curatorFramework.getData().forPath(newKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    /**
+     * 获取节点
      * @param node 节点名称
      * @param defaultValue 默认数据
      * @return
@@ -104,14 +124,6 @@ public class ZookeeperContext implements AutoCloseable {
             e.printStackTrace();
             return defaultValue;
         }
-    }
-    /**
-     * 获取节点
-     * @param node 节点名称
-     * @return
-     */
-    public byte[] query(final String node) {
-        return query(node, null);
     }
     /**
      * 获取节点

@@ -689,7 +689,7 @@ public class CollectionHelper {
             return Collections.emptyList();
         }
         List<T> result = new ArrayList<>(source.length);
-        for (T t : result) {
+        for (T t : source) {
             if(null == t) {
                 continue;
             }

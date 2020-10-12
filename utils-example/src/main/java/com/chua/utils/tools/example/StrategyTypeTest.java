@@ -1,7 +1,6 @@
 package com.chua.utils.tools.example;
 
 import com.chua.utils.tools.example.interfaces.ITestInterface;
-import com.chua.utils.tools.strategy.Strategy;
 import com.chua.utils.tools.strategy.enums.StrategyType;
 import org.testng.annotations.Test;
 

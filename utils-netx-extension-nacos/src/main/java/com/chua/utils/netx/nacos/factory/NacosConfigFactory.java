@@ -44,6 +44,7 @@ public class NacosConfigFactory implements INetxFactory<ConfigService> {
     public void start() {
         log.info(">>>>>>>>>>> NacosConfigFactory Starting to connect");
         try {
+            netxProperties.put("serverAddr", netxProperties.getHostifOnly());
             this.configService = NacosFactory.createConfigService(netxProperties);
             log.info(">>>>>>>>>>> NacosConfigFactory connection complete.");
         } catch (NacosException e) {
