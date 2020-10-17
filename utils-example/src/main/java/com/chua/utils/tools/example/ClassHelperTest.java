@@ -13,7 +13,7 @@ public class ClassHelperTest {
 
     @Test
     public void getSubTypesOf() {
-        Set<Class<? extends IEncrypt>> typesOf = ClassHelper.getSubTypesOf(IEncrypt.class);
+        Set<Class<? extends IEncrypt>> typesOf = (Set<Class<? extends IEncrypt>>) ClassHelper.getSubTypesOf(IEncrypt.class);
         System.out.println(typesOf);
     }
 }
