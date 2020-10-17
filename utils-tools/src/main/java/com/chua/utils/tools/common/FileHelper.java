@@ -2187,4 +2187,12 @@ public class FileHelper {
         return file.lastModified() > timeMillis;
     }
 
+    /**
+     * 获取文件夹
+     * @param folder 文件夹
+     * @return
+     */
+    public static String toFolder(final String folder) {
+        return Strings.isNullOrEmpty(folder) ? FILE_LEFT_SLASH : (folder.endsWith("/") ? folder : folder + FILE_LEFT_SLASH);
+    }
 }

@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * properties工具类
@@ -17,6 +18,7 @@ import java.util.Properties;
  */
 @Slf4j
 public class PropertiesHelper {
+    private static final Properties EMPTY = new Properties();
     private static String DOT = ".";
 
     /**
@@ -219,5 +221,22 @@ public class PropertiesHelper {
             }
         }
         return properties;
+    }
+
+    /**
+     * 获取默认Properties
+     * @return
+     */
+    public static Properties emptyProperties() {
+        return EMPTY;
+    }
+
+    /**
+     * properties转ConcurrentHashMap
+     * @param properties
+     * @return
+     */
+    public static ConcurrentHashMap<String, Object> toConcurrentHashMap(Properties properties) {
+        return new ConcurrentHashMap(properties);
     }
 }

@@ -46,10 +46,13 @@ public class SpiConfigs implements IOptions {
         CfgConfig cfgConfig = new CfgConfig();
         cfgConfig.setMaster(SPI_CONFIG_DEFAULT);
         cfgConfig.setOrder(SPI_CFG_ORDER);
-        cfgConfig.setSlaverName(SPI_CONFIG);
         cfgConfig.addSlaver("extension/", "META-INF/extension/");
 
-        CFG.putAll(CfgOptions.initialCfg(cfgConfig));
+        CfgOptions cfgOptions = new CfgOptions();
+        cfgOptions.analysis(cfgConfig);
+        ConcurrentHashMap<String, Object> initialCfg = cfgOptions.toConcurrentHashMap();
+
+        CFG.putAll(initialCfg);
         options = new IOptions() {
             @Override
             public ConcurrentMap<String, Object> values() {

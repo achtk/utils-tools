@@ -27,7 +27,7 @@ public interface IExtensionProcessor<T> {
      *
      * @param spiConfig
      */
-    public void init(SpiConfig spiConfig);
+    void init(SpiConfig spiConfig);
 
     /**
      * 解析@Spi类
@@ -36,12 +36,12 @@ public interface IExtensionProcessor<T> {
      * @param classLoader
      * @return
      */
-    public Multimap<String, ExtensionClass<T>> analyze(Class<T> service, ClassLoader classLoader);
+    Multimap<String, ExtensionClass<T>> analyze(Class<T> service, ClassLoader classLoader);
 
     /**
      * 刷新
      */
-    public void refresh();
+    void refresh();
 
     /**
      * 解析实体对象的 @Spi 注解
@@ -49,7 +49,7 @@ public interface IExtensionProcessor<T> {
      * @param t
      * @return
      */
-    default public void analysisSpi(final T t, final ExtensionClass<T> extensionClass) {
+    default void analysisSpi(final T t, final ExtensionClass<T> extensionClass) {
         if (null == t) {
             return;
         }
@@ -73,7 +73,7 @@ public interface IExtensionProcessor<T> {
      * @param order          优先级
      * @return
      */
-    default public ExtensionClass<T> loadExtension(Class<T> interfaceClass, Class<? extends Annotation> extension, String name, final Class loadedClazz, String order) {
+    default ExtensionClass<T> loadExtension(Class<T> interfaceClass, Class<? extends Annotation> extension, String name, final Class loadedClazz, String order) {
         if (null == loadedClazz) {
             return null;
         }
@@ -163,7 +163,7 @@ public interface IExtensionProcessor<T> {
      * @param overrider          是否覆盖
      * @return
      */
-    default public ExtensionClass<T> buildExtensionClass(String interfaceClassName, int order, Class<? extends T> implClass, String name, boolean overrider) {
+    default ExtensionClass<T> buildExtensionClass(String interfaceClassName, int order, Class<? extends T> implClass, String name, boolean overrider) {
         ExtensionClass<T> extensionClass = new ExtensionClass<T>();
         extensionClass.setOrder(order);
         extensionClass.setName(name);

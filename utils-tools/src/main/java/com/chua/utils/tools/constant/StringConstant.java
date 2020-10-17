@@ -679,7 +679,7 @@ public class StringConstant {
     /**
      * spi默认配置
      */
-    public static final String SPI_CONFIG_DEFAULT = "spi-config-default.json";
+    public static final String SPI_CONFIG_DEFAULT = "spi-config-default";
     /**
      * spi配置
      */
