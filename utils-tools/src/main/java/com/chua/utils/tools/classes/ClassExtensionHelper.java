@@ -28,7 +28,7 @@ import java.util.function.BiConsumer;
  * @author CH
  * @date 2020-09-26
  */
-public class ClassExtensionHelper {
+public class ClassExtensionHelper<T> {
 
     protected static final String GETTER = "get";
     protected static final String SETTER = "set";

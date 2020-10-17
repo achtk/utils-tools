@@ -1,12 +1,14 @@
 package com.chua.utils.tools.classes.reflections;
 
+import com.chua.utils.tools.cache.ConcurrentCacheProvider;
+import com.chua.utils.tools.cache.ICacheProvider;
 import com.chua.utils.tools.classes.ClassExtensionHelper;
 import com.chua.utils.tools.common.ArraysHelper;
 import com.chua.utils.tools.common.CollectionHelper;
+import com.google.common.base.Strings;
 import org.reflections.Reflections;
 import org.reflections.scanners.*;
 import org.reflections.util.ConfigurationBuilder;
-import sun.misc.ClassLoaderUtil;
 import sun.misc.SharedSecrets;
 import sun.misc.URLClassPath;
 
@@ -15,6 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 
@@ -25,16 +28,27 @@ import java.util.concurrent.ForkJoinPool;
 public class ReflectionsHelper extends ClassExtensionHelper {
 
 
+    private static final ICacheProvider<Class, Set<Class>> SUB_CACHE = new ConcurrentCacheProvider();
+    private static final ICacheProvider<Class<? extends Annotation>, Set<Class<?>>> ANNOTATION_CACHE = new ConcurrentCacheProvider();
+    private static final ICacheProvider<String, Set<String>> PACKAGE_CACHE = new ConcurrentCacheProvider();
     /**
      * 获取子类
      * @param <T>
      * @param tClass 类
      * @return
      */
-    public static <T> Set<Class<? extends T>> getSubTypesOf(Class<T> tClass) {
+    public static <T> Set<? extends Class> getSubTypesOf(Class tClass) {
+        if(null == tClass) {
+            return Collections.emptySet();
+        }
+        if(SUB_CACHE.container(tClass)) {
+            return SUB_CACHE.get(tClass);
+        }
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(new SubTypesScanner());
         Reflections reflections = new Reflections(configurationBuilder);
-        return reflections.getSubTypesOf(tClass);
+        Set<Class> typesOf = reflections.getSubTypesOf(tClass);
+        SUB_CACHE.put(tClass, typesOf);
+        return typesOf;
     }
     /**
      * 获取注解注释的类
@@ -42,9 +56,17 @@ public class ReflectionsHelper extends ClassExtensionHelper {
      * @return
      */
     public static Set<Class<?>> getTypesAnnotatedWith(Class<? extends Annotation> annotation) {
+        if(null == annotation) {
+            return Collections.emptySet();
+        }
+        if(ANNOTATION_CACHE.container(annotation)) {
+            return ANNOTATION_CACHE.get(annotation);
+        }
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(new TypeAnnotationsScanner());
         Reflections reflections = new Reflections(configurationBuilder);
-        return reflections.getTypesAnnotatedWith(annotation);
+        Set<Class<?>> annotatedWith = reflections.getTypesAnnotatedWith(annotation);
+        ANNOTATION_CACHE.put(annotation, annotatedWith);
+        return annotatedWith;
     }
     /**
      * 获取注解注释的字段
@@ -82,9 +104,17 @@ public class ReflectionsHelper extends ClassExtensionHelper {
      * @return
      */
     public static Set<String> getAllTypes(final String packages) {
+        if(Strings.isNullOrEmpty(packages)) {
+            return Collections.emptySet();
+        }
+        if(PACKAGE_CACHE.container(packages)) {
+            return PACKAGE_CACHE.get(packages);
+        }
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(packages);
         Reflections reflections = new Reflections(configurationBuilder);
-        return reflections.getAllTypes();
+        Set<String> allTypes = reflections.getAllTypes();
+        PACKAGE_CACHE.put(packages, allTypes);
+        return allTypes;
     }
 
     /**
