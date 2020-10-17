@@ -646,4 +646,5 @@ public class ClassHelper extends ReflectionsHelper {
         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
         return (Class<T>) actualTypeArguments[0];
     }
+
 }

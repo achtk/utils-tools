@@ -10,6 +10,7 @@ import com.chua.utils.tools.mapper.ProxyMapper;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Set;
 
 /**
  * jdk proxy
@@ -19,6 +20,7 @@ public class DefaultProxyAgent<T> implements ProxyAgent<T> {
 
     private ProxyMapper mapper;
     private BalancerLoader balancerLoader = new RotationBalancerLoader();
+    private Set<String> objectName = ClassHelper.getDefaultMethods();
 
     public DefaultProxyAgent() {}
     public DefaultProxyAgent(MethodIntercept methodIntercept) {
@@ -38,7 +40,9 @@ public class DefaultProxyAgent<T> implements ProxyAgent<T> {
     @Override
     public Object invoker(Object obj, Method method, Object[] args, Object proxy) throws Throwable {
         String methodName = method.getName();
-
+        if(objectName.contains(methodName)) {
+            return null;
+        }
         ClassHelper.methodAccessible(method);
         if(null == mapper || !mapper.hasName(methodName)) {
             return method.invoke(obj, args);

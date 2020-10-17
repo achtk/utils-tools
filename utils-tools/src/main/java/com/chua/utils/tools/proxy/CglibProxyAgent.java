@@ -1,5 +1,6 @@
 package com.chua.utils.tools.proxy;
 
+import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.function.intercept.MethodIntercept;
 import com.chua.utils.tools.loader.BalancerLoader;
@@ -11,6 +12,7 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
+import java.util.Set;
 
 /**
  * cglib 代理
@@ -20,6 +22,7 @@ public class CglibProxyAgent<T> implements ProxyAgent<T>, MethodInterceptor {
 
     private ProxyMapper mapper;
     private BalancerLoader balancerLoader = new RotationBalancerLoader();
+    private Set<String> objectName = ClassHelper.getDefaultMethods();
 
     public CglibProxyAgent() {}
     public CglibProxyAgent(MethodIntercept methodIntercept) {
@@ -42,6 +45,9 @@ public class CglibProxyAgent<T> implements ProxyAgent<T>, MethodInterceptor {
     @Override
     public Object invoker(Object obj, Method method, Object[] args, Object proxy) throws Throwable {
         String methodName = method.getName();
+        if(objectName.contains(methodName)) {
+            return null;
+        }
         MethodProxy methodProxy = (MethodProxy) proxy;
         if(null == mapper || !mapper.hasName(methodName)) {
             return methodProxy.invokeSuper(obj, args);

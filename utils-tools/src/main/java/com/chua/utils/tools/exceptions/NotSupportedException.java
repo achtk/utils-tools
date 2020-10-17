@@ -5,7 +5,7 @@ package com.chua.utils.tools.exceptions;
  * @author CH
  * @date 2020-09-26
  */
-public class NotSupportedException extends Exception {
+public class NotSupportedException extends RuntimeException {
     public NotSupportedException() {
     }
 

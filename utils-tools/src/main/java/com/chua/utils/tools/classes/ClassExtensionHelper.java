@@ -44,6 +44,7 @@ public class ClassExtensionHelper {
     private static final Map<Class<?>, List<MemberInfo>> DECLARED_SUPER_FIELDS_CACHE = new ConcurrentHashMap<>(256);
     private static final Map<Class<?>, List<Method>> DECLARED_METHODS_CACHE = new ConcurrentHashMap<>(256);
 
+    private static final Set<String> DEFAULT_OBJECT_METHODS = Sets.newHashSet("toString", "equals", "hashCode");
 
     public static List<String> getPrimitiveNames() {
         initPrimitives();
@@ -1153,6 +1154,14 @@ public class ClassExtensionHelper {
         return method.invoke(obj, args);
     }
 
+
+    /**
+     * 获取默认方法
+     * @return
+     */
+    public static Set<String> getDefaultMethods() {
+        return DEFAULT_OBJECT_METHODS;
+    }
     /**
      * 设置字段值
      *
