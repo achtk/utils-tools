@@ -1438,8 +1438,8 @@ public class MapHelper {
     private static void dataFormatYaml(String key, Object value, Properties result) {
         if (value instanceof Map) {
             doAnalysisMapValue(key, value, result);
-        } else if (value instanceof List) {
-            doAnalysisListValue(key, value, result);
+      //  } else if (value instanceof List) {
+      //      doAnalysisListValue(key, value, result);
         } else {
             result.put(key, value);
         }

@@ -51,7 +51,7 @@ public class ExtensionProcessor<T> implements IExtensionProcessor<T> {
         this.extension = spiConfig.getExtension();
         List<String> loaderPath = spiConfig.getExtensionLoaderPath();
         if(!BooleanHelper.hasLength(loaderPath)) {
-            loaderPath = SpiConfigs.options.getListValue(SpiOptions.EXTENSION_LOAD_PATH);
+            loaderPath = SpiConfigs.newConfig().getListValue(SpiOptions.EXTENSION_LOAD_PATH);
         }
         
         this.extensionLoadPath = loaderPath;

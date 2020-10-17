@@ -8,6 +8,7 @@ import com.google.common.base.Charsets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -26,7 +27,7 @@ public class XmlPropertiesLoader implements PropertiesLoader {
             return PropertiesHelper.emptyProperties();
         }
         try(InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charsets.UTF_8)) {
-            Properties properties = JsonHelper.fromXmlJson(inputStreamReader, Properties.class);
+            Map properties = JsonHelper.fromXmlJson(inputStreamReader, Map.class);
             return MapHelper.map2Yaml(properties);
         } catch (IOException e) {
             return PropertiesHelper.emptyProperties();

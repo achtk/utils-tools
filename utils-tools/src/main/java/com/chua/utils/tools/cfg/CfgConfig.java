@@ -2,6 +2,7 @@ package com.chua.utils.tools.cfg;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.prop.loader.PropertiesLoader;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -23,10 +24,6 @@ import static com.chua.utils.tools.constant.StringConstant.SYSTEM_PRIORITY_PROP;
 @Setter
 public class CfgConfig {
     /**
-     * 默认 slaver
-     */
-    private static final List<String> DEFAULT_SLAVERS = Lists.newArrayList("extension/", "META-INF/extension/");
-    /**
      * 配置文件名称
      */
     private String master;
@@ -46,7 +43,7 @@ public class CfgConfig {
     /**
      * 文件所在目录
      */
-    private Set<String> slaver = Sets.newHashSet("json");
+    private Set<String> slaver = Sets.newHashSet("", "extension/", "META-INF/extension/", "extensions/", "META-INF/extensions/");
 
     /**
      * 添加配置
@@ -54,14 +51,14 @@ public class CfgConfig {
      * @return
      */
     public CfgConfig addSlaver(String... strings) {
-        if(null != strings || strings.length == 0) {
+        if(null == strings || strings.length == 0) {
             return this;
         }
         for (String string : strings) {
             if(Strings.isNullOrEmpty(string)) {
                 continue;
             }
-            suffix.add(string);
+            slaver.add(string);
         }
         return this;
     }

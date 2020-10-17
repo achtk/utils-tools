@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -27,7 +28,7 @@ public class JsonPropertiesLoader implements PropertiesLoader {
             return PropertiesHelper.emptyProperties();
         }
         try(InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charsets.UTF_8)) {
-            Properties properties = JsonHelper.fromJson(inputStreamReader, Properties.class);
+            Map properties = JsonHelper.fromJson(inputStreamReader, Map.class);
             return MapHelper.map2Yaml(properties);
         } catch (IOException e) {
             return PropertiesHelper.emptyProperties();

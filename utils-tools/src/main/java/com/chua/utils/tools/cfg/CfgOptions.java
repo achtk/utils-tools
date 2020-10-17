@@ -3,7 +3,7 @@ package com.chua.utils.tools.cfg;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.*;
 import com.chua.utils.tools.options.IOptions;
-import com.chua.utils.tools.prop.loader.PropertiesLoader;
+import com.chua.utils.tools.prop.loader.*;
 import com.chua.utils.tools.prop.placeholder.AbstractPropertiesPlaceholderResolver;
 import com.chua.utils.tools.prop.placeholder.PropertiesPlaceholderFactory;
 import com.chua.utils.tools.spi.common.SpiConfigs;
@@ -36,6 +36,7 @@ import static com.chua.utils.tools.constant.StringConstant.*;
 public class CfgOptions {
 
     private static final ConcurrentMap<String, HashMultimap<String, Properties>> CACHE = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, PropertiesLoader> LOADER_CACHE = new ConcurrentHashMap<>();
     /**
      * 文件路径
      */
@@ -209,7 +210,7 @@ public class CfgOptions {
         }
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            PropertiesLoader propertiesLoader = ExtensionFactory.getExtensionLoader(PropertiesLoader.class).getExtension(suffix);
+            PropertiesLoader propertiesLoader = getExtension(suffix);
             if (null == propertiesLoader) {
                 continue;
             }
@@ -222,6 +223,34 @@ public class CfgOptions {
             result.put(url.toExternalForm(), properties);
         }
         return result;
+    }
+
+    /**
+     * 判断文件类型
+     * @param suffix
+     * @return
+     */
+    private static PropertiesLoader getExtension(String suffix) {
+        if(LOADER_CACHE.containsKey(suffix)) {
+            return LOADER_CACHE.get(suffix);
+        }
+        PropertiesLoader propertiesLoader = null;
+        switch (suffix) {
+            case "json":
+                propertiesLoader = new JsonPropertiesLoader();
+                break;
+            case "yml":
+                propertiesLoader =  new YamlPropertiesLoader();
+                break;
+            case "xml":
+                propertiesLoader =  new XmlPropertiesLoader();
+                break;
+            case "properties":
+                propertiesLoader =  new PropertiesPropertiesLoader();
+                break;
+        }
+        LOADER_CACHE.put(suffix, propertiesLoader);
+        return propertiesLoader;
     }
 
     /**

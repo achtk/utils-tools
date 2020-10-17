@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.LongAdder;
 
 import static com.chua.utils.tools.constant.StringConstant.SPI_CONFIG;
 import static com.chua.utils.tools.constant.StringConstant.SPI_CONFIG_DEFAULT;
@@ -35,18 +36,16 @@ public class SpiConfigs implements IOptions {
      * 全部配置
      */
     private final static ConcurrentMap<String, Object> CFG = new ConcurrentHashMap<>();
-    
-    public static IOptions options = null;
 
     static {
         init();
     }
+    public static IOptions options = null;
 
     private static void init() {
         CfgConfig cfgConfig = new CfgConfig();
         cfgConfig.setMaster(SPI_CONFIG_DEFAULT);
         cfgConfig.setOrder(SPI_CFG_ORDER);
-        cfgConfig.addSlaver("extension/", "META-INF/extension/");
 
         CfgOptions cfgOptions = new CfgOptions();
         cfgOptions.analysis(cfgConfig);
@@ -129,6 +128,11 @@ public class SpiConfigs implements IOptions {
 
         FileHelper.write(new File(file), JsonHelper.toFormatJson(meta), "UTF-8", false);
 
+    }
+
+    public static IOptions newConfig() {
+        init();
+        return options;
     }
 
     @Override

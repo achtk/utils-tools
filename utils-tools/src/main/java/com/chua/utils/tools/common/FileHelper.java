@@ -2193,6 +2193,6 @@ public class FileHelper {
      * @return
      */
     public static String toFolder(final String folder) {
-        return Strings.isNullOrEmpty(folder) ? FILE_LEFT_SLASH : (folder.endsWith("/") ? folder : folder + FILE_LEFT_SLASH);
+        return Strings.isNullOrEmpty(folder) ? EMPTY : (folder.endsWith("/") ? folder : folder + FILE_LEFT_SLASH);
     }
 }

@@ -1,7 +1,6 @@
 package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.common.loader.PropertiesLoader;
-import com.chua.utils.tools.function.impl.YamlPropertiesDataTransform;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -183,28 +182,6 @@ public class PropertiesHelper {
     }
 
     /**
-     * map转properties
-     * @param source 数据源
-     * @return
-     */
-    public static PropertiesLoader yaml2Properties(final Map<String, Object> source) {
-        if(!BooleanHelper.hasLength(source)) {
-            return null;
-        }
-        Properties properties = new YamlPropertiesDataTransform().transFrom(JsonHelper.toJson(source));
-        return PropertiesLoader.newLoader(properties);
-    }
-
-    /**
-     * properties转map
-     * @param properties 数据源
-     * @return
-     */
-    public static Map<String, Object> properties2Yaml(final Properties properties) {
-        return JsonHelper.fromJson2Map(new YamlPropertiesDataTransform().transTo(properties));
-    }
-
-    /**
      * 获取prop
      * @param text 字符串
      * @return
@@ -237,6 +214,6 @@ public class PropertiesHelper {
      * @return
      */
     public static ConcurrentHashMap<String, Object> toConcurrentHashMap(Properties properties) {
-        return new ConcurrentHashMap(properties);
+        return null == properties ? new ConcurrentHashMap<>() : new ConcurrentHashMap(properties);
     }
 }

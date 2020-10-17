@@ -9,6 +9,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -28,7 +29,7 @@ public class YamlPropertiesLoader implements PropertiesLoader {
             return PropertiesHelper.emptyProperties();
         }
         try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charsets.UTF_8)) {
-            Properties properties = JsonHelper.fromYamlJson(inputStreamReader, Properties.class);
+            Map properties = JsonHelper.fromYamlJson(inputStreamReader, Map.class);
             return MapHelper.map2Yaml(properties);
         } catch (IOException e) {
             return PropertiesHelper.emptyProperties();

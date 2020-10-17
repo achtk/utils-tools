@@ -20,17 +20,17 @@ public interface IOptions {
      * 获取values
      * @return
      */
-    public ConcurrentMap<String, Object> values();
+    ConcurrentMap<String, Object> values();
 
     /**
      * 处理占位符信息
      * @return
      */
-    default public ConcurrentMap<String, Object> valuesFinal() {
+    default ConcurrentMap<String, Object> valuesFinal() {
         return values();
     }
 
-    default public Properties yamlValue() {
+    default Properties yamlValue() {
         return MapHelper.map2Yaml(values());
     }
     /**
@@ -39,7 +39,7 @@ public interface IOptions {
      * @param primaryKey the primary key
      * @return the boolean value
      */
-    default public Boolean getBooleanValue(String primaryKey) {
+    default Boolean getBooleanValue(String primaryKey) {
         Object val = valuesFinal().get(primaryKey);
         if (val == null) {
             return null;
@@ -55,7 +55,7 @@ public interface IOptions {
      * @param secondaryKey the secondary key
      * @return the boolean value
      */
-    default public boolean getBooleanValue(String primaryKey, String secondaryKey) {
+    default boolean getBooleanValue(String primaryKey, String secondaryKey) {
         Boolean booleanValue = getBooleanValue(primaryKey);
         return null == booleanValue ? getBooleanValue(secondaryKey) : booleanValue;
     }
@@ -66,7 +66,7 @@ public interface IOptions {
      * @param primaryKey the primary key
      * @return the int value
      */
-    default public int getIntValue(String primaryKey) {
+    default int getIntValue(String primaryKey) {
         Object val = valuesFinal().get(primaryKey);
         if (val == null) {
             return -1;
@@ -86,7 +86,7 @@ public interface IOptions {
      * @param secondaryKey the secondary key
      * @return the int value
      */
-    default public int getIntValue(String primaryKey, String secondaryKey) {
+    default int getIntValue(String primaryKey, String secondaryKey) {
         int intValue = getIntValue(primaryKey);
         return -1 == intValue ? getIntValue(secondaryKey) : intValue;
     }
@@ -97,7 +97,7 @@ public interface IOptions {
      * @param primaryKey the primary key
      * @return the string value
      */
-    default public String getStringValue(String primaryKey) {
+    default String getStringValue(String primaryKey) {
         Object object = valuesFinal().get(primaryKey);
         if(null == object) {
             return null;
@@ -116,7 +116,7 @@ public interface IOptions {
      * @param secondaryKey the secondary key
      * @return the string value
      */
-   default public String getStringValue(String primaryKey, String secondaryKey) {
+   default String getStringValue(String primaryKey, String secondaryKey) {
        String stringValue = getStringValue(primaryKey);
        if(null == stringValue) {
            return getStringValue(secondaryKey);
@@ -129,7 +129,7 @@ public interface IOptions {
      * @param primaryKey the primary key
      * @return the list value
      */
-    default public List getListValue(String primaryKey) {
+    default List getListValue(String primaryKey) {
         return getListValue(primaryKey, ",");
     }
     /**
@@ -139,7 +139,7 @@ public interface IOptions {
      * @param separator the separator key
      * @return the list value
      */
-    default public List getListValue(String primaryKey, String separator) {
+    default List getListValue(String primaryKey, String separator) {
         Object item = valuesFinal().get(primaryKey);
         if(null == item) {
             return null;
