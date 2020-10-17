@@ -210,7 +210,7 @@ interface IBeanFactory {
         if (null == entity) {
             return null;
         }
-        Map<String, Object> maps = ClassHelper.getAllFields(entity);
+        Map<String, Object> maps = ClassHelper.getFieldsValueAsMap(entity);
         if (null != maps) {
             classParams.putAll(maps);
         }
@@ -228,7 +228,7 @@ interface IBeanFactory {
         if (null == entity) {
             return null;
         }
-        Map<String, Object> maps = ClassHelper.getAllFields(entity);
+        Map<String, Object> maps = ClassHelper.getFieldsValueAsMap(entity);
         return ifNotContainerRegisterBean(beanName, entity.getClass(), maps);
     }
 
@@ -243,7 +243,7 @@ interface IBeanFactory {
         if (null == entity) {
             return null;
         }
-        Map<String, Object> maps = ClassHelper.getAllFields(entity);
+        Map<String, Object> maps = ClassHelper.getFieldsValueAsMap(entity);
         return ifNotContainerRegisterBean(entity.getClass().getName(), entity.getClass(), maps);
     }
 
@@ -258,7 +258,7 @@ interface IBeanFactory {
         if (null == entity) {
             return null;
         }
-        Map<String, Object> maps = ClassHelper.getAllFields(entity);
+        Map<String, Object> maps = ClassHelper.getFieldsValueAsMap(entity);
         if (null != maps) {
             classParams.putAll(maps);
         }
