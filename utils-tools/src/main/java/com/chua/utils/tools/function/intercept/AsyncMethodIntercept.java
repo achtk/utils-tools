@@ -24,7 +24,7 @@ public class AsyncMethodIntercept implements MethodIntercept {
     private String[] exclude = ArraysHelper.emptyString();
 
     @Override
-    public Object invoke(Object obj, Method method, Object[] args, Object... proxy) throws Throwable {
+    public Object invoke(Object obj, Method method, Object[] args, Object proxy) throws Throwable {
         if(ArraysHelper.contains(exclude, method.getName())) {
             return ProxyMapper.intercept(obj, method, args, proxy);
         }

@@ -1,7 +1,6 @@
 package com.chua.utils.tools.common;
 
-import com.google.common.base.Charsets;
-
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -25,11 +24,12 @@ public class ByteHelper {
 
     /**
      * byte[] -> short[]rcmd
+     *
      * @param data 数据
      * @return
      */
     public static short[] getBytes(final byte[] data) {
-        if(null == data) {
+        if (null == data) {
             return null;
         }
         return ByteBuffer.wrap(data).order(ByteOrder.BIG_ENDIAN).asShortBuffer().array();
@@ -37,6 +37,7 @@ public class ByteHelper {
 
     /**
      * 将short整型数值转换为字节数组
+     *
      * @param data 数据
      * @return
      */
@@ -49,6 +50,7 @@ public class ByteHelper {
 
     /**
      * 将字符转换为字节数组
+     *
      * @param data 数据
      * @return
      */
@@ -61,6 +63,7 @@ public class ByteHelper {
 
     /**
      * 将布尔值转换为字节数组
+     *
      * @param data 数据
      * @return
      */
@@ -72,6 +75,7 @@ public class ByteHelper {
 
     /**
      * 将整型数值转换为字节数组
+     *
      * @param data 数据
      * @return
      */
@@ -86,6 +90,7 @@ public class ByteHelper {
 
     /**
      * 将long整型数值转换为字节数组
+     *
      * @param data 数据
      * @return
      */
@@ -104,6 +109,7 @@ public class ByteHelper {
 
     /**
      * 将float型数值转换为字节数组
+     *
      * @param data 数据
      * @return
      */
@@ -114,6 +120,7 @@ public class ByteHelper {
 
     /**
      * 将double型数值转换为字节数组
+     *
      * @param data 数据
      * @return
      */
@@ -124,7 +131,8 @@ public class ByteHelper {
 
     /**
      * 将字符串按照charsetName编码格式的字节数组
-     * @param data 字符串
+     *
+     * @param data        字符串
      * @param charsetName 编码格式
      * @return
      */
@@ -132,10 +140,12 @@ public class ByteHelper {
         Charset charset = Charset.forName(charsetName);
         return data.getBytes(charset);
     }
+
     /**
      * 将字符串按照charsetName编码格式的字节数组
-     * @param data 字符串
-     * @param charsetName 编码格式
+     *
+     * @param data    字符串
+     * @param charset 编码格式
      * @return
      */
     public static byte[] getBytes(String data, Charset charset) {
@@ -144,23 +154,26 @@ public class ByteHelper {
 
     /**
      * 获取限制长度的字节数组
-     * @param value 原始数据
+     *
+     * @param value   原始数据
      * @param charset 字符编码
-     * @param limit 长度
+     * @param limit   长度
      * @return
      */
     public static byte[] getBytes(String value, String charset, int limit) {
         byte[] bs = new byte[limit];
         byte[] bytes1 = value.getBytes(Charset.forName(charset));
-        if(bytes1.length >= limit) {
+        if (bytes1.length >= limit) {
             System.arraycopy(bytes1, 0, bs, 0, limit);
         } else {
             System.arraycopy(bytes1, 0, bs, 0, bytes1.length);
         }
         return bs;
     }
+
     /**
      * 将字符串按照GBK编码格式的字节数组
+     *
      * @param data 数据
      * @return
      */
@@ -170,6 +183,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组第0字节转换为布尔值
+     *
      * @param bytes 数据
      * @return
      */
@@ -179,6 +193,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组的第index字节转换为布尔值
+     *
      * @param bytes 数据
      * @param index 索引
      * @return
@@ -189,6 +204,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组前2字节转换为short整型数值
+     *
      * @param bytes 数据
      * @return
      */
@@ -199,7 +215,7 @@ public class ByteHelper {
     /**
      * 将字节数组从startIndex开始的2个字节转换为short整型数值
      *
-     * @param bytes 数据
+     * @param bytes      数据
      * @param startIndex 索引位置
      * @return
      */
@@ -209,6 +225,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组前2字节转换为字符
+     *
      * @param bytes 数据
      * @return
      */
@@ -218,7 +235,8 @@ public class ByteHelper {
 
     /**
      * 将字节数组从startIndex开始的2个字节转换为字符
-     * @param bytes 数据
+     *
+     * @param bytes      数据
      * @param startIndex 索引位置
      * @return
      */
@@ -228,6 +246,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组前4字节转换为整型数值
+     *
      * @param bytes 数据
      * @return
      */
@@ -238,7 +257,8 @@ public class ByteHelper {
 
     /**
      * 将字节数组从startIndex开始的4个字节转换为整型数值
-     * @param bytes 数据
+     *
+     * @param bytes      数据
      * @param startIndex 索引位置
      * @return
      */
@@ -250,6 +270,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组前8字节转换为long整型数值
+     *
      * @param bytes 数据
      * @return
      */
@@ -265,7 +286,8 @@ public class ByteHelper {
 
     /**
      * 将字节数组从startIndex开始的8个字节转换为long整型数值
-     * @param bytes 数据
+     *
+     * @param bytes      数据
      * @param startIndex 索引位置
      * @return
      */
@@ -281,6 +303,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组前4字节转换为float型数值
+     *
      * @param bytes 数据
      * @return
      */
@@ -290,7 +313,8 @@ public class ByteHelper {
 
     /**
      * 将字节数组从startIndex开始的4个字节转换为float型数值
-     * @param bytes 数据
+     *
+     * @param bytes      数据
      * @param startIndex 索引位置
      * @return
      */
@@ -302,6 +326,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组前8字节转换为double型数值
+     *
      * @param bytes 数据
      * @return
      */
@@ -312,7 +337,8 @@ public class ByteHelper {
 
     /**
      * 将字节数组从startIndex开始的8个字节转换为double型数值
-     * @param bytes 数据
+     *
+     * @param bytes      数据
      * @param startIndex 索引位置
      * @return
      */
@@ -325,7 +351,8 @@ public class ByteHelper {
 
     /**
      * 将charsetName编码格式的字节数组转换为字符串
-     * @param bytes 数据
+     *
+     * @param bytes       数据
      * @param charsetName 字符编码
      * @return
      */
@@ -335,6 +362,7 @@ public class ByteHelper {
 
     /**
      * 将GBK编码格式的字节数组转换为字符串
+     *
      * @param bytes 数据
      * @return
      */
@@ -344,6 +372,7 @@ public class ByteHelper {
 
     /**
      * 将16进制字符串转换为字节数组
+     *
      * @param hex 数据
      * @return
      */
@@ -363,6 +392,7 @@ public class ByteHelper {
 
     /**
      * 将16进制字符串转换为字节数组
+     *
      * @param hex 数据
      * @return
      */
@@ -398,8 +428,9 @@ public class ByteHelper {
 
     /**
      * 字符所在位置
+     *
      * @param input 原始数据
-     * @param c 字符
+     * @param c     字符
      * @return
      */
     private static int indexOf(String input, char c) {
@@ -414,6 +445,7 @@ public class ByteHelper {
 
     /**
      * 将BCD编码的字节数组转换为字符串
+     *
      * @param bcds 原始数据
      * @return
      */
@@ -435,15 +467,17 @@ public class ByteHelper {
 
     /**
      * 字节转整形
+     *
      * @param value 原始数据
      * @return
      */
-    public static int bcdToInt(byte value){
-        return ((value>>4) * 10) + (value&0x0F);
+    public static int bcdToInt(byte value) {
+        return ((value >> 4) * 10) + (value & 0x0F);
     }
 
     /**
      * 字节数组转16进制字符串
+     *
      * @param bs 原始数据
      * @return
      */
@@ -460,13 +494,14 @@ public class ByteHelper {
 
     /**
      * 字节数组取前len个字节转16进制字符串
-     * @param bs 原始数据
+     *
+     * @param bs  原始数据
      * @param len 长度
      * @return
      */
     public static String bytesToHex(byte[] bs, int len) {
         StringBuilder sb = new StringBuilder();
-        for (int i=0; i<len; i++ ) {
+        for (int i = 0; i < len; i++) {
             byte b = bs[i];
             int high = (b >> 4) & 0x0f;
             int low = b & 0x0f;
@@ -475,16 +510,18 @@ public class ByteHelper {
         }
         return sb.toString();
     }
+
     /**
      * 字节数组偏移offset长度之后的取len个字节转16进制字符串
-     * @param bs 原始数据
+     *
+     * @param bs     原始数据
      * @param offset 偏移量
-     * @param len 长度
+     * @param len    长度
      * @return
      */
     public static String bytesToHex(byte[] bs, int offset, int len) {
         StringBuilder sb = new StringBuilder();
-        for (int i=0; i<len; i++ ) {
+        for (int i = 0; i < len; i++) {
             byte b = bs[offset + i];
             int high = (b >> 4) & 0x0f;
             int low = b & 0x0f;
@@ -493,8 +530,10 @@ public class ByteHelper {
         }
         return sb.toString();
     }
+
     /**
      * 字节数组转16进制字符串
+     *
      * @param b 原始数据
      * @return
      */
@@ -506,8 +545,10 @@ public class ByteHelper {
         sb.append(HEX_VOCABLE[low]);
         return sb.toString();
     }
+
     /**
      * 将字节数组取反
+     *
      * @param src 原始数据
      * @return
      */
@@ -551,10 +592,12 @@ public class ByteHelper {
         }
         return true;
     }
+
     /**
      * 只比对指定长度byte
-     * @param a 原始数据
-     * @param b 比对数据
+     *
+     * @param a   原始数据
+     * @param b   比对数据
      * @param len 长度
      * @return
      */
@@ -573,6 +616,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组转换为二进制字符串
+     *
      * @param items 原始数据
      * @return
      */
@@ -589,6 +633,7 @@ public class ByteHelper {
 
     /**
      * 将字节转换为二进制字符串
+     *
      * @param item 原始数据
      * @return
      */
@@ -604,6 +649,7 @@ public class ByteHelper {
 
     /**
      * 对数组a，b进行异或运算
+     *
      * @param a 原始数据1
      * @param b 原始数据2
      * @return
@@ -622,8 +668,9 @@ public class ByteHelper {
 
     /**
      * 对数组a，b进行异或运算 运算长度len
-     * @param a 原始数据1
-     * @param b 原始数据2
+     *
+     * @param a   原始数据1
+     * @param b   原始数据2
      * @param len 长度
      * @return
      */
@@ -631,7 +678,7 @@ public class ByteHelper {
         if (a == null || a.length == 0 || b == null || b.length == 0) {
             return null;
         }
-        if (a.length < len || b.length < len){
+        if (a.length < len || b.length < len) {
             return null;
         }
         byte[] result = new byte[len];
@@ -640,8 +687,10 @@ public class ByteHelper {
         }
         return result;
     }
+
     /**
      * 将short整型数值转换为字节数组
+     *
      * @param num 原始数据
      * @return
      */
@@ -655,6 +704,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组转为整型
+     *
      * @param arr 原始数据
      * @return
      */
@@ -672,6 +722,7 @@ public class ByteHelper {
 
     /**
      * 将整型数值转换为指定长度的字节数组
+     *
      * @param num 原始数据
      * @return
      */
@@ -685,6 +736,7 @@ public class ByteHelper {
 
     /**
      * 将整型数值转换为指定长度的字节数组
+     *
      * @param src 原始数据
      * @param len 长度
      * @return
@@ -702,6 +754,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组转换为整型数值
+     *
      * @param arr 原始数据
      * @return
      */
@@ -719,6 +772,7 @@ public class ByteHelper {
 
     /**
      * 将long整型数值转换为字节数组
+     *
      * @param num 原始数据
      * @return
      */
@@ -732,6 +786,7 @@ public class ByteHelper {
 
     /**
      * 将字节数组转换为long整型数值
+     *
      * @param arr 原始数据
      * @return
      */
@@ -750,6 +805,7 @@ public class ByteHelper {
 
     /**
      * 将16进制字符转换为字节
+     *
      * @param c 原始数据
      * @return
      */
@@ -762,14 +818,15 @@ public class ByteHelper {
      * 功能描述：把两个字节的字节数组转化为整型数据，高位补零，例如：<br/>
      * 有字节数组byte[] data = new byte[]{1,2};转换后int数据的字节分布如下：<br/>
      * 00000000  00000000 00000001 00000010,函数返回258
+     *
      * @param lenData 需要进行转换的字节数组
-     * @return  字节数组所表示整型值的大小
+     * @return 字节数组所表示整型值的大小
      */
     public static int bytesToIntWhereByteLengthEquals2(byte[] lenData) {
-        if(lenData.length != 2){
+        if (lenData.length != 2) {
             return -1;
         }
-        byte[] fill = new byte[]{0,0};
+        byte[] fill = new byte[]{0, 0};
         byte[] real = new byte[4];
         System.arraycopy(fill, 0, real, 0, 2);
         System.arraycopy(lenData, 0, real, 2, 2);
@@ -780,14 +837,15 @@ public class ByteHelper {
 
     /**
      * 功能描述：将byte数组转化为int类型的数据
+     *
      * @param byteVal 需要转化的字节数组
      * @return 字节数组所表示的整型数据
      */
     public static int byteToInt(byte[] byteVal) {
         int result = 0;
-        for(int i = 0;i < byteVal.length;i++) {
-            int tmpVal = (byteVal[i]<<(8*(3-i)));
-            switch(i) {
+        for (int i = 0; i < byteVal.length; i++) {
+            int tmpVal = (byteVal[i] << (8 * (3 - i)));
+            switch (i) {
                 case 0:
                     tmpVal = tmpVal & 0xFF000000;
                     break;
@@ -811,24 +869,27 @@ public class ByteHelper {
 
     /**
      * 数据求和
+     *
      * @param bData 原始数据
      * @return
      */
-    public static byte checkXORSum(byte[] bData){
+    public static byte checkXORSum(byte[] bData) {
         byte sum = 0x00;
         for (int i = 0; i < bData.length; i++) {
             sum ^= bData[i];
         }
         return sum;
     }
+
     /**
      * 从offset开始 将后续长度为len的byte字节转为int
-     * @param data 原始数据
+     *
+     * @param data   原始数据
      * @param offset 偏移量
-     * @param len 长度
+     * @param len    长度
      * @return
      */
-    public static int bytesToInt(byte[] data, int offset, int len){
+    public static int bytesToInt(byte[] data, int offset, int len) {
         int mask = 0xFF;
         int temp = 0;
         int result = 0;
@@ -843,14 +904,14 @@ public class ByteHelper {
 
     /**
      * byte字节数组中的字符串的长度
+     *
      * @param data 原始数据
      * @return
      */
-    public static int getBytesStringLen(byte[] data)
-    {
+    public static int getBytesStringLen(byte[] data) {
         int count = 0;
         for (byte b : data) {
-            if(b == 0x00) {
+            if (b == 0x00) {
                 break;
             }
             count++;
@@ -860,14 +921,17 @@ public class ByteHelper {
 
     /**
      * 字节数组转字符串
+     *
      * @param attribute 原始数据
      * @return
      */
     public static String toString(byte[] attribute) {
         return null != attribute ? new String(attribute, UTF_8) : EXTENSION_EMPTY;
     }
+
     /**
      * 字节数组转字符串
+     *
      * @param attribute 原始数据
      * @return
      */
@@ -875,5 +939,21 @@ public class ByteHelper {
         return null != attribute ? new String(attribute, charset) : EXTENSION_EMPTY;
     }
 
+    /**
+     * 进制转化
+     * <p>将{from}进制的{source}转为{to}进制</p>
+     * @param source 数据源
+     * @param from   进制类型
+     * @param to     进制类型
+     * @return
+     */
+    public static String fromRadix(String source, int from, int to) {
+        BigInteger bigint = new BigInteger(source, from);
+        return bigint.toString(to);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(fromRadix("16", 32, 10));
+    }
 
 }

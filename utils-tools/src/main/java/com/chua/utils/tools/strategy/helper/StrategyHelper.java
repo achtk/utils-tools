@@ -2,6 +2,7 @@ package com.chua.utils.tools.strategy.helper;
 
 import com.chua.utils.tools.function.intercept.*;
 import com.chua.utils.tools.proxy.CglibProxyAgent;
+import com.chua.utils.tools.proxy.DefaultProxyAgent;
 import com.chua.utils.tools.proxy.ProxyAgent;
 import com.chua.utils.tools.proxy.ProxyLoader;
 import com.chua.utils.tools.strategy.handler.IAsyncStrategyPolicy;
@@ -13,7 +14,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.concurrent.*;
 
 /**
@@ -30,15 +33,16 @@ public class StrategyHelper {
     /**
      * 创建策略
      *
-     * @param tClass         类型
+     * @param tClass 类型
      * @param <T>
      * @return
      */
-    public static <T> T doWithIntercept(final  MethodIntercept methodIntercept, final Class<T> tClass) {
+    public static <T> T doWithIntercept(final MethodIntercept methodIntercept, final Class<T> tClass) {
         ProxyAgent<T> proxyAgent = new CglibProxyAgent<>(methodIntercept);
         ProxyLoader<T> proxyLoader = new ProxyLoader<>(proxyAgent);
         return proxyLoader.newProxy(tClass);
     }
+
     /**
      * 创建代理策略
      *
@@ -50,7 +54,7 @@ public class StrategyHelper {
     public static <T> T doWithProxy(final IStrategyPolicy<MethodIntercept> strategyPolicy, final Class<T> tClass) {
         return doWithIntercept(new MethodIntercept() {
             @Override
-            public Object invoke(Object obj, Method method, Object[] args, Object... proxy) throws Throwable {
+            public Object invoke(Object obj, Method method, Object[] args, Object proxy) throws Throwable {
                 MethodIntercept policy = strategyPolicy.policy();
                 return policy.invoke(obj, method, args, proxy);
             }
@@ -58,14 +62,34 @@ public class StrategyHelper {
     }
 
     /**
-     * 调度策略
+     * 创建代理策略
      *
-     * @param tClass 类
-     * @param strategyPolicy  消费者
+     * @param strategyPolicy 策略
+     * @param tClass         类型
      * @param <T>
      * @return
      */
-    public static <T> T doWithSchedule(final IAsyncStrategyPolicy strategyPolicy, final Class<T> tClass, final long delay, final String... exclude) {
+    public static <T> T doWithInterfaceProxy(final IStrategyPolicy<MethodIntercept> strategyPolicy, final Class<T> tClass) {
+        ProxyAgent<T> proxyAgent = new DefaultProxyAgent(new MethodIntercept() {
+            @Override
+            public Object invoke(Object obj, Method method, Object[] args, Object proxy) throws Throwable {
+                MethodIntercept policy = strategyPolicy.policy();
+                return policy.invoke(obj, method, args, proxy);
+            }
+        });
+        ProxyLoader<T> proxyLoader = new ProxyLoader<>(proxyAgent);
+        return proxyLoader.newProxy(tClass);
+    }
+
+    /**
+     * 调度策略
+     *
+     * @param tClass         类
+     * @param strategyPolicy 消费者
+     * @param <T>
+     * @return 代理对象
+     */
+    public static <T> T doWithSchedule(final IAsyncStrategyPolicy<MethodIntercept> strategyPolicy, final Class<T> tClass, final long delay, final String... exclude) {
         return doWithProxy(new IStrategyPolicy<MethodIntercept>() {
             @Override
             public MethodIntercept policy() {
@@ -78,15 +102,16 @@ public class StrategyHelper {
             }
         }, tClass);
     }
+
     /**
      * 异步策略
      *
-     * @param tClass 类
-     * @param strategyPolicy  消费者
+     * @param tClass         类
+     * @param strategyPolicy 消费者
      * @param <T>
-     * @return
+     * @return 代理对象
      */
-    public static <T, V> T doWithAsync(final IAsyncStrategyPolicy strategyPolicy, final Class<T> tClass, final String... exclude) {
+    public static <T> T doWithAsync(final IAsyncStrategyPolicy<MethodIntercept> strategyPolicy, final Class<T> tClass, final String... exclude) {
         return doWithProxy(new IStrategyPolicy<MethodIntercept>() {
             @Override
             public MethodIntercept policy() {
@@ -99,14 +124,29 @@ public class StrategyHelper {
             }
         }, tClass);
     }
+
     /**
      * 缓存策略
      *
      * @param tClass 类
+     * @param methodIntercept 方法拦截器用于接口
      * @param <T>
-     * @return
+     * @return 代理对象
      */
-    public static <T> T doWithCache(final Class<T> tClass, final String... exclude) {
+    public static <T> T doWithCache(final Class<T> tClass, final MethodIntercept methodIntercept, final String... exclude) {
+        if (tClass.isInterface()) {
+            return doWithInterfaceProxy(new IStrategyPolicy<MethodIntercept>() {
+                @Override
+                public MethodIntercept policy() {
+                    return methodIntercept;
+                }
+
+                @Override
+                public MethodIntercept failure(Throwable throwable) {
+                    return methodIntercept;
+                }
+            }, tClass);
+        }
         return doWithProxy(new IStrategyPolicy<MethodIntercept>() {
             @Override
             public MethodIntercept policy() {
@@ -119,28 +159,44 @@ public class StrategyHelper {
             }
         }, tClass);
     }
+
     /**
      * 限流策略
      *
      * @param tClass 类
+     * @param methodIntercept 方法拦截器用于接口
      * @param size   令牌数量
      * @param <T>
-     * @return
+     * @return 代理对象
      */
-    public static <T> T doWithLimit(final Class<T> tClass, final int size, final String... exclude) {
-        return doWithLimit(tClass, DEFAULT_GROUP, size);
+    public static <T> T doWithLimit(final Class<T> tClass, final MethodIntercept methodIntercept, final int size, final String... exclude) {
+        return doWithLimit(tClass, methodIntercept, DEFAULT_GROUP, size);
     }
 
     /**
      * 限流策略
      *
      * @param tClass 类
+     * @param methodIntercept 方法拦截器用于接口
      * @param size   令牌数量
      * @param group  分组
      * @param <T>
-     * @return
+     * @return 代理对象
      */
-    public static <T> T doWithLimit(final Class<T> tClass, final String group, final int size, final String... exclude) {
+    public static <T> T doWithLimit(final Class<T> tClass, final MethodIntercept methodIntercept, final String group, final int size, final String... exclude) {
+        if (tClass.isInterface()) {
+            return doWithInterfaceProxy(new IStrategyPolicy<MethodIntercept>() {
+                @Override
+                public MethodIntercept policy() {
+                    return methodIntercept;
+                }
+
+                @Override
+                public MethodIntercept failure(Throwable throwable) {
+                    return methodIntercept;
+                }
+            }, tClass);
+        }
         return doWithProxy(new IStrategyPolicy<MethodIntercept>() {
             @Override
             public MethodIntercept policy() {
@@ -159,7 +215,7 @@ public class StrategyHelper {
      *
      * @param strategyPolicy 策略
      * @param <T>
-     * @return
+     * @return 数据结果
      */
     public static <T> T doWithRetry(IStrategyPolicy<T> strategyPolicy) {
         Preconditions.checkArgument(null != strategyPolicy);
@@ -177,7 +233,7 @@ public class StrategyHelper {
      * @param strategyPolicy 策略
      * @param exceptionClass 异常类型
      * @param <T>
-     * @return
+     * @return 数据结果
      */
     public static <T> T doWithRetry(IStrategyPolicy<T> strategyPolicy, final @Nonnull Class<? extends Throwable> exceptionClass) {
         Preconditions.checkArgument(null != strategyPolicy);
@@ -195,7 +251,7 @@ public class StrategyHelper {
      * @param strategyPolicy 策略
      * @param predicate      异常类型
      * @param <T>
-     * @return
+     * @return 数据结果
      */
     public static <T> T doWithRetry(IStrategyPolicy<T> strategyPolicy, @Nonnull Predicate<T> predicate) {
         Preconditions.checkArgument(null != strategyPolicy);
@@ -213,7 +269,7 @@ public class StrategyHelper {
      * @param strategyPolicy 策略
      * @param timoutMs       超时策略
      * @param <T>
-     * @return
+     * @return 数据结果
      */
     public static <T> T doWithTimeout(IStrategyPolicy<T> strategyPolicy, final long timoutMs) {
         Preconditions.checkArgument(timoutMs > 0, "time should be bigger than 0");

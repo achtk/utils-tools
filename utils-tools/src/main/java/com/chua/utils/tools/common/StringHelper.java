@@ -3058,4 +3058,13 @@ public class StringHelper {
         }
         return ret;
     }
+
+    /**
+     * 是否包含通配符
+     * @param source 数据
+     * @return
+     */
+    public static boolean isWildcardMatch(final String source) {
+        return null != source && (source.indexOf("?") > -1 || source.indexOf("*") > -1);
+    }
 }

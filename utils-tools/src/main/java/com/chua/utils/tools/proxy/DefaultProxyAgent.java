@@ -17,16 +17,16 @@ import java.lang.reflect.Proxy;
  */
 public class DefaultProxyAgent<T> implements ProxyAgent<T> {
 
-    private ProxyMapper proxyMapper ;
+    private ProxyMapper mapper;
     private BalancerLoader balancerLoader = new RotationBalancerLoader();
 
     public DefaultProxyAgent() {}
     public DefaultProxyAgent(MethodIntercept methodIntercept) {
-        this.proxyMapper = new AllProxyMapper(methodIntercept);
+        this.mapper = new AllProxyMapper(methodIntercept);
     }
 
     public DefaultProxyAgent(ProxyMapper proxyMapper, BalancerLoader balancerLoader) {
-        this.proxyMapper = proxyMapper;
+        this.mapper = proxyMapper;
         this.balancerLoader = balancerLoader;
     }
 
@@ -36,25 +36,26 @@ public class DefaultProxyAgent<T> implements ProxyAgent<T> {
     }
 
     @Override
-    public Object invoker(ProxyMapper proxyMapper, Object obj, Method method, Object[] args, Object... proxy) throws Throwable {
+    public Object invoker(Object obj, Method method, Object[] args, Object proxy) throws Throwable {
         String methodName = method.getName();
 
-        if(null == proxyMapper || !proxyMapper.hasName(methodName)) {
-            return ProxyMapper.intercept(obj, method, args, proxy);
+        ClassHelper.methodAccessible(method);
+        if(null == mapper || !mapper.hasName(methodName)) {
+            return method.invoke(obj, args);
         }
 
-        MethodIntercept methodIntercept = proxyMapper.tryToGetProxy(methodName, balancerLoader);
+        MethodIntercept methodIntercept = mapper.tryToGetProxy(methodName, balancerLoader);
         if(null != methodIntercept) {
             return methodIntercept.invoke(obj, method, args, proxy);
         }
-        return ProxyMapper.intercept(obj, method, args, proxy);
+        return method.invoke(obj, args);
     }
 
     private class MethodInterceptFactory implements InvocationHandler {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            return invoker(proxyMapper, proxy, method, args, null);
+            return invoker(proxy, method, args, null);
         }
     }
 }

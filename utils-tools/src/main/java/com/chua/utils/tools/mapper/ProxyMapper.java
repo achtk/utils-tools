@@ -1,6 +1,7 @@
 package com.chua.utils.tools.mapper;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.collects.HashMultiMap;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.function.intercept.MethodIntercept;
@@ -17,14 +18,12 @@ import java.util.Set;
  * 代理映射
  * @author CH
  */
-@Getter
-@EqualsAndHashCode
 public class ProxyMapper {
 
     /**
      * 方法代理缓存
      */
-    private static final HashMultimap<String, MethodIntercept> CACHE_INTERCEPT = HashMultimap.create();
+    private static final HashMultiMap<String, MethodIntercept> CACHE_INTERCEPT = new HashMultiMap<>();
 
     /**
      * 执行方法
@@ -81,12 +80,5 @@ public class ProxyMapper {
             return (MethodIntercept) balancerLoader.balancer(methodIntercepts);
         }
         return null;
-    }
-
-    /**
-     * 获取所有方法代理
-     */
-    public void getAllInteceptor() {
-        return;
     }
 }

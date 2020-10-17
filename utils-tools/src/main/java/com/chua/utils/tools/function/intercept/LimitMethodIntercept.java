@@ -36,7 +36,7 @@ public class LimitMethodIntercept implements MethodIntercept {
     }
 
     @Override
-    public Object invoke(Object obj, Method method, Object[] args, Object... proxy) throws Throwable {
+    public Object invoke(Object obj, Method method, Object[] args, Object proxy) throws Throwable {
         if(ArraysHelper.contains(exclude, method.getName())) {
             return ProxyMapper.intercept(obj, method, args, proxy);
         }

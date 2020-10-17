@@ -19,7 +19,6 @@ public interface ProxyAgent<T> {
 
     /**
      * 执行方法
-     * @param proxyMapper 代理映射
      * @param obj 对象
      * @param method 方法
      * @param args 参数
@@ -27,5 +26,5 @@ public interface ProxyAgent<T> {
      * @return
      * @throws Throwable
      */
-    Object invoker(ProxyMapper proxyMapper, Object obj, Method method, Object[] args, Object... proxy) throws Throwable;
+    Object invoker(Object obj, Method method, Object[] args, Object proxy) throws Throwable;
 }

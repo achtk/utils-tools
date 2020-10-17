@@ -17,5 +17,5 @@ public interface MethodIntercept {
      * @exception Exception
      * @return
      */
-    public Object invoke(Object obj, Method method, Object[] args, Object... proxy) throws Throwable;
+    public Object invoke(Object obj, Method method, Object[] args, Object proxy) throws Throwable;
 }
