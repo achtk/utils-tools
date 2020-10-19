@@ -119,6 +119,8 @@
 
         <slf4j.version>1.7.30</slf4j.version>
 
+        <hikaricp.version>3.4.5</hikaricp.version>
+
         <okhttp.version>4.7.2</okhttp.version>
         <reflections.version>0.9.12</reflections.version>
 
@@ -160,6 +162,12 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${google-guava.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
@@ -212,6 +220,9 @@
         <module>utils-netx-extension-mongodb</module>
         <module>utils-spider</module>
         <module>utils-netx-extension-vertx</module>
+        <module>utils-netx-extension-datasource</module>
+        <module>utils-netx-extension-datasource-sqlite</module>
+        <module>utils-netx-extension-datasource-hsqldb</module>
     </modules>
 
     <build>

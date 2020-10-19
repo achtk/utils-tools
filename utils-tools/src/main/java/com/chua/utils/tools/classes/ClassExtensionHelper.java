@@ -663,7 +663,7 @@ public class ClassExtensionHelper<T> {
             aClass = aClass.getSuperclass();
         }
         DECLARED_SUPER_FIELDS_CACHE.put(aClass, result);
-        return getMembers(obj);
+        return result;
     }
 
     /**
@@ -692,8 +692,9 @@ public class ClassExtensionHelper<T> {
         }
 
         Field[] fields = tClass.getDeclaredFields();
+        List<MemberInfo> members = findMembers(fields, obj);
         DECLARED_FIELDS_CACHE.put(tClass, findMembers(fields, obj));
-        return getLocalMembers(obj);
+        return findMembers(fields, obj);
     }
 
     /**
