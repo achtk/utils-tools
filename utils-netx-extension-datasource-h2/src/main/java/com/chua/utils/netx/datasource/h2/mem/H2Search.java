@@ -1,4 +1,4 @@
-package com.chua.utils.netx.datasource.sqlite.mem;
+package com.chua.utils.netx.datasource.h2.mem;
 
 import com.chua.utils.netx.datasource.factory.DataSourceFactory;
 import com.chua.utils.netx.datasource.info.TableInfo;
@@ -25,13 +25,11 @@ import java.util.function.BiConsumer;
  * @since 2020/10/19 20:35
  */
 @Slf4j
-public class SqliteSearch<T> extends AbstractMemSearch<T> {
+public class H2Search<T> extends AbstractMemSearch<T> {
 
-    /**
-     * jdbc:sqlite
-     */
-    private static final String URL = ":memory:";
-    public static final String DRIVER_URL = "org.sqlite.JDBC";
+    private static final String URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+    public static final String DRIVER_URL = "org.h2.Driver";
+
     @Override
     protected DataSourceProperties dataSourceProperties() {
         DataSourceProperties dataSourceProperties = new DataSourceProperties();
@@ -39,4 +37,5 @@ public class SqliteSearch<T> extends AbstractMemSearch<T> {
         dataSourceProperties.setJdbcUrl(URL);
         return dataSourceProperties;
     }
+
 }

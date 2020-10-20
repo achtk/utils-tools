@@ -2,6 +2,7 @@ package com.chua.utils.netx.datasource.hsqldb.mem;
 
 import com.chua.utils.netx.datasource.factory.DataSourceFactory;
 import com.chua.utils.netx.datasource.info.TableInfo;
+import com.chua.utils.netx.datasource.mem.AbstractMemSearch;
 import com.chua.utils.netx.datasource.mem.MemSearch;
 import com.chua.utils.netx.datasource.properties.DataSourceProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -24,75 +25,17 @@ import java.util.function.BiConsumer;
  * @since 2020/10/19 20:35
  */
 @Slf4j
-public class HsqlSearch<T> implements MemSearch<T> {
+public class HsqlSearch<T> extends AbstractMemSearch<T> {
 
-    private static final String URL = "jdbc:hsqldb:mem";
-    private final DataSourceFactory dataSourceFactory;
-    private TableInfo tableInfo;
+    private static final String URL = "jdbc:hsqldb:mem:.";
+    public static final String DRIVER_URL = "org.hsqldb.jdbcDriver";
 
-    public HsqlSearch() {
+    @Override
+    protected DataSourceProperties dataSourceProperties() {
         DataSourceProperties dataSourceProperties = new DataSourceProperties();
+        dataSourceProperties.setDriverClassName(DRIVER_URL);
         dataSourceProperties.setJdbcUrl(URL);
-        this.dataSourceFactory = DataSourceFactory.newBuilder().dataSourceProperties(dataSourceProperties).build();
-    }
-
-    @Override
-    public MemSearch addData(List<T> data) throws Throwable {
-        if (null == data || data.size() == 0) {
-            return this;
-        }
-        if (null == tableInfo) {
-            synchronized (data) {
-                if (null == tableInfo) {
-                    tableInfo = new TableInfo();
-                    tableInfo.objectToTable(data.get(0));
-                    dataSourceFactory.getQueryRunner().execute(tableInfo.initialConfig());
-                }
-            }
-        }
-        QueryRunner queryRunner = dataSourceFactory.getQueryRunner();
-        //获取连接对象
-        Connection connection = queryRunner.getDataSource().getConnection();
-        //设置禁用自动提交
-        connection.setAutoCommit(false);
-        //创建执行对象
-        PreparedStatement preparedStatement = connection.prepareStatement(tableInfo.prepareInsertBatch());
-        //这里可以通过addBatch()方法增加多条任意SQL语句
-        long startTime = 0L;
-        if (log.isDebugEnabled()) {
-            startTime = System.currentTimeMillis();
-        }
-        for (T datum : data) {
-            tableInfo.addBatch(datum, new BiConsumer<Integer, Object>() {
-                @Override
-                public void accept(Integer integer, Object o) {
-                    try {
-                        preparedStatement.setObject(integer, o);
-                    } catch (SQLException throwables) {
-                        return;
-                    }
-                }
-            });
-            preparedStatement.addBatch();
-        }
-
-        int[] ints = preparedStatement.executeBatch();
-        if (log.isDebugEnabled()) {
-            log.debug("插入{}条数据，成功{}/{}, 耗时{}ms", data.size(), ints.length, data.size(), System.currentTimeMillis() - startTime);
-        }
-        return this;
-    }
-
-    @Override
-    public List<Map<String, Object>> query(String ddl) throws SQLException {
-        QueryRunner queryRunner = dataSourceFactory.getQueryRunner();
-        return queryRunner.query(tableInfo.parser(ddl), new MapListHandler());
-    }
-
-    @Override
-    public List<T> queryForObject(String ddl) throws SQLException {
-        QueryRunner queryRunner = dataSourceFactory.getQueryRunner();
-        return (List<T>) queryRunner.query(tableInfo.parser(ddl), new BeanListHandler(tableInfo.getObjClass()));
+        return dataSourceProperties;
     }
 
 

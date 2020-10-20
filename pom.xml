@@ -223,6 +223,7 @@
         <module>utils-netx-extension-datasource</module>
         <module>utils-netx-extension-datasource-sqlite</module>
         <module>utils-netx-extension-datasource-hsqldb</module>
+        <module>utils-netx-extension-datasource-h2</module>
     </modules>
 
     <build>

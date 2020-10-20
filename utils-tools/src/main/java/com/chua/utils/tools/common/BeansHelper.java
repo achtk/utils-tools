@@ -8,6 +8,8 @@ import net.sf.cglib.beans.BeanMap;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 /**
  * @author CH
@@ -17,7 +19,7 @@ public class BeansHelper {
     /**
      * 实体对象赋值
      *
-     * @param entity      对象
+     * @param entity 对象
      * @param params 值
      * @param =<T>
      * @return
@@ -35,7 +37,7 @@ public class BeansHelper {
      * @param <T>
      * @param t     对象
      * @param fName key
-     * @param value  value
+     * @param value value
      * @return
      */
     public static <T> T setProperty(final T t, final String fName, final Object value) {
@@ -50,51 +52,102 @@ public class BeansHelper {
     /**
      * 实体对象复制
      *
-     * @param t   对象
-     * @param t1  对象
-     * @param <T>
+     * @param from 对象
+     * @param to   对象
      * @return
      */
-    public static <T> void copier(final Class<T> t, final Class<T> t1) {
-        Preconditions.checkArgument(null != t);
-        Preconditions.checkArgument(null != t1);
-
-        final BeanCopier beanCopier = BeanCopier.create(t, t1, false);
-        beanCopier.copy(t, t1, null);
+    public static <E, E1> E1 copierIfEffective(final E from, E1 to) {
+        Preconditions.checkArgument(null != from);
+        Preconditions.checkArgument(null != to);
+        BeanMap toBeanMap = BeanMap.create(to);
+        BeanMap fromBeanMap = BeanMap.create(from);
+        fromBeanMap.forEach(new BiConsumer() {
+            @Override
+            public void accept(Object o, Object o2) {
+                if (o2 == null) {
+                    return;
+                }
+                toBeanMap.put(o, o2);
+            }
+        });
+        return (E1) toBeanMap.getBean();
     }
     /**
      * 实体对象复制
      *
-     * @param from   对象
-     * @param to  对象
+     * @param from 对象
+     * @param to   对象
      * @return
      */
-    public static <E, E1>void copier(final E from, final E1 to) {
+    public static <E, E1> E1 copierIfEffective(final E from, E1 to, final BiFunction biFunction) {
+        Preconditions.checkArgument(null != from);
+        Preconditions.checkArgument(null != to);
+        BeanMap toBeanMap = BeanMap.create(to);
+        BeanMap fromBeanMap = BeanMap.create(from);
+        fromBeanMap.forEach(new BiConsumer() {
+            @Override
+            public void accept(Object o, Object o2) {
+                Object apply = biFunction.apply(o, o2);
+                toBeanMap.put(o, apply);
+            }
+        });
+        return (E1) toBeanMap.getBean();
+    }
+    /**
+     * 实体对象复制
+     *
+     * @param from 对象
+     * @param to   对象
+     * @return
+     */
+    public static <E, E1> E1 copierIfEffective(final E from, final Class<E1> to) {
+        Preconditions.checkArgument(null != from);
+        Preconditions.checkArgument(null != to);
+
+        try {
+            E1 e1 = to.newInstance();
+            return copierIfEffective(from, e1);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    /**
+     * 实体对象复制
+     *
+     * @param <T>
+     * @param t      对象
+     * @param params 对象
+     * @return
+     */
+    public static <T> T copierIfEffective(final T t, final Map<String, Object> params) {
+        BeanMap beanMap = BeanMap.create(t);
+        beanMap.putAll(params);
+        return (T) beanMap.getBean();
+    }
+    /**
+     * 实体对象复制
+     *
+     * @param from 对象
+     * @param to   对象
+     * @return
+     */
+    public static <E, E1> E1 copier(final E from, final E1 to) {
         Preconditions.checkArgument(null != from);
         Preconditions.checkArgument(null != to);
 
         final BeanCopier beanCopier = BeanCopier.create(from.getClass(), to.getClass(), false);
         beanCopier.copy(from, to, null);
+        return to;
     }
-    /**
-     * 实体对象反射复制
-     *
-     * @param from   对象
-     * @param to  对象
-     * @return
-     */
-    public static <E, E1>void reflectCopier(final E from, final E1 to) {
-        Preconditions.checkArgument(null != from);
-        Preconditions.checkArgument(null != to);
 
-        Map<String, Object> nameAndValues = ReflectHelper.getAllFieldNameAndValues(from);
-        ReflectHelper.setProperties(to, nameAndValues);
-    }
     /**
      * 实体对象复制
      *
-     * @param from   对象
-     * @param to  对象
+     * @param from 对象
+     * @param to   对象
      * @return
      */
     public static <E, E1> E1 copier(final E from, final Class<E1> to) {
@@ -103,9 +156,7 @@ public class BeansHelper {
 
         try {
             E1 e1 = to.newInstance();
-            final BeanCopier beanCopier = BeanCopier.create(from.getClass(), to, false);
-            beanCopier.copy(from, e1, null);
-            return e1;
+            return copier(from, e1);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -114,11 +165,12 @@ public class BeansHelper {
 
         return null;
     }
+
     /**
      * 实体对象复制
      *
-     * @param from   对象
-     * @param to  对象
+     * @param from 对象
+     * @param to   对象
      * @return
      */
     public static <E, E1> List<E1> copier(final List<E> from, final Class<E1> to) {
@@ -142,6 +194,7 @@ public class BeansHelper {
 
     /**
      * object 2 byte[]
+     *
      * @param obj
      * @return
      */
@@ -163,6 +216,7 @@ public class BeansHelper {
 
     /**
      * object 2 byte[]
+     *
      * @param obj
      * @return
      */
@@ -182,12 +236,13 @@ public class BeansHelper {
 
     /**
      * 拷贝集合到对象
-     * @param object 对象
+     *
+     * @param object     对象
      * @param properties 集合
      * @return
      */
-    public static <T>T copierProperties2Object(T object, final Properties properties) {
-        if(!BooleanHelper.hasLength(properties) || null == object) {
+    public static <T> T copierProperties2Object(T object, final Properties properties) {
+        if (!BooleanHelper.hasLength(properties) || null == object) {
             return object;
         }
 
@@ -198,16 +253,17 @@ public class BeansHelper {
 
     /**
      * 集合转对象
+     *
      * @param tClass 类
      * @param source 数据
      * @param <T>
      * @return
      */
     public static <T> T setProperty(Class<T> tClass, List<String> source) {
-        if(null == tClass) {
+        if (null == tClass) {
             return null;
         }
-        if(!BooleanHelper.hasLength(source)) {
+        if (!BooleanHelper.hasLength(source)) {
             return ClassHelper.forObject(tClass);
         }
         BeanMap beanMap = BeanMap.create(ClassHelper.forObject(tClass));
@@ -223,6 +279,7 @@ public class BeansHelper {
 
     /**
      * 获取属性
+     *
      * @param obj 对象
      * @return
      */
@@ -232,8 +289,10 @@ public class BeansHelper {
         result.putAll(beanMap);
         return result;
     }
+
     /**
      * 获取属性
+     *
      * @param obj 对象
      * @return
      */
