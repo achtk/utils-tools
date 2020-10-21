@@ -2,6 +2,7 @@ package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.classes.reflections.ReflectionsHelper;
 import com.chua.utils.tools.common.*;
+import com.chua.utils.tools.exceptions.NotSupportedException;
 import com.chua.utils.tools.proxy.CglibProxyAgent;
 import com.chua.utils.tools.proxy.ProxyAgent;
 import com.google.common.base.Preconditions;
@@ -23,6 +24,17 @@ import static com.chua.utils.tools.constant.StringConstant.*;
  */
 @Slf4j
 public class ClassHelper extends ReflectionsHelper {
+    private static final Map<Class<?>, Object> DEFAULT_TYPE_VALUES;
+
+    static {
+        Map<Class<?>, Object> values = new HashMap<>();
+        values.put(boolean.class, false);
+        values.put(byte.class, (byte) 0);
+        values.put(short.class, (short) 0);
+        values.put(int.class, 0);
+        values.put(long.class, (long) 0);
+        DEFAULT_TYPE_VALUES = Collections.unmodifiableMap(values);
+    }
 
     /**
      * 得到当前ClassLoader
@@ -525,6 +537,7 @@ public class ClassHelper extends ReflectionsHelper {
         Class<?> aClass = forName(className, classLoaders);
         return (T) forObject(aClass);
     }
+
     /**
      * 获取类对象
      *
@@ -535,11 +548,12 @@ public class ClassHelper extends ReflectionsHelper {
      */
     public static <T> T forDefaultObject(final Object value, final Class<T> tClass) {
         T forObject = forObject(value, tClass);
-        if(null == forObject) {
+        if (null == forObject) {
             return forObject(tClass);
         }
         return forObject;
     }
+
     /**
      * 获取类对象
      *
@@ -637,6 +651,7 @@ public class ClassHelper extends ReflectionsHelper {
 
     /**
      * 解释类型
+     *
      * @param declaredClass
      * @param <T>
      * @return
@@ -645,6 +660,65 @@ public class ClassHelper extends ReflectionsHelper {
         ParameterizedType parameterizedType = (ParameterizedType) declaredClass.getGenericSuperclass();
         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
         return (Class<T>) actualTypeArguments[0];
+    }
+
+    /**
+     * 实例化
+     *
+     * @param clazz 类
+     * @param <T>
+     * @return
+     * @throws Throwable
+     */
+    public static <T> T instantiateClass(Class<T> clazz) throws Throwable {
+        Assert.notNull(clazz, "Class must not be null");
+        if (clazz.isInterface()) {
+            throw new NotSupportedException(clazz.getName());
+        }
+        try {
+            return instantiateClass(clazz.getDeclaredConstructor());
+        } catch (NoSuchMethodException ex) {
+            throw new NotSupportedException("No default constructor found", ex);
+        } catch (LinkageError err) {
+            throw new NotSupportedException("Unresolvable class definition", err);
+        }
+    }
+
+    /**
+     * 实例化
+     *
+     * @param ctor 构造
+     * @param args 参数
+     * @param <T>
+     * @return
+     * @throws Throwable
+     */
+    public static <T> T instantiateClass(Constructor<T> ctor, Object... args) throws Throwable {
+        Assert.notNull(ctor, "Constructor must not be null");
+        try {
+            makeAccessible(ctor);
+            Class<?>[] parameterTypes = ctor.getParameterTypes();
+            Assert.isTrue(args.length <= parameterTypes.length, "Can't specify more arguments than constructor parameters");
+            Object[] argsWithDefaultValues = new Object[args.length];
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] == null) {
+                    Class<?> parameterType = parameterTypes[i];
+                    argsWithDefaultValues[i] = (parameterType.isPrimitive() ? DEFAULT_TYPE_VALUES.get(parameterType) : null);
+                } else {
+                    argsWithDefaultValues[i] = args[i];
+                }
+                return ctor.newInstance(argsWithDefaultValues);
+            }
+        } catch (InstantiationException ex) {
+            throw new NotSupportedException("Is it an abstract class?", ex);
+        } catch (IllegalAccessException ex) {
+            throw new NotSupportedException("Is the constructor accessible?", ex);
+        } catch (IllegalArgumentException ex) {
+            throw new NotSupportedException("Illegal arguments for constructor", ex);
+        } catch (InvocationTargetException ex) {
+            throw new NotSupportedException("Constructor threw exception", ex.getTargetException());
+        }
+        return null;
     }
 
 }

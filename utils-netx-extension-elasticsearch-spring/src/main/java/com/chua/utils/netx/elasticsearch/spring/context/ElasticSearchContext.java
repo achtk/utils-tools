@@ -1,5 +1,6 @@
 package com.chua.utils.netx.elasticsearch.spring.context;
 
+import com.chua.utils.tools.function.Template;
 import com.chua.utils.tools.properties.NetxProperties;
 import com.chua.utils.netx.elasticsearch.spring.factory.ElasticSearchFactory;
 import com.chua.utils.netx.factory.INetxFactory;
@@ -17,7 +18,7 @@ import java.util.List;
  * es上线文
  * @author CH
  */
-public class ElasticSearchContext implements AutoCloseable {
+public class ElasticSearchContext implements Template<AbstractElasticsearchTemplate>, AutoCloseable {
 
     private NetxProperties netxProperties;
     private final INetxFactory<AbstractElasticsearchTemplate> netxFactory;
@@ -223,5 +224,10 @@ public class ElasticSearchContext implements AutoCloseable {
         if(null != this.netxFactory) {
             netxFactory.close();
         }
+    }
+
+    @Override
+    public AbstractElasticsearchTemplate getTemplate() {
+        return elasticsearchTemplate;
     }
 }

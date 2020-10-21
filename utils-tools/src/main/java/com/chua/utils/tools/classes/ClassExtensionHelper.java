@@ -539,6 +539,8 @@ public class ClassExtensionHelper<T> {
         return result;
     }
 
+
+
     /**
      * 字段信息分析
      *
@@ -591,7 +593,18 @@ public class ClassExtensionHelper<T> {
      * @return
      */
     public static List<Field> getFields(final Object obj) {
-        return findFields(getMembers(obj));
+        return findFields(getMembers(obj), null);
+    }
+
+    /**
+     * 查找属性
+     *
+     * @param obj 对象
+     * @param name 字段名称
+     * @return
+     */
+    public static Field getFields(Object obj, String name) {
+        return FinderHelper.firstElement(findFields(getMembers(obj), name));
     }
     /**
      * 获取所有字段
@@ -673,7 +686,7 @@ public class ClassExtensionHelper<T> {
      * @return
      */
     public static List<Field> getLocalFields(final Object obj) {
-        return findFields(getLocalMembers(obj));
+        return findFields(getLocalMembers(obj), null);
     }
 
     /**
@@ -1058,26 +1071,12 @@ public class ClassExtensionHelper<T> {
     }
 
     /**
-     * 查找属性
-     *
-     * @param type 类
-     * @param name 字段名称
-     * @return
-     */
-    public static Field findField(Class<?> type, String name) {
-        if (null == type || Strings.isNullOrEmpty(name)) {
-            return null;
-        }
-        return ClassExtensionHelper.findField(type, name);
-    }
-
-    /**
      * 获取字段
      *
      * @param memberInfos MemberInfo数据
      * @return
      */
-    private static List<Field> findFields(final List<MemberInfo> memberInfos) {
+    private static List<Field> findFields(final List<MemberInfo> memberInfos, String name) {
         if (!BooleanHelper.hasLength(memberInfos)) {
             return Collections.emptyList();
         }
@@ -1086,7 +1085,14 @@ public class ClassExtensionHelper<T> {
             if (!memberInfo.isField()) {
                 continue;
             }
-            fieldList.add((Field) memberInfo.getMember());
+            if(null == name) {
+                fieldList.add((Field) memberInfo.getMember());
+                continue;
+            }
+            if(memberInfo.getName().equals(name)) {
+                fieldList.add((Field) memberInfo.getMember());
+                continue;
+            }
         }
         return fieldList;
     }
@@ -1179,6 +1185,23 @@ public class ClassExtensionHelper<T> {
         field.set(obj, value);
     }
 
+    /**
+     * 设置无障碍
+     * @param member
+     * @param <T>
+     */
+    public static <T> void makeAccessible(Member member) {
+        if(null == member) {
+            return;
+        }
+        if(member instanceof Field) {
+            ((Field) member).setAccessible(true);
+        } else if(member instanceof Method) {
+            ((Method) member).setAccessible(true);
+        } else {
+            ((Constructor) member).setAccessible(true);
+        }
+    }
     /**
      * 字段信息
      */
