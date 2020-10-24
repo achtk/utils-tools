@@ -1,5 +1,7 @@
 package com.chua.utils.tools.classes;
 
+import com.chua.utils.tools.function.Converter;
+import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.function.intercept.MethodIntercept;
 
 import java.lang.annotation.Annotation;
@@ -21,6 +23,25 @@ public interface ClassResolver {
      */
     Map<String, Annotation> annotations();
 
+    /**
+     * 自动转配
+     *
+     * @param entity    对象
+     * @param prefix    前缀
+     * @param converter 转化器
+     * @param <T>
+     * @return
+     */
+    <T> T automaticAssembly(T entity, String prefix, Converter<String, Object> converter);
+    /**
+     * 自动转配
+     *
+     * @param prefix    前缀
+     * @param converter 转化器
+     * @param <T>
+     * @return
+     */
+    <T> T automaticAssembly(String prefix, Converter<String, Object> converter);
 
     /**
      * 是否是type子类
@@ -47,10 +68,11 @@ public interface ClassResolver {
 
     /**
      * 实例化
+     *
      * @param <T>
      * @return
      */
-    <T>T newInstance() throws Exception;
+    <T> T newInstance() throws Exception;
 
     /**
      * 查询子类

@@ -1,8 +1,8 @@
 package com.chua.utils.tools.prop.resolver;
 
 import com.chua.utils.tools.prop.mapper.FileMapper;
-import com.chua.utils.tools.function.Converter;
-import com.chua.utils.tools.function.NoneConverter;
+import com.chua.utils.tools.function.AbstractConverter;
+import com.chua.utils.tools.function.NoneAbstractConverter;
 import com.google.common.collect.HashMultimap;
 import org.w3c.dom.*;
 import org.xml.sax.EntityResolver;
@@ -97,12 +97,12 @@ public class XmlFileResolver implements IFileResolver {
     }
 
     @Override
-    public FileMapper analysis(Converter converter) {
+    public FileMapper analysis(AbstractConverter abstractConverter) {
         if (null == hashMultimap) {
             return null;
         }
-        if (null == converter) {
-            converter = new NoneConverter();
+        if (null == abstractConverter) {
+            abstractConverter = new NoneAbstractConverter();
         }
         HashMultimap<String, Object> hashMultimap = HashMultimap.create();
         FileMapper fileMapper = new FileMapper();
@@ -110,7 +110,7 @@ public class XmlFileResolver implements IFileResolver {
 
         Set<Map.Entry<String, Object>> entries = this.hashMultimap.entries();
         for (Map.Entry<String, Object> entry : entries) {
-            hashMultimap.put(entry.getKey(), converter.doBackward(entry.getValue()));
+            hashMultimap.put(entry.getKey(), abstractConverter.doBackward(entry.getValue()));
         }
         return fileMapper;
     }

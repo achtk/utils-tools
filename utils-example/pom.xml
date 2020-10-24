@@ -65,7 +65,6 @@
             <groupId>com.chua</groupId>
             <artifactId>utils-tools-extension-feign</artifactId>
             <version>1.0</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 

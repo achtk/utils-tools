@@ -4,7 +4,7 @@ package com.chua.utils.tools.function;
  * 不转化转化器
  * @author CH
  */
-public class NoneConverter extends Converter {
+public class NoneAbstractConverter extends AbstractConverter {
     @Override
     public Object doForward(Object o) {
         return o;

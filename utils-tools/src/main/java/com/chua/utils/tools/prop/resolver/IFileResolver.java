@@ -2,7 +2,7 @@ package com.chua.utils.tools.prop.resolver;
 
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.prop.mapper.FileMapper;
-import com.chua.utils.tools.function.Converter;
+import com.chua.utils.tools.function.AbstractConverter;
 import com.google.common.base.Strings;
 
 import java.io.InputStream;
@@ -20,10 +20,10 @@ public interface IFileResolver {
 
     /**
      * 解析文件
-     * @param converter 转化器
+     * @param abstractConverter 转化器
      * @return
      */
-    FileMapper analysis(Converter converter);
+    FileMapper analysis(AbstractConverter abstractConverter);
 
     /**
      * 支持的文件后缀

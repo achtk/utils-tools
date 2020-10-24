@@ -4,38 +4,20 @@ import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.common.*;
 import com.chua.utils.tools.function.Matcher;
-import com.chua.utils.tools.proxy.CglibProxyAgent;
-import com.chua.utils.tools.proxy.ProxyAgent;
-import com.chua.utils.tools.spring.assembly.Assembly;
 import com.chua.utils.tools.spring.placeholder.PlaceholderResolver;
-import com.chua.utils.tools.spring.propertysource.PropertySourcesResolver;
 import com.google.common.base.Strings;
 import lombok.NoArgsConstructor;
-import net.sf.cglib.beans.BeanMap;
 import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.ResolvableType;
-import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.env.*;
-import org.springframework.util.StringUtils;
-import org.springframework.web.context.support.StandardServletEnvironment;
 
-import javax.persistence.metamodel.Bindable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
-import static com.chua.utils.tools.constant.StringConstant.*;
-import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
  * 环境变量读取

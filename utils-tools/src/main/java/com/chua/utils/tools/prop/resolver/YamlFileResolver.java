@@ -1,8 +1,8 @@
 package com.chua.utils.tools.prop.resolver;
 
 import com.chua.utils.tools.prop.mapper.FileMapper;
-import com.chua.utils.tools.function.Converter;
-import com.chua.utils.tools.function.NoneConverter;
+import com.chua.utils.tools.function.AbstractConverter;
+import com.chua.utils.tools.function.NoneAbstractConverter;
 import com.google.common.collect.HashMultimap;
 import org.yaml.snakeyaml.Yaml;
 
@@ -24,19 +24,19 @@ public class YamlFileResolver implements IFileResolver{
     }
 
     @Override
-    public FileMapper analysis(Converter converter) {
+    public FileMapper analysis(AbstractConverter abstractConverter) {
         if(null == properties) {
             return null;
         }
-        if(null == converter) {
-            converter = new NoneConverter();
+        if(null == abstractConverter) {
+            abstractConverter = new NoneAbstractConverter();
         }
         HashMultimap hashMultimap = HashMultimap.create();
         FileMapper fileMapper = new FileMapper();
         fileMapper.setHashMultimap(hashMultimap);
 
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            hashMultimap.put(entry.getKey(), converter.doBackward(entry.getValue()));
+            hashMultimap.put(entry.getKey(), abstractConverter.doBackward(entry.getValue()));
         }
         return fileMapper;
     }

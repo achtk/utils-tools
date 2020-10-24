@@ -4,7 +4,6 @@ import com.chua.utils.tools.fegin.FeginRemoteContractCallFactory;
 import com.chua.utils.tools.interfaces.IRemoteCallFactory;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.example.interfaces.ITokenService;
-import com.chua.utils.tools.fegin.FeginRemoteCallFactory;
 import org.testng.annotations.Test;
 
 /**

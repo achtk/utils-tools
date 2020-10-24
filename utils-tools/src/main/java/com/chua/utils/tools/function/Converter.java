@@ -1,21 +1,18 @@
 package com.chua.utils.tools.function;
 
 /**
- * 转化对象
+ * 转化器
+ *
  * @author CH
+ * @version 1.0
+ * @since 2020/10/24 21:37
  */
-public abstract class Converter<A, B> {
+public interface Converter<I, O> {
     /**
      * 转化
-     * @param a
+     *
+     * @param value 值
      * @return
      */
-    abstract public B doForward(A a);
-    /**
-     * 转化
-     * @param b
-     * @return
-     */
-    abstract public A doBackward(B b);
-
+    O convert(I value);
 }
