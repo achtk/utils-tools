@@ -168,12 +168,14 @@ public class ExtensionProcessor<T> implements IExtensionProcessor<T> {
             return;
         }
 
-        ExtensionClass<T> extensionClass = loadExtension(interfaceClass, extension, alias, tmp, order);
-        if(null != extensionClass && extensionClass.isSingle()) {
-            extensionClass.setObj(ClassHelper.forObject(extensionClass.getClazz().getName(), this.classLoader));
-        }
-        if(null != extensionClass) {
-            providerCache.put(extensionClass.getName(), extensionClass);
+        List<ExtensionClass<T>> extensionClass = loadExtension(interfaceClass, extension, alias, tmp, order);
+        for (ExtensionClass<T> tExtensionClass : extensionClass) {
+            if(null != tExtensionClass && tExtensionClass.isSingle()) {
+                tExtensionClass.setObj(ClassHelper.forObject(tExtensionClass.getClazz().getName(), this.classLoader));
+            }
+            if(null != tExtensionClass) {
+                providerCache.put(tExtensionClass.getName(), tExtensionClass);
+            }
         }
     }
 

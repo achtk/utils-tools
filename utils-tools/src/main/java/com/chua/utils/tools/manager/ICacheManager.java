@@ -1,5 +1,10 @@
 package com.chua.utils.tools.manager;
 
+import com.chua.utils.tools.common.BooleanHelper;
+
+import java.util.Collection;
+import java.util.Collections;
+
 /**
  * 缓存管理器
  * @author CH
@@ -13,6 +18,36 @@ public interface ICacheManager<K, V> {
      * @return
      */
     V put(K key, V value);
+    /**
+     * 保存缓存
+     * @param key 索引
+     * @param values 值
+     * @return
+     */
+    default Collection<V> put(K key, Collection<V> values) {
+        if(null != key || !BooleanHelper.hasLength(values)) {
+            return Collections.emptyList();
+        }
+        for (V value : values) {
+            put(key, values);
+        }
+        return values;
+    }
+    /**
+     * 保存缓存
+     * @param key 索引
+     * @param values 值
+     * @return
+     */
+    default V[] put(K key, V[] values) {
+        if(null != key || !BooleanHelper.hasLength(values)) {
+            return null;
+        }
+        for (V value : values) {
+            put(key, values);
+        }
+        return values;
+    }
 
     /**
      * 获取值

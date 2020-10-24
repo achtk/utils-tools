@@ -6,19 +6,13 @@ package com.chua.utils.tools.classes.callback;
  * @since 2020/10/12
  */
 
+import com.chua.utils.tools.function.Matcher;
+
 import java.lang.reflect.Field;
 
 /**
  * 字段回调
  */
-@FunctionalInterface
-public interface FieldCallback {
+public interface FieldCallback extends Matcher<Field> {
 
-    /**
-     * 字段回调
-     * @param field
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
-     */
-    void doWith(Field field) throws IllegalArgumentException, IllegalAccessException;
 }

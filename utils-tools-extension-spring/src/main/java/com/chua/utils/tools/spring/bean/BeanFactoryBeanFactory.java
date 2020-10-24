@@ -47,23 +47,7 @@ public class BeanFactoryBeanFactory implements IBeanFactory, SingletonBeanRegist
 
     @Override
     public EnvironmentFactory environmentFactory() {
-        EnvironmentFactory environmentFactory = new EnvironmentFactory();
-        if (!(beanFactory instanceof DefaultListableBeanFactory)) {
-            return environmentFactory;
-        }
-        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) beanFactory;
-        Set<PropertyEditorRegistrar> propertyEditorRegistrars = defaultListableBeanFactory.getPropertyEditorRegistrars();
-        Set<ResourceEditorRegistrar> resourceEditorRegistrars = CollectionHelper.filter(propertyEditorRegistrars, ResourceEditorRegistrar.class);
-        for (ResourceEditorRegistrar resourceEditorRegistrar : resourceEditorRegistrars) {
-            PropertyResolver propertyResolver = ClassHelper.getOnlyFieldValue(resourceEditorRegistrar, PropertyResolver.class);
-            if (null == propertyResolver) {
-                return environmentFactory;
-            }
-            if (!(propertyResolver instanceof StandardServletEnvironment)) {
-                return environmentFactory;
-            }
-            environmentFactory.absorb((StandardServletEnvironment) propertyResolver);
-        }
+        EnvironmentFactory environmentFactory = new EnvironmentFactory(beanFactory.getBean(Environment.class));
         return environmentFactory;
     }
 

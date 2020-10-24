@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
  * 方法拦截器
  * @author CH
  */
-public interface MethodIntercept {
+public interface MethodIntercept<T> {
 
     /**
      * 执行方法
@@ -17,5 +17,5 @@ public interface MethodIntercept {
      * @exception Exception
      * @return
      */
-    public Object invoke(Object obj, Method method, Object[] args, Object proxy) throws Throwable;
+    public Object invoke(Object obj, Method method, Object[] args, T proxy) throws Throwable;
 }

@@ -5,11 +5,14 @@ import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.spi.Spi;
 import com.chua.utils.tools.spi.entity.ExtensionClass;
 import com.chua.utils.tools.spi.entity.SpiConfig;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multimap;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 扩展接口实现主要针对已有的Spi机制以及spi扩展
@@ -19,6 +22,7 @@ import java.lang.reflect.Field;
  *
  * @see com.chua.utils.tools.spi.entity.SpiConfig
  * @see com.chua.utils.tools.spi.entity.ExtensionClass
+ * @see com.chua.utils.tools.spi.factory.ExtensionFactory
  */
 public interface IExtensionProcessor<T> {
 
@@ -73,7 +77,7 @@ public interface IExtensionProcessor<T> {
      * @param order          优先级
      * @return
      */
-    default ExtensionClass<T> loadExtension(Class<T> interfaceClass, Class<? extends Annotation> extension, String name, final Class loadedClazz, String order) {
+    default List<ExtensionClass<T>> loadExtension(Class<T> interfaceClass, Class<? extends Annotation> extension, String name, final Class loadedClazz, String order) {
         if (null == loadedClazz) {
             return null;
         }
@@ -108,18 +112,32 @@ public interface IExtensionProcessor<T> {
         if (null != extension) {
             Annotation annotation = implClass.getAnnotation(extension);
             if (null == name) {
+                //非@Spi注解获取注解中的名称
                 name = extExtension(annotation);
             }
         }
 
+        List<ExtensionClass<T>> extensionClassList = new ArrayList<>();
+        int orderInt = NumberHelper.toInt(order, 0);
+
         if(null == name) {
             name = implClass.getName();
-        }
-        int orderInt = NumberHelper.toInt(order, 0);
-        ExtensionClass<T> extensionClass = buildExtensionClass(interfaceClass.getName(), orderInt, implClass, name, overrider);
+            ExtensionClass<T> extensionClass = buildExtensionClass(interfaceClass.getName(), orderInt, implClass, name, overrider);
+            extensionClass.setSingle(isSingle);
 
-        extensionClass.setSingle(isSingle);
-        return extensionClass;
+            extensionClassList.add(extensionClass);
+        } else {
+            List<String> strings = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(name);
+            for (String string : strings) {
+                ExtensionClass<T> extensionClass = buildExtensionClass(interfaceClass.getName(), orderInt, implClass, string, overrider);
+                extensionClass.setSingle(isSingle);
+
+                extensionClassList.add(extensionClass);
+            }
+
+        }
+
+        return extensionClassList;
     }
 
     /**

@@ -2,6 +2,7 @@ package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.function.intercept.MethodIntercept;
+import com.google.common.base.Strings;
 import com.google.common.collect.*;
 
 import java.lang.reflect.Array;
@@ -167,24 +168,24 @@ public class MapHelper {
         for (Map.Entry<K, V> entry : source.entrySet()) {
             V value = entry.getValue();
             K key = entry.getKey();
-            if(null == key) {
+            if (null == key) {
                 continue;
             }
             String newKey = key.toString();
             Object newValue = null;
-            if(value instanceof List) {
+            if (value instanceof List) {
                 newValue = null == value ? Collections.emptyList() : entry.getValue();
             }
-            if(value instanceof Map) {
+            if (value instanceof Map) {
                 newValue = null == value ? Collections.emptyMap() : entry.getValue();
             }
-            if(value instanceof Set) {
+            if (value instanceof Set) {
                 newValue = null == value ? Collections.emptySet() : entry.getValue();
             }
-            if(null == newValue) {
+            if (null == newValue) {
                 continue;
             }
-            properties.put(newKey, newValue) ;
+            properties.put(newKey, newValue);
         }
         return properties;
     }
@@ -303,7 +304,7 @@ public class MapHelper {
      * @param source 原数据
      * @param target 目标数据
      */
-    public static synchronized  <K, V> void putAll(HashMultimap<K, V> source, final Map<K, V> target) {
+    public static synchronized <K, V> void putAll(HashMultimap<K, V> source, final Map<K, V> target) {
         if (BooleanHelper.isEmpty(source)) {
             source = HashMultimap.create();
         }
@@ -934,7 +935,7 @@ public class MapHelper {
      */
     public static final boolean booleans(final String key, final boolean defaultValue, final Map<String, Object>... maps) {
         final String string = strings(key, maps);
-        return null == string ? defaultValue : BooleanHelper.toBoolean(string);
+        return Strings.isNullOrEmpty(string) ? defaultValue : BooleanHelper.toBoolean(string);
     }
 
     /**
@@ -1438,8 +1439,8 @@ public class MapHelper {
     private static void dataFormatYaml(String key, Object value, Properties result) {
         if (value instanceof Map) {
             doAnalysisMapValue(key, value, result);
-      //  } else if (value instanceof List) {
-      //      doAnalysisListValue(key, value, result);
+            //  } else if (value instanceof List) {
+            //      doAnalysisListValue(key, value, result);
         } else {
             result.put(key, value);
         }
@@ -1573,7 +1574,97 @@ public class MapHelper {
      * @param index  索引
      * @return
      */
-    public static <K, V>boolean containerKey(Map<K, V> source, K index) {
+    public static <K, V> boolean containerKey(Map<K, V> source, K index) {
         return null != source && source.containsKey(index);
+    }
+
+    /**
+     * 获取实体对象
+     *
+     * @param key        索引
+     * @param tClass     类型
+     * @param attributes 值
+     * @param <T>
+     * @return
+     */
+    public static <T> T toEntity(String key, Class<T> tClass, Map<String, Object> attributes) {
+        return toEntity(key, null, tClass, attributes);
+    }
+
+    /**
+     * 获取实体对象
+     *
+     * @param key           索引
+     * @param defaultEntity 默认值
+     * @param tClass        类型
+     * @param attributes    值
+     * @param <T>
+     * @return
+     */
+    public static <T> T toEntity(String key, T defaultEntity, Class<T> tClass, Map<String, Object> attributes) {
+        if (null == attributes || !attributes.containsKey(key) || null == tClass) {
+            return defaultEntity;
+        }
+        Object o = attributes.get(key);
+        if (!tClass.isAssignableFrom(o.getClass())) {
+            return defaultEntity;
+        }
+        return (T) o;
+    }
+
+    /**
+     * 获取唯一值或者字段值
+     *
+     * @param source     元数据
+     * @param name       索引
+     * @param valueClass 数据类型
+     * @param <T>
+     * @return
+     */
+    public static <T> T getIfOnly(final Map<String, Object> source, final String name, final Class<T> valueClass) {
+        if (isEmpty(source)) {
+            return null;
+        }
+        Object o = source.get(name);
+        return null == o ? null : (valueClass.isAssignableFrom(o.getClass()) ? (T) o : null);
+    }
+    /**
+     * 获取唯一值或者字段值
+     *
+     * @param source     元数据
+     * @param name       索引
+     * @param valueClass 数据类型
+     * @param <T>
+     * @return
+     */
+    public static <T> T getIfOnly(final Map<String, Object> source, final Class<T> valueClass) {
+        if (isEmpty(source)) {
+            return null;
+        }
+        Set<String> keySet = source.keySet();
+        if(CollectionHelper.size(keySet) != 1) {
+            return null;
+        }
+        Object o = source.get(FinderHelper.firstElement(keySet));
+        return null == o ? null : (valueClass.isAssignableFrom(o.getClass()) ? (T) o : null);
+    }
+
+    /**
+     * 集合是否为空
+     *
+     * @param source 集合
+     * @return
+     */
+    public static boolean isEmpty(Map<String, Object> source) {
+        return size(source) == 0;
+    }
+    /**
+     * 集合长度
+     *
+     * @param source 集合
+     * @return
+     */
+    public static int size(final Map<String, Object> source) {
+        return null == source ? 0 : source.size();
     }
 }

@@ -1,21 +1,32 @@
 package com.chua.utils.tools.spring.environment;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.common.*;
+import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.proxy.CglibProxyAgent;
 import com.chua.utils.tools.proxy.ProxyAgent;
 import com.chua.utils.tools.spring.assembly.Assembly;
+import com.chua.utils.tools.spring.placeholder.PlaceholderResolver;
 import com.chua.utils.tools.spring.propertysource.PropertySourcesResolver;
 import com.google.common.base.Strings;
 import lombok.NoArgsConstructor;
 import net.sf.cglib.beans.BeanMap;
+import org.springframework.beans.TypeConverter;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.env.*;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.StandardServletEnvironment;
 
+import javax.persistence.metamodel.Bindable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -24,6 +35,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
+import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
  * 环境变量读取
@@ -35,558 +47,256 @@ import static com.chua.utils.tools.constant.StringConstant.*;
 @NoArgsConstructor
 public class EnvironmentFactory {
 
+    private PlaceholderResolver placeholderResolver;
+    protected BeanFactory beanFactory;
+    private TypeConverter typeConverter;
     /**
      * PropertyResolver 集合
      */
-    private Set<Environment> environments = new HashSet<>();
+    private Environment environment;
     private String CONFIGURATION_PROPERTIES = "org.springframework.boot.context.properties.ConfigurationProperties";
+    public static final String BEAN_NAME = "configurationBeanBindingPostProcessor";
 
+    static final String CONFIGURATION_PROPERTIES_ATTRIBUTE_NAME = "configurationProperties";
+
+    static final String IGNORE_UNKNOWN_FIELDS_ATTRIBUTE_NAME = "ignoreUnknownFields";
+
+    static final String IGNORE_INVALID_FIELDS_ATTRIBUTE_NAME = "ignoreInvalidFields";
     public EnvironmentFactory(ApplicationContext applicationContext) {
-        if (null == applicationContext) {
-            return;
-        }
-        environments.add(applicationContext.getEnvironment());
+        this.environment = null == applicationContext ? null : applicationContext.getEnvironment();
+        this.beanFactory = null == applicationContext ? null : applicationContext.getAutowireCapableBeanFactory();
+        this.placeholderResolver = new PlaceholderResolver(environment);
     }
 
     public EnvironmentFactory(ConfigurableListableBeanFactory beanFactory) {
-        if (null == beanFactory) {
-            return;
-        }
-        environments.add(beanFactory.getBean(Environment.class));
+        this.environment = null == beanFactory ? null : beanFactory.getBean(Environment.class);
+        this.beanFactory = beanFactory;
+        this.placeholderResolver = new PlaceholderResolver(environment);
     }
 
     public EnvironmentFactory(Environment environment) {
-        this.environments.add(environment);
-    }
-
-    public EnvironmentFactory(Set<Environment> environments) {
-        this.environments.addAll(environments);
+        this.environment = environment;
+        this.placeholderResolver = new PlaceholderResolver(environment);
     }
 
     public EnvironmentFactory(BeanDefinitionRegistry beanDefinitionRegistry) {
-        if (null == beanDefinitionRegistry) {
-            return;
+        if (null != beanDefinitionRegistry && beanDefinitionRegistry instanceof DefaultListableBeanFactory) {
+            this.beanFactory = ((DefaultListableBeanFactory) beanDefinitionRegistry);
+            this.environment = beanFactory.getBean(Environment.class);
+            this.typeConverter = ((DefaultListableBeanFactory) beanDefinitionRegistry).getTypeConverter();
+            this.placeholderResolver = new PlaceholderResolver(environment);
         }
-        BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(Environment.class.getName());
-        if (null == beanDefinition) {
-            return;
-        }
-        String className = beanDefinition.getBeanClassName();
-        Environment environment = ClassHelper.forObject(className);
-        if (null == environment) {
-            return;
-        }
-        environments.add(environment);
     }
 
     /**
-     * 将配置渲染到bean
+     * 自动配置
      *
-     * @param tClass
+     * @param obj 对象
      * @param <T>
      * @return
      */
-    public <T> T getBean(Class<T> tClass) {
-        return getBean(tClass, "");
+    public <T> T autoConfiguration(final T obj) {
+        if (null == obj) {
+            return null;
+        }
+        Map<String, Object> annotation = getConfigurationPropertiesAttribute(obj.getClass());
+        if (null == annotation) {
+            return autoConfigurationByAttribute(obj);
+        }
+        return autoConfigurationAnnotation(obj, annotation);
     }
-
     /**
-     * 将配置渲染到bean
+     * 自动配置
      *
-     * @param tClass
+     * @param tClass 对象
      * @param <T>
      * @return
      */
-    public <T> T getBean(Class<T> tClass, final String prefix) {
+    public <T> T autoConfiguration(final Class<T> tClass) {
         if (null == tClass) {
             return null;
         }
+       return autoConfiguration(ClassHelper.forObject(tClass));
+    }
 
-        T bean = null;
-        try {
-            bean = tClass.newInstance();
-        } catch (Throwable e) {
-        }
-        BeanMap beanMap = BeanMap.create(bean);
-        beanMap.forEach(new BiConsumer() {
+    /**
+     * 通过属性自动装配
+     *
+     * @param obj        对象
+     * @param <T>
+     * @param annotation 注解
+     * @return
+     */
+    private <T> T autoConfigurationAnnotation(Object obj, Map<String, Object> annotation) {
+        Class<?> aClass = ClassHelper.getClass(obj);
+        T newObject = (T) ClassHelper.forObject(aClass);
+        String prefix = getPrefix(annotation);
+
+        ClassHelper.doWithFields(aClass, new FieldCallback() {
             @Override
-            public void accept(Object o, Object o2) {
-                String name = o.toString();
-                String property = getProperty(prefix + "." + name);
-                if (null == property) {
-                    property = getProperty(prefix + "." + StringHelper.humpToMin2(name));
+            public void doWith(Field item) throws Throwable {
+                setField(item);
+            }
+
+            private void setField(Field item) {
+                String name = item.getName();
+                Class<?> type = item.getType();
+                String property = environment.getProperty(prefix + "." + name);
+                if (Strings.isNullOrEmpty(property)) {
+                    property = environment.getProperty(prefix + "." + StringHelper.humpToLine2(name, "-"));
                 }
-                if(null != property) {
-                    beanMap.put(o, property);
+
+                if (Strings.isNullOrEmpty(property)) {
+                    return;
+                }
+                ClassHelper.makeAccessible(item);
+                try {
+                    item.set(newObject, converter(property, item.getType()));
+                } catch (Throwable e) {
                 }
             }
         });
-        return (T) beanMap.getBean();
+        return newObject;
     }
 
     /**
-     * 获取变量值
-     *
-     * @param key 索引
+     * @param name
      * @return
      */
-    public String getProperty(final String key) {
-        for (Environment environment : environments) {
-            if (!environment.containsProperty(key)) {
-                continue;
-            }
-            return environment.getProperty(key);
+    private boolean containsBeanDefinition(String name) {
+        if (null != beanFactory) {
+            return beanFactory.containsBean(name);
         }
-        return null;
+        return false;
     }
+
+
     /**
-     * 获取变量值
-     *
-     * @param key 索引
+     * @param annotation
      * @return
      */
-    public String tryGetProperty(final String key) {
-        for (Environment environment : environments) {
-            if (!tryContainsProperty(key)) {
-                continue;
-            }
-            String newKey = StringHelper.humpToLine2(key, "-").toLowerCase();
-            return environment.containsProperty(key) ? environment.getProperty(key) : environment.getProperty(newKey);
-        }
-        return null;
+    private String getPrefix(Map<String, Object> annotation) {
+        return annotation.containsKey("prefix") ? annotation.get("prefix").toString() : "";
     }
 
     /**
-     * 获取变量值
+     * 通过属性自动装配
      *
-     * @param key1 索引
-     * @param keys 索引
+     * @param object 类
+     * @param <T>
      * @return
      */
-    public String getProperty(final String key1, String... keys) {
-        String property = getProperty(key1);
-        if (null != property) {
+    private <T> T autoConfigurationByAttribute(final T object) {
+        Class<?> tClass = ClassHelper.getClass(object);
+        T newObject = (T) ClassHelper.forObject(tClass);
+        ClassHelper.doWithFields(tClass, new FieldCallback() {
+            @Override
+            public void doWith(Field item) throws Throwable {
+                String name = item.getName();
+                String property = environment.getProperty(name);
+                if (Strings.isNullOrEmpty(property)) {
+                    property = environment.getProperty(StringHelper.humpToLine2(name, "-"));
+                }
+
+                if (Strings.isNullOrEmpty(property)) {
+                    return;
+                }
+                ClassHelper.makeAccessible(item);
+                try {
+                    item.set(newObject, converter(property, item.getType()));
+                } catch (Throwable e) {
+                }
+            }
+        });
+        return newObject;
+    }
+
+    /**
+     * 数据转化
+     *
+     * @param property
+     * @param type
+     * @return
+     */
+    private Object converter(String property, Class<?> type) {
+        if (null == typeConverter) {
             return property;
         }
-
-        if (!BooleanHelper.hasLength(keys)) {
-            return null;
-        }
-
-        for (String key : keys) {
-            property = getProperty(key);
-            if (!Strings.isNullOrEmpty(property)) {
-                break;
-            }
-        }
-
-        return property;
+        return typeConverter.convertIfNecessary(property, type);
     }
 
     /**
-     * 渲染对象
+     * 获取注解
      *
-     * @param entityClass
+     * @param tClass
      * @param <T>
      * @return
      */
-    public <T> T inject(Class<T> entityClass) {
-        if (null == entityClass) {
-            return null;
-        }
-
-        T t = null;
-        if (entityClass.isInterface() || Modifier.isAbstract(entityClass.getModifiers())) {
-            ProxyAgent proxy = new CglibProxyAgent();
-            t = (T) proxy.newProxy(entityClass);
-        } else {
-            try {
-                t = entityClass.newInstance();
-            } catch (Throwable e) {
-                return null;
-            }
-        }
-
-        if (null == t) {
-            return null;
-        }
-
-        Map<String, Object> propertyFactory = getPropertyFactory();
-        BeanMap beanMap = BeanMap.create(t);
-        Field[] fields = entityClass.getDeclaredFields();
-        for (Object o : beanMap.keySet()) {
-            renderBeanMap(o.toString(), beanMap, propertyFactory);
-        }
-        return (T) beanMap.getBean();
-    }
-
-    /**
-     * 渲染beanmap
-     *
-     * @param name
-     * @param beanMap
-     * @param params
-     */
-    private void renderBeanMap(String name, BeanMap beanMap, Map<String, Object> params) {
-
-        if (!BooleanHelper.hasLength(params)) {
-            return;
-        }
-        Object element = FinderHelper.firstElement(params);
-        if (null == element) {
-            return;
-        }
-
-        String type = beanMap.getPropertyType(name).getName().toLowerCase();
-        if (CLASS_INT.equals(type)) {
-            beanMap.put(name, NumberHelper.toInt(element.toString(), 0));
-        } else if (CLASS_LONG.equals(type)) {
-            beanMap.put(name, NumberHelper.toLong(element.toString(), 0L));
-        } else if (CLASS_DOUBLE.equals(type)) {
-            beanMap.put(name, NumberHelper.toDouble(element.toString(), 0D));
-        } else if (CLASS_BOOLEAN.equals(type)) {
-            beanMap.put(name, BooleanHelper.toBoolean(element.toString()));
-        } else if (CLASS_CHAR.equals(type)) {
-            beanMap.put(name, (char) element);
-        } else if (CLASS_SHORT.equals(type)) {
-            beanMap.put(name, NumberHelper.toShort(element.toString(), (short) 0));
-        } else if (CLASS_FLOAT.equals(type)) {
-            beanMap.put(name, NumberHelper.toFloat(element.toString(), 0f));
-        } else if (CLASS_BYTE.equals(type)) {
-            beanMap.put(name, NumberHelper.toByte(element.toString(), (byte) 0));
-        }
-        beanMap.put(name, element);
-
-    }
-
-    /**
-     * 获取变量值
-     *
-     * @param key          索引
-     * @param defaultValue 默认值
-     * @return
-     */
-    public String getProperty(final String key, final String defaultValue) {
-        return getProperty(key, defaultValue);
-    }
-
-    /**
-     * 获取变量值
-     *
-     * @param key    索引
-     * @param tClass 类型
-     * @param <T>
-     * @return
-     */
-    public <T> T getProperty(final String key, final Class<T> tClass) {
-        return getProperty(key, tClass);
-    }
-
-    /**
-     * 获取变量值
-     *
-     * @param key          索引
-     * @param tClass       类型
-     * @param <T>
-     * @param defaultValue 默认值
-     * @return
-     */
-    public <T> T getProperty(final String key, final Class<T> tClass, final T defaultValue) {
-        return getProperty(key, tClass, defaultValue);
-    }
-
-    /**
-     * 获取激活的profiles
-     *
-     * @return
-     */
-    public String[] getActiveProfiles() {
-        return getActiveProfiles();
-    }
-
-    /**
-     * 获取默认的profiles
-     *
-     * @return
-     */
-    public String[] getDefaultProfiles() {
-        return getDefaultProfiles();
-    }
-
-    /**
-     * 获取默认的profiles
-     *
-     * @return
-     */
-    public boolean acceptsProfiles(final String profile) {
-        return acceptsProfiles(profile);
-    }
-
-    /**
-     * 是否包含索引
-     *
-     * @param key 索引
-     * @return
-     */
-    public boolean containsProperty(final String key) {
-        for (Environment environment : environments) {
-            if(environment.containsProperty(key)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    /**
-     * 尝试查询所有包含索引的数据
-     * <p>首先采用默认方式</p>
-     * <p>其次采用-风格</p>
-     *
-     * @param key 索引
-     * @return
-     */
-    public boolean tryContainsProperty(final String key) {
-        for (Environment environment : environments) {
-            if(environment.containsProperty(key)) {
-                return true;
-            }
-        }
-
-        String newKey = StringHelper.humpToLine2(key, "-").toLowerCase();
-        for (Environment environment : environments) {
-            if(environment.containsProperty(newKey)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 处理占位符
-     *
-     * @param key 索引
-     * @return
-     */
-    public String resolvePlaceholders(final String key) {
-        return resolvePlaceholders(key);
-    }
-
-    /**
-     * 获取PropertySources
-     *
-     * @return
-     */
-    public Set<MutablePropertySources> getPropertySources() {
-        Set<MutablePropertySources> mutablePropertySources = new HashSet<>(environments.size());
-        for (Environment environment : environments) {
-            if (!(environment instanceof StandardEnvironment)) {
-                continue;
-            }
-            StandardEnvironment standardEnvironment = (StandardEnvironment) environment;
-            mutablePropertySources.add(standardEnvironment.getPropertySources());
-        }
-        return mutablePropertySources;
-    }
-
-    /**
-     * 获取PropertySources
-     *
-     * @return
-     */
-    public Map<String, Object> getPropertyFactory() {
-        Map<String, Object> params = new HashMap<>();
-        Set<MutablePropertySources> propertySources = getPropertySources();
-        if (null == propertySources) {
-            return params;
-        }
-
-        for (MutablePropertySources mutablePropertySources : propertySources) {
-            Iterator<PropertySource<?>> iterator = mutablePropertySources.iterator();
-            while (iterator.hasNext()) {
-                PropertySource<?> propertySource = iterator.next();
-                Object source = propertySource.getSource();
-                if (source instanceof Map) {
-                    params.putAll((Map<String, Object>) source);
-                }
-            }
-        }
-        return params;
-    }
-
-    /**
-     * 添加PropertySources
-     *
-     * @return
-     */
-    public void addLastPropertySources(final String name, final Properties properties) {
-        MutablePropertySources propertySources = FinderHelper.lastElement(getPropertySources());
-        if (null == propertySources) {
-            return;
-        }
-        PropertySource propertySource = new PropertiesPropertySource(name, properties);
-        propertySources.addLast(propertySource);
-    }
-
-    /**
-     * 添加PropertySources
-     *
-     * @return
-     */
-    public void addFirstPropertySources(final String name, final Properties properties) {
-        MutablePropertySources propertySources = FinderHelper.lastElement(getPropertySources());
-        if (null == propertySources) {
-            return;
-        }
-        PropertySource propertySource = new PropertiesPropertySource(name, properties);
-        propertySources.addFirst(propertySource);
-    }
-
-    /**
-     * 删除PropertySources
-     *
-     * @return
-     */
-    public void removePropertySources(final String name) {
-        for (MutablePropertySources propertySource : getPropertySources()) {
-            if (null == propertySource) {
-                continue;
-            }
-            if (!propertySource.contains(name)) {
-                continue;
-            }
-            propertySource.remove(name);
-        }
-    }
-
-    /**
-     * 替换PropertySources
-     *
-     * @return
-     */
-    public void replacePropertySources(final String name, final Properties properties) {
-        for (MutablePropertySources propertySource : getPropertySources()) {
-            if (null == propertySource) {
-                continue;
-            }
-            if (!propertySource.contains(name)) {
-                continue;
-            }
-            PropertySource propertySource1 = new PropertiesPropertySource(name, properties);
-            propertySource.replace(name, propertySource1);
-        }
-    }
-
-    /**
-     * 获取默认的profiles
-     *
-     * @return
-     */
-    public Map<String, Object> maps(final String prefix, final boolean simpleName) {
-        if (StringHelper.isBlank(prefix)) {
-            return null;
-        }
-        Set<MutablePropertySources> propertySources = getPropertySources();
-        if (null == propertySources) {
-            return null;
-        }
-        Map<String, Object> map = new HashMap<>();
-        for (MutablePropertySources mutablePropertySources : propertySources) {
-            mutablePropertySources.stream().forEach(new Consumer<PropertySource<?>>() {
-                @Override
-                public void accept(PropertySource<?> propertySource) {
-                    Object source = propertySource.getSource();
-                    if (!(source instanceof Map)) {
-                        return;
-                    }
-                    filterMap(map, (Map) source, prefix, simpleName);
-                }
-            });
-        }
-        return map;
-    }
-
-    /**
-     * 过滤map
-     *
-     * @param map        结果集
-     * @param source     数据集
-     * @param prefix     前缀
-     * @param simpleName 是否为简单名称
-     */
-    private void filterMap(Map<String, Object> map, Map<String, Object> source, String prefix, boolean simpleName) {
-        if (null == source) {
-            return;
-        }
-
-        String key = "";
-        for (Map.Entry<String, Object> entry : source.entrySet()) {
-            key = entry.getKey();
-            if (FileHelper.wildcardMatch(key, prefix)) {
-                if (simpleName) {
-                    map.put(FileHelper.getExtension(key), entry.getValue());
-                } else {
-                    map.put(key, entry.getValue());
-                }
-            }
-        }
-    }
-
-    /**
-     * @return
-     */
-    public Properties properties() {
-        for (Environment environment : environments) {
-            if (!(environment instanceof ConfigurableEnvironment)) {
-                continue;
-            }
-            PropertySourcesResolver propertySourcesResolver = new PropertySourcesResolver(environment);
-            return FinderHelper.firstElement(propertySourcesResolver.properties());
-        }
-
-        return null;
-    }
-
-    /**
-     * 合并数据
-     *
-     * @param standardServletEnvironment
-     */
-    public void absorb(StandardServletEnvironment standardServletEnvironment) {
-        this.environments.add(standardServletEnvironment);
-    }
-
-    /**
-     * 自动装配
-     * <p>需要注解 org.springframework.boot.context.properties.ConfigurationProperties或者com.chua.utils.tools.spring.assembly.Assembly</p>
-     * @param <T>
-     * @param entity 实体
-     * @see com.chua.utils.tools.spring.assembly.Assembly
-     * @return
-     */
-    public <T> T automaticAssembly(T entity) {
-        if (null == entity) {
-            return entity;
-        }
-        Class<?> aClass = entity.getClass();
-        if(aClass.isAnnotationPresent(Assembly.class)) {
-            Assembly assembly = aClass.getAnnotation(Assembly.class);
-            return (T) getBean(aClass, assembly.prefix());
-        }
-        Annotation[] annotations = aClass.getDeclaredAnnotations();
-        Annotation item = null;
+    private <T> Map<String, Object> getConfigurationPropertiesAttribute(Class<T> tClass) {
+        Annotation[] annotations = tClass.getDeclaredAnnotations();
+        Annotation annotationItem = null;
         for (Annotation annotation : annotations) {
             if (!CONFIGURATION_PROPERTIES.equals(annotation.annotationType().getName())) {
                 continue;
             }
-            item = annotation;
-        }
-        //注解不存在无法装配
-        if (null == item) {
-            return entity;
+            annotationItem = annotation;
+            break;
         }
 
-        String annotationValue = ClassHelper.getAnnotationValue(item, "prefix", String.class);
-        return (T) getBean(aClass, annotationValue);
+        if (null == annotationItem) {
+            return null;
+        }
+
+        Map<String, Object> map = ClassHelper.getAnnotationValue(annotationItem);
+        return map;
     }
 
+    /**
+     * 尝试获取参数是否存在
+     * <p>1、默认值</p>
+     * <p>2、'-'</p>
+     * @param name
+     * @return
+     */
+    public boolean tryContainsProperty(String name) {
+        return environment.containsProperty(name) ? true : environment.containsProperty(StringHelper.humpToLine2(name, "-"));
+    }
 
+    /**
+     * 获取值
+     * <p>1、默认值</p>
+     * <p>2、'-'</p>
+     * @param name
+     * @return
+     */
+    public Object tryGetProperty(String name) {
+        if(environment.containsProperty(name)) {
+            return placeholderResolver.resolvePlaceholders(environment.getProperty(name));
+        }
+        String newName = StringHelper.humpToLine2(name, "-");
+        if(environment.containsProperty(newName)) {
+            return placeholderResolver.resolvePlaceholders(environment.getProperty(newName));
+        }
+        return null;
+    }
+
+    /**
+     * 获取值
+     * <p>1、默认值</p>
+     * <p>2、'-'</p>
+     * @param name
+     * @return
+     */
+    public String tryGetStringProperty(String name) {
+        if(environment.containsProperty(name)) {
+            Object o = placeholderResolver.resolvePlaceholders(environment.getProperty(name));
+            return o instanceof String ? o.toString() : "";
+        }
+        String newName = StringHelper.humpToLine2(name, "-");
+        if(environment.containsProperty(newName)) {
+            Object o = placeholderResolver.resolvePlaceholders(environment.getProperty(newName));
+            return o instanceof String ? o.toString() : "";
+        }
+        return "";
+    }
 }

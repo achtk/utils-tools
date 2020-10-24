@@ -45,7 +45,7 @@ public class ReflectionsHelper extends ClassExtensionHelper {
             return SUB_CACHE.get(tClass);
         }
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(new SubTypesScanner());
-        Reflections reflections = new Reflections(configurationBuilder);
+        ReflectionsFactory reflections = new ReflectionsFactory(configurationBuilder);
         Set<Class> typesOf = reflections.getSubTypesOf(tClass);
         SUB_CACHE.put(tClass, typesOf);
         return typesOf;
@@ -63,7 +63,7 @@ public class ReflectionsHelper extends ClassExtensionHelper {
             return ANNOTATION_CACHE.get(annotation);
         }
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(new TypeAnnotationsScanner());
-        Reflections reflections = new Reflections(configurationBuilder);
+        ReflectionsFactory reflections = new ReflectionsFactory(configurationBuilder);
         Set<Class<?>> annotatedWith = reflections.getTypesAnnotatedWith(annotation);
         ANNOTATION_CACHE.put(annotation, annotatedWith);
         return annotatedWith;
@@ -75,7 +75,7 @@ public class ReflectionsHelper extends ClassExtensionHelper {
      */
     public static Set<Field> getFieldsAnnotatedWith(Class<? extends Annotation> annotation) {
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(new FieldAnnotationsScanner());
-        Reflections reflections = new Reflections(configurationBuilder);
+        ReflectionsFactory reflections = new ReflectionsFactory(configurationBuilder);
         return reflections.getFieldsAnnotatedWith(annotation);
     }
     /**
@@ -85,7 +85,7 @@ public class ReflectionsHelper extends ClassExtensionHelper {
      */
     public static Set<Method> getMethodsAnnotatedWith(Class<? extends Annotation> annotation) {
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(new MethodAnnotationsScanner());
-        Reflections reflections = new Reflections(configurationBuilder);
+        ReflectionsFactory reflections = new ReflectionsFactory(configurationBuilder);
         return reflections.getMethodsAnnotatedWith(annotation);
     }
     /**
@@ -95,7 +95,7 @@ public class ReflectionsHelper extends ClassExtensionHelper {
      */
     public static Set<Method> getMethodsWithAnyParamAnnotated(Class<? extends Annotation> annotation) {
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(new MethodParameterScanner());
-        Reflections reflections = new Reflections(configurationBuilder);
+        ReflectionsFactory reflections = new ReflectionsFactory(configurationBuilder);
         return reflections.getMethodsWithAnyParamAnnotated(annotation);
     }
     /**
@@ -111,7 +111,7 @@ public class ReflectionsHelper extends ClassExtensionHelper {
             return PACKAGE_CACHE.get(packages);
         }
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(packages);
-        Reflections reflections = new Reflections(configurationBuilder);
+        ReflectionsFactory reflections = new ReflectionsFactory(configurationBuilder);
         Set<String> allTypes = reflections.getAllTypes();
         PACKAGE_CACHE.put(packages, allTypes);
         return allTypes;

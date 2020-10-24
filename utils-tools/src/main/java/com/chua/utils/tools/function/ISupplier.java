@@ -1,7 +1,7 @@
 package com.chua.utils.tools.function;
 
 /**
- * 消费者
+ * 提供者
  * @author CH
  */
 public interface ISupplier<O> {

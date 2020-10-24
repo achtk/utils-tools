@@ -3,6 +3,7 @@ package com.chua.utils.tools.classes;
 import com.chua.utils.tools.classes.reflections.ReflectionsHelper;
 import com.chua.utils.tools.common.*;
 import com.chua.utils.tools.exceptions.NotSupportedException;
+import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.proxy.CglibProxyAgent;
 import com.chua.utils.tools.proxy.ProxyAgent;
 import com.google.common.base.Preconditions;
@@ -14,6 +15,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.*;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
 
@@ -412,10 +414,12 @@ public class ClassHelper extends ReflectionsHelper {
 
                 if (!hasNoParamConstructor) {
                     Class<? extends T> aClass = addNoParamConstructor(tClass);
-                    if (aClass == tClass) {
-                        return null;
+                    try {
+                        return aClass.newInstance();
+                    } catch (InstantiationException instantiationException) {
+                        Loader loader = new Loader();
+                        return (T) loader.loadClass(aClass.getName()).newInstance();
                     }
-                    return aClass.newInstance();
                 }
 
                 if (isPublic) {
@@ -440,13 +444,16 @@ public class ClassHelper extends ReflectionsHelper {
      * @return
      */
     private static <T> Class<? extends T> addNoParamConstructor(Class<? extends T> aClass) {
+        String name = aClass.getName();
+        String newName = name + JAVASSIST_SUFFIX;
         try {
-            String name = aClass.getName();
             ClassPool classPool = getClassPool();
             CtClass oldClass = classPool.get(name);
-            String newName = name + JAVASSIST_SUFFIX;
             try {
-                classPool.get(newName);
+                CtClass ctClass = classPool.get(name);
+                ctClass.setName(newName);
+                oldClass = ctClass;
+                oldClass.setSuperclass(classPool.get(name));
                 setNewName(oldClass, classPool, newName);
             } catch (NotFoundException e) {
                 oldClass.setName(newName);
@@ -467,7 +474,10 @@ public class ClassHelper extends ReflectionsHelper {
             }
             return (Class<? extends T>) oldClass.toClass();
         } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                return (Class<? extends T>) new Loader().loadClass(newName);
+            } catch (ClassNotFoundException classNotFoundException) {
+            }
         }
         return aClass;
     }
@@ -720,5 +730,79 @@ public class ClassHelper extends ReflectionsHelper {
         }
         return null;
     }
+
+    /**
+     * 获取类
+     *
+     * @param object 对象
+     * @return
+     */
+    public static Class<?> getClass(Object object) {
+        return BooleanHelper.isClass(object) ? (Class<?>) object : object.getClass();
+    }
+
+    /**
+     * 是否基础类
+     *
+     * @param type
+     * @return
+     */
+    public static boolean isBasicClass(Class<?> type) {
+        return null == type ||
+                type.isPrimitive() || type.isArray() ||
+                String.class.isAssignableFrom(type) ||
+                Integer.class.isAssignableFrom(type) ||
+                Long.class.isAssignableFrom(type) ||
+                Short.class.isAssignableFrom(type) ||
+                Double.class.isAssignableFrom(type) ||
+                Float.class.isAssignableFrom(type) ||
+                Boolean.class.isAssignableFrom(type) ||
+                BigDecimal.class.isAssignableFrom(type) ||
+                Character.class.isAssignableFrom(type) ||
+                CharSequence.class.isAssignableFrom(type) ||
+                Byte.class.isAssignableFrom(type);
+    }
+
+    /**
+     * 校验类名是否合法
+     *  @param classNamesList 类名集合
+     * @param filter        是否合法
+     * @return
+     */
+    public static List<String> doWithVerify(List<String> classNamesList, Filter<Class> filter) {
+        if(!BooleanHelper.hasLength(classNamesList) || null == filter) {
+            return Collections.emptyList();
+        }
+        List<String> verifyList = new ArrayList<>(classNamesList.size());
+        classNamesList.stream().forEach(new Consumer<String>() {
+            @Override
+            public void accept(String s) {
+                Class<?> aClass = forName(s);
+                boolean matcher = filter.matcher(aClass);
+                if(matcher) {
+                    verifyList.add(s);
+                }
+            }
+        });
+        return verifyList;
+    }
+
+    /**
+     * 获取参数类型
+     * @param args
+     * @return
+     */
+    public static Class<?>[] toParamType(Object[] args) {
+        if(!BooleanHelper.hasLength(args)) {
+            return new Class[0];
+        }
+        Class<?>[] classes = new Class[args.length];
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+            classes[i] = arg.getClass();
+        }
+        return classes;
+    }
+
 
 }

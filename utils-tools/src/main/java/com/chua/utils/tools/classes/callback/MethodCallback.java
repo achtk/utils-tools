@@ -6,19 +6,12 @@ package com.chua.utils.tools.classes.callback;
  * @since 2020/10/12
  */
 
+import com.chua.utils.tools.function.Matcher;
+
 import java.lang.reflect.Method;
 
 /**
  * 字方法回调
  */
-@FunctionalInterface
-public interface MethodCallback {
-
-    /**
-     * 方法回调
-     * @param method
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
-     */
-    void doWith(Method method) throws IllegalArgumentException, IllegalAccessException;
+public interface MethodCallback extends Matcher<Method> {
 }

@@ -58,7 +58,7 @@ public class CollectionHelper {
      * @return
      */
     public static <V> Boolean isEmpty(Collection<V> collection) {
-        return null == collection;
+        return null == collection || collection.size() == 0;
     }
 
     /**
@@ -72,7 +72,7 @@ public class CollectionHelper {
      * @return
      */
     public static <K, V> Boolean isEmpty(Map<K, V> kvMap) {
-        return null == kvMap;
+        return null == kvMap || kvMap.isEmpty();
     }
 
 

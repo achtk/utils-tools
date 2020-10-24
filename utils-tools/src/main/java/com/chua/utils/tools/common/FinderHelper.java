@@ -1,5 +1,7 @@
 package com.chua.utils.tools.common;
 
+import com.chua.utils.tools.exceptions.NonUniqueException;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -161,6 +163,41 @@ public class FinderHelper {
      */
     public static <T> T firstElement(final Collection<T> source) {
         return findElement(0, true, source);
+    }
+
+    /**
+     * 有且只有一个元素时获取
+     * <p>
+     * getIfOnlyElement([e1, e2, e3]) = null
+     * getIfOnlyElement([e1]) = e1
+     * getIfOnlyElement(null) = null
+     * </p>
+     *
+     * @param source 数据源
+     * @return
+     */
+    public static <T> T getIfOnlyElement(final Collection<T> source)  {
+        if (!BooleanHelper.hasLength(source) || source.size() != 1) {
+            throw new NonUniqueException();
+        }
+        return firstElement(source);
+    }
+    /**
+     * 有且只有一个元素时获取
+     * <p>
+     * getIfOnlyElement([e1, e2, e3]) = null
+     * getIfOnlyElement([e1]) = e1
+     * getIfOnlyElement(null) = null
+     * </p>
+     *
+     * @param source 数据源
+     * @return
+     */
+    public static <T> T safeIfOnlyElement(final Collection<T> source) {
+        if (!BooleanHelper.hasLength(source) || source.size() != 1) {
+            return null;
+        }
+        return firstElement(source);
     }
 
     /**

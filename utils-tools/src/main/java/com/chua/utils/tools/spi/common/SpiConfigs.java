@@ -47,7 +47,7 @@ public class SpiConfigs implements IOptions {
         cfgConfig.setMaster(SPI_CONFIG_DEFAULT);
         cfgConfig.setOrder(SPI_CFG_ORDER);
 
-        CfgOptions cfgOptions = new CfgOptions();
+        CfgOptions cfgOptions = new CfgOptions(cfgConfig);
         cfgOptions.analysis(cfgConfig);
         ConcurrentHashMap<String, Object> initialCfg = cfgOptions.toConcurrentHashMap();
 

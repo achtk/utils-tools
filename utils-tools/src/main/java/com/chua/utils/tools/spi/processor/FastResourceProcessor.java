@@ -11,6 +11,7 @@ import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.Set;
 
 import static com.chua.utils.tools.constant.StringConstant.EXTENSION_CLASS_SUFFIX;
@@ -58,12 +59,15 @@ public class FastResourceProcessor<T> implements IExtensionProcessor<T> {
             name = StringHelper.startsWithAndEmpty(name, "/");
             name = name.replace("/", ".").replace(EXTENSION_CLASS_SUFFIX, "");
 
-            ExtensionClass<T> extensionClass = loadExtension(service, extension, null, ClassHelper.forName(name), null);
-            if(null != extensionClass && extensionClass.isSingle()) {
-                extensionClass.setObj(ClassHelper.forObject(extensionClass.getClazz(), classLoader));
-            }
-            if(null != extensionClass) {
-                providerCache.put(extensionClass.getName(), extensionClass);
+            List<ExtensionClass<T>> extensionClass = loadExtension(service, extension, null, ClassHelper.forName(name), null);
+            for (ExtensionClass<T> tExtensionClass : extensionClass) {
+
+                if(null != tExtensionClass && tExtensionClass.isSingle()) {
+                    tExtensionClass.setObj(ClassHelper.forObject(tExtensionClass.getClazz(), classLoader));
+                }
+                if(null != tExtensionClass) {
+                    providerCache.put(tExtensionClass.getName(), tExtensionClass);
+                }
             }
         }
         return providerCache;

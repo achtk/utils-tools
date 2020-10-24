@@ -121,7 +121,10 @@ public class ExtensionLoader<T> {
      * @return
      */
     public ExtensionClass<T> getExtensionClass(String name) {
-        Collection<ExtensionClass<T>> classes = getExtensionClasses(name);
+        if(null == name) {
+            return null;
+        }
+        Collection<ExtensionClass<T>> classes = getExtensionClasses(name.toLowerCase());
         if(null == classes) {
             return null;
         }

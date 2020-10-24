@@ -1,9 +1,13 @@
 package com.chua.utils.tools.cache;
 
+import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.config.CacheProperties;
 import com.chua.utils.tools.manager.ICacheManager;
 import com.google.common.collect.HashMultimap;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,10 +15,11 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * ConcurrentMap方式缓存
+ *
  * @author CH
  * @date 2020-09-30
  */
-public class ConcurrentSetCacheProvider<K, V> implements ICacheProvider<K, Set<V>>, ICacheManager<K, Set<V>> {
+public class ConcurrentSetCacheProvider<K, V> implements MultiCacheProvider<K, V> {
 
     private final ThreadLocal<HashMultimap<K, V>> threadLocal = new ThreadLocal<HashMultimap<K, V>>() {
         @Override
@@ -23,6 +28,7 @@ public class ConcurrentSetCacheProvider<K, V> implements ICacheProvider<K, Set<V
             return hashMultimap;
         }
     };
+
 
     @Override
     public ICacheProvider configure(CacheProperties cacheProperties) {
@@ -36,10 +42,10 @@ public class ConcurrentSetCacheProvider<K, V> implements ICacheProvider<K, Set<V
 
     @Override
     public ConcurrentMap<K, Set<V>> asMap() {
-        HashMultimap<K, V> hashMultimap = threadLocal.get();
+        HashMultimap<K, V> kvHashMultimap = threadLocal.get();
         ConcurrentHashMap<K, Set<V>> concurrentHashMap = new ConcurrentHashMap<>();
-        for (K key : hashMultimap.keys()) {
-            concurrentHashMap.put(key, hashMultimap.get(key));
+        for (K key : kvHashMultimap.keys()) {
+            concurrentHashMap.put(key, kvHashMultimap.get(key));
         }
         return concurrentHashMap;
     }
@@ -64,21 +70,6 @@ public class ConcurrentSetCacheProvider<K, V> implements ICacheProvider<K, Set<V
     }
 
     @Override
-    public Set<V> getValue(K key) {
-        return threadLocal.get().get(key);
-    }
-
-    @Override
-    public void remove(K key) {
-        threadLocal.get().removeAll(key);
-    }
-
-    @Override
-    public void clear() {
-        threadLocal.get().clear();
-    }
-
-    @Override
     public void remove(K... name) {
         for (K k : name) {
             remove(k);
@@ -94,7 +85,7 @@ public class ConcurrentSetCacheProvider<K, V> implements ICacheProvider<K, Set<V
 
     @Override
     public void removeAll() {
-        clear();
+        threadLocal.get().clear();
     }
 
     @Override
@@ -102,4 +93,46 @@ public class ConcurrentSetCacheProvider<K, V> implements ICacheProvider<K, Set<V
         return threadLocal.get().size();
     }
 
+
+    @Override
+    public void add(K key, V value) {
+        if(null == key || null == value) {
+            return;
+        }
+        threadLocal.get().put(key, value);
+    }
+
+    @Override
+    public void putAll(K key, Collection<V> values) {
+        if(null == key || !BooleanHelper.hasLength(values)) {
+            return;
+        }
+        for (V value : values) {
+            threadLocal.get().put(key, value);
+        }
+    }
+
+    @Override
+    public void putAll(K key, V[] values) {
+        if(null == key || !BooleanHelper.hasLength(values)) {
+            return;
+        }
+        for (V value : values) {
+            threadLocal.get().put(key, value);
+        }
+    }
+
+    @Override
+    public Set<K> getKey(V value) {
+        HashMultimap<K, V> kvHashMultimap = threadLocal.get();
+        Set<K> keys = new HashSet<>();
+        for (K k : kvHashMultimap.keySet()) {
+            Set<V> vs = kvHashMultimap.get(k);
+            if(!vs.contains(value)) {
+                continue;
+            }
+            keys.add(k);
+        }
+        return keys;
+    }
 }

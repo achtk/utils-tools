@@ -311,18 +311,4 @@ interface IBeanFactory {
         return fieldsAndType;
     }
 
-    /**
-     * 实体校验
-     *
-     * @param entity 实体
-     * @param <T>
-     * @return
-     */
-    default <T> T verificationEntity(T entity) {
-        EnvironmentFactory environmentFactory = environmentFactory();
-        if (null == environmentFactory) {
-            return entity;
-        }
-        return environmentFactory.automaticAssembly(entity);
-    }
 }

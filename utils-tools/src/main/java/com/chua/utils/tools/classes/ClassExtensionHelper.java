@@ -2,14 +2,16 @@ package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.classes.callback.MethodCallback;
-import com.chua.utils.tools.common.*;
+import com.chua.utils.tools.common.Assert;
+import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.entity.*;
-import com.chua.utils.tools.filter.MethodFilter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import javassist.*;
 import javassist.Modifier;
+import javassist.*;
 import javassist.bytecode.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,10 +40,8 @@ public class ClassExtensionHelper<T> {
     private static List<String> primitiveNames;
     private static List<String> primitiveDescriptors;
 
-    public static final MethodFilter USER_DECLARED_METHODS = (method -> !method.isBridge() && !method.isSynthetic());
-
-    private static final Map<Class<?>, List<MemberInfo>> DECLARED_FIELDS_CACHE = new ConcurrentHashMap<>(256);
-    private static final Map<Class<?>, List<MemberInfo>> DECLARED_SUPER_FIELDS_CACHE = new ConcurrentHashMap<>(256);
+    private static final Map<Class<?>, List<MemberInfo>> DECLARED_MEMBER_CACHE = new ConcurrentHashMap<>(256);
+    private static final Map<Class<?>, List<MemberInfo>> DECLARED_SUPER_MEMBER_CACHE = new ConcurrentHashMap<>(256);
     private static final Map<Class<?>, List<Method>> DECLARED_METHODS_CACHE = new ConcurrentHashMap<>(256);
 
     private static final Set<String> DEFAULT_OBJECT_METHODS = Sets.newHashSet("toString", "equals", "hashCode");
@@ -353,7 +353,7 @@ public class ClassExtensionHelper<T> {
      *
      * @return
      */
-    protected static ClassPool getClassPool() {
+    public static ClassPool getClassPool() {
         ClassPool classPool = ClassPool.getDefault();
         classPool.appendClassPath(new LoaderClassPath(Thread.currentThread().getContextClassLoader()));
         return classPool;
@@ -540,7 +540,6 @@ public class ClassExtensionHelper<T> {
     }
 
 
-
     /**
      * 字段信息分析
      *
@@ -593,19 +592,20 @@ public class ClassExtensionHelper<T> {
      * @return
      */
     public static List<Field> getFields(final Object obj) {
-        return findFields(getMembers(obj), null);
+        return findFields(getFieldMembers(obj), null);
     }
 
     /**
      * 查找属性
      *
-     * @param obj 对象
+     * @param obj  对象
      * @param name 字段名称
      * @return
      */
     public static Field getFields(Object obj, String name) {
-        return FinderHelper.firstElement(findFields(getMembers(obj), name));
+        return FinderHelper.firstElement(findFields(getFieldMembers(obj), name));
     }
+
     /**
      * 获取所有字段
      *
@@ -614,15 +614,16 @@ public class ClassExtensionHelper<T> {
      */
     public static Map<String, Field> getFieldsAsMap(final Object obj) {
         Map<String, Field> result = new HashMap<>();
-        List<MemberInfo> members = getMembers(obj);
+        List<MemberInfo> members = getFieldMembers(obj);
         for (MemberInfo member : members) {
-            if(!member.isField()) {
+            if (!member.isField()) {
                 continue;
             }
             result.put(member.getName(), (Field) member.getMember());
         }
         return result;
     }
+
     /**
      * 获取所有字段值
      *
@@ -631,9 +632,9 @@ public class ClassExtensionHelper<T> {
      */
     public static Map<String, Object> getFieldsValueAsMap(final Object obj) {
         Map<String, Object> result = new HashMap<>();
-        List<MemberInfo> members = getMembers(obj);
+        List<MemberInfo> members = getFieldMembers(obj);
         for (MemberInfo member : members) {
-            if(!member.isField()) {
+            if (!member.isField()) {
                 continue;
             }
             try {
@@ -644,13 +645,14 @@ public class ClassExtensionHelper<T> {
         }
         return result;
     }
+
     /**
      * 获取MemberInfo
      *
      * @param obj 对象
      * @return
      */
-    public static List<MemberInfo> getMembers(final Object obj) {
+    public static List<MemberInfo> getFieldMembers(final Object obj) {
         if (null == obj) {
             return Collections.emptyList();
         }
@@ -658,8 +660,8 @@ public class ClassExtensionHelper<T> {
         if (obj instanceof Class) {
             aClass = (Class<?>) obj;
         }
-        if (DECLARED_SUPER_FIELDS_CACHE.containsKey(aClass)) {
-            return DECLARED_SUPER_FIELDS_CACHE.get(aClass);
+        if (DECLARED_SUPER_MEMBER_CACHE.containsKey(aClass)) {
+            return DECLARED_SUPER_MEMBER_CACHE.get(aClass);
         }
         List<MemberInfo> result = new ArrayList<>();
         while (null != aClass && !Object.class.getName().equals(aClass.getName())) {
@@ -675,7 +677,7 @@ public class ClassExtensionHelper<T> {
             }
             aClass = aClass.getSuperclass();
         }
-        DECLARED_SUPER_FIELDS_CACHE.put(aClass, result);
+        DECLARED_SUPER_MEMBER_CACHE.put(aClass, result);
         return result;
     }
 
@@ -692,7 +694,7 @@ public class ClassExtensionHelper<T> {
     /**
      * 获取所有字段
      *
-     * @param obj              对象
+     * @param obj 对象
      * @return
      */
     public static List<MemberInfo> getLocalMembers(final Object obj) {
@@ -700,18 +702,18 @@ public class ClassExtensionHelper<T> {
             return Collections.emptyList();
         }
         Class<?> tClass = obj.getClass();
-        if (DECLARED_FIELDS_CACHE.containsKey(tClass)) {
-            return DECLARED_FIELDS_CACHE.get(tClass);
+        if (DECLARED_MEMBER_CACHE.containsKey(tClass)) {
+            return DECLARED_MEMBER_CACHE.get(tClass);
         }
 
         Field[] fields = tClass.getDeclaredFields();
         List<MemberInfo> members = findMembers(fields, obj);
-        DECLARED_FIELDS_CACHE.put(tClass, findMembers(fields, obj));
-        return findMembers(fields, obj);
+        DECLARED_MEMBER_CACHE.put(tClass, members);
+        return members;
     }
 
     /**
-     * 通过类型获取字段
+     * 通过名称获取字段
      *
      * @param obj      对象
      * @param name     对象名称
@@ -719,8 +721,46 @@ public class ClassExtensionHelper<T> {
      * @return
      */
     public static List<Field> findField(final Object obj, final String name, boolean wildcard) {
-        List<MemberInfo> members = getMembers(obj);
+        List<MemberInfo> members = getFieldMembers(obj);
         return MemberInfo.findField(members, name, wildcard);
+    }
+
+    /**
+     * 通过名称获取字段
+     *
+     * @param obj  对象
+     * @param name 对象名称
+     * @return
+     */
+    public static List<Field> findFieldByName(final Object obj, final String name) {
+        List<MemberInfo> members = getFieldMembers(obj);
+        List<Field> result = new ArrayList<>();
+        for (MemberInfo member : members) {
+            if (!member.isField() && !member.getName().equals(name)) {
+                continue;
+            }
+            result.add((Field) member.getMember());
+        }
+        return result;
+    }
+
+    /**
+     * 通过类型获取字段
+     *
+     * @param obj  对象
+     * @param type 对象类型
+     * @return
+     */
+    public static List<Field> findFieldByType(final Object obj, final Class<?> type) {
+        List<MemberInfo> members = getFieldMembers(obj);
+        List<Field> result = new ArrayList<>();
+        for (MemberInfo member : members) {
+            if (!member.isField() && !member.getType().isAssignableFrom(type)) {
+                continue;
+            }
+            result.add((Field) member.getMember());
+        }
+        return result;
     }
 
     /**
@@ -867,17 +907,27 @@ public class ClassExtensionHelper<T> {
     /**
      * 获取注解的值
      *
-     * @param annotation 直接
-     * @param fieldName  字段
+     * @param annotation 注解
+     * @return
      */
-    public static <T> T getAnnotationValue(final Annotation annotation, final String fieldName, final Class<T> type) {
+    public static Map getAnnotationValue(final Annotation annotation) {
         if (null == annotation) {
             return null;
         }
         InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
         Map<String, Map> memberValues = getFieldValue(invocationHandler, "memberValues", Map.class);
         Map map = memberValues.get("memberValues");
-        return (T) map.get(fieldName);
+        return map;
+    }
+
+    /**
+     * 获取注解的值
+     *
+     * @param annotation 注解
+     * @param fieldName  字段
+     */
+    public static <T> T getAnnotationValue(final Annotation annotation, final String fieldName) {
+        return (T) getAnnotationValue(annotation).get(fieldName);
     }
 
     /**
@@ -916,11 +966,30 @@ public class ClassExtensionHelper<T> {
      * @param clazz
      * @param fc
      */
+    public static void doWithFields(Class<?> clazz, FieldCallback fc) {
+        for (MemberInfo memberInfo : getFieldMembers(clazz)) {
+            if (!memberInfo.isField()) {
+                continue;
+            }
+            try {
+                fc.doWith((Field) memberInfo.getMember());
+            } catch (Throwable ex) {
+                throw new IllegalStateException("Not allowed to access field '" + memberInfo.getName() + "': " + ex);
+            }
+        }
+    }
+
+    /**
+     * 字段查询
+     *
+     * @param clazz
+     * @param fc
+     */
     public static void doWithLocalFields(Class<?> clazz, FieldCallback fc) {
         for (Field field : getLocalFields(clazz)) {
             try {
                 fc.doWith(field);
-            } catch (IllegalAccessException ex) {
+            } catch (Throwable ex) {
                 throw new IllegalStateException("Not allowed to access field '" + field.getName() + "': " + ex);
             }
         }
@@ -937,7 +1006,7 @@ public class ClassExtensionHelper<T> {
         for (Method method : methods) {
             try {
                 mc.doWith(method);
-            } catch (IllegalAccessException ex) {
+            } catch (Throwable ex) {
                 throw new IllegalStateException("Not allowed to access method '" + method.getName() + "': " + ex);
             }
         }
@@ -950,36 +1019,67 @@ public class ClassExtensionHelper<T> {
      * @param mc    方法回调
      */
     public static void doWithMethods(Class<?> clazz, MethodCallback mc) {
-        doWithMethods(clazz, mc, null);
+        if (null == clazz || null == mc) {
+            return;
+        }
+        List<Method> methods = getMethods(clazz);
+        for (Method method : methods) {
+            try {
+                mc.doWith(method);
+            } catch (Throwable throwable) {
+                throw new IllegalStateException("Not allowed to access method '" + method.getName() + "': " + throwable);
+            }
+        }
     }
 
     /**
-     * 方法回调
+     * 获取所有字段
      *
-     * @param clazz 类
-     * @param mc    方法回调
-     * @param mf    过滤回调
+     * @param obj 对象
+     * @return
      */
-    public static void doWithMethods(Class<?> clazz, MethodCallback mc, @Nullable MethodFilter mf) {
-        // Keep backing up the inheritance hierarchy.
-        List<Method> methods = getDeclaredMethods(clazz);
-        for (Method method : methods) {
-            if (mf != null && !mf.matches(method)) {
-                continue;
-            }
-            try {
-                mc.doWith(method);
-            } catch (IllegalAccessException ex) {
-                throw new IllegalStateException("Not allowed to access method '" + method.getName() + "': " + ex);
-            }
+    public static List<Method> getMethods(Object obj) {
+        return findMethods(getMemberMethods(obj), null);
+    }
+
+    /**
+     * 获取所有字段
+     *
+     * @param obj 对象
+     * @return
+     */
+    public static List<MemberInfo> getMemberMethods(Object obj) {
+        if (null == obj) {
+            return Collections.emptyList();
         }
-        if (clazz.getSuperclass() != null && (mf != USER_DECLARED_METHODS || clazz.getSuperclass() != Object.class)) {
-            doWithMethods(clazz.getSuperclass(), mc, mf);
-        } else if (clazz.isInterface()) {
-            for (Class<?> superIfc : clazz.getInterfaces()) {
-                doWithMethods(superIfc, mc, mf);
-            }
+        Class<?> objClass = obj.getClass();
+
+        if (obj instanceof Class) {
+            objClass = (Class<?>) obj;
         }
+
+        if (DECLARED_SUPER_MEMBER_CACHE.containsKey(objClass)) {
+            return DECLARED_SUPER_MEMBER_CACHE.get(objClass);
+        }
+
+        List<MemberInfo> result = new ArrayList<>();
+        while (!Object.class.equals(objClass)) {
+            Method[] methods = objClass.getDeclaredMethods();
+            for (Method method : methods) {
+                MemberInfo memberInfo = new MemberInfo();
+                memberInfo.setName(method.getName());
+                memberInfo.setType(method.getReturnType());
+                memberInfo.setMember(method);
+
+                memberInfo.setObj(obj);
+
+                result.add(memberInfo);
+            }
+
+            objClass = objClass.getSuperclass();
+        }
+        DECLARED_SUPER_MEMBER_CACHE.put(objClass, result);
+        return result;
     }
 
 
@@ -1085,12 +1185,39 @@ public class ClassExtensionHelper<T> {
             if (!memberInfo.isField()) {
                 continue;
             }
-            if(null == name) {
+            if (null == name) {
                 fieldList.add((Field) memberInfo.getMember());
                 continue;
             }
-            if(memberInfo.getName().equals(name)) {
+            if (memberInfo.getName().equals(name)) {
                 fieldList.add((Field) memberInfo.getMember());
+                continue;
+            }
+        }
+        return fieldList;
+    }
+
+    /**
+     * 获取字段
+     *
+     * @param memberInfos MemberInfo数据
+     * @return
+     */
+    private static List<Method> findMethods(final List<MemberInfo> memberInfos, String name) {
+        if (!BooleanHelper.hasLength(memberInfos)) {
+            return Collections.emptyList();
+        }
+        List<Method> fieldList = new ArrayList<>(memberInfos.size());
+        for (MemberInfo memberInfo : memberInfos) {
+            if (!memberInfo.isMethod()) {
+                continue;
+            }
+            if (null == name) {
+                fieldList.add((Method) memberInfo.getMember());
+                continue;
+            }
+            if (memberInfo.getName().equals(name)) {
+                fieldList.add((Method) memberInfo.getMember());
                 continue;
             }
         }
@@ -1100,8 +1227,8 @@ public class ClassExtensionHelper<T> {
     /**
      * 获取Member
      *
-     * @param members          Member数据
-     * @param obj              对象
+     * @param members Member数据
+     * @param obj     对象
      * @return
      */
     public static List<MemberInfo> findMembers(final Member[] members, Object obj) {
@@ -1111,8 +1238,8 @@ public class ClassExtensionHelper<T> {
     /**
      * 获取Member
      *
-     * @param members          Member数据
-     * @param obj              对象
+     * @param members Member数据
+     * @param obj     对象
      * @return
      */
     public static List<MemberInfo> findMembers(final List<Member> members, Object obj) {
@@ -1164,11 +1291,13 @@ public class ClassExtensionHelper<T> {
 
     /**
      * 获取默认方法
+     *
      * @return
      */
     public static Set<String> getDefaultMethods() {
         return DEFAULT_OBJECT_METHODS;
     }
+
     /**
      * 设置字段值
      *
@@ -1186,22 +1315,39 @@ public class ClassExtensionHelper<T> {
     }
 
     /**
+     * 制作修饰符
+     * @param sourceClass
+     * @return
+     */
+    public static Class<?> makeModifiers(Class<?> sourceClass) throws Exception {
+        if(null == sourceClass) {
+            return sourceClass;
+        }
+        ClassPool classPool = getClassPool();
+        CtClass ctClass = classPool.get(sourceClass.getName());
+        ctClass.setModifiers(Modifier.PUBLIC);
+        Loader loader = new Loader();
+        return loader.loadClass(ctClass.getName());
+    }
+    /**
      * 设置无障碍
+     *
      * @param member
      * @param <T>
      */
     public static <T> void makeAccessible(Member member) {
-        if(null == member) {
+        if (null == member) {
             return;
         }
-        if(member instanceof Field) {
+        if (member instanceof Field) {
             ((Field) member).setAccessible(true);
-        } else if(member instanceof Method) {
+        } else if (member instanceof Method) {
             ((Method) member).setAccessible(true);
         } else {
             ((Constructor) member).setAccessible(true);
         }
     }
+
     /**
      * 字段信息
      */
@@ -1269,12 +1415,17 @@ public class ClassExtensionHelper<T> {
             return member instanceof Constructor;
         }
 
+        public boolean isClass() {
+            return obj instanceof Class;
+        }
+
         /**
          * 尝试获取字段数据
+         *
          * @return
          */
         public Object tryGetFieldValue() {
-            if(!isField() || null == obj) {
+            if (!isField() || null == obj) {
                 return null;
             }
             try {
@@ -1283,5 +1434,65 @@ public class ClassExtensionHelper<T> {
                 return null;
             }
         }
+    }
+
+    /**
+     * 是否有无参构造
+     * @param sourceClass
+     * @return
+     */
+    public static boolean hasNoParamterConstructor(Class<?> sourceClass) {
+        if(null == sourceClass) {
+            return false;
+        }
+        Constructor<?>[] declaredConstructors = sourceClass.getDeclaredConstructors();
+        for (Constructor<?> declaredConstructor : declaredConstructors) {
+            if(declaredConstructor.getParameterTypes().length == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * 类是否有注解
+     *
+     * @param aClass         类
+     * @param annotationType 注解
+     * @return
+     */
+    public static boolean hasAnnotation(Class<?> aClass, Class<? extends Annotation> annotationType) {
+        if(null == aClass || null == annotationType) {
+            return false;
+        }
+        String annotationTypeName = annotationType.getName();
+        Annotation[] annotations = aClass.getDeclaredAnnotations();
+        for (Annotation annotation : annotations) {
+            if(!annotationTypeName.equals(annotation.annotationType().getName())) {
+                continue;
+            }
+            return true;
+        }
+        return false;
+    }
+    /**
+     * 获取指定注解, 没有返回空
+     *
+     * @param aClass         类
+     * @param annotationType 注解
+     * @return
+     */
+    public static <T>T getAnnotation(Class<?> aClass, Class<T> annotationType) {
+        if(null == aClass || null == annotationType) {
+            return null;
+        }
+        String annotationTypeName = annotationType.getName();
+        Annotation[] annotations = aClass.getDeclaredAnnotations();
+        for (Annotation annotation : annotations) {
+            if(!annotationTypeName.equals(annotation.annotationType().getName())) {
+                continue;
+            }
+            return (T) annotation;
+        }
+        return null;
     }
 }

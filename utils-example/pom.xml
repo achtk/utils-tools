@@ -47,12 +47,8 @@
             <artifactId>utils-netx-extension-zookeeper</artifactId>
             <version>1.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-tools-extension-fegin</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
+
+
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-spider</artifactId>
@@ -62,6 +58,12 @@
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-netx-extension-vertx</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-tools-extension-feign</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>

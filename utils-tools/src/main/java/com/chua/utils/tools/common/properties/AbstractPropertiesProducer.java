@@ -803,8 +803,7 @@ public abstract class AbstractPropertiesProducer {
     }
 
     public void cfgLoader(CfgConfig cfgConfig) {
-        CfgOptions cfgOptions = new CfgOptions();
-        cfgOptions.analysis(cfgConfig);
+        CfgOptions cfgOptions = new CfgOptions(cfgConfig);
         ConcurrentHashMap<String, Object> initialCfg = cfgOptions.toConcurrentHashMap();
         Properties properties = MapHelper.toProperties(initialCfg);
         put(StringHelper.uuid(), properties);

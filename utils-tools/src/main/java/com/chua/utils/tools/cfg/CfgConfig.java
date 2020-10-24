@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import static com.chua.utils.tools.constant.StringConstant.SYSTEM_PRIORITY_PROP;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CfgConfig {
     /**
      * 配置文件名称

@@ -111,6 +111,21 @@ public class Assert {
             throw new IllegalArgumentException(message);
         }
     }
+    /**
+     * @param object
+     * @param message
+     */
+    public static void isNotNull(Object object, String message) {
+        if (object == null) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+    /**
+     * @param object
+     */
+    public static void isNotNull(Object object) {
+       isNotNull(object, "[Assertion failed]-Object parameter must not be empty");
+    }
 
     /**
      * @param object

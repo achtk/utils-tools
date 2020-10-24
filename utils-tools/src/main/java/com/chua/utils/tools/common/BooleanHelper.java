@@ -1367,4 +1367,38 @@ public class BooleanHelper {
         return true;
 
     }
+
+    /**
+     * 是否是class
+     * @param object
+     * @return
+     */
+    public static boolean isClass(final Object object) {
+        return null == object || object instanceof Class;
+    }
+    /**
+     * 是否是class
+     * @param object
+     * @return
+     */
+    public static boolean isNotNullClass(final Object object) {
+        return null != object && object instanceof Class;
+    }
+    /**
+     * 是否是class
+     * @param object
+     * @return
+     */
+    public static boolean isAssignableFrom(final Object object, Class<?> comparisonClass) {
+        return null == object ? false : (isClass(object) ? comparisonClass.isAssignableFrom((Class<?>) object) : comparisonClass.isAssignableFrom(object.getClass()));
+    }
+
+    /**
+     * 是否是基础类
+     * @param type
+     * @return
+     */
+    public static boolean isBasicClass(Class<?> type) {
+        return ClassHelper.isBasicClass(type) || String.class.isAssignableFrom(type);
+    }
 }

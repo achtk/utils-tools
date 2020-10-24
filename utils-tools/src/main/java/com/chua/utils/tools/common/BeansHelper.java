@@ -1,6 +1,7 @@
 package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.google.common.base.Preconditions;
 import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
@@ -8,6 +9,7 @@ import net.sf.cglib.beans.BeanMap;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
@@ -61,6 +63,7 @@ public class BeansHelper {
         Preconditions.checkArgument(null != to);
         BeanMap toBeanMap = BeanMap.create(to);
         BeanMap fromBeanMap = BeanMap.create(from);
+        AtomicBoolean fail = new AtomicBoolean(false);
         fromBeanMap.forEach(new BiConsumer() {
             @Override
             public void accept(Object o, Object o2) {
@@ -68,8 +71,28 @@ public class BeansHelper {
                     return;
                 }
                 toBeanMap.put(o, o2);
+                if(toBeanMap.get(o) != o2) {
+                    fail.set(true);
+                }
             }
         });
+        if(fail.get()) {
+            ClassHelper.doWithFields(to.getClass(), new FieldCallback() {
+                @Override
+                public void doWith(Field item) throws Throwable {
+                    if(!fromBeanMap.containsKey(item.getName())) {
+                        return;
+                    }
+                    Class<?> type = item.getType();
+                    Object o = fromBeanMap.get(item.getName());
+                    if(!type.isAssignableFrom(o.getClass())) {
+                        return;
+                    }
+                    ClassHelper.makeAccessible(item);
+                    item.set(to, o);
+                }
+            });
+        }
         return (E1) toBeanMap.getBean();
     }
     /**
@@ -299,4 +322,6 @@ public class BeansHelper {
     public static Map<String, Object> toMap(Object obj) {
         return getAttributes(obj);
     }
+
+
 }

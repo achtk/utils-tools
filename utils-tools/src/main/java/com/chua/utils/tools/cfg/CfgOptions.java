@@ -1,15 +1,10 @@
 package com.chua.utils.tools.cfg;
 
-import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.*;
-import com.chua.utils.tools.options.IOptions;
 import com.chua.utils.tools.prop.loader.*;
 import com.chua.utils.tools.prop.placeholder.AbstractPropertiesPlaceholderResolver;
 import com.chua.utils.tools.prop.placeholder.PropertiesPlaceholderFactory;
-import com.chua.utils.tools.spi.common.SpiConfigs;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +16,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.Consumer;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
 
@@ -54,6 +48,29 @@ public class CfgOptions {
      */
     private ClassLoader classLoader;
     private CfgConfig cfgConfig;
+
+    public CfgOptions(CfgConfig cfgConfig) {
+        this.cfgConfig = cfgConfig;
+        this.analysis(cfgConfig);
+    }
+
+    /**
+     * 初始化cfg信息
+     *
+     * @param master 文件名称
+     * @return
+     */
+    public static CfgOptions analysis(String master) {
+        return new CfgOptions(new CfgConfig().setMaster(master));
+    }
+
+    /**
+     * 获取HashMultimap
+     * @return
+     */
+    public HashMultimap<String, Properties> toHashMultimap() {
+        return CACHE.get(getCacheKey(cfgConfig));
+    }
 
     /**
      * 初始化cfg信息
@@ -98,6 +115,7 @@ public class CfgOptions {
 
     /**
      * 排序
+     *
      * @param properties
      * @return
      */
@@ -227,11 +245,12 @@ public class CfgOptions {
 
     /**
      * 判断文件类型
+     *
      * @param suffix
      * @return
      */
     private static PropertiesLoader getExtension(String suffix) {
-        if(LOADER_CACHE.containsKey(suffix)) {
+        if (LOADER_CACHE.containsKey(suffix)) {
             return LOADER_CACHE.get(suffix);
         }
         PropertiesLoader propertiesLoader = null;
@@ -240,13 +259,13 @@ public class CfgOptions {
                 propertiesLoader = new JsonPropertiesLoader();
                 break;
             case "yml":
-                propertiesLoader =  new YamlPropertiesLoader();
+                propertiesLoader = new YamlPropertiesLoader();
                 break;
             case "xml":
-                propertiesLoader =  new XmlPropertiesLoader();
+                propertiesLoader = new XmlPropertiesLoader();
                 break;
             case "properties":
-                propertiesLoader =  new PropertiesPropertiesLoader();
+                propertiesLoader = new PropertiesPropertiesLoader();
                 break;
         }
         LOADER_CACHE.put(suffix, propertiesLoader);
@@ -301,6 +320,7 @@ public class CfgOptions {
 
     /**
      * 获取ConcurrentHashMap
+     *
      * @return
      */
     public ConcurrentHashMap<String, Object> toConcurrentHashMap() {
