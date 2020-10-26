@@ -1,7 +1,7 @@
 package com.chua.utils.tools.classes.method;
 
-import com.chua.utils.tools.cache.ConcurrentSetCacheProvider;
-import com.chua.utils.tools.cache.MultiCacheProvider;
+import com.chua.utils.tools.cache.ConcurrentSetValueCacheProvider;
+import com.chua.utils.tools.cache.MultiValueCacheProvider;
 import com.chua.utils.tools.classes.ClassHelper;
 
 import java.lang.annotation.Annotation;
@@ -18,14 +18,13 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @since 2020/10/24
  */
 public class DefaultMethodResolver implements MethodResolver {
-    private Object obj;
-    private Class sourceClass;
-    private volatile Object proxyObj;
+    private final Object obj;
+    private final Object proxyObj;
     /**
      * 注解-方法
      */
-    protected MultiCacheProvider<Method, String> methodAnnotationCache = new ConcurrentSetCacheProvider();
-    protected CopyOnWriteArraySet<Method> methods = new CopyOnWriteArraySet();
+    protected MultiValueCacheProvider<Method, String> methodAnnotationCache = new ConcurrentSetValueCacheProvider<>();
+    protected CopyOnWriteArraySet<Method> methods = new CopyOnWriteArraySet<>();
 
     public DefaultMethodResolver(Object obj) {
         this.obj = obj;
@@ -40,7 +39,7 @@ public class DefaultMethodResolver implements MethodResolver {
         if (null == obj) {
             return;
         }
-        this.sourceClass = ClassHelper.getClass(obj);
+        Class sourceClass = ClassHelper.getClass(obj);
         Method[] methods = sourceClass.getDeclaredMethods();
         for (Method method : methods) {
             Annotation[] annotations = method.getDeclaredAnnotations();
@@ -66,7 +65,7 @@ public class DefaultMethodResolver implements MethodResolver {
 
     @Override
     public Set<String> findAnnotation(Method method) {
-        if (methodAnnotationCache.container(method)) {
+        if (methodAnnotationCache.containsKey(method)) {
             return methodAnnotationCache.get(method);
         }
         Annotation[] annotations = method.getDeclaredAnnotations();

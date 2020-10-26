@@ -173,11 +173,11 @@ public class SimpleBeanDefinitionFactory<T> implements BeanDefinitionFactory<T> 
         }
 
         if(BooleanHelper.hasLength(cacheMap)) {
-            addFirstPropertyValue(cacheMap);
+            addFirstPropertyValues(cacheMap);
         }
 
         if(BooleanHelper.hasLength(lastCacheMap)) {
-            addFirstPropertyValue(lastCacheMap);
+            addFirstPropertyValues(lastCacheMap);
         }
 
         BeanDefinitionHolder beanDefinitionHolder = null;

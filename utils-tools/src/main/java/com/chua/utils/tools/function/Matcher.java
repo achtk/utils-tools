@@ -1,7 +1,5 @@
 package com.chua.utils.tools.function;
 
-import java.lang.reflect.Member;
-
 /**
  * 匹配器
  *
@@ -15,7 +13,7 @@ public interface Matcher<T> {
      * 回调
      *
      * @param item 元素
-     * @throws Throwable
+     * @throws Throwable 异常
      */
     void doWith(T item) throws Throwable;
 }

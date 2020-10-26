@@ -1,8 +1,7 @@
 package com.chua.utils.tools.handler;
 
-import com.chua.utils.tools.cache.ConcurrentCacheProvider;
-import com.chua.utils.tools.cache.ConcurrentSetCacheProvider;
-import com.chua.utils.tools.cache.ICacheProvider;
+import com.chua.utils.tools.cache.ConcurrentSetValueCacheProvider;
+import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.enums.HandlerType;
 
 import java.util.Set;
@@ -14,7 +13,7 @@ import java.util.Set;
  */
 public class HandlerResolver {
 
-	private final ICacheProvider<HandlerType, Handler> cacheProvider = new ConcurrentSetCacheProvider();
+	private final CacheProvider<HandlerType, Handler> cacheProvider = new ConcurrentSetValueCacheProvider();
 
 	/**
 	 * 获取handler
@@ -47,7 +46,7 @@ public class HandlerResolver {
 		if(null == handlerType) {
 			return false;
 		}
-		return cacheProvider.container(handlerType);
+		return cacheProvider.containsKey(handlerType);
 	}
 
 	/**

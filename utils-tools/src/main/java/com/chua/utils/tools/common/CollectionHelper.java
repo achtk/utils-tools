@@ -1,5 +1,7 @@
 package com.chua.utils.tools.common;
 
+import com.chua.utils.tools.function.Filter;
+import com.chua.utils.tools.function.Matcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
@@ -126,7 +128,7 @@ public class CollectionHelper {
      * @param predicate
      * @param <E>
      */
-    public static <E> Collection<E> filter(Collection<E> list, Predicate<E> predicate) {
+    public static <E> Collection<E> doWithFilter(Collection<E> list, Predicate<E> predicate) {
         if (isBlank(list)) {
             return list;
         }
@@ -600,10 +602,10 @@ public class CollectionHelper {
      * @return
      */
     public static <T> List<T> toEntity(List<String> source, String delimiter, Class<T> tClass) {
-        if(null == tClass) {
+        if (null == tClass) {
             return null;
         }
-        if(!BooleanHelper.hasLength(source)) {
+        if (!BooleanHelper.hasLength(source)) {
             return Collections.emptyList();
         }
 
@@ -611,7 +613,7 @@ public class CollectionHelper {
         for (String item : source) {
             List<String> strings = Splitter.on(StringHelper.defaultIfBlank(delimiter, ",")).trimResults().omitEmptyStrings().splitToList(item);
             T entity = BeansHelper.setProperty(tClass, strings);
-            if(null == entity) {
+            if (null == entity) {
                 continue;
             }
             result.add(entity);
@@ -622,22 +624,25 @@ public class CollectionHelper {
 
     /**
      * 如果集合为null返回空集合，反之返回原始数据
+     *
      * @param source 集合
      * @return
      */
-    public static <T>List<T> forEmpty(final List<T> source) {
-        if(null == source) {
+    public static <T> List<T> forEmpty(final List<T> source) {
+        if (null == source) {
             return Collections.emptyList();
         }
         return source;
     }
+
     /**
      * 如果集合为null返回空集合，反之返回原始数据
+     *
      * @param source 集合
      * @return
      */
-    public static <T>Set<T> forEmpty(final Set<T> source) {
-        if(null == source) {
+    public static <T> Set<T> forEmpty(final Set<T> source) {
+        if (null == source) {
             return Collections.emptySet();
         }
         return source;
@@ -645,18 +650,19 @@ public class CollectionHelper {
 
     /**
      * 过滤类型数据
+     *
      * @param source 数据源
-     * @param type 类型
+     * @param type   类型
      * @param <T>
      * @return
      */
-    public static <T>Set<T> filter(Collection<?> source, Class<T> type) {
-        if(!BooleanHelper.hasLength(source)) {
+    public static <T> Set<T> doWithFilter(Collection<?> source, Class<T> type) {
+        if (!BooleanHelper.hasLength(source)) {
             return Collections.emptySet();
         }
         Set<T> result = new HashSet<>(source.size());
         for (Object o : source) {
-            if(!o.getClass().isAssignableFrom(type)) {
+            if (!o.getClass().isAssignableFrom(type)) {
                 continue;
             }
             result.add((T) o);
@@ -666,11 +672,12 @@ public class CollectionHelper {
 
     /**
      * 循环集合(自动判空)
-     * @param source 数据
+     *
+     * @param source   数据
      * @param consumer 回调
      */
-    public static <Item>void forEach(Collection<Item> source, Consumer<Item> consumer) {
-        if(!BooleanHelper.hasLength(source) || null == consumer) {
+    public static <Item> void forEach(Collection<Item> source, Consumer<Item> consumer) {
+        if (!BooleanHelper.hasLength(source) || null == consumer) {
             return;
         }
         for (Item item : source) {
@@ -680,17 +687,18 @@ public class CollectionHelper {
 
     /**
      * 数组转集合
+     *
      * @param source 数据源
      * @param <T>
      * @return
      */
-    public static <T>List<T> toList(T[] source) {
-        if(!BooleanHelper.hasLength(source)) {
+    public static <T> List<T> toList(T[] source) {
+        if (!BooleanHelper.hasLength(source)) {
             return Collections.emptyList();
         }
         List<T> result = new ArrayList<>(source.length);
         for (T t : source) {
-            if(null == t) {
+            if (null == t) {
                 continue;
             }
             result.add(t);
@@ -698,19 +706,21 @@ public class CollectionHelper {
 
         return result;
     }
+
     /**
      * 数组转集合
+     *
      * @param source 数据源
      * @param <T>
      * @return
      */
-    public static <T>Set<T> toSet(T[] source) {
-        if(!BooleanHelper.hasLength(source)) {
+    public static <T> Set<T> toSet(T[] source) {
+        if (!BooleanHelper.hasLength(source)) {
             return Collections.emptySet();
         }
         Set<T> result = new HashSet<>(source.length);
         for (T t : result) {
-            if(null == t) {
+            if (null == t) {
                 continue;
             }
             result.add(t);
@@ -721,12 +731,13 @@ public class CollectionHelper {
 
     /**
      * 合并集合
+     *
      * @param sources
      * @param <E>
      * @return
      */
     public static <E> Collection<E> combine(Collection<? extends E>... sources) {
-        if(!BooleanHelper.hasLength(sources)) {
+        if (!BooleanHelper.hasLength(sources)) {
             return Collections.emptyList();
         }
         List<E> allElements = new ArrayList<>();
@@ -734,5 +745,80 @@ public class CollectionHelper {
             allElements.addAll(e);
         }
         return allElements;
+    }
+
+    /**
+     * 包含值
+     *
+     * @param collection 集合
+     * @param value      值
+     * @param <V>
+     * @return
+     */
+    public static <V> boolean contains(Collection<V> collection, V value) {
+        return !BooleanHelper.hasLength(collection) ? false : collection.contains(value);
+    }
+
+    /**
+     * 过滤元素
+     *
+     * @param collection 集合
+     * @param filter     过滤器
+     * @return List<V>
+     */
+    public static <V> Set<V> doWithFilter(Set<V> collection, Filter<V> filter) {
+        if (!BooleanHelper.hasLength(collection)) {
+            return collection;
+        }
+        Set<V> result = new HashSet<>();
+        collection.parallelStream().forEach(v -> {
+            boolean matcher = filter.matcher(v);
+            if (!matcher) {
+                return;
+            }
+            result.add(v);
+        });
+        return result;
+    }
+    /**
+     * 过滤元素
+     *
+     * @param collection 集合
+     * @param filter     过滤器
+     * @return List<V>
+     */
+    public static <V> List<V> doWithFilter(List<V> collection, Filter<V> filter) {
+        if (!BooleanHelper.hasLength(collection)) {
+            return collection;
+        }
+        List<V> result = new LinkedList<>();
+        collection.parallelStream().forEach(v -> {
+            boolean matcher = filter.matcher(v);
+            if (!matcher) {
+                return;
+            }
+            result.add(v);
+        });
+        return result;
+    }
+
+    /**
+     * 匹配元素
+     *
+     * @param collection 集合
+     * @param matcher    匹配器
+     * @return
+     */
+    public static <V> void doWithMatcher(Collection<V> collection, Matcher<V> matcher) {
+        if (!BooleanHelper.hasLength(collection)) {
+            return;
+        }
+        collection.parallelStream().forEach(v -> {
+            try {
+                matcher.doWith(v);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
     }
 }

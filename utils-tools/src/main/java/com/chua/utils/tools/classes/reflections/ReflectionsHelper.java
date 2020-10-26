@@ -1,12 +1,11 @@
 package com.chua.utils.tools.classes.reflections;
 
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
-import com.chua.utils.tools.cache.ICacheProvider;
+import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.classes.ClassExtensionHelper;
 import com.chua.utils.tools.common.ArraysHelper;
 import com.chua.utils.tools.common.CollectionHelper;
 import com.google.common.base.Strings;
-import org.reflections.Reflections;
 import org.reflections.scanners.*;
 import org.reflections.util.ConfigurationBuilder;
 import sun.misc.SharedSecrets;
@@ -28,9 +27,9 @@ import java.util.concurrent.ForkJoinPool;
 public class ReflectionsHelper extends ClassExtensionHelper {
 
 
-    private static final ICacheProvider<Class, Set<Class>> SUB_CACHE = new ConcurrentCacheProvider();
-    private static final ICacheProvider<Class<? extends Annotation>, Set<Class<?>>> ANNOTATION_CACHE = new ConcurrentCacheProvider();
-    private static final ICacheProvider<String, Set<String>> PACKAGE_CACHE = new ConcurrentCacheProvider();
+    private static final CacheProvider<Class, Set<Class>> SUB_CACHE = new ConcurrentCacheProvider();
+    private static final CacheProvider<Class<? extends Annotation>, Set<Class<?>>> ANNOTATION_CACHE = new ConcurrentCacheProvider();
+    private static final CacheProvider<String, Set<String>> PACKAGE_CACHE = new ConcurrentCacheProvider();
     /**
      * 获取子类
      * @param <T>
@@ -41,7 +40,7 @@ public class ReflectionsHelper extends ClassExtensionHelper {
         if(null == tClass) {
             return Collections.emptySet();
         }
-        if(SUB_CACHE.container(tClass)) {
+        if(SUB_CACHE.containsKey(tClass)) {
             return SUB_CACHE.get(tClass);
         }
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(new SubTypesScanner());
@@ -59,7 +58,7 @@ public class ReflectionsHelper extends ClassExtensionHelper {
         if(null == annotation) {
             return Collections.emptySet();
         }
-        if(ANNOTATION_CACHE.container(annotation)) {
+        if(ANNOTATION_CACHE.containsKey(annotation)) {
             return ANNOTATION_CACHE.get(annotation);
         }
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(new TypeAnnotationsScanner());
@@ -107,7 +106,7 @@ public class ReflectionsHelper extends ClassExtensionHelper {
         if(Strings.isNullOrEmpty(packages)) {
             return Collections.emptySet();
         }
-        if(PACKAGE_CACHE.container(packages)) {
+        if(PACKAGE_CACHE.containsKey(packages)) {
             return PACKAGE_CACHE.get(packages);
         }
         ConfigurationBuilder configurationBuilder = newConfigurationBuilder(packages);

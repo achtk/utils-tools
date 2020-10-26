@@ -1,15 +1,13 @@
 package com.chua.utils.tools.factory;
 
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
-import com.chua.utils.tools.cache.ConcurrentSetCacheProvider;
-import com.chua.utils.tools.cache.ICacheProvider;
+import com.chua.utils.tools.cache.ConcurrentSetValueCacheProvider;
+import com.chua.utils.tools.cache.CacheProvider;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Member;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * member处理工厂
@@ -19,9 +17,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class MemberFactory {
 
-    private ICacheProvider<String, MemberInfo> provider = new ConcurrentCacheProvider<>();
-    private ICacheProvider<Class, MemberInfo> subProvider = new ConcurrentSetCacheProvider();
-    private ICacheProvider<Class, MemberInfo> annotationProvider = new ConcurrentSetCacheProvider();
+    private CacheProvider<String, MemberInfo> provider = new ConcurrentCacheProvider<>();
+    private CacheProvider<Class, MemberInfo> subProvider = new ConcurrentSetValueCacheProvider();
+    private CacheProvider<Class, MemberInfo> annotationProvider = new ConcurrentSetValueCacheProvider();
 
     /**
      * 添加Member

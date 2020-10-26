@@ -3,7 +3,7 @@ package com.chua.utils.tools.cache;
 import com.chua.utils.tools.action.ActionListener;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.config.CacheProperties;
-import com.chua.utils.tools.manager.ICacheManager;
+import com.chua.utils.tools.manager.CacheManager;
 import com.google.common.cache.*;
 import lombok.Getter;
 
@@ -13,9 +13,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * guava缓存
+ *
  * @author CH
  */
-public class GuavaCacheProvider<K, T> implements ICacheProvider<K, T>, ICacheManager<K, T> {
+public class GuavaCacheProvider<K, T> implements CacheProvider<K, T>, CacheManager<K, T> {
 
     @Getter
     private Cache<K, T> cache;
@@ -25,21 +26,21 @@ public class GuavaCacheProvider<K, T> implements ICacheProvider<K, T>, ICacheMan
     }
 
     @Override
-    public ICacheProvider configure(CacheProperties cacheProperties) {
+    public CacheProvider configure(CacheProperties cacheProperties) {
         CacheBuilder<Object, Object> objectObjectCacheBuilder = CacheBuilder.newBuilder();
 
-        if(cacheProperties.getMemMaximumSize() > 0) {
+        if (cacheProperties.getMemMaximumSize() > 0) {
             objectObjectCacheBuilder.maximumSize(cacheProperties.getMemMaximumSize());
         }
-        if(cacheProperties.getExpire() > 0) {
+        if (cacheProperties.getExpire() > 0) {
             objectObjectCacheBuilder.expireAfterAccess(cacheProperties.getExpire(), TimeUnit.SECONDS);
         }
-        if(cacheProperties.getWriteExpire() > 0) {
+        if (cacheProperties.getWriteExpire() > 0) {
             objectObjectCacheBuilder.expireAfterWrite(cacheProperties.getWriteExpire(), TimeUnit.SECONDS);
         }
 
         ActionListener removeListener = cacheProperties.getRemoveListener();
-        if(null != removeListener) {
+        if (null != removeListener) {
             objectObjectCacheBuilder.removalListener(new RemovalListener<Object, Object>() {
                 @Override
                 public void onRemoval(RemovalNotification<Object, Object> notification) {
@@ -49,7 +50,7 @@ public class GuavaCacheProvider<K, T> implements ICacheProvider<K, T>, ICacheMan
         }
 
         ActionListener updateListener = cacheProperties.getUpdateListener();
-        if(null != updateListener) {
+        if (null != updateListener) {
             final CacheLoader cacheLoader = new CacheLoader() {
                 @Override
                 public Object load(Object key) throws Exception {
@@ -66,7 +67,7 @@ public class GuavaCacheProvider<K, T> implements ICacheProvider<K, T>, ICacheMan
     }
 
     @Override
-    public boolean container(K name) {
+    public boolean containsKey(K name) {
         return null != name && null != cache && null != cache.getIfPresent(name);
     }
 
@@ -82,7 +83,7 @@ public class GuavaCacheProvider<K, T> implements ICacheProvider<K, T>, ICacheMan
 
     @Override
     public T put(K name, T value) {
-        if(null == name) {
+        if (null == name) {
             return null;
         }
         cache.put(name, value);
@@ -92,11 +93,6 @@ public class GuavaCacheProvider<K, T> implements ICacheProvider<K, T>, ICacheMan
     @Override
     public T getValue(K key) {
         return get(key);
-    }
-
-    @Override
-    public void remove(K key) {
-        remove(key);
     }
 
     @Override
@@ -110,18 +106,13 @@ public class GuavaCacheProvider<K, T> implements ICacheProvider<K, T>, ICacheMan
     }
 
     @Override
-    public void remove(K... name) {
-        if(!BooleanHelper.hasLength(name)) {
-            return;
-        }
-        for (K k : name) {
-            cache.invalidate(k);
-        }
+    public void remove(K name) {
+        cache.invalidate(name);
     }
 
     @Override
     public void remove(List<K> name) {
-        if(!BooleanHelper.hasLength(name)) {
+        if (!BooleanHelper.hasLength(name)) {
             return;
         }
         for (K k : name) {

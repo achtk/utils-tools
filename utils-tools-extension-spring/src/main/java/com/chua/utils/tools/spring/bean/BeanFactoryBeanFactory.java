@@ -9,6 +9,7 @@ import com.chua.utils.tools.entity.GetterSetterProperties;
 import com.chua.utils.tools.spring.entity.BeanLoader;
 import com.chua.utils.tools.spring.enums.BeanStatus;
 import com.chua.utils.tools.spring.environment.EnvironmentFactory;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
@@ -39,6 +40,7 @@ import java.util.Set;
  * @author CH
  * @date 2020-09-26
  */
+@NoArgsConstructor
 @RequiredArgsConstructor
 public class BeanFactoryBeanFactory implements IBeanFactory, SingletonBeanRegistry {
 

@@ -1,7 +1,5 @@
 package com.chua.utils.tools.classes.convertor;
 
-import com.google.common.base.Strings;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -17,14 +15,14 @@ public interface Convertor<T> {
      * 转换
      *
      * @param value 数据源
-     * @return
+     * @return T
      */
     T convert(Object value);
 
     /**
      * 分隔符
      *
-     * @return
+     * @return String
      */
     default String delimiter() {
         return ",";
@@ -33,15 +31,15 @@ public interface Convertor<T> {
     /**
      * 获取BigDecimal
      *
-     * @param value
-     * @return
+     * @param value value
+     * @return BigDecimal
      */
     default BigDecimal getNumber(Object value) {
         if (value instanceof Double) {
-            return new BigDecimal((Double) value);
+            return BigDecimal.valueOf((Double) value);
         }
         if (value instanceof Float) {
-            return new BigDecimal((Float) value);
+            return BigDecimal.valueOf((Float) value);
         }
         if (value instanceof Character) {
             return new BigDecimal((Character) value);

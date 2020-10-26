@@ -1,15 +1,10 @@
 package com.chua.utils.tools.function.intercept;
 
 import com.chua.utils.tools.cache.GuavaCacheProvider;
-import com.chua.utils.tools.cache.ICacheProvider;
+import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.common.ArraysHelper;
-import com.chua.utils.tools.limit.ILimiterProvider;
-import com.chua.utils.tools.limit.TokenLimitProvider;
 import com.chua.utils.tools.mapper.ProxyMapper;
-import com.chua.utils.tools.strategy.handler.IStrategyPolicy;
 import com.google.common.base.Joiner;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
@@ -22,7 +17,7 @@ import java.lang.reflect.Method;
  */
 public class CacheMethodIntercept implements MethodIntercept {
 
-    private static final ICacheProvider<String, Object> provider = new GuavaCacheProvider<>();
+    private static final CacheProvider<String, Object> provider = new GuavaCacheProvider<>();
     private String[] exclude = ArraysHelper.emptyString();
 
     public CacheMethodIntercept(String[] exclude) {
@@ -38,7 +33,7 @@ public class CacheMethodIntercept implements MethodIntercept {
             return ProxyMapper.intercept(obj, method, args, proxy);
         }
         String cacheKey = createCacheKey(obj, method, args);
-        if(provider.container(cacheKey)) {
+        if(provider.containsKey(cacheKey)) {
             System.out.println("--------------");
             return provider.get(cacheKey);
         }

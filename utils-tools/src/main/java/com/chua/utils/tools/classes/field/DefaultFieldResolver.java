@@ -1,14 +1,13 @@
 package com.chua.utils.tools.classes.field;
 
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
-import com.chua.utils.tools.cache.ConcurrentSetCacheProvider;
-import com.chua.utils.tools.cache.ICacheProvider;
-import com.chua.utils.tools.cache.MultiCacheProvider;
+import com.chua.utils.tools.cache.ConcurrentSetValueCacheProvider;
+import com.chua.utils.tools.cache.CacheProvider;
+import com.chua.utils.tools.cache.MultiValueCacheProvider;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.google.common.base.Strings;
 
 import java.lang.reflect.Field;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -20,12 +19,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class DefaultFieldResolver implements FieldResolver {
 
-    private Object object;
-    private Class aClass;
+    private final Object object;
     private static final String DELIMITER = "#";
-    private final ICacheProvider<String, Field> cacheNameTypeProvider = new ConcurrentCacheProvider<>();
-    private final MultiCacheProvider<String, Field> cacheProvider = new ConcurrentSetCacheProvider();
-    private final CopyOnWriteArraySet<Field> copyOnWriteArraySet = new CopyOnWriteArraySet();
+    private final CacheProvider<String, Field> cacheNameTypeProvider = new ConcurrentCacheProvider<>();
+    private final MultiValueCacheProvider<String, Field> cacheProvider = new ConcurrentSetValueCacheProvider<>();
+    private final CopyOnWriteArraySet<Field> copyOnWriteArraySet = new CopyOnWriteArraySet<>();
 
     public DefaultFieldResolver(Object object) {
         this.object = object;
@@ -36,7 +34,7 @@ public class DefaultFieldResolver implements FieldResolver {
         if(null == object) {
             return;
         }
-        this.aClass = ClassHelper.getClass(object);
+        Class aClass = ClassHelper.getClass(object);
         Field[] declaredFields = aClass.getDeclaredFields();
         for (Field declaredField : declaredFields) {
             cacheNameTypeProvider.put(declaredField.getName() + DELIMITER + declaredField.getType().getName(), declaredField);
@@ -63,8 +61,7 @@ public class DefaultFieldResolver implements FieldResolver {
         if(Strings.isNullOrEmpty(fieldName)) {
             return null;
         }
-        Set<Field> fields = cacheProvider.get(fieldName);
-        return fields;
+        return cacheProvider.get(fieldName);
     }
 
     @Override

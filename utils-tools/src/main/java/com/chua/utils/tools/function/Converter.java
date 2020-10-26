@@ -12,7 +12,7 @@ public interface Converter<I, O> {
      * 转化
      *
      * @param value 值
-     * @return
+     * @return o
      */
     O convert(I value);
 }

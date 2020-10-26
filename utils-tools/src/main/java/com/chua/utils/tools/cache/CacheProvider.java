@@ -7,53 +7,69 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * 缓存接口
+ *
  * @author CH
  */
-public interface ICacheProvider<K, T> {
+public interface CacheProvider<K, V> {
     /**
      * 基础配置项
-     * @param cacheProperties
-     * @return
+     *
+     * @param cacheProperties 缓存配置
+     * @return CacheProvider
      */
-    ICacheProvider configure(CacheProperties cacheProperties);
+    CacheProvider configure(CacheProperties cacheProperties);
 
     /**
      * 是否存在缓存
+     *
      * @param name 索引
-     * @return
+     * @return boolean
      */
-    boolean container(K name);
+    boolean containsKey(K name);
+
     /**
      * 获取所有数据
-     * @return
+     *
+     * @return ConcurrentMap<K, T>
      */
-    ConcurrentMap<K, T> asMap();
+    ConcurrentMap<K, V> asMap();
+
     /**
      * 获取缓存
+     *
      * @param name 索引
-     * @return
+     * @return T
      */
-    T get(K name);
+    V get(K name);
+
     /**
      * 保存缓存
-     * @param name 索引
-     * @param value 值
-     */
-    T put(K name, T value);
-    /**
-     * 更新缓存
+     *
      * @param name  索引
      * @param value 值
+     * @return T
      */
-    T update(K name, T value);
+    V put(K name, V value);
+
+    /**
+     * 更新缓存
+     *
+     * @param name  索引
+     * @param value 值
+     * @return T
+     */
+    V update(K name, V value);
 
     /**
      * 删除缓存
-     * @param name  索引
+     *
+     * @param name 索引
      */
-    void remove(K... name);
+    void remove(K name);
+
     /**
      * 删除缓存
+     *
      * @param name 索引
      */
     void remove(List<K> name);
@@ -65,7 +81,8 @@ public interface ICacheProvider<K, T> {
 
     /**
      * 缓存数量
-     * @return
+     *
+     * @return 缓存数量
      */
     long size();
 }

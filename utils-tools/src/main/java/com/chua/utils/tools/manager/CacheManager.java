@@ -10,7 +10,7 @@ import java.util.Collections;
  * @author CH
  * @date 2020-09-30
  */
-public interface ICacheManager<K, V> {
+public interface CacheManager<K, V> {
     /**
      * 保存缓存
      * @param key 索引

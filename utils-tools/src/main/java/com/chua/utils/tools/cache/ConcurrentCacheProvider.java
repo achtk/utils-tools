@@ -3,22 +3,22 @@ package com.chua.utils.tools.cache;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.PropertiesHelper;
 import com.chua.utils.tools.config.CacheProperties;
-import com.chua.utils.tools.manager.ICacheManager;
+import com.chua.utils.tools.manager.CacheManager;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
  * ConcurrentMap方式缓存
+ *
  * @author CH
  * @date 2020-09-30
  */
 @NoArgsConstructor
-public class ConcurrentCacheProvider<K, V> implements ICacheProvider<K, V>, ICacheManager<K, V> {
+public class ConcurrentCacheProvider<K, V> implements CacheProvider<K, V>, CacheManager<K, V> {
 
     private final ConcurrentHashMap<K, Properties> cache = new ConcurrentHashMap<>();
     private int timeout = -1;
@@ -30,12 +30,12 @@ public class ConcurrentCacheProvider<K, V> implements ICacheProvider<K, V>, ICac
     }
 
     @Override
-    public ICacheProvider configure(CacheProperties cacheProperties) {
+    public CacheProvider configure(CacheProperties cacheProperties) {
         return this;
     }
 
     @Override
-    public boolean container(K name) {
+    public boolean containsKey(K name) {
         return cache.containsKey(name);
     }
 
@@ -44,7 +44,7 @@ public class ConcurrentCacheProvider<K, V> implements ICacheProvider<K, V>, ICac
         ConcurrentHashMap<K, V> temp = new ConcurrentHashMap<>();
         for (K k : cache.keySet()) {
             V v = get(k);
-            if(v == null) {
+            if (v == null) {
                 continue;
             }
             temp.put(k, v);
@@ -54,13 +54,16 @@ public class ConcurrentCacheProvider<K, V> implements ICacheProvider<K, V>, ICac
 
     @Override
     public V get(K name) {
+        if (null == name) {
+            return null;
+        }
         Properties properties = cache.get(name);
         long ints = PropertiesHelper.longs(properties, DEFAULT_TIMEOUT_FIELDS);
         V value = (V) properties.get(DEFAULT_KEY_FIELDS);
-        if(-1L == ints) {
+        if (-1L == ints) {
             return value;
         }
-        if(System.currentTimeMillis() - ints > timeout) {
+        if (System.currentTimeMillis() - ints > timeout) {
             remove(name);
             return null;
         }
@@ -69,6 +72,9 @@ public class ConcurrentCacheProvider<K, V> implements ICacheProvider<K, V>, ICac
 
     @Override
     public V put(K name, V value) {
+        if (null == name || null == value) {
+            return null;
+        }
         Properties properties = new Properties();
         properties.put(DEFAULT_KEY_FIELDS, value);
         properties.put(DEFAULT_TIMEOUT_FIELDS, System.currentTimeMillis());
@@ -82,11 +88,6 @@ public class ConcurrentCacheProvider<K, V> implements ICacheProvider<K, V>, ICac
     }
 
     @Override
-    public void remove(K key) {
-        cache.remove(key);
-    }
-
-    @Override
     public void clear() {
         removeAll();
     }
@@ -97,18 +98,16 @@ public class ConcurrentCacheProvider<K, V> implements ICacheProvider<K, V>, ICac
     }
 
     @Override
-    public void remove(K... name) {
-        if(!BooleanHelper.hasLength(name)) {
-            return;
+    public void remove(K name) {
+        if (null == name) {
+            throw new NullPointerException();
         }
-        for (K k : name) {
-            cache.remove(k);
-        }
+        cache.remove(name);
     }
 
     @Override
     public void remove(List<K> name) {
-        if(!BooleanHelper.hasLength(name)) {
+        if (!BooleanHelper.hasLength(name)) {
             return;
         }
         for (K k : name) {

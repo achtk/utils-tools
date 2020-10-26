@@ -17,22 +17,22 @@ import java.util.Set;
  * @version 1.0.0
  * @since 2020/10/24
  */
-public class DefaultModifiableClassResolver<T> implements ModifiableClassResolver<T> {
+public class DefaultModifiableClassResolver implements ModifiableClassResolver {
 
     private final ClassPool classPool;
     private CtClass ctClass;
-    private Class<T> source;
+    private final Class source;
     private Object sourceObject;
     protected static final String JAVASSIST_SUFFIX = "$javassist";
 
     public DefaultModifiableClassResolver(Object source) throws NotFoundException {
         this.sourceObject = source;
-        this.source = (Class<T>) source.getClass();
+        this.source = source.getClass();
         this.classPool = ClassHelper.getClassPool();
         reset();
     }
 
-    public DefaultModifiableClassResolver(Class<T> source) throws NotFoundException {
+    public DefaultModifiableClassResolver(Class source) throws NotFoundException {
         this.source = source;
         this.classPool = ClassHelper.getClassPool();
         reset();
@@ -128,7 +128,7 @@ public class DefaultModifiableClassResolver<T> implements ModifiableClassResolve
     @Override
     public Object toObject() throws Exception {
         Class<?> aClass = toClass();
-        if(null ==aClass) {
+        if (null == aClass) {
             return null;
         }
         try {
@@ -137,13 +137,13 @@ public class DefaultModifiableClassResolver<T> implements ModifiableClassResolve
             Loader classLoader = new Loader(classPool);
             classLoader.addTranslator(classPool, new Translator() {
                 @Override
-                public void start(ClassPool classPool) throws NotFoundException, CannotCompileException {
-                    System.out.println("start");
+                public void start(ClassPool pool) {
+
                 }
 
                 @Override
-                public void onLoad(ClassPool classPool, String paramString) throws NotFoundException, CannotCompileException {
-                    System.out.println("onLoad：" + paramString); //com.bqt.test.Person
+                public void onLoad(ClassPool pool, String classname) {
+
                 }
             });
 
@@ -154,15 +154,14 @@ public class DefaultModifiableClassResolver<T> implements ModifiableClassResolve
     /**
      * 方法添加注解
      *
-     * @param ctMethod
-     * @param annotations
+     * @param ctMethod    方法
+     * @param annotations 注解
      */
     private void makeMethodAnnotationInfo(CtMethod ctMethod, Set<String> annotations) {
         if (BooleanHelper.hasLength(annotations)) {
             ClassFile classFile = ctClass.getClassFile();
             ConstPool constPool = classFile.getConstPool();
             MethodInfo methodInfo = ctMethod.getMethodInfo();
-            // 属性附上注解
             AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
             for (String annotation : annotations) {
                 javassist.bytecode.annotation.Annotation annotation1 = new javassist.bytecode.annotation.Annotation(annotation, constPool);
@@ -175,7 +174,7 @@ public class DefaultModifiableClassResolver<T> implements ModifiableClassResolve
     /***
      * 添加字段注解
      * @param annotations 注解
-     * @param ctField
+     * @param ctField 字段
      */
     private void makeFieldAnnotationInfo(Set<String> annotations, CtField ctField) {
         ClassFile classFile = ctClass.getClassFile();
@@ -235,10 +234,11 @@ public class DefaultModifiableClassResolver<T> implements ModifiableClassResolve
 
     /**
      * 编译字符串
+     *
      * @param javaCode
      * @return
      */
-    public Object compile(String javaCode){
+    public Object compile(String javaCode) {
         AbstractCompiler compiler = new JavassistCompilerFactory();
         return compiler.compiler(javaCode, ClassHelper.getDefaultClassLoader());
     }

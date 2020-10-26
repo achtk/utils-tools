@@ -1,20 +1,17 @@
 package com.chua.utils.tools.classes;
 
+import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
-import com.chua.utils.tools.cache.ICacheProvider;
-import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.function.Converter;
-import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.function.intercept.MethodIntercept;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Map;
@@ -31,14 +28,14 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Slf4j
 public class DefaultClassResolver<T> implements ClassResolver {
 
-    private T object;
-    protected ICacheProvider<String, Annotation> annotationCache = new ConcurrentCacheProvider<>();
-    protected static final CopyOnWriteArraySet<Class> subTypes = new CopyOnWriteArraySet<>();
+    private final T object;
+    protected CacheProvider<String, Annotation> annotationCache = new ConcurrentCacheProvider<>();
+    protected static final CopyOnWriteArraySet<Class> SUB_TYPES = new CopyOnWriteArraySet<>();
     private Class<?> sourceClass;
 
     public DefaultClassResolver(T object) {
         this.object = object;
-        this.initial();
+        initial();
     }
 
     private void initial() {
@@ -59,18 +56,13 @@ public class DefaultClassResolver<T> implements ClassResolver {
     }
 
     @Override
-    public <T> T automaticAssembly(final T entity, String prefix, final Converter<String, Object> converter) {
+    public <T> T automaticAssembly(@NonNull final T entity, String prefix, final Converter<String, Object> converter) {
         Class<?> aClass = entity.getClass();
-        if(null != prefix && !prefix.endsWith(".")) {
+        if (null != prefix && !prefix.endsWith(".")) {
             prefix += ".";
         }
         final String newPrefix = prefix;
-        ClassHelper.doWithLocalFields(aClass, new FieldCallback() {
-            @Override
-            public void doWith(Field item) throws Throwable {
-                renderingField(item, entity, newPrefix, converter);
-            }
-        });
+        ClassHelper.doWithLocalFields(aClass, item -> renderingField(item, entity, newPrefix, converter));
         return entity;
     }
 
@@ -94,7 +86,7 @@ public class DefaultClassResolver<T> implements ClassResolver {
             return;
         }
         String s = type.toGenericString();
-        if (s.startsWith("[") || name1.indexOf("$") != -1) {
+        if (s.startsWith("[") || name1.contains("$")) {
             return;
         }
         String name = StringHelper.humpToLine2(name1, "-");
@@ -108,11 +100,11 @@ public class DefaultClassResolver<T> implements ClassResolver {
             return;
         }
         Object fieldValue = ClassHelper.getFieldValue(field, object);
-        Object chilrenValue = subclassRendering(fieldValue, newName + ".", converter);
-        if (null == chilrenValue) {
+        Object childrenValue = subclassRendering(fieldValue, newName + ".", converter);
+        if (null == childrenValue) {
             return;
         }
-        ClassHelper.setFieldValue(field, chilrenValue, object);
+        ClassHelper.setFieldValue(field, childrenValue, object);
     }
 
     /**
@@ -121,19 +113,13 @@ public class DefaultClassResolver<T> implements ClassResolver {
      * @param object    对象
      * @param prefix    前缀
      * @param converter 转化器
-     * @return
+     * @return 对象
      */
     private Object subclassRendering(Object object, String prefix, Converter<String, Object> converter) {
         if (null == object) {
             return null;
         }
-        ClassHelper.doWithFields(object.getClass(), new FieldCallback() {
-
-            @Override
-            public void doWith(Field item) throws Throwable {
-                renderingField(item, object, prefix, converter);
-            }
-        });
+        ClassHelper.doWithFields(object.getClass(), item -> renderingField(item, object, prefix, converter));
         return object;
     }
 
@@ -153,9 +139,8 @@ public class DefaultClassResolver<T> implements ClassResolver {
         field.setAccessible(true);
         try {
             field.set(object, property);
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
-        return;
     }
 
 
@@ -174,12 +159,12 @@ public class DefaultClassResolver<T> implements ClassResolver {
             log.warn("Uninitialized object");
             return Collections.emptySet();
         }
-        if (!subTypes.isEmpty()) {
-            return subTypes;
+        if (!SUB_TYPES.isEmpty()) {
+            return SUB_TYPES;
         }
         Set<? extends Class> subTypesOf = ClassHelper.getSubTypesOf(object.getClass());
-        subTypes.addAll(subTypesOf);
-        subTypes.add(object.getClass());
+        SUB_TYPES.addAll(subTypesOf);
+        SUB_TYPES.add(object.getClass());
         return subTypesOf;
     }
 
@@ -192,12 +177,7 @@ public class DefaultClassResolver<T> implements ClassResolver {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(object.getClass());
         enhancer.setInterfaces(object.getClass().getInterfaces());
-        enhancer.setCallback(new MethodInterceptor() {
-            @Override
-            public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-                return methodIntercept.invoke(obj, method, args, proxy);
-            }
-        });
+        enhancer.setCallback((MethodInterceptor) (obj, method, args, proxy) -> methodIntercept.invoke(obj, method, args, proxy));
         return enhancer.create();
     }
 
@@ -216,8 +196,8 @@ public class DefaultClassResolver<T> implements ClassResolver {
     /**
      * 通过构造实例化
      *
-     * @param <T>
-     * @return
+     * @param <T> T
+     * @return 实例化
      */
     private <T> T newInstanceByConstruction() throws Exception {
         if (ClassHelper.hasNoParamterConstructor(sourceClass)) {

@@ -656,7 +656,7 @@ public class ClassExtensionHelper<T> {
         if (null == obj) {
             return Collections.emptyList();
         }
-        Class<?> aClass = obj.getClass();
+        Class<?> aClass = ClassHelper.getClass(obj);
         if (obj instanceof Class) {
             aClass = (Class<?>) obj;
         }
@@ -701,7 +701,7 @@ public class ClassExtensionHelper<T> {
         if (null == obj) {
             return Collections.emptyList();
         }
-        Class<?> tClass = obj.getClass();
+        Class<?> tClass = ClassHelper.getClass(obj);
         if (DECLARED_MEMBER_CACHE.containsKey(tClass)) {
             return DECLARED_MEMBER_CACHE.get(tClass);
         }
