@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiConsumer;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
 
@@ -29,8 +30,9 @@ import static com.chua.utils.tools.constant.StringConstant.*;
 @Slf4j
 public class CfgOptions {
 
-    private static final ConcurrentMap<String, HashMultimap<String, Properties>> CACHE = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, List<Properties>> CACHE = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, PropertiesLoader> LOADER_CACHE = new ConcurrentHashMap<>();
+    private static final String KEY_NAME = "KEY#NAME";
     /**
      * 文件路径
      */
@@ -68,7 +70,7 @@ public class CfgOptions {
      * 获取HashMultimap
      * @return
      */
-    public HashMultimap<String, Properties> toHashMultimap() {
+    public List<Properties> toHashMultimap() {
         return CACHE.get(getCacheKey(cfgConfig));
     }
 
@@ -78,10 +80,10 @@ public class CfgOptions {
      * @param cfgConfig 文件名称
      * @return
      */
-    public HashMultimap<String, Properties> analysis(CfgConfig cfgConfig) {
+    public List<Properties> analysis(CfgConfig cfgConfig) {
         this.cfgConfig = cfgConfig;
         //存储数据
-        HashMultimap<String, Properties> concurrentHashMap = CACHE.get(getCacheKey(cfgConfig));
+        List<Properties> concurrentHashMap = CACHE.get(getCacheKey(cfgConfig));
         if (null != concurrentHashMap) {
             return concurrentHashMap;
         }
@@ -98,13 +100,9 @@ public class CfgOptions {
         for (String slaver : slavers) {
             allData.putAll(doAnalysisSlaver(slaver));
         }
-        HashMultimap<String, Properties> result = HashMultimap.create();
-        for (String s : allData.keySet()) {
-            List<Properties> properties = sortPropertiesList(allData.get(s));
-            insertResult(result, s, properties);
-        }
-        CACHE.put(master, allData);
-        return allData;
+        List<Properties> properties = sortPropertiesList(allData);
+        CACHE.put(master, properties);
+        return properties;
     }
 
     private void insertResult(HashMultimap<String, Properties> result, String s, List<Properties> properties) {
@@ -116,12 +114,29 @@ public class CfgOptions {
     /**
      * 排序
      *
-     * @param properties
+     * @param source
      * @return
      */
-    private List<Properties> sortPropertiesList(Set<Properties> properties) {
-        List<Properties> list = new ArrayList<>(properties);
-        Collections.sort(list, new Comparator<Properties>() {
+    private List<Properties> sortPropertiesList(HashMultimap<String, Properties> source) {
+        HashMultimap<String, Properties> hashMultimap = HashMultimap.create();
+        List<Properties> values = new ArrayList<>();
+        source.asMap().forEach(new BiConsumer<String, Collection<Properties>>() {
+            @Override
+            public void accept(String s, Collection<Properties> properties) {
+                List<Properties> result = new ArrayList<>();
+                for (Properties property : properties) {
+                    Properties properties1 = new Properties();
+                    properties1.putAll(property);
+                    properties1.put(KEY_NAME, s);
+
+                    result.add(properties1);
+                }
+
+                values.addAll(result);
+            }
+        });
+
+        Collections.sort(values, new Comparator<Properties>() {
             @Override
             public int compare(Properties o1, Properties o2) {
                 int int1 = MapHelper.ints(SYSTEM_PRIORITY_PROP, 0, o1);
@@ -129,7 +144,9 @@ public class CfgOptions {
                 return int1 > int2 ? 1 : -1;
             }
         });
-        return list;
+
+
+        return values;
     }
 
     /**
@@ -324,8 +341,8 @@ public class CfgOptions {
      * @return
      */
     public ConcurrentHashMap<String, Object> toConcurrentHashMap() {
-        HashMultimap<String, Properties> multimap = CACHE.get(getCacheKey(cfgConfig));
-        Properties properties = FinderHelper.firstElement(multimap.values());
+        List<Properties> multimap = CACHE.get(getCacheKey(cfgConfig));
+        Properties properties = FinderHelper.firstElement(multimap);
         return PropertiesHelper.toConcurrentHashMap(properties);
     }
 

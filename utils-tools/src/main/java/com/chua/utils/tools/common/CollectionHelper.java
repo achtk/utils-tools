@@ -780,6 +780,7 @@ public class CollectionHelper {
         });
         return result;
     }
+
     /**
      * 过滤元素
      *
@@ -824,10 +825,32 @@ public class CollectionHelper {
 
     /**
      * 获取长度
+     *
      * @param collection 集合
      * @return
      */
     public static int getSize(Collection collection) {
         return isEmpty(collection) ? 0 : collection.size();
+    }
+
+    /**
+     * 尝试获取List
+     *
+     * @param value 值
+     * @param <T>
+     * @return List
+     */
+    public static <T> List<T> getListIfFeasible(T value) {
+        if(null == value) {
+            return Collections.emptyList();
+        }
+        if(value instanceof Collection) {
+            return new ArrayList<T>((Collection)value);
+        }
+        Class<?> aClass = value.getClass();
+        if(aClass.isArray()) {
+            return Arrays.asList((T[])value);
+        }
+        return Lists.newArrayList(value);
     }
 }

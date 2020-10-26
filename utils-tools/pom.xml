@@ -42,6 +42,12 @@
             <version>${cglib.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jexl3</artifactId>
+            <version>${commons-jexl3.version}</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
         <!--<dependency>
             <groupId>com.google.code.gson</groupId>
