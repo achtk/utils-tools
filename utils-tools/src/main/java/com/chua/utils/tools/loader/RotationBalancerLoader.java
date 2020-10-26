@@ -1,6 +1,10 @@
 package com.chua.utils.tools.loader;
 
+import com.chua.utils.tools.common.CollectionHelper;
 import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.common.SizeHelper;
+import com.chua.utils.tools.function.Filter;
+import com.chua.utils.tools.function.impl.TrueFilter;
 
 import java.util.Collection;
 import java.util.concurrent.atomic.LongAdder;
@@ -11,23 +15,43 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class RotationBalancerLoader<T> implements BalancerLoader<T> {
 
+    private Filter<T> filter;
+    private Collection<T> source;
     private final LongAdder longAdder = new LongAdder();
+    private int size;
 
     @Override
-    public T balancer(Collection<T> ts) {
-        if(null == ts || ts.size() == 0) {
+    public BalancerLoader data(Collection<T> source) {
+        this.source = source;
+        this.size = CollectionHelper.getSize(source);
+        return this;
+    }
+
+    @Override
+    public BalancerLoader filter(Filter<T> filter) {
+        this.filter = filter == null ? TrueFilter.INSTANCE : filter;
+        return this;
+    }
+
+    @Override
+    public T balancer() {
+        if(size == 0) {
             return null;
         }
-        int intValue = longAdder.intValue();
-        int length = ts.size();
-        int value = 0;
-        if(length < intValue) {
-            value = length;
-            longAdder.reset();
-        } else {
-            value = intValue;
+        int index = longAdder.intValue() % size;
+        try {
+            return FinderHelper.findElement(index, source);
+        } finally {
             longAdder.increment();
         }
-        return FinderHelper.findElement(value, ts);
+    }
+
+    @Override
+    public T random() {
+        if(0 == size) {
+            return null;
+        }
+        Double doubles = Math.random() * Math.pow(size, 10);
+        return FinderHelper.findElement(doubles.intValue(), source);
     }
 }

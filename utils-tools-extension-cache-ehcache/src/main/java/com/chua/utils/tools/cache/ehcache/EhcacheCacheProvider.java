@@ -126,6 +126,6 @@ public class EhcacheCacheProvider implements CacheProvider<Object, Object> {
 
     @Override
     public long size() {
-        return SizeHelper.size(cache.iterator());
+        return SizeHelper.getSize(cache.iterator());
     }
 }

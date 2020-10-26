@@ -775,6 +775,7 @@ public class StringHelper {
     public static String uuid() {
         return uuid(false);
     }
+
     /**
      * jdk uuid
      *
@@ -1982,10 +1983,10 @@ public class StringHelper {
      * @return
      */
     public static String toString(final Object value) {
-        if(null == value) {
+        if (null == value) {
             return EMPTY;
         }
-        if(value instanceof byte[]) {
+        if (value instanceof byte[]) {
             return toString((byte[]) value, Charsets.UTF_8);
         }
         return value.toString();
@@ -2003,6 +2004,7 @@ public class StringHelper {
     public static String toString(byte[] bytes, String charsetName) throws UnsupportedEncodingException {
         return charsetName == null ? new String(bytes) : new String(bytes, charsetName);
     }
+
     /**
      * <pre>
      *     StringHelper.toString(null) == ""
@@ -2463,15 +2465,15 @@ public class StringHelper {
      *
      * @param str 源数据
      *            <pre>
-     *                                                                   StringHelper.stripToEmpty(null)     = ""
-     *                                                                   StringHelper.stripToEmpty("")       = ""
-     *                                                                   StringHelper.stripToEmpty("   ")    = ""
-     *                                                                   StringHelper.stripToEmpty("abc")    = "abc"
-     *                                                                   StringHelper.stripToEmpty("  abc")  = "abc"
-     *                                                                   StringHelper.stripToEmpty("abc  ")  = "abc"
-     *                                                                   StringHelper.stripToEmpty(" abc ")  = "abc"
-     *                                                                   StringHelper.stripToEmpty(" ab c ") = "ab c"
-     *                                                                   </pre>
+     *                                                                                                               StringHelper.stripToEmpty(null)     = ""
+     *                                                                                                               StringHelper.stripToEmpty("")       = ""
+     *                                                                                                               StringHelper.stripToEmpty("   ")    = ""
+     *                                                                                                               StringHelper.stripToEmpty("abc")    = "abc"
+     *                                                                                                               StringHelper.stripToEmpty("  abc")  = "abc"
+     *                                                                                                               StringHelper.stripToEmpty("abc  ")  = "abc"
+     *                                                                                                               StringHelper.stripToEmpty(" abc ")  = "abc"
+     *                                                                                                               StringHelper.stripToEmpty(" ab c ") = "ab c"
+     *                                                                                                               </pre>
      * @return
      */
     public static String stripToEmpty(final String str) {
@@ -3036,6 +3038,7 @@ public class StringHelper {
         }
         return sb.toString().trim();
     }
+
     /**
      * 数组转十六进制
      *
@@ -3054,17 +3057,95 @@ public class StringHelper {
             m = i * 2 + 1;
             n = m + 1;
             int intVal = Integer.decode("0x" + hex.substring(i * 2, m) + hex.substring(m, n));
-            ret[i] = Byte.valueOf((byte)intVal);
+            ret[i] = Byte.valueOf((byte) intVal);
         }
         return ret;
     }
 
     /**
      * 是否包含通配符
+     *
      * @param source 数据
      * @return
      */
     public static boolean isWildcardMatch(final String source) {
         return null != source && (source.indexOf("?") > -1 || source.indexOf("*") > -1);
+    }
+
+    /**
+     * 获取分隔符之后数据
+     *
+     * @param source    数据
+     * @param delimiter 分隔符
+     * @return
+     */
+    public static String getAfterDelimiter(String source, String delimiter) {
+        if (Strings.isNullOrEmpty(source) || Strings.isNullOrEmpty(delimiter)) {
+            return source;
+        }
+        int index = source.indexOf(delimiter);
+        return -1 == index ? source : source.substring(index + 1);
+    }
+
+    /**
+     * 获取最后一个分隔符之后数据
+     *
+     * @param source    数据
+     * @param delimiter 分隔符
+     * @return
+     */
+    public static String getAfterLastDelimiter(String source, String delimiter) {
+        if (Strings.isNullOrEmpty(source) || Strings.isNullOrEmpty(delimiter)) {
+            return source;
+        }
+        int index = source.lastIndexOf(delimiter);
+        return -1 == index ? source : source.substring(index + 1);
+    }
+
+    /**
+     * 获取最后一个分隔符之前数据
+     *
+     * @param source    数据
+     * @param delimiter 分隔符
+     * @return
+     */
+    public static String getBeforeLastDelimiter(String source, String delimiter) {
+        if (Strings.isNullOrEmpty(source) || Strings.isNullOrEmpty(delimiter)) {
+            return source;
+        }
+        int index = source.lastIndexOf(delimiter);
+        return -1 == index ? source : source.substring(0, index);
+    }
+
+    /**
+     * 获取分隔符之前数据
+     *
+     * @param source    数据
+     * @param delimiter 分隔符
+     * @return
+     */
+    public static String getBeforeDelimiter(String source, String delimiter) {
+        if (Strings.isNullOrEmpty(source) || Strings.isNullOrEmpty(delimiter)) {
+            return source;
+        }
+        int index = source.indexOf(delimiter);
+        return -1 == index ? source : source.substring(0, index);
+    }
+
+    /**
+     * 获取分隔符之间数据
+     *
+     * @param source         数据
+     * @param firstDelimiter 分隔符
+     * @return
+     */
+    public static String getBetweenDelimiter(String source, String firstDelimiter, String lastDelimiter) {
+        if (Strings.isNullOrEmpty(source) || (Strings.isNullOrEmpty(firstDelimiter) &&
+                Strings.isNullOrEmpty(lastDelimiter))
+        ) {
+            return source;
+        }
+        String afterDelimiter = getAfterDelimiter(source, firstDelimiter);
+        return getBeforeDelimiter(afterDelimiter, lastDelimiter);
     }
 }

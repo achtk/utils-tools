@@ -228,11 +228,11 @@ public class ResourceScannerFactoryBeanDefinitionFactory implements BeanDefiniti
         beanName += beanSuffix;
 
         if (BooleanHelper.hasLength(cacheMap)) {
-            addFirstPropertyValue(cacheMap);
+            addFirstPropertyValues(cacheMap);
         }
 
         if (BooleanHelper.hasLength(lastCacheMap)) {
-            addFirstPropertyValue(lastCacheMap);
+            addFirstPropertyValues(lastCacheMap);
         }
 
         if (BooleanHelper.hasLength(aliasNames)) {

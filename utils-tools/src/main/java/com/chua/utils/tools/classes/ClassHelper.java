@@ -7,6 +7,7 @@ import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.proxy.CglibProxyAgent;
 import com.chua.utils.tools.proxy.ProxyAgent;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import javassist.*;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +63,7 @@ public class ClassHelper extends ReflectionsHelper {
      * 获取类的类加载器
      *
      * @param caller 类
-     * @return
+     * @return ClassLoader
      */
     public static ClassLoader getCallerClassLoader(Class<?> caller) {
         Preconditions.checkNotNull(caller);
@@ -765,12 +766,13 @@ public class ClassHelper extends ReflectionsHelper {
 
     /**
      * 校验类名是否合法
-     *  @param classNamesList 类名集合
-     * @param filter        是否合法
+     *
+     * @param classNamesList 类名集合
+     * @param filter         是否合法
      * @return
      */
     public static List<String> doWithVerify(List<String> classNamesList, Filter<Class> filter) {
-        if(!BooleanHelper.hasLength(classNamesList) || null == filter) {
+        if (!BooleanHelper.hasLength(classNamesList) || null == filter) {
             return Collections.emptyList();
         }
         List<String> verifyList = new ArrayList<>(classNamesList.size());
@@ -779,7 +781,7 @@ public class ClassHelper extends ReflectionsHelper {
             public void accept(String s) {
                 Class<?> aClass = forName(s);
                 boolean matcher = filter.matcher(aClass);
-                if(matcher) {
+                if (matcher) {
                     verifyList.add(s);
                 }
             }
@@ -789,11 +791,12 @@ public class ClassHelper extends ReflectionsHelper {
 
     /**
      * 获取参数类型
+     *
      * @param args
      * @return
      */
     public static Class<?>[] toParamType(Object[] args) {
-        if(!BooleanHelper.hasLength(args)) {
+        if (!BooleanHelper.hasLength(args)) {
             return new Class[0];
         }
         Class<?>[] classes = new Class[args.length];
@@ -804,5 +807,24 @@ public class ClassHelper extends ReflectionsHelper {
         return classes;
     }
 
-
+    /**
+     * 获取枚举类
+     *
+     * @param value     值
+     * @param enumClass 枚举类类型
+     * @return 枚举类
+     */
+    public static <T> T getEnum(String value, Class<T> enumClass) {
+        if (null == enumClass || Strings.isNullOrEmpty(value)) {
+            return null;
+        }
+        T[] enumConstants = enumClass.getEnumConstants();
+        for (T enumConstant : enumConstants) {
+            if (!value.equalsIgnoreCase(enumConstant.toString())) {
+                continue;
+            }
+            return enumConstant;
+        }
+        return null;
+    }
 }

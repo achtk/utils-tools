@@ -821,4 +821,13 @@ public class CollectionHelper {
             }
         });
     }
+
+    /**
+     * 获取长度
+     * @param collection 集合
+     * @return
+     */
+    public static int getSize(Collection collection) {
+        return isEmpty(collection) ? 0 : collection.size();
+    }
 }

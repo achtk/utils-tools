@@ -34,7 +34,7 @@ public class SizeHelper {
      * @param size
      * @return
      */
-    public static String size(final long size) {
+    public static String getSize(final long size) {
         if(size < B) {
             return size + "B";
         } else if(size < K) {
@@ -67,7 +67,7 @@ public class SizeHelper {
      * @param <E>
      * @return
      */
-    public static <E>int size(final Collection<E> collection) {
+    public static <E>int getSize(final Collection<E> collection) {
         return BooleanHelper.hasLength(collection) ? collection.size() : 0;
     }
     /**
@@ -78,7 +78,7 @@ public class SizeHelper {
      */
     public static <E>int sizeNotNull(final Collection<E> collection) {
         Iterator<E> eIterator = elementNotNull(collection);
-        return BooleanHelper.hasLength(eIterator) ? SizeHelper.size(eIterator) : 0;
+        return BooleanHelper.hasLength(eIterator) ? SizeHelper.getSize(eIterator) : 0;
     }
     /**
      * 获取集合长度
@@ -104,7 +104,7 @@ public class SizeHelper {
      * @param <E>
      * @return
      */
-    public static <E>int size(final Iterator iterator) {
+    public static <E>int getSize(final Iterator iterator) {
         if(!BooleanHelper.hasLength(iterator)) {
             return 0;
         }
@@ -122,7 +122,7 @@ public class SizeHelper {
      * @param <E>
      * @return
      */
-    public static <E>int size(final E... collection) {
+    public static <E>int getSize(final E... collection) {
         return BooleanHelper.hasLength(collection) ? collection.length : 0;
     }
     /**
@@ -154,7 +154,7 @@ public class SizeHelper {
      * @param <V>
      * @return
      */
-    public static <K, V>int size(final Map<K, V> kvMap) {
+    public static <K, V>int getSize(final Map<K, V> kvMap) {
         return BooleanHelper.hasLength(kvMap) ? kvMap.size() : 0;
     }
     /**

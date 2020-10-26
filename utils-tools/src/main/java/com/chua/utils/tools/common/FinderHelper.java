@@ -39,7 +39,7 @@ public class FinderHelper {
      * @return
      */
     public static <K, T> K lastKeyElement(final Map<K, T> source) {
-        return findKeyElement(SizeHelper.size(source), true, source);
+        return findKeyElement(SizeHelper.getSize(source), true, source);
     }
 
     /**
@@ -212,7 +212,7 @@ public class FinderHelper {
      * @return
      */
     public static <T> T lastElement(final Collection<T> source) {
-        return findElement(SizeHelper.size(source), true, source);
+        return findElement(SizeHelper.getSize(source), true, source);
     }
 
     /**
@@ -306,7 +306,7 @@ public class FinderHelper {
      * @return
      */
     public static <T> T lastElement(final T[] source) {
-        return findElement(SizeHelper.size(source), true, source);
+        return findElement(SizeHelper.getSize(source), true, source);
     }
 
     /**
@@ -391,7 +391,7 @@ public class FinderHelper {
      * @return
      */
     public static <T> T lastElement(final Iterable<T> source) {
-        return findElement(SizeHelper.size(source), source);
+        return findElement(SizeHelper.getSize(source), source);
     }
 
 

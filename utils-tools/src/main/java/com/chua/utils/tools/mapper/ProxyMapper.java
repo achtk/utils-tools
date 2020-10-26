@@ -80,7 +80,8 @@ public class ProxyMapper {
             if (null == balancerLoader) {
                 return FinderHelper.firstElement(methodIntercepts);
             }
-            return (MethodIntercept) balancerLoader.balancer(methodIntercepts);
+            balancerLoader.data(methodIntercepts);
+            return (MethodIntercept) balancerLoader.balancer();
         }
         return null;
     }

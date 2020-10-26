@@ -82,7 +82,7 @@ public class DefaultClassResolver<T> implements ClassResolver {
     private void renderingField(Field field, Object object, String prefix, Converter<String, Object> converter) throws Throwable {
         Class<?> type = field.getType();
         String name1 = field.getName();
-        if (Modifier.isStatic(type.getModifiers())) {
+        if (!type.isEnum() && Modifier.isStatic(type.getModifiers())) {
             return;
         }
         String s = type.toGenericString();
@@ -96,7 +96,18 @@ public class DefaultClassResolver<T> implements ClassResolver {
             return;
         }
         if (type.isEnum()) {
+            Object convert = converter.convert(newName);
+            if(null == convert) {
+                return;
+            }
+            Object fieldValue = ClassHelper.getFieldValue(field, object);
             //String property = environment.getProperty(newName);
+
+            Object obj = ClassHelper.getEnum(convert.toString(), field.getType());
+            if(fieldValue == obj) {
+                return;
+            }
+            ClassHelper.setFieldValue(field, obj, object);
             return;
         }
         Object fieldValue = ClassHelper.getFieldValue(field, object);
