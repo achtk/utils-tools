@@ -2,8 +2,8 @@ package com.chua.utils.tools.cfg;
 
 import com.chua.utils.tools.common.*;
 import com.chua.utils.tools.prop.loader.*;
-import com.chua.utils.tools.prop.placeholder.AbstractPropertiesPlaceholderResolver;
-import com.chua.utils.tools.prop.placeholder.PropertiesPlaceholderFactory;
+import com.chua.utils.tools.prop.placeholder.resolver.AbstractPropertiesPlaceholderResolver;
+import com.chua.utils.tools.prop.placeholder.resolver.PropertiesPlaceholderFactory;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.google.common.collect.HashMultimap;
 import lombok.AllArgsConstructor;

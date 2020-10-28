@@ -1,4 +1,4 @@
-package com.chua.utils.tools.prop.placeholder;
+package com.chua.utils.tools.prop.placeholder.resolver;
 
 import com.chua.utils.tools.prop.placeholder.mapper.PlaceholderMapper;
 

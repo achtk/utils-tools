@@ -1,4 +1,4 @@
-package com.chua.utils.tools.prop.placeholder;
+package com.chua.utils.tools.prop.placeholder.resolver;
 
 import com.chua.utils.tools.prop.placeholder.mapper.PlaceholderMapper;
 
@@ -6,35 +6,35 @@ import com.chua.utils.tools.prop.placeholder.mapper.PlaceholderMapper;
  * 配置项占位符
  * @author CH
  */
-public interface PropertiesPlaceholderResolver {
+interface PropertiesPlaceholderResolver {
     /**
      * 占位符前缀
      * @return
      */
-    public String before();
+    String before();
 
     /**
      * 分隔符
      * @return
      */
-    public String valueSeparate();
+    String valueSeparate();
     /**
      * 占位符后缀
      * @return
      */
-    public String after();
+    String after();
 
     /**
      * 允许
      * @param value 值
      * @return
      */
-    public boolean isMatcher(String value);
+    boolean isMatcher(String value);
 
     /**
      * 占位
      * @param value 值
      * @return
      */
-    public PlaceholderMapper analyze(String value);
+    PlaceholderMapper analyze(String value);
 }
