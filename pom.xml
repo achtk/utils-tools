@@ -92,6 +92,7 @@
         <hibernate.version>5.3.10.Final</hibernate.version>
 
         <lucene.version>8.6.3</lucene.version>
+        <kitdb.version>0.2.6</kitdb.version>
 
         <leveldb.version>0.12</leveldb.version>
         <mapdb.version>3.0.8</mapdb.version>
@@ -236,6 +237,7 @@
         <module>utils-netx-extension-datasource-h2</module>
         <module>utils-netx-extension-lucene</module>
         <module>utils-netx-extension-datasource-mariadb4j</module>
+        <module>utils-netx-extension-kitdb</module>
     </modules>
 
     <build>
