@@ -5,16 +5,8 @@ import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.common.PropertiesHelper;
 import com.chua.utils.tools.prop.loader.*;
-<<<<<<< .mine
 import com.chua.utils.tools.prop.placeholder.EnvPropertyPlaceholder;
 import com.chua.utils.tools.prop.placeholder.PropertyPlaceholder;
-||||||| .r142
-import com.chua.utils.tools.prop.placeholder.AbstractPropertiesPlaceholderResolver;
-import com.chua.utils.tools.prop.placeholder.PropertiesPlaceholderFactory;
-=======
-import com.chua.utils.tools.prop.placeholder.resolver.AbstractPropertiesPlaceholderResolver;
-import com.chua.utils.tools.prop.placeholder.resolver.PropertiesPlaceholderFactory;
->>>>>>> .r143
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
