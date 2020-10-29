@@ -96,7 +96,7 @@ public class DefaultClassResolver<T> implements ClassResolver {
             return;
         }
         if (type.isEnum()) {
-            Object convert = converter.convert(newName);
+            Object convert = converter.convert(newName, field.getType());
             if(null == convert) {
                 return;
             }
@@ -143,7 +143,7 @@ public class DefaultClassResolver<T> implements ClassResolver {
      * @param converter 转化器
      */
     private void basicRenderingClass(Field field, String key, Object object, Converter<String, Object> converter) {
-        Object property = converter.convert(key);
+        Object property = converter.convert(key, field.getType());
         if (null == property) {
             return;
         }

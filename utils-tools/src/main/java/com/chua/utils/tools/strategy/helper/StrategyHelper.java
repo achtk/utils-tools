@@ -1,5 +1,7 @@
 package com.chua.utils.tools.strategy.helper;
 
+import com.chua.utils.tools.cache.CacheProvider;
+import com.chua.utils.tools.cache.ConcurrentCacheProvider;
 import com.chua.utils.tools.function.intercept.*;
 import com.chua.utils.tools.proxy.CglibProxyAgent;
 import com.chua.utils.tools.proxy.DefaultProxyAgent;
@@ -18,6 +20,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 /**
  * 策略工具类
@@ -126,9 +129,31 @@ public class StrategyHelper {
     }
 
     /**
+     * 执行并缓存数据
+     *
+     * @param cacheKey 缓存Key
+     * @param supplier 执行方法
+     * @param <T>
+     * @return
+     */
+    public static <K, T> T doWithCache(final K cacheKey, final Supplier<T> supplier, CacheProvider<K, T> cacheProvider) {
+        if (null == cacheProvider) {
+            cacheProvider = new ConcurrentCacheProvider<>();
+        }
+        if (null != cacheKey && cacheProvider.containsKey(cacheKey)) {
+            return cacheProvider.get(cacheKey);
+        }
+        T t = supplier.get();
+        if (null != cacheKey) {
+            cacheProvider.put(cacheKey, t);
+        }
+        return t;
+    }
+
+    /**
      * 缓存策略
      *
-     * @param tClass 类
+     * @param tClass          类
      * @param methodIntercept 方法拦截器用于接口
      * @param <T>
      * @return 代理对象
@@ -163,9 +188,9 @@ public class StrategyHelper {
     /**
      * 限流策略
      *
-     * @param tClass 类
+     * @param tClass          类
      * @param methodIntercept 方法拦截器用于接口
-     * @param size   令牌数量
+     * @param size            令牌数量
      * @param <T>
      * @return 代理对象
      */
@@ -176,10 +201,10 @@ public class StrategyHelper {
     /**
      * 限流策略
      *
-     * @param tClass 类
+     * @param tClass          类
      * @param methodIntercept 方法拦截器用于接口
-     * @param size   令牌数量
-     * @param group  分组
+     * @param size            令牌数量
+     * @param group           分组
      * @param <T>
      * @return 代理对象
      */

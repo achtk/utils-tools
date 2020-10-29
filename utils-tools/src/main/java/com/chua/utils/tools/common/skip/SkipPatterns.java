@@ -40,6 +40,7 @@ public class SkipPatterns {
         patterns.add("jmx*.jar");
         patterns.add("jmx-tools-*.jar");
         patterns.add("jta*.jar");
+        patterns.add("failureaccess*.jar");
         patterns.add("junit-*.jar");
         patterns.add("httpclient*.jar");
         patterns.add("log4j-*.jar");
@@ -55,6 +56,10 @@ public class SkipPatterns {
         patterns.add("xercesImpl-*.jar");
         patterns.add("xmlParserAPIs-*.jar");
         patterns.add("xml-apis-*.jar");
+        patterns.add("testng*.jar");
+        patterns.add("rxjava*.jar");
+        patterns.add("jsr305*.jar");
+        patterns.add("accessors*.jar");
         SKIP_PATTERNS = Collections.unmodifiableSet(patterns);
     }
 

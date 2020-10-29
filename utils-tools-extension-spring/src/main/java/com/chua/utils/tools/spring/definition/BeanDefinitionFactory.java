@@ -1,8 +1,14 @@
 package com.chua.utils.tools.spring.definition;
 
+import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
+import com.google.common.base.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 
+import javax.annotation.Resource;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -407,4 +413,49 @@ public interface BeanDefinitionFactory<T> {
     default void register(String beanName) {
         register(beanName, true);
     }
+
+    /**
+     * 解释依赖
+     *
+     * @param tClass 类
+     */
+    default void resolveDependence(Class<?> tClass) {
+        ClassHelper.doWithFields(tClass, field -> {
+            Autowired autowired = field.getDeclaredAnnotation(Autowired.class);
+            if (null != autowired) {
+                Class<?> type = field.getType();
+                Qualifier qualifier = field.getDeclaredAnnotation(Qualifier.class);
+                if (null == qualifier) {
+                    resolveType(field, type);
+                } else {
+                    resolveName(field, qualifier.value());
+                }
+            }
+            Resource resource = field.getDeclaredAnnotation(Resource.class);
+            if (null != resource) {
+                String name = resource.name();
+                if (Strings.isNullOrEmpty(name)) {
+                    Class<?> type = field.getType();
+                    resolveType(field, type);
+                } else {
+                    resolveName(field, name);
+                }
+            }
+        });
+    }
+
+    /**
+     * 解释类型
+     *
+     * @param field 字段
+     * @param type  类型
+     */
+    void resolveType(Field field, Class<?> type);
+    /**
+     * 解释名称
+     *
+     * @param field 字段
+     * @param name  名称
+     */
+    void resolveName(Field field, String name);
 }

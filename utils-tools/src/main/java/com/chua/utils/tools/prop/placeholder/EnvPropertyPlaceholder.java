@@ -16,7 +16,12 @@ public class EnvPropertyPlaceholder extends PropertiesPropertyPlaceholder {
             return super.placeholder(value);
         }
         PlaceholderSource placeholderSource = super.getPlaceholderSource(value.toString());
-        String getenv = System.getenv(placeholderSource.getNewKey());
+        String getenv = null;
+        if(placeholderSource.isPlaceholder()) {
+            getenv = System.getenv(placeholderSource.getNewKey());
+        } else {
+            getenv = placeholderSource.getNewKey();
+        }
         return null == getenv ? placeholderSource.getDefaultValue() : getenv;
     }
 }

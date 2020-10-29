@@ -45,7 +45,7 @@ public class CfgConfig {
     /**
      * 文件所在目录
      */
-    private Set<String> slaver = Sets.newHashSet("", "extension/", "META-INF/extension/", "extensions/", "META-INF/extensions/");
+    private Set<String> slaver = Sets.newHashSet("", "META-INF/", "extension/", "META-INF/extension/", "extensions/", "META-INF/extensions/");
 
     /**
      * 添加配置

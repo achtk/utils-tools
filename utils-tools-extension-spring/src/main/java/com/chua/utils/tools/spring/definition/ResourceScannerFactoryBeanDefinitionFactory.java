@@ -2,14 +2,13 @@ package com.chua.utils.tools.spring.definition;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.MapHelper;
-import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.spring.scanner.ResourceClassPathScanningProvider;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.*;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -37,20 +36,20 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public class ResourceScannerFactoryBeanDefinitionFactory implements BeanDefinitionFactory<FactoryBean> {
 
-    private DefaultListableBeanFactory defaultListableBeanFactory;
-    private BeanDefinitionRegistry beanDefinitionRegistry;
-    private BeanDefinitionBuilder beanDefinitionBuilder;
-    private ResourceClassPathScanningProvider resourceClassPathScanningProvider;
-    private Class<? extends FactoryBean> factoryBean;
-    private String packages;
-    private ClassPathScanningCandidateComponentProvider componentProvider;
+    private final DefaultListableBeanFactory defaultListableBeanFactory;
+    private final BeanDefinitionRegistry beanDefinitionRegistry;
+    private final BeanDefinitionBuilder beanDefinitionBuilder;
+    private final ResourceClassPathScanningProvider resourceClassPathScanningProvider;
+    private final Class<? extends FactoryBean> factoryBean;
+    private final String packages;
+    private final ClassPathScanningCandidateComponentProvider componentProvider;
     private String[] aliases;
 
-    private ConcurrentMap<String, Object> cacheMap = new ConcurrentHashMap<>();
-    private ConcurrentMap<String, Object> lastCacheMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Object> cacheMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Object> lastCacheMap = new ConcurrentHashMap<>();
     private String beanSuffix;
     private String[] aliasNames;
-    private Map<String, Field> fields;
+    private final Map<String, Field> fields;
     private boolean primary;
 
     public ResourceScannerFactoryBeanDefinitionFactory(Class<? extends FactoryBean> factoryBean, String packages, BeanDefinitionRegistry beanDefinitionRegistry, ClassPathScanningCandidateComponentProvider classPathScanningCandidateComponentProvider) {
@@ -80,7 +79,7 @@ public class ResourceScannerFactoryBeanDefinitionFactory implements BeanDefiniti
     public BeanDefinitionFactory addPropertyValue(String name, Object value) {
         if (null != value && fields.containsKey(name)) {
             Field field = fields.get(name);
-            if(!field.getType().isAssignableFrom(value.getClass())) {
+            if (!field.getType().isAssignableFrom(value.getClass())) {
                 return this;
             }
             cacheMap.put(name, value);
@@ -92,7 +91,7 @@ public class ResourceScannerFactoryBeanDefinitionFactory implements BeanDefiniti
     public BeanDefinitionFactory addLastPropertyValue(String name, Object value) {
         if (null != value && fields.containsKey(name)) {
             Field field = fields.get(name);
-            if(!field.getType().isAssignableFrom(value.getClass())) {
+            if (!field.getType().isAssignableFrom(value.getClass())) {
                 return this;
             }
             lastCacheMap.put(name, value);
@@ -104,10 +103,10 @@ public class ResourceScannerFactoryBeanDefinitionFactory implements BeanDefiniti
     public BeanDefinitionFactory addFirstPropertyValue(String name, Object value) {
         if (null != value && fields.containsKey(name)) {
             Field field = fields.get(name);
-            if(!field.getType().isAssignableFrom(value.getClass())) {
+            if (!field.getType().isAssignableFrom(value.getClass())) {
                 return this;
             }
-            if(String.class.isAssignableFrom(field.getType()) && "".equals(value)) {
+            if (String.class.isAssignableFrom(field.getType()) && "".equals(value)) {
                 return this;
             }
             this.beanDefinitionBuilder.addPropertyValue(name, value);
@@ -176,35 +175,49 @@ public class ResourceScannerFactoryBeanDefinitionFactory implements BeanDefiniti
 
     @Override
     public void register(String beanName, boolean ignore) {
-        resourceClassPathScanningProvider.doWithScanner(packages, new Matcher<BeanDefinition>() {
-            @Override
-            public void doWith(BeanDefinition beanDefinition) throws Throwable {
-                if (beanDefinition instanceof AnnotatedBeanDefinition) {
-                    AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
-                    AnnotationMetadata annotationMetadata = annotatedBeanDefinition.getMetadata();
+        resourceClassPathScanningProvider.doWithScanner(packages, beanDefinition -> {
+            if (beanDefinition instanceof AnnotatedBeanDefinition) {
+                AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
+                AnnotationMetadata annotationMetadata = annotatedBeanDefinition.getMetadata();
 
-                    Set<String> annotationTypes = annotationMetadata.getAnnotationTypes();
-                    List<Map<String, Object>> mapList = new ArrayList<>(annotationTypes.size());
+                Set<String> annotationTypes = annotationMetadata.getAnnotationTypes();
+                List<Map<String, Object>> mapList = new ArrayList<>(annotationTypes.size());
 
-                    for (String annotationType : annotationTypes) {
-                        mapList.add(annotationMetadata.getAnnotationAttributes(annotationType));
-                    }
-                    registerBean(annotationMetadata, mapList, ignore);
+                for (String annotationType : annotationTypes) {
+                    mapList.add(annotationMetadata.getAnnotationAttributes(annotationType));
                 }
+                registerBean(annotationMetadata, mapList, ignore);
             }
         });
     }
 
+    @Override
+    public void resolveType(Field field, Class<?> type) {
+        Map<String, ?> type1 = defaultListableBeanFactory.getBeansOfType(type);
+        if (BooleanHelper.hasLength(type1) && type1.size() == 1) {
+            addFirstPropertyValue(field.getName(), FinderHelper.firstElement(type1.values()));
+        }
+    }
+
+    @Override
+    public void resolveName(Field field, String name) {
+        Map<String, ?> type1 = defaultListableBeanFactory.getBeansOfType(field.getType());
+        if (BooleanHelper.hasLength(type1) && type1.containsKey(name)) {
+            addFirstPropertyValue(field.getName(), type1.get(name));
+        }
+    }
+
     /**
      * 注册Bean
-     *  @param annotationMetadata
+     *
+     * @param annotationMetadata
      * @param mapList
      * @param ignore
      */
     protected void registerBean(AnnotationMetadata annotationMetadata, List<Map<String, Object>> mapList, boolean ignore) {
         String className = annotationMetadata.getClassName();
         Class<?> aClass = ClassHelper.forName(className);
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("扫描类[{}]开始处理类", className);
         }
         addPropertyValue("type", aClass);
@@ -212,9 +225,9 @@ public class ResourceScannerFactoryBeanDefinitionFactory implements BeanDefiniti
 
         AbstractBeanDefinition definition = this.beanDefinitionBuilder.getBeanDefinition();
 
-        if(ignore && !primary) {
+        if (ignore && !primary) {
             Map<String, ?> ofType = defaultListableBeanFactory.getBeansOfType(aClass);
-            if(BooleanHelper.hasLength(ofType)) {
+            if (BooleanHelper.hasLength(ofType)) {
                 log.warn("The current bean [{}] already exists, and [primary] is not configured, start to ignore registration", className);
                 log.warn("该类型[{}]已被{}注册", aClass.getName(), ofType.values());
                 return;
@@ -240,6 +253,7 @@ public class ResourceScannerFactoryBeanDefinitionFactory implements BeanDefiniti
         }
 
         addFirstPropertyValues(mapList);
+        resolveDependence(aClass);
 
         BeanDefinitionHolder beanDefinitionHolder = null;
         if (BooleanHelper.hasLength(aliases)) {
@@ -251,8 +265,9 @@ public class ResourceScannerFactoryBeanDefinitionFactory implements BeanDefiniti
     }
 
     /**
-     * @param resourceLoader
-     * @param includeFilter
+     * 创建ClassPathScanningCandidateComponentProvider
+     * @param resourceLoader 资源加载器
+     * @param includeFilter  过滤器
      * @return
      */
     private ClassPathScanningCandidateComponentProvider newClassPathScanningCandidateComponentProvider(ResourceLoader resourceLoader, TypeFilter includeFilter) {

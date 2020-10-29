@@ -1,24 +1,40 @@
 package com.chua.utils.tools.cfg;
 
-import com.chua.utils.tools.common.*;
+import com.chua.utils.tools.common.FileHelper;
+import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.common.MapHelper;
+import com.chua.utils.tools.common.PropertiesHelper;
 import com.chua.utils.tools.prop.loader.*;
+<<<<<<< .mine
+import com.chua.utils.tools.prop.placeholder.EnvPropertyPlaceholder;
+import com.chua.utils.tools.prop.placeholder.PropertyPlaceholder;
+||||||| .r142
+import com.chua.utils.tools.prop.placeholder.AbstractPropertiesPlaceholderResolver;
+import com.chua.utils.tools.prop.placeholder.PropertiesPlaceholderFactory;
+=======
 import com.chua.utils.tools.prop.placeholder.resolver.AbstractPropertiesPlaceholderResolver;
 import com.chua.utils.tools.prop.placeholder.resolver.PropertiesPlaceholderFactory;
+>>>>>>> .r143
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiConsumer;
 
-import static com.chua.utils.tools.constant.StringConstant.*;
+import static com.chua.utils.tools.constant.StringConstant.EXTENSION_DOT;
+import static com.chua.utils.tools.constant.StringConstant.SYSTEM_PRIORITY_PROP;
 
 /**
  * <p>配置项解析</p>
@@ -30,13 +46,21 @@ import static com.chua.utils.tools.constant.StringConstant.*;
 @Slf4j
 public class CfgOptions {
 
-    private static final ConcurrentMap<String, List<Properties>> CACHE = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, List<Properties>> cache = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, PropertiesLoader> LOADER_CACHE = new ConcurrentHashMap<>();
     private static final String KEY_NAME = "KEY#NAME";
     /**
      * 文件路径
      */
     private Set<String> slavers;
+    /**
+     * 占位符
+     */
+    private Set<PropertyPlaceholder> placeholder = new HashSet<>();
+    /**
+     * 默认占位符
+     */
+    private static final Set<PropertyPlaceholder> DEFAULT_PLACE_HOLDER = Sets.newHashSet(new EnvPropertyPlaceholder());
     /**
      * 文件名称
      */
@@ -60,7 +84,7 @@ public class CfgOptions {
      * 初始化cfg信息
      *
      * @param master 文件名称
-     * @return
+     * @return CfgOptions
      */
     public static CfgOptions analysis(String master) {
         return new CfgOptions(new CfgConfig().setMaster(master));
@@ -68,10 +92,20 @@ public class CfgOptions {
 
     /**
      * 获取HashMultimap
+     *
      * @return
      */
     public List<Properties> toHashMultimap() {
-        return CACHE.get(getCacheKey(cfgConfig));
+        return cache.get(getCacheKey(cfgConfig));
+    }
+
+    /**
+     * 添加占位符处理
+     *
+     * @param propertyPlaceholder 占位符
+     */
+    public void addPlaceholder(PropertyPlaceholder propertyPlaceholder) {
+        placeholder.add(propertyPlaceholder);
     }
 
     /**
@@ -83,9 +117,12 @@ public class CfgOptions {
     public List<Properties> analysis(CfgConfig cfgConfig) {
         this.cfgConfig = cfgConfig;
         //存储数据
-        List<Properties> concurrentHashMap = CACHE.get(getCacheKey(cfgConfig));
+        List<Properties> concurrentHashMap = cache.get(getCacheKey(cfgConfig));
         if (null != concurrentHashMap) {
             return concurrentHashMap;
+        }
+        if (placeholder.size() == 0) {
+            placeholder.addAll(DEFAULT_PLACE_HOLDER);
         }
         //文件名称
         this.master = cfgConfig.getMaster();
@@ -100,8 +137,11 @@ public class CfgOptions {
         for (String slaver : slavers) {
             allData.putAll(doAnalysisSlaver(slaver));
         }
+        //占位符处理
+        placeholder(allData);
+        //排序
         List<Properties> properties = sortPropertiesList(allData);
-        CACHE.put(master, properties);
+        cache.put(master, properties);
         return properties;
     }
 
@@ -192,39 +232,11 @@ public class CfgOptions {
         }
         File file = new File(path);
         try {
-            Properties properties = propertiesLoader.toProp(new FileInputStream(file));
-            return placeholder(properties);
+            return propertiesLoader.toProp(new FileInputStream(file));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         return PropertiesHelper.emptyProperties();
-    }
-
-    /**
-     * 占位符处理
-     *
-     * @param properties
-     * @return
-     */
-    private static Properties placeholder(Properties properties) {
-        String env = MapHelper.strings(SYSTEM_PLACEHOLDER_PROP, "system", properties);
-        AbstractPropertiesPlaceholderResolver extension = ExtensionFactory.getExtensionLoader(AbstractPropertiesPlaceholderResolver.class).getExtension(env);
-        PropertiesPlaceholderFactory propertiesPlaceholderFactory = PropertiesPlaceholderFactory.newBuilder().dataMapper(MapHelper.maps(properties)).addResolver(extension).build();
-        Properties result = new Properties();
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            Object value = entry.getValue();
-            if (value instanceof List) {
-                value = doPlaceholderListAnalyze((List) value, propertiesPlaceholderFactory);
-            } else if (value instanceof Map) {
-                value = doPlaceholderMapAnalyze((Map) value, propertiesPlaceholderFactory);
-            } else {
-                if (extension.isMatcher(value + "")) {
-                    value = extension.analyze(value.toString());
-                }
-            }
-            result.put(entry.getKey(), value);
-        }
-        return result;
     }
 
     /**
@@ -233,9 +245,9 @@ public class CfgOptions {
      * @param path        文件路径
      * @param classLoader 类加载器
      * @param suffix      后缀
-     * @return
+     * @return HashMultimap
      */
-    private static HashMultimap<String, Properties> doAnalysisClasspathFile(final String path, final ClassLoader classLoader, final String suffix) {
+    private HashMultimap<String, Properties> doAnalysisClasspathFile(final String path, final ClassLoader classLoader, final String suffix) {
         HashMultimap<String, Properties> result = HashMultimap.create();
         Enumeration<URL> resources = null;
         try {
@@ -261,12 +273,53 @@ public class CfgOptions {
     }
 
     /**
+     * 占位符处理
+     *
+     * @param hashMultimap 原始数据
+     */
+    private void placeholder(HashMultimap<String, Properties> hashMultimap) {
+        Collection<Properties> collection = hashMultimap.values();
+        for (Properties properties1 : collection) {
+            for (PropertyPlaceholder propertyPlaceholder : placeholder) {
+                propertyPlaceholder.addPropertySource(properties1);
+            }
+        }
+        for (Properties properties1 : collection) {
+            placeholderProperties(properties1);
+        }
+    }
+
+    /**
+     * 占位符处理
+     *
+     * @param properties 原始数据
+     */
+    private void placeholderProperties(Properties properties) {
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            properties.put(entry.getKey(), placeholderValue(entry.getValue()));
+        }
+    }
+
+    /**
+     * 占位符处理
+     *
+     * @param value 原始数据
+     */
+    private Object placeholderValue(Object value) {
+        Object placeholder = null;
+        for (PropertyPlaceholder propertyPlaceholder : this.placeholder) {
+            placeholder = propertyPlaceholder.placeholder(value);
+        }
+        return placeholder;
+    }
+
+    /**
      * 判断文件类型
      *
      * @param suffix
-     * @return
+     * @return PropertiesLoader
      */
-    private static PropertiesLoader getExtension(String suffix) {
+    private PropertiesLoader getExtension(String suffix) {
         if (LOADER_CACHE.containsKey(suffix)) {
             return LOADER_CACHE.get(suffix);
         }
@@ -290,60 +343,33 @@ public class CfgOptions {
     }
 
     /**
-     * 处理Map占位符
-     *
-     * @param value
-     * @param propertiesPlaceholderFactory
-     * @return
-     */
-    private static Map doPlaceholderMapAnalyze(Map<Object, Object> value, PropertiesPlaceholderFactory propertiesPlaceholderFactory) {
-        Map result = new HashMap();
-        for (Map.Entry<Object, Object> entry : value.entrySet()) {
-            Object value1 = entry.getValue();
-            if (value1 instanceof List) {
-                value1 = doPlaceholderListAnalyze((List) value1, propertiesPlaceholderFactory);
-            } else if (value1 instanceof Map) {
-                value1 = doPlaceholderMapAnalyze((Map) value1, propertiesPlaceholderFactory);
-            } else {
-                value1 = propertiesPlaceholderFactory.placeholder(value1);
-            }
-
-            result.put(entry.getKey(), value1);
-        }
-
-        return result;
-    }
-
-    /**
-     * 处理List占位符
-     *
-     * @param value
-     * @return
-     */
-    private static List doPlaceholderListAnalyze(List value, PropertiesPlaceholderFactory propertiesPlaceholderFactory) {
-        List result = new ArrayList();
-        for (Object o : value) {
-            if (o instanceof List) {
-                result.add(doPlaceholderListAnalyze((List) o, propertiesPlaceholderFactory));
-            } else if (o instanceof Map) {
-                result.add(doPlaceholderMapAnalyze((Map) o, propertiesPlaceholderFactory));
-            } else {
-                result.add(propertiesPlaceholderFactory.placeholder(o));
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * 获取ConcurrentHashMap
      *
-     * @return
+     * @return ConcurrentHashMap
      */
     public ConcurrentHashMap<String, Object> toConcurrentHashMap() {
-        List<Properties> multimap = CACHE.get(getCacheKey(cfgConfig));
+        List<Properties> multimap = cache.get(getCacheKey(cfgConfig));
         Properties properties = FinderHelper.firstElement(multimap);
         return PropertiesHelper.toConcurrentHashMap(properties);
+    }
+
+    /**
+     * 获取Map
+     *
+     * @return Map
+     */
+    public Map<String, Properties> asMap() {
+        Map<String, Properties> result = new HashMap<>();
+        List<Properties> properties = toHashMultimap();
+        for (Properties property : properties) {
+            String key = property.getProperty(KEY_NAME);
+            Properties properties1 = new Properties();
+            properties1.putAll(property);
+            properties1.remove(key);
+            result.put(key, properties1);
+        }
+
+        return result;
     }
 
 

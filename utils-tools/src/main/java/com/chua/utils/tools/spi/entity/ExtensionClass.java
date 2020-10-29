@@ -1,6 +1,7 @@
 package com.chua.utils.tools.spi.entity;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.spi.Spi;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,6 +38,7 @@ public class ExtensionClass<T> {
      * 扩展接口实现类名
      */
     protected Class<? extends T> clazz;
+
     /**
      * 接口名称
      */
@@ -68,5 +70,19 @@ public class ExtensionClass<T> {
             }
         }
         return obj;
+    }
+
+
+
+    /**
+     * 转配Spi
+     * @param spi spi
+     */
+    public void assembleSpi(Spi spi) {
+        setInitial(false);
+        setName(spi.value());
+        setSingle(spi.single());
+        setOverrider(spi.override());
+        setOrder(spi.order());
     }
 }

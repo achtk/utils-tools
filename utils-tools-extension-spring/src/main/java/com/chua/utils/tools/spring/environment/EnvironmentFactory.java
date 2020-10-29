@@ -2,9 +2,9 @@ package com.chua.utils.tools.spring.environment;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.callback.FieldCallback;
-import com.chua.utils.tools.common.*;
-import com.chua.utils.tools.function.Matcher;
-import com.chua.utils.tools.spring.placeholder.PlaceholderResolver;
+import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.prop.placeholder.PropertyPlaceholder;
+import com.chua.utils.tools.spring.placeholder.SpringPropertyPlaceholder;
 import com.google.common.base.Strings;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.TypeConverter;
@@ -13,11 +13,11 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.*;
+import org.springframework.core.env.Environment;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Map;
 
 /**
  * 环境变量读取
@@ -29,7 +29,7 @@ import java.util.*;
 @NoArgsConstructor
 public class EnvironmentFactory {
 
-    private PlaceholderResolver placeholderResolver;
+    private PropertyPlaceholder placeholderResolver;
     protected BeanFactory beanFactory;
     private TypeConverter typeConverter;
     /**
@@ -47,18 +47,18 @@ public class EnvironmentFactory {
     public EnvironmentFactory(ApplicationContext applicationContext) {
         this.environment = null == applicationContext ? null : applicationContext.getEnvironment();
         this.beanFactory = null == applicationContext ? null : applicationContext.getAutowireCapableBeanFactory();
-        this.placeholderResolver = new PlaceholderResolver(environment);
+        this.placeholderResolver = new SpringPropertyPlaceholder(environment);
     }
 
     public EnvironmentFactory(ConfigurableListableBeanFactory beanFactory) {
         this.environment = null == beanFactory ? null : beanFactory.getBean(Environment.class);
         this.beanFactory = beanFactory;
-        this.placeholderResolver = new PlaceholderResolver(environment);
+        this.placeholderResolver = new SpringPropertyPlaceholder(environment);
     }
 
     public EnvironmentFactory(Environment environment) {
         this.environment = environment;
-        this.placeholderResolver = new PlaceholderResolver(environment);
+        this.placeholderResolver = new SpringPropertyPlaceholder(environment);
     }
 
     public EnvironmentFactory(BeanDefinitionRegistry beanDefinitionRegistry) {
@@ -66,7 +66,7 @@ public class EnvironmentFactory {
             this.beanFactory = ((DefaultListableBeanFactory) beanDefinitionRegistry);
             this.environment = beanFactory.getBean(Environment.class);
             this.typeConverter = ((DefaultListableBeanFactory) beanDefinitionRegistry).getTypeConverter();
-            this.placeholderResolver = new PlaceholderResolver(environment);
+            this.placeholderResolver = new SpringPropertyPlaceholder(environment);
         }
     }
 
@@ -253,11 +253,11 @@ public class EnvironmentFactory {
      */
     public Object tryGetProperty(String name) {
         if(environment.containsProperty(name)) {
-            return placeholderResolver.resolvePlaceholders(environment.getProperty(name));
+            return placeholderResolver.placeholder(environment.getProperty(name));
         }
         String newName = StringHelper.humpToLine2(name, "-");
         if(environment.containsProperty(newName)) {
-            return placeholderResolver.resolvePlaceholders(environment.getProperty(newName));
+            return placeholderResolver.placeholder(environment.getProperty(newName));
         }
         return null;
     }
@@ -271,12 +271,12 @@ public class EnvironmentFactory {
      */
     public String tryGetStringProperty(String name) {
         if(environment.containsProperty(name)) {
-            Object o = placeholderResolver.resolvePlaceholders(environment.getProperty(name));
+            Object o = placeholderResolver.placeholder(environment.getProperty(name));
             return o instanceof String ? o.toString() : "";
         }
         String newName = StringHelper.humpToLine2(name, "-");
         if(environment.containsProperty(newName)) {
-            Object o = placeholderResolver.resolvePlaceholders(environment.getProperty(newName));
+            Object o = placeholderResolver.placeholder(environment.getProperty(newName));
             return o instanceof String ? o.toString() : "";
         }
         return "";

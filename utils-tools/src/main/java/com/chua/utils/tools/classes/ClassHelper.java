@@ -374,6 +374,60 @@ public class ClassHelper extends ReflectionsHelper {
 
     /**
      * 实例化类
+     *
+     * @param className      类名
+     * @param parameterTypes 构造参数
+     * @return
+     */
+    public static <T> T forConstructor(String className, Object... parameterTypes) {
+        Class<?> aClass = forName(className);
+        try {
+            Constructor constructor = null;
+            Constructor<?>[] declaredConstructors = aClass.getDeclaredConstructors();
+            for (Constructor<?> declaredConstructor : declaredConstructors) {
+                Class<?>[] parameterTypes1 = declaredConstructor.getParameterTypes();
+                if(parameterTypes1.length != parameterTypes.length) {
+                    continue;
+                }
+                boolean isSimilar = true;
+                for (int i = 0; i < parameterTypes1.length; i++) {
+                    Class<?> aClass1 = parameterTypes1[i];
+                    if(!aClass1.isAssignableFrom(parameterTypes[i].getClass())) {
+                        isSimilar = false;
+                        break;
+                    }
+                }
+                
+                if(isSimilar) {
+                    constructor = declaredConstructor;
+                }
+            }
+            if(null == constructor) {
+                return null;
+            }
+            constructor.setAccessible(true);
+            return (T) constructor.newInstance(parameterTypes);
+        } catch (Throwable e) {
+            return null;
+        }
+    }
+
+    /**
+     * 实例化类
+     *
+     * @param className      类名
+     * @param parameterTypes 构造参数
+     * @return
+     */
+    public static <T> T forConstructor(Class<?> className, Object... parameterTypes) {
+        if(null == className) {
+            return null;
+        }
+        return forConstructor(className.getName(), parameterTypes);
+    }
+
+    /**
+     * 实例化类
      * <p>
      * <p>类加载过程:</p>
      * <p>1、首次尝试对类实例化<code>newInstance</code></p>

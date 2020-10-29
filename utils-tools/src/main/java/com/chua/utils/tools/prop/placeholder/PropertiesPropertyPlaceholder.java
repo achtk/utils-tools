@@ -81,6 +81,9 @@ public class PropertiesPropertyPlaceholder implements PropertyPlaceholder {
      * @return
      */
     protected Object analysePlaceholder(String stringValue) {
+        if (!isPlaceholder(stringValue)) {
+            return stringValue;
+        }
         PlaceholderSource placeholderSource = getPlaceholderSource(stringValue);
 
         Object o = get(placeholderSource.getNewKey());
@@ -101,6 +104,11 @@ public class PropertiesPropertyPlaceholder implements PropertyPlaceholder {
      */
     protected PlaceholderSource getPlaceholderSource(String stringValue) {
         PlaceholderSource placeholderSource = new PlaceholderSource();
+        if (!isPlaceholder(stringValue)) {
+            placeholderSource.setNewKey(stringValue);
+            return placeholderSource;
+        }
+        placeholderSource.setPlaceholder(true);
         Matcher matcher = pattern().matcher(stringValue);
         //开始匹配
         matcher.find();
@@ -159,5 +167,6 @@ public class PropertiesPropertyPlaceholder implements PropertyPlaceholder {
     protected static class PlaceholderSource {
         private String newKey;
         private String defaultValue;
+        private boolean isPlaceholder;
     }
 }

@@ -22,13 +22,21 @@ import java.util.function.Consumer;
  * @version 1.0.0
  * @since 2020/10/22
  */
-@AllArgsConstructor
 public class ResourceClassPathScanningProvider {
 
     private ClassPathScanningCandidateComponentProvider classPathScanningCandidateComponentProvider;
 
+    public ResourceClassPathScanningProvider(ClassPathScanningCandidateComponentProvider classPathScanningCandidateComponentProvider) {
+        this.classPathScanningCandidateComponentProvider = classPathScanningCandidateComponentProvider;
+        this.setEnvironment(classPathScanningCandidateComponentProvider.getEnvironment());
+    }
+
     public ResourceClassPathScanningProvider(ResourceLoader resourceLoader, Set<TypeFilter> includeFilter) {
         this(resourceLoader, includeFilter, Collections.emptySet());
+    }
+
+    public ResourceClassPathScanningProvider(ResourceLoader resourceLoader) {
+        this(resourceLoader, Collections.emptySet(), Collections.emptySet());
     }
 
     public ResourceClassPathScanningProvider(ResourceLoader resourceLoader, Set<TypeFilter> includeFilter, Set<TypeFilter> excludeFilter) {
@@ -41,6 +49,30 @@ public class ResourceClassPathScanningProvider {
             classPathScanningCandidateComponentProvider.addExcludeFilter(typeFilter);
         }
         this.classPathScanningCandidateComponentProvider = classPathScanningCandidateComponentProvider;
+    }
+
+    /**
+     * 添加过滤方式
+     *
+     * @param typeFilter
+     */
+    public void addIncludeFilter(TypeFilter typeFilter) {
+        if (null == typeFilter) {
+            return;
+        }
+        classPathScanningCandidateComponentProvider.addIncludeFilter(typeFilter);
+    }
+
+    /**
+     * 添加过滤方式
+     *
+     * @param typeFilter
+     */
+    public void addExcludeFilter(TypeFilter typeFilter) {
+        if (null == typeFilter) {
+            return;
+        }
+        classPathScanningCandidateComponentProvider.addExcludeFilter(typeFilter);
     }
 
     /**

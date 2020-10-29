@@ -2,11 +2,15 @@ package com.chua.utils.tools.spring.definition;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.FinderHelper;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.*;
 
+import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
@@ -158,10 +162,10 @@ public class SimpleBeanDefinitionFactory<T> implements BeanDefinitionFactory<T> 
     public void register(String beanName, boolean ignore) {
         AbstractBeanDefinition definition = this.beanDefinitionBuilder.getBeanDefinition();
 
-        if(ignore && !primary) {
+        if (ignore && !primary) {
             String newName = null == beanName ? tClass.getCanonicalName() : beanName;
             Map<String, ?> ofType = defaultListableBeanFactory.getBeansOfType(tClass);
-            if(BooleanHelper.hasLength(ofType)) {
+            if (BooleanHelper.hasLength(ofType)) {
                 log.warn("The current bean [{}] already exists, and [primary] is not configured, start to ignore registration", newName);
                 log.warn("该类型[{}]已被{}注册", tClass.getName(), ofType.values());
                 return;
@@ -172,14 +176,15 @@ public class SimpleBeanDefinitionFactory<T> implements BeanDefinitionFactory<T> 
             beanName = uniqueBeanName(beanName);
         }
 
-        if(BooleanHelper.hasLength(cacheMap)) {
+        if (BooleanHelper.hasLength(cacheMap)) {
             addFirstPropertyValues(cacheMap);
         }
 
-        if(BooleanHelper.hasLength(lastCacheMap)) {
+        if (BooleanHelper.hasLength(lastCacheMap)) {
             addFirstPropertyValues(lastCacheMap);
         }
 
+        resolveDependence(tClass);
         BeanDefinitionHolder beanDefinitionHolder = null;
         if (BooleanHelper.hasLength(aliases)) {
             beanDefinitionHolder = new BeanDefinitionHolder(definition, beanName, aliases);
@@ -187,6 +192,22 @@ public class SimpleBeanDefinitionFactory<T> implements BeanDefinitionFactory<T> 
             beanDefinitionHolder = new BeanDefinitionHolder(definition, beanName);
         }
         BeanDefinitionReaderUtils.registerBeanDefinition(beanDefinitionHolder, beanDefinitionRegistry);
+    }
+
+    @Override
+    public void resolveType(Field field, Class<?> type) {
+        Map<String, ?> type1 = defaultListableBeanFactory.getBeansOfType(type);
+        if (BooleanHelper.hasLength(type1) && type1.size() == 1) {
+            addFirstPropertyValue(field.getName(), FinderHelper.firstElement(type1.values()));
+        }
+    }
+
+    @Override
+    public void resolveName(Field field, String name) {
+        Map<String, ?> type1 = defaultListableBeanFactory.getBeansOfType(field.getType());
+        if (BooleanHelper.hasLength(type1) && type1.containsKey(name)) {
+            addFirstPropertyValue(field.getName(), type1.get(name));
+        }
     }
 
     /**

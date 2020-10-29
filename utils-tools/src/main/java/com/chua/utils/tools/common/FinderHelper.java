@@ -182,6 +182,24 @@ public class FinderHelper {
         }
         return firstElement(source);
     }
+
+    /**
+     * 有且只有一个元素时获取
+     * <p>
+     * getIfOnlyElement([e1, e2, e3]) = null
+     * getIfOnlyElement([e1]) = e1
+     * getIfOnlyElement(null) = null
+     * </p>
+     *
+     * @param source 数据源
+     * @return
+     */
+    public static <K, V> V getIfOnlyElement(final Map<K, V> source)  {
+        if (!BooleanHelper.hasLength(source) || source.size() != 1) {
+            throw new NonUniqueException();
+        }
+        return firstElement(source.values());
+    }
     /**
      * 有且只有一个元素时获取
      * <p>

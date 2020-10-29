@@ -3,10 +3,14 @@ package com.chua.utils.tools.classes.reflections;
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
 import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.classes.ClassExtensionHelper;
-import com.chua.utils.tools.common.ArraysHelper;
-import com.chua.utils.tools.common.CollectionHelper;
+import com.chua.utils.tools.common.*;
+import com.chua.utils.tools.common.skip.SkipPatterns;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.reflections.scanners.*;
+import org.reflections.scanners.Scanner;
 import org.reflections.util.ConfigurationBuilder;
 import sun.misc.SharedSecrets;
 import sun.misc.URLClassPath;
@@ -14,11 +18,13 @@ import sun.misc.URLClassPath;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.Consumer;
+import java.util.function.IntFunction;
 
 /**
  * Reflections工具
@@ -126,7 +132,57 @@ public class ReflectionsHelper extends ClassExtensionHelper {
             return ArraysHelper.emptyArray(URL.class);
         }
         URLClassPath urlClassPath = SharedSecrets.getJavaNetAccess().getURLClassPath((URLClassLoader) classLoader);
-        return urlClassPath.getURLs();
+        URL[] urls = urlClassPath.getURLs();
+        if(BooleanHelper.hasLength(urls)) {
+            return urls;
+        }
+        return Arrays.stream(System.getProperty("java.class.path").split(";")).map(new Function<String, URL>() {
+            @Override
+            public @Nullable URL apply(@Nullable String input) {
+                try {
+                    return new URL(input);
+                } catch (MalformedURLException e) {
+                    return null;
+                }
+            }
+        }).filter(new Predicate<URL>() {
+            @Override
+            public boolean apply(@Nullable URL input) {
+                return null != input;
+            }
+        }).toArray(new IntFunction<URL[]>() {
+            @Override
+            public URL[] apply(int value) {
+                return new URL[0];
+            }
+        });
+    }
+    /**
+     * 获取类加载器下的URL非JDK
+     * @param classLoader 类加载器
+     * @return
+     */
+    public static URL[] getUrlsByClassLoaderExcludeJDK(ClassLoader classLoader) {
+        URL[] urlsByClassLoader = getUrlsByClassLoader(classLoader);
+        List<URL> cache = new ArrayList<>(urlsByClassLoader.length);
+        Arrays.stream(urlsByClassLoader).parallel().forEach(new Consumer<URL>() {
+            @Override
+            public void accept(URL url) {
+                String form = url.toExternalForm();
+                for (String item : SkipPatterns.DEFAULT) {
+                    if(StringHelper.wildcardMatch(FileHelper.getName(form), item)) {
+                        return;
+                    }
+                }
+                for (String item : SkipPatterns.JDK_LIB) {
+                    if(StringHelper.wildcardMatch(FileHelper.getName(form), item)) {
+                        return;
+                    }
+                }
+                cache.add(url);
+            }
+        });
+        return cache.toArray(new URL[0]);
     }
     /**
      * 创建ConfigurationBuilder

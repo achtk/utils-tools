@@ -2,14 +2,20 @@ package com.chua.utils.tools.classes.reflections;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BeansHelper;
+import lombok.Getter;
 import org.reflections.*;
 import org.reflections.scanners.Scanner;
 import org.reflections.scanners.SubTypesScanner;
+import org.reflections.vfs.Vfs;
 
-import java.util.Collections;
-import java.util.Set;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static org.reflections.util.Utils.index;
@@ -25,10 +31,12 @@ public class ReflectionsFactory extends Reflections {
 
     private transient Configuration configuration;
     private static StoreFactory STORE = new StoreFactory();
+    @Getter
+    private Map<String, Throwable> throwableMap = new HashMap<>();
 
     public ReflectionsFactory(Configuration configuration) {
-        this.configuration = configuration;
         super.store = STORE;
+        this.configuration = configuration;
         this.scanUrl();
     }
 
@@ -45,8 +53,7 @@ public class ReflectionsFactory extends Reflections {
                 longAdder.increment();
             }
             if (longAdder.intValue() != 0) {
-                BeansHelper.copierIfEffective(configuration, super.configuration);
-                super.scan();
+                this.scan();
                 if (configuration.shouldExpandSuperTypes()) {
                     expandSuperTypes();
                 }
@@ -78,6 +85,108 @@ public class ReflectionsFactory extends Reflections {
                 }
                 expandSupertypes(store, supertype.getName(), supertype);
             }
+        }
+    }
+
+    @Override
+    protected void scan() {
+        if (configuration.getUrls() == null || configuration.getUrls().isEmpty()) {
+            if (log != null) {
+                log.warn("given scan urls are empty. set urls in the configuration");
+            }
+            return;
+        }
+
+        if (log != null && log.isDebugEnabled()) {
+            log.debug("going to scan these urls: {}", configuration.getUrls());
+        }
+
+        long time = System.currentTimeMillis();
+        int scannedUrls = 0;
+        ExecutorService executorService = configuration.getExecutorService();
+        List<Future<?>> futures = new ArrayList<>();
+
+        for (final URL url : configuration.getUrls()) {
+            try {
+                if (executorService != null) {
+                    futures.add(executorService.submit(() -> {
+                        if (log != null) {
+                            log.debug("[{}] scanning {}", Thread.currentThread().toString(), url);
+                        }
+                        scan(url);
+                    }));
+                } else {
+                    scan(url);
+                }
+                scannedUrls++;
+            } catch (ReflectionsException e) {
+                if (log != null) {
+                    log.warn("could not create Vfs.Dir from url. ignoring the exception and continuing", e);
+                }
+            }
+        }
+
+        //todo use CompletionService
+        if (executorService != null) {
+            for (Future future : futures) {
+                try {
+                    future.get();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        //gracefully shutdown the parallel scanner executor service.
+        if (executorService != null) {
+            executorService.shutdown();
+        }
+
+        if (log != null) {
+            log.info(format("ReflectionsFactory took %d ms to scan %d urls, producing %s %s",
+                    System.currentTimeMillis() - time, scannedUrls, producingDescription(store),
+                    executorService instanceof ThreadPoolExecutor ?
+                            format("[using %d cores]", ((ThreadPoolExecutor) executorService).getMaximumPoolSize()) : ""));
+        }
+    }
+
+    private static String producingDescription(Store store) {
+        int keys = 0;
+        int values = 0;
+        for (String index : store.keySet()) {
+            keys += store.keys(index).size();
+            values += store.values(index).size();
+        }
+        return String.format("%d keys and %d values", keys, values);
+    }
+
+    @Override
+    protected void scan(URL url) {
+        Vfs.Dir dir = Vfs.fromURL(url);
+
+        try {
+            for (final Vfs.File file : dir.getFiles()) {
+                // scan if inputs filter accepts file relative path or fqn
+                Predicate<String> inputsFilter = configuration.getInputsFilter();
+                String path = file.getRelativePath();
+                String fqn = path.replace('/', '.');
+                if (inputsFilter == null || inputsFilter.test(path) || inputsFilter.test(fqn)) {
+                    Object classObject = null;
+                    for (Scanner scanner : configuration.getScanners()) {
+                        try {
+                            if (scanner.acceptsInput(path) || scanner.acceptsInput(fqn)) {
+                                classObject = scanner.scan(file, classObject, store);
+                            }
+                        } catch (Exception e) {
+                            if (log != null) {
+                                throwableMap.put(file.getRelativePath(), e);
+                            }
+                        }
+                    }
+                }
+            }
+        } finally {
+            dir.close();
         }
     }
 }
