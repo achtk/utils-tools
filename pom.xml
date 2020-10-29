@@ -93,6 +93,7 @@
 
         <lucene.version>8.6.3</lucene.version>
         <kitdb.version>0.2.6</kitdb.version>
+        <db4o.version>7.7.67</db4o.version>
 
         <leveldb.version>0.12</leveldb.version>
         <mapdb.version>3.0.8</mapdb.version>
@@ -229,15 +230,15 @@
         <module>utils-netx-extension-rpc-dubbo</module>
         <module>utils-netx-extension-rpc-sofa</module>
         <module>utils-netx-extension-mongodb</module>
+        <module>utils-netx-extension-lucene</module>
+        <module>utils-netx-extension-kitdb</module>
+        <module>utils-netx-extension-db4o</module>
         <module>utils-spider</module>
         <module>utils-netx-extension-vertx</module>
         <module>utils-netx-extension-datasource</module>
         <module>utils-netx-extension-datasource-sqlite</module>
         <module>utils-netx-extension-datasource-hsqldb</module>
         <module>utils-netx-extension-datasource-h2</module>
-        <module>utils-netx-extension-lucene</module>
-        <module>utils-netx-extension-datasource-mariadb4j</module>
-        <module>utils-netx-extension-kitdb</module>
     </modules>
 
     <build>
