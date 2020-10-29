@@ -38,7 +38,7 @@ public class Db4oContext implements AutoCloseable {
      */
     public void set(Object obj) {
         try {
-            this.objectContainer.set(obj);
+            this.objectContainer.store(obj);
         } catch (Exception e) {
             e.printStackTrace();
             objectContainer.rollback();
@@ -52,7 +52,7 @@ public class Db4oContext implements AutoCloseable {
      */
     public void delete(Object obj) {
         try {
-            ObjectSet objectSet = objectContainer.get(obj);
+            ObjectSet objectSet = objectContainer.queryByExample(obj);
             Object next = objectSet.next();
             objectContainer.delete(next);
         } catch (Exception e) {
@@ -69,7 +69,7 @@ public class Db4oContext implements AutoCloseable {
      */
     public List<Object> query(Object obj) throws Exception {
         List<Object> result = new ArrayList<>();
-        ObjectSet<Object> objects = objectContainer.get(obj);
+        ObjectSet<Object> objects = objectContainer.queryByExample(obj);
         result.addAll(objects);
         return result;
     }
