@@ -11,9 +11,9 @@ public interface Converter<I, O> {
     /**
      * 转化
      *
-     * @param value 值
-     * @param type
-     * @return o
+     * @param value  值
+     * @param tClass 类型
+     * @return O
      */
-    O convert(I value, Class<?> type);
+    O convert(I value, Class<? extends O> tClass);
 }

@@ -2,6 +2,9 @@ package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.callback.FieldCallback;
+import com.chua.utils.tools.function.Converter;
+import com.chua.utils.tools.function.converter.TypeConverter;
+import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.google.common.base.Preconditions;
 import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
@@ -9,6 +12,8 @@ import net.sf.cglib.beans.BeanMap;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -18,19 +23,58 @@ import java.util.function.BiFunction;
  */
 public class BeansHelper {
 
+    private static final ConcurrentMap<Class, TypeConverter> CLASS_TYPE_CONVERTER_CONCURRENT_MAP = new ConcurrentHashMap<Class, TypeConverter>() {
+        {
+            Set<TypeConverter> allSpiService = ExtensionFactory.getExtensionLoader(TypeConverter.class).getAllSpiService();
+            for (TypeConverter typeConverter : allSpiService) {
+                put(typeConverter.getType(), typeConverter);
+            }
+        }
+    };
+
     /**
      * 实体对象赋值
      *
      * @param entity 对象
      * @param params 值
-     * @param =<T>
+     * @param <T>
      * @return
      */
-    public static <T> T setProperty(final T entity, final Map<String, Object> params) {
-        Preconditions.checkArgument(!BooleanHelper.isEmpty(params));
-        BeanMap beanMap = BeanMap.create(entity);
-        beanMap.putAll(params);
-        return (T) beanMap.getBean();
+    public static void reflectionAssignment(final Object entity, final Map<String, Object> params) {
+        ClassHelper.doWithLocalFields(entity.getClass(), new FieldCallback() {
+            @Override
+            public void doWith(Field item) throws Throwable {
+                String name = item.getName();
+                if (!params.containsKey(name)) {
+                    return;
+                }
+                Object value = params.get(name);
+                if (null == value) {
+                    return;
+                }
+                Class<?> type = item.getType();
+                TypeConverter typeConverter = CLASS_TYPE_CONVERTER_CONCURRENT_MAP.get(type);
+                ClassHelper.makeAccessible(item);
+                if (null == typeConverter) {
+                    try {
+                        item.set(entity, value);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                    return;
+                }
+                Object convert = typeConverter.convert(value);
+                if (null == convert) {
+                    return;
+                }
+                try {
+                    item.set(entity, convert);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+        });
     }
 
     /**
@@ -71,21 +115,21 @@ public class BeansHelper {
                     return;
                 }
                 toBeanMap.put(o, o2);
-                if(toBeanMap.get(o) != o2) {
+                if (toBeanMap.get(o) != o2) {
                     fail.set(true);
                 }
             }
         });
-        if(fail.get()) {
+        if (fail.get()) {
             ClassHelper.doWithFields(to.getClass(), new FieldCallback() {
                 @Override
                 public void doWith(Field item) throws Throwable {
-                    if(!fromBeanMap.containsKey(item.getName())) {
+                    if (!fromBeanMap.containsKey(item.getName())) {
                         return;
                     }
                     Class<?> type = item.getType();
                     Object o = fromBeanMap.get(item.getName());
-                    if(!type.isAssignableFrom(o.getClass())) {
+                    if (!type.isAssignableFrom(o.getClass())) {
                         return;
                     }
                     ClassHelper.makeAccessible(item);
@@ -95,6 +139,7 @@ public class BeansHelper {
         }
         return (E1) toBeanMap.getBean();
     }
+
     /**
      * 实体对象复制
      *
@@ -116,6 +161,7 @@ public class BeansHelper {
         });
         return (E1) toBeanMap.getBean();
     }
+
     /**
      * 实体对象复制
      *
@@ -137,6 +183,7 @@ public class BeansHelper {
         }
         return null;
     }
+
     /**
      * 实体对象复制
      *
@@ -150,6 +197,7 @@ public class BeansHelper {
         beanMap.putAll(params);
         return (T) beanMap.getBean();
     }
+
     /**
      * 实体对象复制
      *
@@ -271,6 +319,20 @@ public class BeansHelper {
 
         BeanMap beanMap = BeanMap.create(object);
         beanMap.putAll(properties);
+        return (T) beanMap.getBean();
+    }
+
+    /**
+     * 集合转对象
+     *
+     * @param t      类
+     * @param source 数据
+     * @param <T>
+     * @return
+     */
+    public static <T> T setProperty(T t, Map<String, Object> source) {
+        BeanMap beanMap = BeanMap.create(t);
+        beanMap.putAll(source);
         return (T) beanMap.getBean();
     }
 

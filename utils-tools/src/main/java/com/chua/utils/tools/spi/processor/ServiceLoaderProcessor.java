@@ -1,25 +1,22 @@
 package com.chua.utils.tools.spi.processor;
 
-import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.spi.entity.ExtensionClass;
 import com.chua.utils.tools.spi.entity.SpiConfig;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import java.util.Iterator;
-import java.util.ServiceLoader;
+import java.util.*;
 
 /**
- * 使用原生spi实现扩展
+ * JDK原生spi实现扩展
+ *
  * @author CH
  * @version 1.0.0
- * @since 2020/6/3 15:23
- *
- * @see ServiceLoader
+ * @since 2020/10/30
  */
-public class ServiceLoaderProcessor<T> implements IExtensionProcessor<T> {
+public class ServiceLoaderProcessor<T> extends SimpleExtensionProcessor<T> {
 
-    private ClassLoader classLoader;
+    private static Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
 
     @Override
     public void init(SpiConfig spiConfig) {
@@ -27,34 +24,33 @@ public class ServiceLoaderProcessor<T> implements IExtensionProcessor<T> {
     }
 
     @Override
-    public Multimap<String, ExtensionClass<T>> analyze(Class<T> service, ClassLoader classLoader) {
-        if(null == service) {
-            return null;
+    public Collection<ExtensionClass<?>> analyze(Class<T> service, ClassLoader classLoader) {
+        if (CACHE.containsKey(service.getName())) {
+            return CACHE.get(service.getName());
         }
+        this.setClassLoader(classLoader);
+        this.setInterfaceClass(service);
 
-        Multimap<String, ExtensionClass<T>> result = MapHelper.newHashMultimap();
-        this.classLoader = null == classLoader ? ClassHelper.getDefaultClassLoader() : classLoader;
-
-        ServiceLoader<T> serviceLoader = ServiceLoader.load(service, this.classLoader);
-        if(null != serviceLoader) {
-            Iterator<T> iterator = serviceLoader.iterator();
+        List<ExtensionClass<?>> result = new ArrayList<>();
+        ServiceLoader<T> serviceLoader = ServiceLoader.load(service, getClassLoader());
+        if (null != serviceLoader) {
             for (T t : serviceLoader) {
-                ExtensionClass<T> extensionClass = new ExtensionClass<>();
-                extensionClass.setClazz(service);
-                //解析@Spi注解
-                analysisSpi(t, extensionClass);
-                //单例模式直接实例化
-                if(extensionClass.isSingle()) {
-                    extensionClass.setObj(t);
-                }
-                //赋值
-                result.put(extensionClass.getName(), extensionClass);
+                result.addAll(buildExtensionClassByObject(t));
             }
         }
+        CACHE.putAll(service.getName(), result);
         return result;
     }
 
     @Override
-    public void refresh() {
+    public void removeAll() {
+        CACHE.clear();
     }
+
+    @Override
+    public void remove(Class<T> tClass) {
+        CACHE.removeAll(tClass.getName());
+    }
+
+
 }

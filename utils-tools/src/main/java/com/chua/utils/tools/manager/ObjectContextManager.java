@@ -3,12 +3,11 @@ package com.chua.utils.tools.manager;
 import com.chua.utils.tools.classes.reflections.ReflectionsFactory;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
-import com.chua.utils.tools.spi.processor.IExtensionProcessor;
+import com.chua.utils.tools.spi.processor.ExtensionProcessor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -92,7 +91,7 @@ public interface ObjectContextManager {
      * @param <T>                T
      * @return T
      */
-    <T> T getSpiSubOfType(String spiName, Class<T> tClass, IExtensionProcessor extensionProcessor);
+    <T> T getSpiSubOfType(String spiName, Class<T> tClass, ExtensionProcessor extensionProcessor);
 
     /**
      * 通过spi方式类型查找子类

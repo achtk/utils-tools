@@ -3148,4 +3148,13 @@ public class StringHelper {
         String afterDelimiter = getAfterDelimiter(source, firstDelimiter);
         return getBeforeDelimiter(afterDelimiter, lastDelimiter);
     }
+
+    /**
+     * 逗号分隔列表到字符串数组
+     * @param str 字符串
+     * @return String[]
+     */
+    public static String[] commaDelimitedListToStringArray(String str) {
+        return delimitedListToStringArray(str, ",");
+    }
 }

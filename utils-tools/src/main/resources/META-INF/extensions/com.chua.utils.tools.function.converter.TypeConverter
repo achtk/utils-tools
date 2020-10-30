@@ -1,0 +1,6 @@
+long-type=com.chua.utils.tools.function.converter.LongTypeConverter
+integer-type=com.chua.utils.tools.function.converter.IntegerTypeConverter
+short-type=com.chua.utils.tools.function.converter.ShortTypeConverter
+byte-type=com.chua.utils.tools.function.converter.ByteTypeConverter
+float-type=com.chua.utils.tools.function.converter.FloatTypeConverter
+double-type=com.chua.utils.tools.function.converter.DoubleTypeConverter

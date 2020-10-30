@@ -55,5 +55,12 @@
             <artifactId>utils-tools</artifactId>
             <version>1.0</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-netx</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

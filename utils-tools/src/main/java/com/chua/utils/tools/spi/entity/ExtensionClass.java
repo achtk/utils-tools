@@ -7,6 +7,7 @@ import lombok.Setter;
 
 /**
  * Spi扩展器
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/6/3 15:16
@@ -27,17 +28,13 @@ public class ExtensionClass<T> {
      */
     private boolean single;
     /**
-     * 是否覆盖其它低{@link #order}的同名扩展
-     */
-    private boolean overrider;
-    /**
      * 类加载器
      */
     private ClassLoader classLoader;
     /**
      * 扩展接口实现类名
      */
-    protected Class<? extends T> clazz;
+    protected Class<?> implClass;
 
     /**
      * 接口名称
@@ -45,44 +42,9 @@ public class ExtensionClass<T> {
     private String interfaceName;
     /**
      * 实体对象
+     *
      * @see #single
      */
     private T obj;
-    /**
-     * 是否初始化
-     */
-    private boolean isInitial = false;
-    /**
-     *
-     * @return
-     */
-    public T getObj() {
-        if(!single) {
-            return null == clazz ? null : ClassHelper.forObject(clazz, classLoader);
-        } else {
-            if(null != obj) {
-                return obj;
-            } else {
-                if(!isInitial) {
-                    this.obj = null == clazz ? null : ClassHelper.forObject(clazz, classLoader);
-                    isInitial = true;
-                }
-            }
-        }
-        return obj;
-    }
 
-
-
-    /**
-     * 转配Spi
-     * @param spi spi
-     */
-    public void assembleSpi(Spi spi) {
-        setInitial(false);
-        setName(spi.value());
-        setSingle(spi.single());
-        setOverrider(spi.override());
-        setOrder(spi.order());
-    }
 }

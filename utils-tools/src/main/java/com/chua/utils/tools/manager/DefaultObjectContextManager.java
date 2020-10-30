@@ -9,7 +9,7 @@ import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
-import com.chua.utils.tools.spi.processor.IExtensionProcessor;
+import com.chua.utils.tools.spi.processor.ExtensionProcessor;
 import com.chua.utils.tools.strategy.helper.StrategyHelper;
 import org.reflections.scanners.*;
 import org.reflections.util.ConfigurationBuilder;
@@ -105,7 +105,7 @@ public class DefaultObjectContextManager implements Runnable, ObjectContextManag
     }
 
     @Override
-    public <T> T getSpiSubOfType(String spiName, Class<T> tClass, IExtensionProcessor extensionProcessor) {
+    public <T> T getSpiSubOfType(String spiName, Class<T> tClass, ExtensionProcessor extensionProcessor) {
         return ExtensionFactory.getExtensionLoader(tClass, extensionProcessor).getExtension(spiName);
     }
 

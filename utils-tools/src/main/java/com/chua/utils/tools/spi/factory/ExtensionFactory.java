@@ -2,7 +2,7 @@ package com.chua.utils.tools.spi.factory;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.spi.extension.ExtensionLoader;
-import com.chua.utils.tools.spi.processor.IExtensionProcessor;
+import com.chua.utils.tools.spi.processor.ExtensionProcessor;
 import com.google.common.base.Strings;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,25 +35,27 @@ public class ExtensionFactory {
 
     /**
      * 获取扩展类
+     *
      * @param <T>
      * @param className 类名
      * @return
      */
-    public static synchronized <T>T getExtensionLoader(final String className, final String extensionName, final ClassLoader... classLoaders) {
-        if(Strings.isNullOrEmpty(className)) {
+    public static synchronized <T> T getExtensionLoader(final String className, final String extensionName, final ClassLoader... classLoaders) {
+        if (Strings.isNullOrEmpty(className)) {
             return null;
         }
         Class<?> aClass = ClassHelper.forName(className, classLoaders);
-        if(null == aClass) {
+        if (null == aClass) {
             return null;
         }
         ExtensionLoader<?> extensionLoader = getExtensionLoader(aClass);
-        if(null == extensionLoader) {
+        if (null == extensionLoader) {
             return null;
         }
         Object spiService = extensionLoader.getSpiService(extensionName);
         return null == spiService ? ClassHelper.forObject(className, classLoaders) : (T) spiService;
     }
+
     /**
      * 获取扩展加载器
      *
@@ -92,12 +94,13 @@ public class ExtensionFactory {
      * @param extensionProcessor 扩展器
      * @param <T>
      * @return
-     * @see com.chua.utils.tools.spi.processor.FastResourceProcessor
-     * @see com.chua.utils.tools.spi.processor.ExtensionProcessor
-     * @see com.chua.utils.tools.spi.processor.MetaDataProcessor
+     * @see com.chua.utils.tools.spi.processor.ReflectionExtensionProcessor
+     * @see com.chua.utils.tools.spi.processor.CustomExtensionProcessor
+     * @see com.chua.utils.tools.spi.processor.JsonExtensionProcessor
+     * @see com.chua.utils.tools.spi.processor.FactoriesExtensionProcessor
      * @see com.chua.utils.tools.spi.processor.ServiceLoaderProcessor
      */
-    public static synchronized <T> ExtensionLoader<T> getExtensionLoader(Class<T> clazz, final IExtensionProcessor extensionProcessor) {
+    public static synchronized <T> ExtensionLoader<T> getExtensionLoader(Class<T> clazz, final ExtensionProcessor extensionProcessor) {
         ExtensionLoader<T> loader = LOADER_MAP.get(clazz);
         if (null == loader) {
             loader = new ExtensionLoader<>(clazz, extensionProcessor);
@@ -140,12 +143,13 @@ public class ExtensionFactory {
      * @param extensionProcessor 扩展器
      * @param <T>
      * @return
-     * @see com.chua.utils.tools.spi.processor.FastResourceProcessor
-     * @see com.chua.utils.tools.spi.processor.MetaDataProcessor
-     * @see com.chua.utils.tools.spi.processor.ExtensionProcessor
+     * @see com.chua.utils.tools.spi.processor.ReflectionExtensionProcessor
+     * @see com.chua.utils.tools.spi.processor.CustomExtensionProcessor
+     * @see com.chua.utils.tools.spi.processor.JsonExtensionProcessor
+     * @see com.chua.utils.tools.spi.processor.FactoriesExtensionProcessor
      * @see com.chua.utils.tools.spi.processor.ServiceLoaderProcessor
      */
-    public static synchronized <T> ExtensionLoader<T> getRefreshExtensionLoader(Class<T> clazz, final IExtensionProcessor extensionProcessor) {
+    public static synchronized <T> ExtensionLoader<T> getRefreshExtensionLoader(Class<T> clazz, final ExtensionProcessor extensionProcessor) {
         remove(clazz);
         return getExtensionLoader(clazz, extensionProcessor);
     }
