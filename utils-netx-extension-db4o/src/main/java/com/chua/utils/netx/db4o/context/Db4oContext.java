@@ -5,8 +5,8 @@ import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.tools.properties.NetxProperties;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
+import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -19,9 +19,10 @@ import java.util.function.Predicate;
  */
 public class Db4oContext implements AutoCloseable {
 
+    @Getter
     private final ObjectContainer objectContainer;
-    private NetxProperties netxProperties;
-    private INetxFactory<ObjectContainer> netxFactory;
+    private final NetxProperties netxProperties;
+    private final INetxFactory<ObjectContainer> netxFactory;
 
     public Db4oContext(NetxProperties netxProperties) {
         this.netxProperties = netxProperties;
@@ -30,7 +31,6 @@ public class Db4oContext implements AutoCloseable {
         this.netxFactory.start();
 
     }
-
     /**
      * 保存数据
      *
@@ -65,20 +65,17 @@ public class Db4oContext implements AutoCloseable {
      * 查询数据
      *
      * @param obj 数据
-     * @return
+     * @return List
      */
     public List<Object> query(Object obj) throws Exception {
-        List<Object> result = new ArrayList<>();
-        ObjectSet<Object> objects = objectContainer.queryByExample(obj);
-        result.addAll(objects);
-        return result;
+        return objectContainer.queryByExample(obj);
     }
 
     /**
      * 查询数据
      *
      * @param predicate 数据
-     * @return
+     * @return List
      */
     public <T> List<T> query(Predicate<T> predicate) throws Exception {
         return objectContainer.query(new com.db4o.query.Predicate<T>() {

@@ -6,13 +6,13 @@ package com.chua.utils.netx.elasticsearch.action;
 public interface CallBack<T> {
     /**
      * 成功回调
-     * @param t
+     * @param t t
      */
-    public void onResponse(T t);
+    void onResponse(T t);
 
     /**
      * 异常回调
-     * @param throwable
+     * @param throwable throwable
      */
-    public void failture(Throwable throwable);
+    void failure(Throwable throwable);
 }

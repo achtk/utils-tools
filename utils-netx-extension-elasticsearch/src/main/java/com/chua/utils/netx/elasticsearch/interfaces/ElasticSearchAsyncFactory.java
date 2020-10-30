@@ -70,7 +70,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                     if (null == callBack) {
                         return;
                     }
-                    callBack.failture(ex);
+                    callBack.failure(ex);
                 }
             });
         } catch (IOException e) {
@@ -128,7 +128,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                     if (null == callBack) {
                         return;
                     }
-                    callBack.failture(ex);
+                    callBack.failure(ex);
                 }
             });
         } catch (IOException e) {
@@ -158,7 +158,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                     if (null == callBack) {
                         return;
                     }
-                    callBack.failture(ex);
+                    callBack.failure(ex);
                 }
             });
         } catch (IOException e) {
@@ -188,7 +188,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                     if (null == callBack) {
                         return;
                     }
-                    callBack.failture(ex);
+                    callBack.failure(ex);
                 }
             });
         } catch (IOException e) {
@@ -218,7 +218,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                     if (null == callBack) {
                         return;
                     }
-                    callBack.failture(ex);
+                    callBack.failure(ex);
                 }
             });
         } catch (IOException e) {
@@ -249,7 +249,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                     if (null == first) {
                         return;
                     }
-                    first.failture(ex);
+                    first.failure(ex);
                 }
             });
         } catch (IOException e) {
@@ -287,7 +287,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                         if (null == callBack) {
                             return;
                         }
-                        callBack.failture(ex);
+                        callBack.failure(ex);
                     }
                 });
             }
@@ -328,7 +328,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                         if (null == callBack) {
                             return;
                         }
-                        callBack.failture(ex);
+                        callBack.failure(ex);
                     }
                 });
             }
@@ -366,7 +366,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                         if (null == callBack) {
                             return;
                         }
-                        callBack.failture(ex);
+                        callBack.failure(ex);
                     }
                 });
             }
@@ -443,7 +443,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                         if (null == callBack) {
                             return;
                         }
-                        callBack.failture(ex);
+                        callBack.failure(ex);
                     }
                 });
 
@@ -470,7 +470,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                     if (null == callback) {
                         return;
                     }
-                    callback.failture(ex);
+                    callback.failure(ex);
 
                 }
             });
@@ -498,7 +498,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                     if (null == callBack) {
                         return;
                     }
-                    callBack.failture(ex);
+                    callBack.failure(ex);
                 }
             });
         }
@@ -525,7 +525,7 @@ public class ElasticSearchAsyncFactory implements IElasticSearchAsyncFactory {
                     if (null == callBack) {
                         return;
                     }
-                    callBack.failture(ex);
+                    callBack.failure(ex);
                 }
             });
         }

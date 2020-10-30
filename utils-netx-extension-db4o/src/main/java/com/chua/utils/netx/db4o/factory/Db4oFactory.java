@@ -2,10 +2,8 @@ package com.chua.utils.netx.db4o.factory;
 
 import com.chua.utils.netx.factory.INetxFactory;
 import com.chua.utils.tools.properties.NetxProperties;
-import com.db4o.Db4o;
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
-import com.db4o.internal.config.EmbeddedConfigurationImpl;
 import com.google.common.base.Strings;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

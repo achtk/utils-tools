@@ -25,7 +25,7 @@ import static com.chua.utils.tools.properties.NetxProperties.*;
 @AllArgsConstructor
 public class ElasticSearchConfigurator {
 
-    private Properties properties;
+    private final Properties properties;
     private static final String MULTI_THREADED = "multiThreaded";
     private static final String DEFAULT_MAX_TOTAL_CONNECTION_PER_ROUTE = "defaultMaxTotalConnectionPerRoute";
 

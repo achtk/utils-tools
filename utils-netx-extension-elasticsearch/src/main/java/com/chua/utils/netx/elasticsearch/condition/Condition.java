@@ -7,6 +7,10 @@ import lombok.Setter;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 条件
+ * @author CH
+ */
 @Getter
 @Setter
 public class Condition {
@@ -85,7 +89,7 @@ public class Condition {
      */
     private long scrollTime = 60L;
     /**
-     * 返回记录数，可以为空，默认最大返回10条。该值必须小于10000，如果超过10000请使用  {@link #queryAllByConditions}
+     * 返回记录数，可以为空，默认最大返回10条。该值必须小于10000，如果超过10000请使用
      */
     private int size = 10;
     /**
