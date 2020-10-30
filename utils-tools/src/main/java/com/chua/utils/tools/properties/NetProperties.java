@@ -2,6 +2,7 @@ package com.chua.utils.tools.properties;
 
 
 import com.chua.utils.tools.common.NetHelper;
+import com.chua.utils.tools.constant.StringConstant;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,13 +12,14 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * netx配置项
+ * net配置项
+ *
  * @author CH
  * @since 1.0
  */
 @Getter
 @Slf4j
-public class NetxProperties extends Properties implements StatelessProperties {
+public class NetProperties extends Properties implements StatelessProperties {
     public static final String CONFIG_FIELD_RETRY = "retry";
     public static final int DEFAULT_CONFIG_FIELD_RETRY = 3;
     public static final String CONFIG_FIELD_PORT = "port";
@@ -63,7 +65,7 @@ public class NetxProperties extends Properties implements StatelessProperties {
     /**
      * 数据库名称
      */
-    private String databaseName = "db";
+    private final String databaseName = "db";
     /**
      * 最大连接数
      */
@@ -82,21 +84,34 @@ public class NetxProperties extends Properties implements StatelessProperties {
     private String path;
     private Object t;
 
-    public static final NetxProperties newProperty(String host) {
-        NetxProperties netxProperties = new NetxProperties();
-        netxProperties.setHost(host);
-        return netxProperties;
+    /**
+     * 初始化
+     *
+     * @param host host
+     * @return NetProperties
+     */
+    public static NetProperties newProperty(String host) {
+        NetProperties netProperties = new NetProperties();
+        netProperties.setHost(host);
+        return netProperties;
     }
 
+    /**
+     * 设置host
+     * @param host host
+     */
     public void setHost(String host) {
-        this.host = new String[] { host };
-        if(host.indexOf(":") != -1) {
+        this.host = new String[]{host};
+        if (host.contains(StringConstant.EXTENSION_COLON)) {
             int port = NetHelper.getPort(host);
             setPort(port);
         }
         this.put(CONFIG_FIELD_HOST, this.host);
     }
-
+    /**
+     * 设置host
+     * @param host host
+     */
     public void setHost(String[] host) {
         this.host = host;
         this.put(CONFIG_FIELD_HOST, host);
@@ -104,35 +119,38 @@ public class NetxProperties extends Properties implements StatelessProperties {
 
     /**
      * 当唯一值获取数据
-     * @return
+     *
+     * @return String
      */
-    public String getHostifOnly() {
-        if(null == host) {
+    public String getHostIfOnly() {
+        if (null == host) {
             return DEFAULT_HOST;
         }
         return host.length == 1 ? host[0] : DEFAULT_HOST;
     }
+
     /**
-     *
-     * @param host
+     * 添加host
+     * @param host host
      */
+    @SuppressWarnings("unchecked")
     public void addHost(String host) {
-        if(null == host) {
+        if (null == host) {
             throw new IllegalArgumentException("[host] cannot be empty");
         }
-        if(!this.containsKey(CONFIG_FIELD_HOST)) {
+        if (!this.containsKey(CONFIG_FIELD_HOST)) {
             this.put(CONFIG_FIELD_HOST, host);
-            this.host = new String[] {host};
+            this.host = new String[]{host};
         } else {
             List<String> items = new ArrayList<>();
-            Object o = this.get(CONFIG_FIELD_HOST);
-            if(o instanceof List) {
-                items.addAll((Collection<? extends String>) o);
+            Object obj = this.get(CONFIG_FIELD_HOST);
+            if (obj instanceof List) {
+                items.addAll((Collection<? extends String>) obj);
             } else {
-                items.add(o + "");
+                items.add(obj + "");
                 items.add(host);
             }
-            this.host = items.toArray(new String[items.size()]);
+            this.host = items.toArray(new String[0]);
             this.put(CONFIG_FIELD_HOST, items);
         }
     }
@@ -193,12 +211,12 @@ public class NetxProperties extends Properties implements StatelessProperties {
     }
 
     @Override
-    public <T>T getEntity() {
+    public <T> T getEntity() {
         return (T) t;
     }
 
     @Override
-    public <T>void setEntity(T t) {
+    public <T> void setEntity(T t) {
         this.t = t;
     }
 }

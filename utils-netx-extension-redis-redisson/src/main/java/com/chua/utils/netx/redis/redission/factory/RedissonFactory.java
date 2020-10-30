@@ -1,7 +1,7 @@
 package com.chua.utils.netx.redis.redission.factory;
 
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.MapHelper;
 import com.google.common.base.Strings;
@@ -27,11 +27,11 @@ import java.util.concurrent.locks.Lock;
 @Slf4j
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class RedissonFactory implements AutoCloseable, INetxFactory<RedissonClient> {
+public class RedissonFactory implements AutoCloseable, INetFactory<RedissonClient> {
 
     private static final String ANY_LOCK = "anyLock";
     @NonNull
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
     private RedissonClient redissonClient;
 
 
@@ -52,8 +52,8 @@ public class RedissonFactory implements AutoCloseable, INetxFactory<RedissonClie
     }
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class RedissonFactory implements AutoCloseable, INetxFactory<RedissonClie
     @Override
     public void start() {
         log.info(">>>>>>>>>>> RedissonFactory Starting to connect");
-        String[] addresses = netxProperties.getHost();
+        String[] addresses = netProperties.getHost();
         Config config = new Config();
 
         if(BooleanHelper.hasLength(addresses, 2)) {
@@ -74,20 +74,20 @@ public class RedissonFactory implements AutoCloseable, INetxFactory<RedissonClie
             }
             clusterServersConfig.setClientName("cluster");
 
-            if(netxProperties.getConnectTimeout() > 0) {
-                clusterServersConfig.setConnectTimeout(netxProperties.getConnectTimeout());
+            if(netProperties.getConnectTimeout() > 0) {
+                clusterServersConfig.setConnectTimeout(netProperties.getConnectTimeout());
             }
 
-            if(!Strings.isNullOrEmpty(netxProperties.getPassword())) {
-                clusterServersConfig.setPassword(netxProperties.getPassword());
+            if(!Strings.isNullOrEmpty(netProperties.getPassword())) {
+                clusterServersConfig.setPassword(netProperties.getPassword());
             }
 
-            if(!Strings.isNullOrEmpty(netxProperties.getUsername())) {
-                clusterServersConfig.setUsername(netxProperties.getUsername());
+            if(!Strings.isNullOrEmpty(netProperties.getUsername())) {
+                clusterServersConfig.setUsername(netProperties.getUsername());
             }
 
-            if(BooleanHelper.isValid(netxProperties, "scanInterval")) {
-                clusterServersConfig.setScanInterval(MapHelper.ints("scanInterval", netxProperties));
+            if(BooleanHelper.isValid(netProperties, "scanInterval")) {
+                clusterServersConfig.setScanInterval(MapHelper.ints("scanInterval", netProperties));
             }
 
             try {
@@ -100,16 +100,16 @@ public class RedissonFactory implements AutoCloseable, INetxFactory<RedissonClie
         } else if(BooleanHelper.hasLength(addresses)){
 
             SingleServerConfig single = config.useSingleServer().setAddress(addresses[0]).setClientName("single");
-            if(netxProperties.getConnectTimeout() > 0) {
-                single.setConnectTimeout(netxProperties.getConnectTimeout());
+            if(netProperties.getConnectTimeout() > 0) {
+                single.setConnectTimeout(netProperties.getConnectTimeout());
             }
 
-            if(!Strings.isNullOrEmpty(netxProperties.getPassword())) {
-                single.setPassword(netxProperties.getPassword());
+            if(!Strings.isNullOrEmpty(netProperties.getPassword())) {
+                single.setPassword(netProperties.getPassword());
             }
 
-            if(!Strings.isNullOrEmpty(netxProperties.getUsername())) {
-                single.setUsername(netxProperties.getUsername());
+            if(!Strings.isNullOrEmpty(netProperties.getUsername())) {
+                single.setUsername(netProperties.getUsername());
             }
 
             try {

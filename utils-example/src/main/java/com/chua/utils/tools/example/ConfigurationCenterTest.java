@@ -1,8 +1,6 @@
 package com.chua.utils.tools.example;
 
-import com.chua.utils.netx.entity.CenterConfig;
-import com.chua.utils.netx.zookeeper.center.ZookeeperConfigurationCenter;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import org.testng.annotations.Test;
 
 /**
@@ -13,7 +11,7 @@ public class ConfigurationCenterTest {
 
 	@Test
 	public void test() throws Exception {
-		NetxProperties netxProperties = NetxProperties.newProperty("127.0.0.1:2181");
+		NetProperties netProperties = NetProperties.newProperty("127.0.0.1:2181");
 
 //		ConfigurationCenter configurationCenter = new ZookeeperConfigurationCenter();
 //		configurationCenter.initial(netxProperties);

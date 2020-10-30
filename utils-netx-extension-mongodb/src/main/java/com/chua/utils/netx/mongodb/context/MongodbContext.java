@@ -1,7 +1,7 @@
 package com.chua.utils.netx.mongodb.context;
 
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.netx.mongodb.factory.MongodbFactory;
 import com.mongodb.ReadPreference;
 import com.mongodb.client.MongoCollection;
@@ -37,10 +37,10 @@ import java.util.Set;
 public class MongodbContext implements AutoCloseable {
 
     private final MongoTemplate mongoTemplate;
-    private final INetxFactory<MongoTemplate> netxFactory;
+    private final INetFactory<MongoTemplate> netxFactory;
 
-    public MongodbContext(NetxProperties netxProperties) {
-        this.netxFactory = new MongodbFactory(netxProperties);
+    public MongodbContext(NetProperties netProperties) {
+        this.netxFactory = new MongodbFactory(netProperties);
         this.netxFactory.start();
         this.mongoTemplate = this.netxFactory.client();
     }

@@ -1,10 +1,10 @@
 package com.chua.utils.netx.elasticsearch.spring.factory;
 
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.CollectionHelper;
 import com.chua.utils.tools.common.PropertiesHelper;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.chua.utils.tools.properties.NetxProperties.*;
-import static com.chua.utils.tools.properties.NetxProperties.CONFIG_FIELD_READ_TIMEOUT;
+import static com.chua.utils.tools.properties.NetProperties.*;
+import static com.chua.utils.tools.properties.NetProperties.CONFIG_FIELD_READ_TIMEOUT;
 
 /**
  * Elasticsearch Factory
@@ -34,15 +34,15 @@ import static com.chua.utils.tools.properties.NetxProperties.CONFIG_FIELD_READ_T
 @Slf4j
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class ElasticSearchFactory implements INetxFactory<AbstractElasticsearchTemplate> {
+public class ElasticSearchFactory implements INetFactory<AbstractElasticsearchTemplate> {
 
     @NonNull
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
     private AbstractElasticsearchTemplate elasticsearchTemplate;
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
@@ -100,8 +100,8 @@ public class ElasticSearchFactory implements INetxFactory<AbstractElasticsearchT
             @Override
             public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
                 //最大连接数
-                if (BooleanHelper.isValid(netxProperties, CONFIG_FIELD_MAX_CONNECTION)) {
-                    httpClientBuilder.setMaxConnTotal(PropertiesHelper.ints(netxProperties, CONFIG_FIELD_MAX_CONNECTION));
+                if (BooleanHelper.isValid(netProperties, CONFIG_FIELD_MAX_CONNECTION)) {
+                    httpClientBuilder.setMaxConnTotal(PropertiesHelper.ints(netProperties, CONFIG_FIELD_MAX_CONNECTION));
                 }
 
                 return httpClientBuilder;
@@ -120,12 +120,12 @@ public class ElasticSearchFactory implements INetxFactory<AbstractElasticsearchT
             public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
 
                 //最大连接数
-                if (BooleanHelper.isValid(netxProperties, CONFIG_FIELD_CONNECTION_TIMEOUT)) {
-                    requestConfigBuilder.setConnectTimeout(PropertiesHelper.ints(netxProperties, CONFIG_FIELD_CONNECTION_TIMEOUT));
+                if (BooleanHelper.isValid(netProperties, CONFIG_FIELD_CONNECTION_TIMEOUT)) {
+                    requestConfigBuilder.setConnectTimeout(PropertiesHelper.ints(netProperties, CONFIG_FIELD_CONNECTION_TIMEOUT));
                 }
                 //设置读取超时
-                if (BooleanHelper.isValid(netxProperties, CONFIG_FIELD_READ_TIMEOUT)) {
-                    requestConfigBuilder.setSocketTimeout(PropertiesHelper.ints(netxProperties, CONFIG_FIELD_READ_TIMEOUT));
+                if (BooleanHelper.isValid(netProperties, CONFIG_FIELD_READ_TIMEOUT)) {
+                    requestConfigBuilder.setSocketTimeout(PropertiesHelper.ints(netProperties, CONFIG_FIELD_READ_TIMEOUT));
                 }
                 return requestConfigBuilder;
             }
@@ -138,7 +138,7 @@ public class ElasticSearchFactory implements INetxFactory<AbstractElasticsearchT
      * @return
      */
     private List<HttpHost> getHttpHost() {
-        return Arrays.stream(netxProperties.getHost())
+        return Arrays.stream(netProperties.getHost())
                 .map(host -> {
                     String text = host;
                     String scheme = null;

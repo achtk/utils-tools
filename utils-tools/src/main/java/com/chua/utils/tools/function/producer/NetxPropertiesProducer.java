@@ -1,6 +1,6 @@
 package com.chua.utils.tools.function.producer;
 
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 
 /**
  * NetxProperties提供者
@@ -10,7 +10,7 @@ import com.chua.utils.tools.properties.NetxProperties;
 public interface NetxPropertiesProducer {
 	/**
 	 * 初始化NetxProperties
-	 * @param netxProperties NetxProperties
+	 * @param netProperties NetxProperties
 	 */
-	void initial(NetxProperties netxProperties);
+	void initial(NetProperties netProperties);
 }

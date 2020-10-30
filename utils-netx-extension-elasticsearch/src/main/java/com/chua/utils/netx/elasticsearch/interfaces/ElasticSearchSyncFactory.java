@@ -1,6 +1,6 @@
 package com.chua.utils.netx.elasticsearch.interfaces;
 
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.elasticsearch.action.CallBack;
 import com.chua.utils.netx.elasticsearch.condition.Condition;
 import com.chua.utils.netx.elasticsearch.config.IndexConfig;
@@ -38,7 +38,7 @@ public class ElasticSearchSyncFactory implements IElasticSearchSyncFactory {
 
     private ElasticSearchConfigurator elasticSearchConfigurator;
     private JestClientFactory jestClientFactory;
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
 
     @Override
     public void connect(Properties properties) {
@@ -514,8 +514,8 @@ public class ElasticSearchSyncFactory implements IElasticSearchSyncFactory {
     }
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
@@ -525,7 +525,7 @@ public class ElasticSearchSyncFactory implements IElasticSearchSyncFactory {
 
     @Override
     public void start() {
-        this.elasticSearchConfigurator = new ElasticSearchConfigurator(netxProperties);
+        this.elasticSearchConfigurator = new ElasticSearchConfigurator(netProperties);
         this.jestClientFactory = this.elasticSearchConfigurator.configure();
     }
 

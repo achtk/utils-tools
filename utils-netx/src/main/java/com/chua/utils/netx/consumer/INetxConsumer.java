@@ -1,7 +1,7 @@
 package com.chua.utils.netx.consumer;
 
 import com.chua.utils.netx.configurator.INetxConfigurator;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.netx.factory.INetFactory;
 
 /**
  * 消费者
@@ -15,7 +15,7 @@ public interface INetxConsumer extends INetxConfigurator {
      *
      * @return
      */
-    public INetxFactory factory();
+    public INetFactory factory();
 
     /**
      * 启动

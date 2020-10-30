@@ -1,8 +1,8 @@
 package com.chua.utils.netx.db4o.context;
 
 import com.chua.utils.netx.db4o.factory.Db4oFactory;
-import com.chua.utils.netx.factory.INetxFactory;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.netx.factory.INetFactory;
+import com.chua.utils.tools.properties.NetProperties;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
 import lombok.Getter;
@@ -21,12 +21,12 @@ public class Db4oContext implements AutoCloseable {
 
     @Getter
     private final ObjectContainer objectContainer;
-    private final NetxProperties netxProperties;
-    private final INetxFactory<ObjectContainer> netxFactory;
+    private final NetProperties netProperties;
+    private final INetFactory<ObjectContainer> netxFactory;
 
-    public Db4oContext(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
-        this.netxFactory = new Db4oFactory(netxProperties);
+    public Db4oContext(NetProperties netProperties) {
+        this.netProperties = netProperties;
+        this.netxFactory = new Db4oFactory(netProperties);
         this.objectContainer = this.netxFactory.client();
         this.netxFactory.start();
 

@@ -1,7 +1,7 @@
 package com.chua.utils.netx.kitdb.factory;
 
-import com.chua.utils.netx.factory.INetxFactory;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.netx.factory.INetFactory;
+import com.chua.utils.tools.properties.NetProperties;
 import com.google.common.base.Strings;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,24 +18,24 @@ import top.thinkin.lightd.exception.KitDBException;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class KitDbFactory implements INetxFactory<DB> {
+public class KitDbFactory implements INetFactory<DB> {
     @NonNull
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
     private DB db;
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
     public DB client() {
-        if (null == netxProperties || Strings.isNullOrEmpty(netxProperties.getPath())) {
+        if (null == netProperties || Strings.isNullOrEmpty(netProperties.getPath())) {
             log.warn("KitDb需要配置 [path]");
             throw new NullPointerException();
         }
         try {
-            this.db = DB.buildTransactionDB(netxProperties.getPath(), true);
+            this.db = DB.buildTransactionDB(netProperties.getPath(), true);
             return this.db;
         } catch (KitDBException e) {
             e.printStackTrace();

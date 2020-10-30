@@ -1,6 +1,6 @@
 package com.chua.utils.netx.configurator;
 
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 
 /**
  * 配置配置
@@ -10,7 +10,7 @@ import com.chua.utils.tools.properties.NetxProperties;
 public interface INetxConfigurator {
     /**
      * 启动项配置
-     * @param netxProperties
+     * @param netProperties
      */
-    public void initialConfiguration(NetxProperties netxProperties);
+    public void initialConfiguration(NetProperties netProperties);
 }

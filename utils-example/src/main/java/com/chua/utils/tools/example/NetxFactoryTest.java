@@ -1,6 +1,6 @@
 package com.chua.utils.tools.example;
 
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import org.testng.annotations.Test;
 
@@ -11,7 +11,7 @@ public class NetxFactoryTest {
 
     @Test
     public void testNetxFactory() {
-        INetxFactory netxFactory = ExtensionFactory.getExtensionLoader(INetxFactory.class).getExtension();
+        INetFactory netxFactory = ExtensionFactory.getExtensionLoader(INetFactory.class).getExtension();
         System.out.println(netxFactory);
     }
 }

@@ -1,7 +1,7 @@
 package com.chua.utils.netx.ftp.utils;
 
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.netx.ftp.handler.FtpFileHandler;
 import com.chua.utils.netx.ftp.reader.FtpReader;
 import com.chua.utils.netx.ftp.status.*;
@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version 0.3 实现中文目录创建及中文文件创建，添加对于中文的支持
  */
 @Slf4j
-public class FtpFactory implements INetxFactory<FTPClient> {
+public class FtpFactory implements INetFactory<FTPClient> {
 
     private static final String WINDOW = "window";
     private static final String TYPE_FILE = "文件";
@@ -41,7 +41,7 @@ public class FtpFactory implements INetxFactory<FTPClient> {
     private int port;
     private String username;
     private String password;
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
 
 
     public FtpFactory() {
@@ -1005,8 +1005,8 @@ public class FtpFactory implements INetxFactory<FTPClient> {
     }
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
@@ -1016,13 +1016,13 @@ public class FtpFactory implements INetxFactory<FTPClient> {
 
     @Override
     public void start() {
-        String host = FinderHelper.firstElement(netxProperties.getHost());
+        String host = FinderHelper.firstElement(netProperties.getHost());
         try {
             this.ftpClient = this.connect(
                     NetHelper.getHost(host),
                     NetHelper.getPort(host),
-                    netxProperties.getUsername(),
-                    netxProperties.getPassword()
+                    netProperties.getUsername(),
+                    netProperties.getPassword()
             );
         } catch (IOException e) {
             e.printStackTrace();

@@ -6,7 +6,7 @@ import com.chua.utils.tools.enums.HandlerType;
 import com.chua.utils.tools.handler.*;
 import com.chua.utils.tools.loader.IIteratorLoader;
 import com.chua.utils.tools.loader.IteratorLoader;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import io.vertx.core.AsyncResult;
@@ -150,11 +150,11 @@ public class NetSocketUtil {
 	/**
 	 * 处理结果
 	 * @param event
-	 * @param netxProperties
+	 * @param netProperties
 	 */
-	public static void handlerAsyncResult(AsyncResult<NetServer> event, NetxProperties netxProperties) {
+	public static void handlerAsyncResult(AsyncResult<NetServer> event, NetProperties netProperties) {
 		if(event.succeeded()) {
-			log.info("启动成功, 当前绑定IP<{}>, 端口:<{}>", netxProperties.getHostifOnly(), netxProperties.getPort());
+			log.info("启动成功, 当前绑定IP<{}>, 端口:<{}>", netProperties.getHostIfOnly(), netProperties.getPort());
 			return;
 		}
 		log.error("启动失败, 导致原因: {}", event.cause().getMessage());
@@ -162,24 +162,24 @@ public class NetSocketUtil {
 
 	/**
 	 * 获取 VertxOptions
-	 * @param netxProperties
+	 * @param netProperties
 	 * @return
 	 */
-	public static VertxOptions newVertxOption(NetxProperties netxProperties) {
+	public static VertxOptions newVertxOption(NetProperties netProperties) {
 		VertxOptions vertxOptions = new VertxOptions();
 		return vertxOptions;
 	}
 
 	/**
 	 * 创建 BridgeOptions
-	 * @param netxProperties
+	 * @param netProperties
 	 * @return
 	 */
-	public static BridgeOptions newBridgeOption(NetxProperties netxProperties) {
+	public static BridgeOptions newBridgeOption(NetProperties netProperties) {
 		BridgeOptions bridgeOptions = new BridgeOptions();
-		BeansHelper.copier(netxProperties, bridgeOptions);
+		BeansHelper.copier(netProperties, bridgeOptions);
 		//设置从客户端发送消息到服务端的地址，根据自己的需要可以创建任意个
-		String inbound = netxProperties.getProperty("inbound");
+		String inbound = netProperties.getProperty("inbound");
 		if(!Strings.isNullOrEmpty(inbound)) {
 			List<String> strings = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(inbound);
 			for (String string : strings) {
@@ -187,7 +187,7 @@ public class NetSocketUtil {
 			}
 		}
 		//设置从服务端发送消息到客户端端的地址，根据自己的需要可以创建任意个
-		String outbound = netxProperties.getProperty("outbound");
+		String outbound = netProperties.getProperty("outbound");
 		if(!Strings.isNullOrEmpty(outbound)) {
 			List<String> strings = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(outbound);
 			for (String string : strings) {
@@ -199,45 +199,45 @@ public class NetSocketUtil {
 
 	/**
 	 * 创建 SockJSHandlerOptions
-	 * @param netxProperties
+	 * @param netProperties
 	 * @return
 	 */
-	public static SockJSHandlerOptions newSockJSHandlerOption(NetxProperties netxProperties) {
+	public static SockJSHandlerOptions newSockJSHandlerOption(NetProperties netProperties) {
 		SockJSHandlerOptions sockJSHandlerOptions = new SockJSHandlerOptions();
-		BeansHelper.copier(netxProperties, sockJSHandlerOptions);
+		BeansHelper.copier(netProperties, sockJSHandlerOptions);
 		return sockJSHandlerOptions;
 	}
 
 	/**
 	 * 创建 HttpServerOptions
-	 * @param netxProperties
+	 * @param netProperties
 	 * @return
 	 */
-	public static HttpServerOptions newHttpServerOption(NetxProperties netxProperties) {
+	public static HttpServerOptions newHttpServerOption(NetProperties netProperties) {
 		HttpServerOptions httpServerOptions = new HttpServerOptions();
-		BeansHelper.copier(netxProperties, httpServerOptions);
+		BeansHelper.copier(netProperties, httpServerOptions);
 		return httpServerOptions;
 	}
 
 	/**
 	 * 创建 DeliveryOptions
-	 * @param netxProperties
+	 * @param netProperties
 	 * @return
 	 */
-	public static DeliveryOptions newDeliveryOption(NetxProperties netxProperties) {
+	public static DeliveryOptions newDeliveryOption(NetProperties netProperties) {
 		DeliveryOptions deliveryOptions = new DeliveryOptions();
-		BeansHelper.copier(netxProperties, deliveryOptions);
+		BeansHelper.copier(netProperties, deliveryOptions);
 		return deliveryOptions;
 	}
 
 	/**
 	 * 创建 NetClientOptions
 	 * @return
-	 * @param netxProperties
+	 * @param netProperties
 	 */
-	public static NetClientOptions newNetClientOption(@NonNull NetxProperties netxProperties) {
+	public static NetClientOptions newNetClientOption(@NonNull NetProperties netProperties) {
 		NetClientOptions netClientOptions = new NetClientOptions();
-		BeansHelper.copier(netxProperties, netClientOptions);
+		BeansHelper.copier(netProperties, netClientOptions);
 		return netClientOptions;
 	}
 

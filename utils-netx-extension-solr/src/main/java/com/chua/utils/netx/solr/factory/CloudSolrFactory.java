@@ -1,8 +1,7 @@
 package com.chua.utils.netx.solr.factory;
 
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,21 +24,21 @@ public class CloudSolrFactory extends SolrFactory {
 
 	private CloudSolrClient cloudSolrClient;
 
-	public CloudSolrFactory(NetxProperties netxProperties) {
-		super(netxProperties);
+	public CloudSolrFactory(NetProperties netProperties) {
+		super(netProperties);
 	}
 
 	@Override
 	public void start() {
 		log.info(">>>>>>>>>>> SolrFactory Starting to connect");
 
-		String[] hosts = netxProperties.getHost();
+		String[] hosts = netProperties.getHost();
 
 		try {
 			this.cloudSolrClient =
 					new CloudSolrClient.Builder(Arrays.asList(hosts), Optional.of("/solr"))
-							.withConnectionTimeout(netxProperties.getConnectionTimeout())
-							.withSocketTimeout(netxProperties.getReadTimeout()).build();
+							.withConnectionTimeout(netProperties.getConnectionTimeout())
+							.withSocketTimeout(netProperties.getReadTimeout()).build();
 
 			this.cloudSolrClient.setDefaultCollection(SolrFactory.DEFAULT_COLLECTION);
 

@@ -4,7 +4,7 @@ import com.chua.utils.netx.elasticsearch.action.CallBack;
 import com.chua.utils.netx.elasticsearch.condition.Condition;
 import com.chua.utils.netx.elasticsearch.config.IndexConfig;
 import com.chua.utils.netx.elasticsearch.dsl.DSL;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.common.JsonHelper;
 import com.google.common.collect.HashMultimap;
 import io.searchbox.core.Search;
@@ -18,7 +18,7 @@ import java.util.*;
  * @author CH
  * @since 1.0
  */
-public interface IElasticSearchFactory extends INetxFactory {
+public interface IElasticSearchFactory extends INetFactory {
     /**
      * 连接服务器
      *

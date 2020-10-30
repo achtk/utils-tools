@@ -1,14 +1,13 @@
 package com.chua.utils.netx.redis.jedis.factory;
 
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.common.MapHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisShardInfo;
-import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 
 import java.util.LinkedList;
@@ -23,16 +22,16 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class JedisFactory implements INetxFactory<ShardedJedisPool> {
+public class JedisFactory implements INetFactory<ShardedJedisPool> {
 
     @NonNull
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
     private ShardedJedisPool shardedJedisPool;
     private static ReentrantLock INSTANCE_INIT_LOCL = new ReentrantLock(false);
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
@@ -73,7 +72,7 @@ public class JedisFactory implements INetxFactory<ShardedJedisPool> {
         if (shardedJedisPool == null) {
             // JedisPoolConfig
             JedisPoolConfig config = new JedisPoolConfig();
-            config.setMaxTotal(MapHelper.ints(NetxProperties.CONFIG_FIELD_MAX_CONNECTION, 200, netxProperties));
+            config.setMaxTotal(MapHelper.ints(NetProperties.CONFIG_FIELD_MAX_CONNECTION, 200, netProperties));
             config.setMaxIdle(50);
             config.setMinIdle(8);
             // 获取连接时的最大等待毫秒数(如果设置为阻塞时BlockWhenExhausted),如果超时就抛异常, 小于零:阻塞不确定的时间,  默认-1
@@ -91,7 +90,7 @@ public class JedisFactory implements INetxFactory<ShardedJedisPool> {
             // 表示一个对象至少停留在idle状态的最短时间，然后才能被idle object evitor扫描并驱逐；这一项只有在timeBetweenEvictionRunsMillis大于0时才有意义
             config.setMinEvictableIdleTimeMillis(60000);
 
-            String[] addressArr = netxProperties.getHost();
+            String[] addressArr = netProperties.getHost();
 
             // JedisShardInfo List
             List<JedisShardInfo> jedisShardInfos = new LinkedList<JedisShardInfo>();

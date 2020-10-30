@@ -4,7 +4,7 @@ import com.chua.utils.netx.centor.ClientConfigCenter;
 import com.chua.utils.netx.vertx.result.AsyncResultHandler;
 import com.chua.utils.netx.vertx.util.NetSocketUtil;
 import com.chua.utils.tools.handler.HandlerResolver;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.NetClient;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class VertxNetClientConfigurationCenter extends AbstractVerticle implements ClientConfigCenter {
 
 	@NonNull
-	private NetxProperties netxProperties;
+	private NetProperties netProperties;
 
 	private Vertx vertx;
 	private NetClient netClient;
@@ -33,24 +33,24 @@ public class VertxNetClientConfigurationCenter extends AbstractVerticle implemen
 	private volatile NetClientOptions netClientOptions;
 
 
-	public VertxNetClientConfigurationCenter(@NonNull NetxProperties netxProperties, Vertx vertx) {
-		this.netxProperties = netxProperties;
+	public VertxNetClientConfigurationCenter(@NonNull NetProperties netProperties, Vertx vertx) {
+		this.netProperties = netProperties;
 		this.vertx = vertx;
 	}
 
 	@Override
-	public void initial(NetxProperties netxProperties) {
-		this.netxProperties = netxProperties;
+	public void initial(NetProperties netProperties) {
+		this.netProperties = netProperties;
 	}
 
 	@Override
 	public void connect(HandlerResolver handlerResolver) throws Throwable {
-		this.vertx = Vertx.vertx(NetSocketUtil.newVertxOption(netxProperties));
+		this.vertx = Vertx.vertx(NetSocketUtil.newVertxOption(netProperties));
 		this.vertx.deployVerticle(this);
-		this.netClientOptions = NetSocketUtil.newNetClientOption(netxProperties);
+		this.netClientOptions = NetSocketUtil.newNetClientOption(netProperties);
 
 		this.netClient = vertx.createNetClient(netClientOptions);
-		this.netClient.connect(netxProperties.getPort(), netxProperties.getHostifOnly(), new AsyncResultHandler(handlerResolver));
+		this.netClient.connect(netProperties.getPort(), netProperties.getHostIfOnly(), new AsyncResultHandler(handlerResolver));
 	}
 
 	@Override

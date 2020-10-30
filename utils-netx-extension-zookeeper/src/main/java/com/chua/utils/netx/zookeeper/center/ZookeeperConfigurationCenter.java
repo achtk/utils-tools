@@ -8,7 +8,7 @@ import com.chua.utils.tools.common.ByteHelper;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.function.producer.NetxPropertiesProducer;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.tools.strategy.handler.IStrategyPolicy;
 import com.chua.utils.tools.strategy.helper.StrategyHelper;
 import com.google.common.base.Strings;
@@ -42,7 +42,7 @@ public class ZookeeperConfigurationCenter implements EventPublishingConfigServic
     private static final String CLUSTER_NAME_DEFAULT_GROUP = "cluserName";
     @NonNull
     @Getter
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
     private ZookeeperContext zookeeperContext;
     private String configName;
 
@@ -169,9 +169,9 @@ public class ZookeeperConfigurationCenter implements EventPublishingConfigServic
     }
 
     @Override
-    public void initial(NetxProperties netxProperties) {
-        zookeeperContext = new ZookeeperContext(netxProperties);
-        this.configName = netxProperties.getProperty(CONFIG_NODE_NAME, DEFAULT_CONFIG_NODE_NAME);
+    public void initial(NetProperties netProperties) {
+        zookeeperContext = new ZookeeperContext(netProperties);
+        this.configName = netProperties.getProperty(CONFIG_NODE_NAME, DEFAULT_CONFIG_NODE_NAME);
         try {
             this.zookeeperContext.createPersistent(configName);
         } catch (Exception e) {

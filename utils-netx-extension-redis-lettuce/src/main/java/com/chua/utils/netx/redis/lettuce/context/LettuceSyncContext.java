@@ -6,8 +6,8 @@ import com.chua.utils.netx.function.RMq;
 import com.chua.utils.netx.function.RMqProducer;
 import com.chua.utils.netx.redis.lettuce.function.LettuceRMq;
 import com.chua.utils.netx.redis.lettuce.function.LettuceRkv;
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.netx.redis.lettuce.factory.LettuceSyncFactory;
 import com.lambdaworks.redis.api.async.RedisAsyncCommands;
 import com.lambdaworks.redis.api.sync.RedisCommands;
@@ -20,12 +20,12 @@ import com.lambdaworks.redis.cluster.api.sync.RedisAdvancedClusterCommands;
  */
 public class LettuceSyncContext implements RKvProducer<String, String>, RMqProducer, AutoCloseable {
 
-    private final INetxFactory netxFactory;
+    private final INetFactory netxFactory;
     private RedisAdvancedClusterCommands<String, String> clusterCommands;
     private RedisCommands<String, String> redisCommands;
 
-    public LettuceSyncContext(NetxProperties netxProperties) {
-        this.netxFactory = new LettuceSyncFactory(netxProperties);
+    public LettuceSyncContext(NetProperties netProperties) {
+        this.netxFactory = new LettuceSyncFactory(netProperties);
         this.netxFactory.start();
         Object client = this.netxFactory.client();
         if (client instanceof RedisAsyncCommands) {

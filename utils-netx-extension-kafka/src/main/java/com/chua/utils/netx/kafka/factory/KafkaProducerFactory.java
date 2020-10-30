@@ -1,7 +1,7 @@
 package com.chua.utils.netx.kafka.factory;
 
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +17,11 @@ import java.util.Properties;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class KafkaProducerFactory<K, V> implements AutoCloseable, INetxFactory<KafkaProducer> {
+public class KafkaProducerFactory<K, V> implements AutoCloseable, INetFactory<KafkaProducer> {
 
     private KafkaProducer kafkaProducer;
     @NonNull
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
 
 
     @Override
@@ -36,8 +36,8 @@ public class KafkaProducerFactory<K, V> implements AutoCloseable, INetxFactory<K
     }
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class KafkaProducerFactory<K, V> implements AutoCloseable, INetxFactory<K
         // value反序列化指定类，注意生产者与消费者要保持一致，否则解析出问题
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         // 服务器ip:端口号，集群用逗号分隔
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, netxProperties.getHost());
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, netProperties.getHost());
 
         try {
             this.kafkaProducer = new KafkaProducer(props);

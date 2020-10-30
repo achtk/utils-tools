@@ -1,7 +1,7 @@
 package com.chua.utils.netx.db4o.factory;
 
-import com.chua.utils.netx.factory.INetxFactory;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.netx.factory.INetFactory;
+import com.chua.utils.tools.properties.NetProperties;
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 import com.google.common.base.Strings;
@@ -18,24 +18,24 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class Db4oFactory implements INetxFactory<ObjectContainer> {
+public class Db4oFactory implements INetFactory<ObjectContainer> {
     @NonNull
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
     private ObjectContainer objectContainer;
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
     public ObjectContainer client() {
-        if (null == netxProperties || Strings.isNullOrEmpty(netxProperties.getPath())) {
+        if (null == netProperties || Strings.isNullOrEmpty(netProperties.getPath())) {
             log.warn("Db4o需要配置 [path]{.yap}");
             throw new NullPointerException();
         }
         try {
-            this.objectContainer = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), netxProperties.getPath());
+            this.objectContainer = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), netProperties.getPath());
             return this.objectContainer;
         } catch (Exception e) {
             e.printStackTrace();

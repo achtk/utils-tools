@@ -3,7 +3,7 @@ package com.chua.utils.netx.redis.jedis.context;
 import com.chua.utils.netx.function.RKv;
 import com.chua.utils.netx.function.RKvProducer;
 import com.chua.utils.netx.redis.jedis.function.JedisRKv;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.redis.jedis.factory.JedisFactory;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +20,11 @@ public class JedisContext implements RKvProducer<String, String>, AutoCloseable 
 
     private final JedisFactory netxFactory;
     private final ShardedJedisPool shardedJedisPool;
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
 
-    public JedisContext(@NonNull NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
-        this.netxFactory = new JedisFactory(netxProperties);
+    public JedisContext(@NonNull NetProperties netProperties) {
+        this.netProperties = netProperties;
+        this.netxFactory = new JedisFactory(netProperties);
         this.netxFactory.start();
         this.shardedJedisPool = this.netxFactory.client();
     }

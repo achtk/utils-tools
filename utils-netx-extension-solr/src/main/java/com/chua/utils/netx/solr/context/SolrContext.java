@@ -1,9 +1,9 @@
 package com.chua.utils.netx.solr.context;
 
 import com.chua.utils.tools.function.IFunction;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.tools.properties.QueryProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.netx.solr.factory.CloudSolrFactory;
 import com.chua.utils.netx.solr.factory.SingleSolrFactory;
 import com.chua.utils.tools.common.ArraysHelper;
@@ -30,15 +30,15 @@ import java.util.Map;
  */
 public class SolrContext implements AutoCloseable {
 
-    private INetxFactory netxFactory;
+    private INetFactory netxFactory;
     private SolrClient solrClient;
 
-    public SolrContext(NetxProperties netxProperties) {
-        String[] host = netxProperties.getHost();
+    public SolrContext(NetProperties netProperties) {
+        String[] host = netProperties.getHost();
         if(BooleanHelper.hasLength(host, 2)) {
-            this.netxFactory = new CloudSolrFactory(netxProperties);
+            this.netxFactory = new CloudSolrFactory(netProperties);
         } else {
-            this.netxFactory = new SingleSolrFactory(netxProperties);
+            this.netxFactory = new SingleSolrFactory(netProperties);
         }
         this.netxFactory.start();
         this.solrClient = (SolrClient) this.netxFactory.client();

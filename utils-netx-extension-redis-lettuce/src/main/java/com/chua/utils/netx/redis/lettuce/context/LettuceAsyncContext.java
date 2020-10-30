@@ -1,7 +1,7 @@
 package com.chua.utils.netx.redis.lettuce.context;
 
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.netx.redis.lettuce.factory.LettuceAsyncFactory;
 import com.google.common.base.Preconditions;
 import com.lambdaworks.redis.RedisFuture;
@@ -38,15 +38,15 @@ public class LettuceAsyncContext implements AutoCloseable {
      */
     private final String EX = "EX";
 
-    private final INetxFactory netxFactory;
+    private final INetFactory netxFactory;
 
     private RedisAdvancedClusterAsyncCommands<String, String> clusterAsyncCommands;
     private RedisAsyncCommands<String, String> redisAsyncCommands;
 
 
-    public LettuceAsyncContext(NetxProperties netxProperties) {
-        this.netxFactory = new LettuceAsyncFactory(netxProperties);
-        this.netxFactory.configure(netxProperties);
+    public LettuceAsyncContext(NetProperties netProperties) {
+        this.netxFactory = new LettuceAsyncFactory(netProperties);
+        this.netxFactory.configure(netProperties);
         this.netxFactory.start();
         Object client = this.netxFactory.client();
         if(client instanceof RedisAsyncCommands) {

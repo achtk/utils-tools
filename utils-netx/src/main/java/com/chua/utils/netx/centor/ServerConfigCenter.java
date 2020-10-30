@@ -3,10 +3,7 @@ package com.chua.utils.netx.centor;
 import com.chua.utils.tools.handler.Handler;
 import com.chua.utils.tools.handler.HandlerResolver;
 import com.chua.utils.tools.handler.ThrowableHandler;
-import com.chua.utils.tools.properties.NetxProperties;
-
-import java.io.IOException;
-import java.util.List;
+import com.chua.utils.tools.properties.NetProperties;
 
 /**
  * 服务配置中心接口
@@ -16,9 +13,9 @@ import java.util.List;
 public interface ServerConfigCenter<T> {
 	/**
 	 * 初始化
-	 * @param netxProperties 网络连接配置
+	 * @param netProperties 网络连接配置
 	 */
-	void initial(NetxProperties netxProperties);
+	void initial(NetProperties netProperties);
 
 	/**
 	 * 启动

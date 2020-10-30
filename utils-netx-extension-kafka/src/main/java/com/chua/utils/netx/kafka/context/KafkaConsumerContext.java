@@ -1,7 +1,7 @@
 package com.chua.utils.netx.kafka.context;
 
 import com.chua.utils.tools.function.IConsumer;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.kafka.factory.KafkaConsumerFactory;
 import com.chua.utils.tools.common.ThreadHelper;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -19,20 +19,20 @@ public class KafkaConsumerContext implements AutoCloseable {
 
     private final KafkaConsumerFactory kafkaConsumerFactory;
     private final KafkaConsumer kafkaConsumer;
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
     private ExecutorService executorService;
 
-    public KafkaConsumerContext(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
-        this.kafkaConsumerFactory = new KafkaConsumerFactory(netxProperties);
+    public KafkaConsumerContext(NetProperties netProperties) {
+        this.netProperties = netProperties;
+        this.kafkaConsumerFactory = new KafkaConsumerFactory(netProperties);
         this.kafkaConsumerFactory.start();
         this.kafkaConsumer = this.kafkaConsumerFactory.client();
         this.executorService = ThreadHelper.newCachedThreadPool();
     }
 
-    public KafkaConsumerContext(NetxProperties netxProperties, final int core) {
-        this.netxProperties = netxProperties;
-        this.kafkaConsumerFactory = new KafkaConsumerFactory(netxProperties);
+    public KafkaConsumerContext(NetProperties netProperties, final int core) {
+        this.netProperties = netProperties;
+        this.kafkaConsumerFactory = new KafkaConsumerFactory(netProperties);
         this.kafkaConsumerFactory.start();
         this.kafkaConsumer = this.kafkaConsumerFactory.client();
         this.executorService = ThreadHelper.newFixedThreadExecutor(core);

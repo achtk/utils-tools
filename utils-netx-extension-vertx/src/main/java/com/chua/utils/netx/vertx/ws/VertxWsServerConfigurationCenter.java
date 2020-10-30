@@ -6,7 +6,7 @@ import com.chua.utils.tools.common.NetHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.enums.HandlerType;
 import com.chua.utils.tools.handler.*;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import com.google.common.base.Strings;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
@@ -42,7 +42,7 @@ import java.util.Set;
  *
  * @author CH
  * @date 2020-10-08
- * @see com.chua.utils.tools.properties.NetxProperties
+ * @see NetProperties
  * </p>
  * <p>传递<b>必要</b>参数，以及非必要参数</p>
  * <p>
@@ -60,7 +60,7 @@ import java.util.Set;
 public class VertxWsServerConfigurationCenter extends AbstractVerticle implements ServerConfigCenter<Object> {
 
 	private static final String DEFAULT_ROUTE_PATH = "/eventbus/*";
-	private NetxProperties netxProperties;
+	private NetProperties netProperties;
 	private Vertx vertx;
 	private BridgeOptions bridgeOptions;
 	private SockJSHandlerOptions sockJSHandlerOptions;
@@ -72,15 +72,15 @@ public class VertxWsServerConfigurationCenter extends AbstractVerticle implement
 	private EventBus eventBus;
 
 	@Override
-	public void initial(NetxProperties netxProperties) {
-		this.netxProperties = netxProperties;
-		this.vertx = Vertx.vertx(NetSocketUtil.newVertxOption(netxProperties));
-		this.bridgeOptions = NetSocketUtil.newBridgeOption(netxProperties);
-		this.sockJSHandlerOptions = NetSocketUtil.newSockJSHandlerOption(netxProperties);
-		this.httpServerOptions = NetSocketUtil.newHttpServerOption(netxProperties);
-		this.deliveryOptions = NetSocketUtil.newDeliveryOption(netxProperties);
-		String hostifOnly = netxProperties.getHostifOnly();
-		int port1 = netxProperties.getPort();
+	public void initial(NetProperties netProperties) {
+		this.netProperties = netProperties;
+		this.vertx = Vertx.vertx(NetSocketUtil.newVertxOption(netProperties));
+		this.bridgeOptions = NetSocketUtil.newBridgeOption(netProperties);
+		this.sockJSHandlerOptions = NetSocketUtil.newSockJSHandlerOption(netProperties);
+		this.httpServerOptions = NetSocketUtil.newHttpServerOption(netProperties);
+		this.deliveryOptions = NetSocketUtil.newDeliveryOption(netProperties);
+		String hostifOnly = netProperties.getHostIfOnly();
+		int port1 = netProperties.getPort();
 		this.host = Strings.isNullOrEmpty(hostifOnly) ? null : NetHelper.getHost(hostifOnly);
 		this.port = port1 < 0 ? NetHelper.getPort(hostifOnly) : port1;
 
@@ -114,7 +114,7 @@ public class VertxWsServerConfigurationCenter extends AbstractVerticle implement
 				.allowedHeader("Content-Type"));
 		router.route().handler(BodyHandler.create().setBodyLimit(-1));
 
-		router.route(StringHelper.defaultIfBlank(netxProperties.getPath(), DEFAULT_ROUTE_PATH))
+		router.route(StringHelper.defaultIfBlank(netProperties.getPath(), DEFAULT_ROUTE_PATH))
 				.handler(sockJSHandler);
 		//创建一个eventbus，用来数据通讯
 		this.eventBus = vertx.eventBus();

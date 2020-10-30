@@ -1,8 +1,8 @@
 package com.chua.utils.netx.solr.factory;
 
 import com.chua.utils.tools.function.IFunction;
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.SolrClient;
@@ -23,7 +23,7 @@ import java.util.*;
 @Slf4j
 @NoArgsConstructor
 @RequiredArgsConstructor
-public abstract class SolrFactory implements INetxFactory<SolrClient> {
+public abstract class SolrFactory implements INetFactory<SolrClient> {
 
     /**
      * solr地址
@@ -39,15 +39,15 @@ public abstract class SolrFactory implements INetxFactory<SolrClient> {
     private static final String FIELD_COLLEACTION = "collection";
 
     @NonNull
-    protected NetxProperties netxProperties;
+    protected NetProperties netProperties;
 
     @Getter
     @Setter
     private SolrClient solrClient;
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override

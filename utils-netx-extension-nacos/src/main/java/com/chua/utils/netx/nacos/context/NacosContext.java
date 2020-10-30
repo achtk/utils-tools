@@ -9,7 +9,7 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.client.config.listener.impl.PropertiesListener;
 import com.chua.utils.netx.centor.listener.Listener;
 import com.chua.utils.tools.common.BeansHelper;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.nacos.factory.NacosConfigFactory;
 import com.chua.utils.netx.nacos.factory.NacosNamingFactory;
 import com.chua.utils.tools.common.JsonHelper;
@@ -36,10 +36,10 @@ public class NacosContext implements AutoCloseable {
     private NacosConfigFactory nacosConfigFactory;
     private NacosNamingFactory nacosNamingFactory;
 
-    public NacosContext(NetxProperties netxProperties) {
-        netxProperties.put("serverAddr", netxProperties.getHostifOnly());
-        this.nacosNamingFactory = new NacosNamingFactory(netxProperties);
-        this.nacosConfigFactory = new NacosConfigFactory(netxProperties);
+    public NacosContext(NetProperties netProperties) {
+        netProperties.put("serverAddr", netProperties.getHostIfOnly());
+        this.nacosNamingFactory = new NacosNamingFactory(netProperties);
+        this.nacosConfigFactory = new NacosConfigFactory(netProperties);
 
         this.nacosNamingFactory.start();
         this.nacosConfigFactory.start();

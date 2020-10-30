@@ -1,9 +1,9 @@
 package com.chua.utils.netx.elasticsearch.spring.context;
 
 import com.chua.utils.tools.function.Template;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.elasticsearch.spring.factory.ElasticSearchFactory;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.netx.factory.INetFactory;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.springframework.data.elasticsearch.core.*;
@@ -20,13 +20,13 @@ import java.util.List;
  */
 public class ElasticSearchContext implements Template<AbstractElasticsearchTemplate>, AutoCloseable {
 
-    private NetxProperties netxProperties;
-    private final INetxFactory<AbstractElasticsearchTemplate> netxFactory;
+    private NetProperties netProperties;
+    private final INetFactory<AbstractElasticsearchTemplate> netxFactory;
     private final AbstractElasticsearchTemplate elasticsearchTemplate;
 
-    public ElasticSearchContext(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
-        this.netxFactory = new ElasticSearchFactory(netxProperties);
+    public ElasticSearchContext(NetProperties netProperties) {
+        this.netProperties = netProperties;
+        this.netxFactory = new ElasticSearchFactory(netProperties);
         this.elasticsearchTemplate = this.netxFactory.client();
     }
 

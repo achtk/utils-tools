@@ -4,10 +4,8 @@ import com.chua.utils.netx.centor.ClientConfigCenter;
 import com.chua.utils.netx.vertx.tcp.VertxNetClientConfigurationCenter;
 import com.chua.utils.tools.handler.DataReaderHandler;
 import com.chua.utils.tools.handler.DataWriteHandler;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import io.vertx.core.buffer.Buffer;
-import org.assertj.core.util.Lists;
-import org.testng.annotations.Test;
 
 /**
  * @author CH
@@ -16,10 +14,10 @@ import org.testng.annotations.Test;
 public class TcpClientTest {
 
 	public static void main(String[] args) throws Throwable {
-		NetxProperties netxProperties = new NetxProperties();
-		netxProperties.setPort(43577);
-		netxProperties.setHost("218.75.14.162");
-		ClientConfigCenter clientConfigCenter = new VertxNetClientConfigurationCenter(netxProperties);
+		NetProperties netProperties = new NetProperties();
+		netProperties.setPort(43577);
+		netProperties.setHost("218.75.14.162");
+		ClientConfigCenter clientConfigCenter = new VertxNetClientConfigurationCenter(netProperties);
 		//clientConfigCenter.connect(Lists.newArrayList(new DemoDataWriteHandler(), new DemoDataReaderHandler()));
 	}
 

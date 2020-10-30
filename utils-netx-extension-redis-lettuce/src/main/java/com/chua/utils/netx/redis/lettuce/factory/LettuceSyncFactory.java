@@ -1,7 +1,7 @@
 package com.chua.utils.netx.redis.lettuce.factory;
 
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.lambdaworks.redis.RedisClient;
 import com.lambdaworks.redis.RedisURI;
@@ -25,18 +25,18 @@ import java.util.ArrayList;
  */
 @Slf4j
 @NoArgsConstructor
-public class LettuceSyncFactory implements INetxFactory {
+public class LettuceSyncFactory implements INetFactory {
     private RedisAdvancedClusterCommands<String, String> clusterCommands;
     private RedisCommands<String, String> redisCommands;
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
 
-    public LettuceSyncFactory(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public LettuceSyncFactory(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class LettuceSyncFactory implements INetxFactory {
     public void start() {
         log.info(">>>>>>>>>>> LettuceSyncFactory Starting to connect");
 
-        String[] hosts = netxProperties.getHost();
+        String[] hosts = netProperties.getHost();
         ArrayList<RedisURI> list = new ArrayList<>();
         if (hosts.length > 1) {
             for (String s : hosts) {

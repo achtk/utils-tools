@@ -1,6 +1,6 @@
 package com.chua.utils.netx.elasticsearch.configure;
 
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.PropertiesHelper;
 import com.google.gson.GsonBuilder;
@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import static com.chua.utils.tools.properties.NetxProperties.*;
+import static com.chua.utils.tools.properties.NetProperties.*;
 
 
 /**
@@ -35,7 +35,7 @@ public class ElasticSearchConfigurator {
     public JestClientFactory configure() {
         JestClientFactory jestClientFactory = new JestClientFactory();
 
-        String[] hosts = PropertiesHelper.arrays(properties, NetxProperties.CONFIG_FIELD_HOST);
+        String[] hosts = PropertiesHelper.arrays(properties, NetProperties.CONFIG_FIELD_HOST);
         List<String> collect = Arrays.stream(hosts)
                 .map(host -> {
                     String text = host;

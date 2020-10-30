@@ -1,6 +1,6 @@
 package com.chua.utils.netx.solr.factory;
 
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,13 +19,13 @@ public class SingleSolrFactory extends SolrFactory {
 
 	private HttpSolrClient httpSolrClient;
 
-	public SingleSolrFactory(NetxProperties netxProperties) {
-		super(netxProperties);
+	public SingleSolrFactory(NetProperties netProperties) {
+		super(netProperties);
 	}
 
     @Override
-	public void configure(NetxProperties netxProperties) {
-		this.netxProperties = netxProperties;
+	public void configure(NetProperties netProperties) {
+		this.netProperties = netProperties;
 	}
 
 	/**
@@ -34,11 +34,11 @@ public class SingleSolrFactory extends SolrFactory {
 	@Override
 	public void start() {
 		log.info(">>>>>>>>>>> SolrFactory Starting to connect");
-		String[] hosts = netxProperties.getHost();
+		String[] hosts = netProperties.getHost();
 		try {
 			this.httpSolrClient = new HttpSolrClient.Builder(hosts[0])
-						.withConnectionTimeout(netxProperties.getConnectionTimeout())
-						.withSocketTimeout(netxProperties.getReadTimeout()).build();
+						.withConnectionTimeout(netProperties.getConnectionTimeout())
+						.withSocketTimeout(netProperties.getReadTimeout()).build();
 
 			setSolrClient(httpSolrClient);
 			log.info(">>>>>>>>>>> SolrFactory connection complete.");

@@ -1,7 +1,7 @@
 package com.chua.utils.netx.mongodb.factory;
 
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.common.FinderHelper;
 import com.mongodb.*;
 import lombok.NoArgsConstructor;
@@ -16,19 +16,19 @@ import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
  */
 @Slf4j
 @NoArgsConstructor
-public class MongodbFactory implements INetxFactory<MongoTemplate>  {
+public class MongodbFactory implements INetFactory<MongoTemplate> {
 
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
     private MongoTemplate mongoTemplate;
 
 
-    public MongodbFactory(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public MongodbFactory(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class MongodbFactory implements INetxFactory<MongoTemplate>  {
         log.info(">>>>>>>>>>> MongodbFactory Starting to connect");
         try {
             MongoClientOptions.Builder mongoBuilder = new MongoClientOptions.Builder();
-            mongoBuilder.connectTimeout(netxProperties.getConnectTimeout());
+            mongoBuilder.connectTimeout(netProperties.getConnectTimeout());
             mongoBuilder.minConnectionsPerHost(1);
 
             ConnectionString connectionString = new ConnectionString(getMongoUri());
@@ -81,9 +81,9 @@ public class MongodbFactory implements INetxFactory<MongoTemplate>  {
     private String getMongoUri() {
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("mongodb://");
-        stringBuffer.append(netxProperties.getUsername()).append(":").append(netxProperties.getPassword()).append("@");
-        stringBuffer.append(FinderHelper.firstElement(netxProperties.getHost())).append("/");
-        stringBuffer.append(netxProperties.getDatabaseName());
+        stringBuffer.append(netProperties.getUsername()).append(":").append(netProperties.getPassword()).append("@");
+        stringBuffer.append(FinderHelper.firstElement(netProperties.getHost())).append("/");
+        stringBuffer.append(netProperties.getDatabaseName());
         stringBuffer.append("?authSource=admin");
 
         return stringBuffer.toString();

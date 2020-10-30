@@ -1,9 +1,10 @@
 package com.chua.utils.netx.zookeeper.consumer;
 
 import com.chua.utils.netx.consumer.INetxConsumer;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.netx.zookeeper.factory.ZookeeperFactory;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
+import org.apache.curator.framework.CuratorFramework;
 
 /**
  * zk 消费者
@@ -12,16 +13,16 @@ import com.chua.utils.tools.properties.NetxProperties;
  */
 public class ZookeeperConsumer implements INetxConsumer {
 
-    private INetxFactory netxFactory;
+    private INetFactory<CuratorFramework> netFactory;
 
     @Override
-    public INetxFactory factory() {
-        return netxFactory;
+    public INetFactory<CuratorFramework> factory() {
+        return netFactory;
     }
 
     @Override
-    public void initialConfiguration(NetxProperties netxProperties) {
-        netxFactory = new ZookeeperFactory();
-        netxFactory.configure(netxProperties);
+    public void initialConfiguration(NetProperties netProperties) {
+        netFactory = new ZookeeperFactory();
+        netFactory.configure(netProperties);
     }
 }

@@ -1,8 +1,8 @@
 package com.chua.utils.netx.zookeeper.factory;
 
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.common.MapHelper;
+import com.chua.utils.tools.properties.NetProperties;
 import com.google.common.base.Joiner;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.imps.CuratorFrameworkState;
-import org.apache.curator.framework.state.ConnectionState;
-import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.RetryNTimes;
 
 import java.util.concurrent.CountDownLatch;
@@ -27,26 +25,25 @@ import static org.apache.curator.framework.imps.CuratorFrameworkState.STARTED;
  *
  * @author CH
  * @version 1.0.0
- * @className ZookeeperFactory
  * @since 2020/8/5 11:39
  */
 @Slf4j
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class ZookeeperFactory implements INetxFactory<CuratorFramework> {
+public class ZookeeperFactory implements INetFactory<CuratorFramework> {
 
     @NonNull
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
     private CuratorFramework curatorFramework;
     /**
      * 状态
      */
     @Getter
-    private AtomicBoolean state = new AtomicBoolean(false);
+    private final AtomicBoolean state = new AtomicBoolean(false);
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
@@ -59,29 +56,26 @@ public class ZookeeperFactory implements INetxFactory<CuratorFramework> {
         log.info(">>>>>>>>>>> ZookeeperFactory Starting to connect");
 
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
-        builder.connectString(Joiner.on(",").join(netxProperties.getHost()));
+        builder.connectString(Joiner.on(",").join(netProperties.getHost()));
 
-        if (MapHelper.isValid(NetxProperties.CONFIG_FIELD_SESSION_TIMEOUT, netxProperties)) {
-            builder.sessionTimeoutMs(MapHelper.ints(NetxProperties.CONFIG_FIELD_SESSION_TIMEOUT, netxProperties));
+        if (MapHelper.isValid(NetProperties.CONFIG_FIELD_SESSION_TIMEOUT, netProperties)) {
+            builder.sessionTimeoutMs(MapHelper.ints(NetProperties.CONFIG_FIELD_SESSION_TIMEOUT, netProperties));
         }
 
-        if (MapHelper.isValid(NetxProperties.CONFIG_FIELD_CONNECTION_TIMEOUT, netxProperties)) {
-            builder.connectionTimeoutMs(MapHelper.ints(NetxProperties.CONFIG_FIELD_CONNECTION_TIMEOUT, netxProperties));
+        if (MapHelper.isValid(NetProperties.CONFIG_FIELD_CONNECTION_TIMEOUT, netProperties)) {
+            builder.connectionTimeoutMs(MapHelper.ints(NetProperties.CONFIG_FIELD_CONNECTION_TIMEOUT, netProperties));
         }
 
-        builder.retryPolicy(new RetryNTimes(MapHelper.ints(NetxProperties.CONFIG_FIELD_RETRY, netxProperties), 1000));
+        builder.retryPolicy(new RetryNTimes(MapHelper.ints(NetProperties.CONFIG_FIELD_RETRY, netProperties), 1000));
         CountDownLatch countDownLatch = new CountDownLatch(1);
         this.curatorFramework = builder.build();
         this.curatorFramework.start();
-        this.curatorFramework.getConnectionStateListenable().addListener(new ConnectionStateListener() {
-            @Override
-            public void stateChanged(CuratorFramework client, ConnectionState newState) {
-                log.info("Zookeeper waiting for connection");
-                state.set(newState.isConnected());
-                if (newState.isConnected()) {
-                    log.info("Zookeeper connection succeeded...");
-                    countDownLatch.countDown();
-                }
+        this.curatorFramework.getConnectionStateListenable().addListener((client, newState) -> {
+            log.info("Zookeeper waiting for connection");
+            state.set(newState.isConnected());
+            if (newState.isConnected()) {
+                log.info("Zookeeper connection succeeded...");
+                countDownLatch.countDown();
             }
         });
 
@@ -104,7 +98,7 @@ public class ZookeeperFactory implements INetxFactory<CuratorFramework> {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         if (null != curatorFramework) {
             curatorFramework.close();
             curatorFramework = null;

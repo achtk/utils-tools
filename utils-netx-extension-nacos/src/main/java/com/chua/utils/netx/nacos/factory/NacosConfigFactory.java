@@ -3,8 +3,8 @@ package com.chua.utils.netx.nacos.factory;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.exception.NacosException;
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +17,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @NoArgsConstructor
-public class NacosConfigFactory implements INetxFactory<ConfigService> {
+public class NacosConfigFactory implements INetFactory<ConfigService> {
 
     @NonNull
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
     private ConfigService configService;
     private static final String DEFAULT_GROUP = "DEFAULT_GROUP";
     private static final int DEFAULT_TIME_OUT = 3000;
@@ -28,11 +28,11 @@ public class NacosConfigFactory implements INetxFactory<ConfigService> {
      * <ul>
      *     <li>serverAddr: nacos地址 </li>
      * </ul>
-     * @param netxProperties
+     * @param netProperties
      */
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
@@ -44,8 +44,8 @@ public class NacosConfigFactory implements INetxFactory<ConfigService> {
     public void start() {
         log.info(">>>>>>>>>>> NacosConfigFactory Starting to connect");
         try {
-            netxProperties.put("serverAddr", netxProperties.getHostifOnly());
-            this.configService = NacosFactory.createConfigService(netxProperties);
+            netProperties.put("serverAddr", netProperties.getHostIfOnly());
+            this.configService = NacosFactory.createConfigService(netProperties);
             log.info(">>>>>>>>>>> NacosConfigFactory connection complete.");
         } catch (NacosException e) {
             e.printStackTrace();

@@ -1,7 +1,7 @@
 package com.chua.utils.netx.ftp.utils;
 
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.NetHelper;
 import com.chua.utils.tools.common.StringHelper;
@@ -23,7 +23,7 @@ import java.util.Vector;
  * 
  */
 @Slf4j
-public class SftpFactory implements INetxFactory<SftpFactory> {
+public class SftpFactory implements INetFactory<SftpFactory> {
 
     /** Session */
     private Session session = null;
@@ -40,7 +40,7 @@ public class SftpFactory implements INetxFactory<SftpFactory> {
     private String username;
     /** 密码 */
     private String password;
-    private NetxProperties netxProperties;
+    private NetProperties netProperties;
 
     public SftpFactory() {
     }
@@ -546,8 +546,8 @@ public class SftpFactory implements INetxFactory<SftpFactory> {
     }
 
     @Override
-    public void configure(NetxProperties netxProperties) {
-        this.netxProperties = netxProperties;
+    public void configure(NetProperties netProperties) {
+        this.netProperties = netProperties;
     }
 
     @Override
@@ -557,12 +557,12 @@ public class SftpFactory implements INetxFactory<SftpFactory> {
 
     @Override
     public void start() {
-        String host = FinderHelper.firstElement(netxProperties.getHost());
-        this.username = netxProperties.getUsername();
-        this.password = netxProperties.getPassword();
+        String host = FinderHelper.firstElement(netProperties.getHost());
+        this.username = netProperties.getUsername();
+        this.password = netProperties.getPassword();
         this.host = NetHelper.getHost(host);
         this.port = NetHelper.getPort(host);
-        this.timeout = netxProperties.getConnectionTimeout();
+        this.timeout = netProperties.getConnectionTimeout();
 
         login();
     }

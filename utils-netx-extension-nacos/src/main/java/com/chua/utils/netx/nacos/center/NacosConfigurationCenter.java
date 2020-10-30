@@ -6,7 +6,7 @@ import com.chua.utils.netx.centor.service.EventPublishingConfigService;
 import com.chua.utils.netx.centor.service.EventPublishingNamingService;
 import com.chua.utils.netx.nacos.context.NacosContext;
 import com.chua.utils.tools.function.producer.NetxPropertiesProducer;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * nacos数据中台
@@ -27,7 +26,7 @@ import java.util.Properties;
 public class NacosConfigurationCenter implements EventPublishingConfigService, EventPublishingNamingService, NetxPropertiesProducer, AutoCloseable {
 
 	@NonNull
-	private NetxProperties netxProperties;
+	private NetProperties netProperties;
 	private NacosContext nacosContext;
 
 	@Override
@@ -77,9 +76,9 @@ public class NacosConfigurationCenter implements EventPublishingConfigService, E
 	}
 
 	@Override
-	public void initial(NetxProperties netxProperties) {
-		this.netxProperties = netxProperties;
-		this.nacosContext = new NacosContext(netxProperties);
+	public void initial(NetProperties netProperties) {
+		this.netProperties = netProperties;
+		this.nacosContext = new NacosContext(netProperties);
 	}
 
 	@Override

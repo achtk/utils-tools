@@ -1,7 +1,7 @@
 package com.chua.utils.netx.redis.redission.context;
 
-import com.chua.utils.tools.properties.NetxProperties;
-import com.chua.utils.netx.factory.INetxFactory;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.netx.redis.redission.factory.RedissonFactory;
 import com.google.common.base.Strings;
 import org.redisson.api.RedissonClient;
@@ -14,13 +14,13 @@ import java.util.concurrent.locks.Lock;
  * @author CH
  */
 public class RedissonContext implements AutoCloseable {
-    private final INetxFactory netxFactory;
+    private final INetFactory netxFactory;
     private final RedissonClient redissonClient;
     private static final String ANY_LOCK = "anyLock";
 
 
-    public RedissonContext(NetxProperties netxProperties) {
-        this.netxFactory = new RedissonFactory(netxProperties);
+    public RedissonContext(NetProperties netProperties) {
+        this.netxFactory = new RedissonFactory(netProperties);
         this.netxFactory.start();
         this.redissonClient = (RedissonClient) this.netxFactory.client();
     }

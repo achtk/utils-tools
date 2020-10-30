@@ -7,7 +7,7 @@ import com.chua.utils.netx.vertx.util.NetSocketUtil;
 import com.chua.utils.tools.handler.Handler;
 import com.chua.utils.tools.handler.HandlerResolver;
 import com.chua.utils.tools.handler.ThrowableHandler;
-import com.chua.utils.tools.properties.NetxProperties;
+import com.chua.utils.tools.properties.NetProperties;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 public class VertxNetServerConfigurationCenter extends AbstractVerticle implements ServerConfigCenter<NetSocket> {
 
 	@NonNull
-	private NetxProperties netxProperties;
+	private NetProperties netProperties;
 
 	private NetServer netServer;
 
@@ -37,25 +37,25 @@ public class VertxNetServerConfigurationCenter extends AbstractVerticle implemen
 	@Setter
 	private volatile NetServerOptions netServerOptions;
 
-	public VertxNetServerConfigurationCenter(@NonNull NetxProperties netxProperties, Vertx vertx) {
-		this.netxProperties = netxProperties;
+	public VertxNetServerConfigurationCenter(@NonNull NetProperties netProperties, Vertx vertx) {
+		this.netProperties = netProperties;
 		this.vertx = vertx;
 	}
 
 	@Override
-	public void initial(NetxProperties netxProperties) {
-		this.netxProperties = netxProperties;
+	public void initial(NetProperties netProperties) {
+		this.netProperties = netProperties;
 	}
 
 	@Override
 	public void start(HandlerResolver resolver) throws Throwable {
-		this.vertx = Vertx.vertx(NetSocketUtil.newVertxOption(netxProperties));
+		this.vertx = Vertx.vertx(NetSocketUtil.newVertxOption(netProperties));
 		this.vertx.deployVerticle(this);
 
-		this.netServerOptions = NetSocketUtil.newHttpServerOption(netxProperties);
+		this.netServerOptions = NetSocketUtil.newHttpServerOption(netProperties);
 		this.netServer = vertx.createNetServer(netServerOptions);
 		this.netServer.connectHandler(new ResultHandler(resolver));
-		this.netServer.listen(netxProperties.getPort(), netxProperties.getHostifOnly(), new AsyncServerResultHandler(netxProperties));
+		this.netServer.listen(netProperties.getPort(), netProperties.getHostIfOnly(), new AsyncServerResultHandler(netProperties));
 	}
 
 
