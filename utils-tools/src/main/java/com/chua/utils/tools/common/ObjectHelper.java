@@ -11,12 +11,14 @@ import java.util.Objects;
 
 /**
  * object 工具类
+ *
  * @author CHTK
  */
 public class ObjectHelper {
 
     /**
      * 获取对象标识
+     *
      * @param obj 对象
      * @return
      */
@@ -26,14 +28,17 @@ public class ObjectHelper {
 
     /**
      * 获取hex特征值
+     *
      * @param obj 对象
      * @return
      */
     public static String getIdentityHexString(Object obj) {
         return Integer.toHexString(System.identityHashCode(obj));
     }
+
     /**
      * 检测异常
+     *
      * @param ex
      * @return
      */
@@ -43,6 +48,7 @@ public class ObjectHelper {
 
     /**
      * 检测是否是数组
+     *
      * @param obj
      * @return
      */
@@ -52,14 +58,17 @@ public class ObjectHelper {
 
     /**
      * 是否为空
+     *
      * @param array
      * @return
      */
     public static boolean isEmpty(Object[] array) {
         return (array == null || array.length == 0);
     }
+
     /**
      * object转String
+     *
      * @param object
      * @return
      */
@@ -69,14 +78,17 @@ public class ObjectHelper {
 
     /**
      * object转float
+     *
      * @param object obj
      * @return
      */
     public static Float toFloat(Object object) {
         return NumberHelper.toFloat(toString(object));
     }
+
     /**
      * object转long
+     *
      * @param object obj
      * @return
      */
@@ -86,38 +98,47 @@ public class ObjectHelper {
 
     /**
      * object转 byte
+     *
      * @param object obj
      * @return
      */
     public static Byte toByte(Object object) {
         return NumberHelper.toByte(toString(object));
     }
+
     /**
      * object转 int
+     *
      * @param object obj
      * @return
      */
     public static Integer toInt(Object object) {
         return NumberHelper.toInt(toString(object));
     }
+
     /**
      * object转 short
+     *
      * @param object obj
      * @return
      */
     public static Short toShort(Object object) {
         return NumberHelper.toShort(toString(object));
     }
+
     /**
      * object转 double
+     *
      * @param object obj
      * @return
      */
     public static Double toDouble(Object object) {
         return NumberHelper.toDouble(toString(object));
     }
+
     /**
      * object转 boolean
+     *
      * @param object obj
      * @return
      */
@@ -128,7 +149,8 @@ public class ObjectHelper {
 
     /**
      * 当对象为空返回默认值
-     * @param object obj
+     *
+     * @param object       obj
      * @param defaultValue 默认值
      * @return
      */
@@ -138,47 +160,51 @@ public class ObjectHelper {
 
     /**
      * 获取长度
+     *
      * @param o1
      * @return
      */
     public static int length(Object o1) {
         return null == o1 ? 0 : o1.toString().length();
     }
+
     /**
      * 是否为空
-     * @param object  对象
+     *
+     * @param object 对象
      * @return
      */
     public static boolean isEmpty(Object object) {
         if (object == null) {
             return true;
         } else if (object instanceof CharSequence) {
-            return ((CharSequence)object).length() == 0;
+            return ((CharSequence) object).length() == 0;
         } else if (object.getClass().isArray()) {
             return Array.getLength(object) == 0;
         } else if (object instanceof Collection) {
-            return ((Collection)object).isEmpty();
+            return ((Collection) object).isEmpty();
         } else {
-            return object instanceof Map ? ((Map)object).isEmpty() : false;
+            return object instanceof Map ? ((Map) object).isEmpty() : false;
         }
     }
 
     /**
      * 拷贝对象
+     *
      * @param entity
      * @param <T>
      * @return
      */
     public static <T> T dCopy(T entity) {
-        if(null == entity) {
+        if (null == entity) {
             return entity;
         }
-        try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);) {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);) {
             outputStream.writeObject(entity);
 
             try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-                 ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)){
+                 ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
                 return (T) objectInputStream.readObject();
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -188,6 +214,7 @@ public class ObjectHelper {
 
     /**
      * 对象转JSON字符串
+     *
      * @param obj 对象
      * @return
      */
@@ -197,16 +224,17 @@ public class ObjectHelper {
 
     /**
      * 是否有一个为空
+     *
      * @param source
      * @param sources
      * @return
      */
     public static boolean isAnyNull(Object source, Object... sources) {
-        if(Objects.isNull(source) || !BooleanHelper.hasLength(sources)) {
+        if (Objects.isNull(source) || !BooleanHelper.hasLength(sources)) {
             return true;
         }
         for (Object o : sources) {
-            if(Objects.isNull(o)) {
+            if (Objects.isNull(o)) {
                 return true;
             }
         }
@@ -215,15 +243,16 @@ public class ObjectHelper {
 
     /**
      * 如果数据为空
+     *
      * @param source
      * @param source1
      * @return
      */
-    public static <T>T firstNonNull(T source, T source1) {
-        if(null != source) {
+    public static <T> T firstNonNull(T source, T source1) {
+        if (null != source) {
             return source;
         }
-        if(null != source1) {
+        if (null != source1) {
             return source1;
         }
         throw new IllegalArgumentException("The both parameters cannot be empty!");
@@ -231,22 +260,24 @@ public class ObjectHelper {
 
     /**
      * 默认值
+     *
      * @param predicate
      * @param instance
      * @return
      */
-    public static <T>T defaultNoneNull(T predicate, T instance) {
+    public static <T> T defaultNoneNull(T predicate, T instance) {
         return null == predicate ? instance : predicate;
     }
 
     /**
      * 执行方法
-     * @param obj 对象
+     *
+     * @param obj  对象
      * @param name 方法
      * @param args 参数
      */
     public static void invoke(Object obj, String name, Object... args) {
-        if(null == obj) {
+        if (null == obj) {
             return;
         }
 
@@ -254,13 +285,13 @@ public class ObjectHelper {
         Method[] methods = aClass.getDeclaredMethods();
         Method method = null;
         for (Method item : methods) {
-            if(!item.getName().equals(name)) {
+            if (!item.getName().equals(name)) {
                 continue;
             }
             method = item;
         }
 
-        if(null == method) {
+        if (null == method) {
             return;
         }
 
@@ -272,5 +303,15 @@ public class ObjectHelper {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 空转空字符串
+     *
+     * @param source 数据
+     * @return String
+     */
+    public static String nullToEmpty(String source) {
+        return null == source ? "" : source.toString();
     }
 }

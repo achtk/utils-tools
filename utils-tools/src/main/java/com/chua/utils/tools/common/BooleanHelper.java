@@ -212,6 +212,15 @@ public class BooleanHelper {
     public static <T> boolean hasLength(final Collection<T> collection) {
         return null != collection && !collection.isEmpty();
     }
+    /**
+     * 判断集合是否有长度
+     *
+     * @param dictionary 集合
+     * @return
+     */
+    public static <T> boolean hasLength(final Dictionary dictionary) {
+        return null != dictionary && !dictionary.isEmpty();
+    }
 
     /**
      * 判断数组是否有长度

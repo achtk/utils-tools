@@ -7,6 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
+ * 多值Map
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/10/17

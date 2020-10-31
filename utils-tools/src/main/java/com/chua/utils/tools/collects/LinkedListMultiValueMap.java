@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
+ * 多值Map
  * @author CH
  * @version 1.0.0
  * @since 2020/10/17

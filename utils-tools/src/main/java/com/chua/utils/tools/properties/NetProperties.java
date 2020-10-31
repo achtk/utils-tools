@@ -83,6 +83,15 @@ public class NetProperties extends Properties implements StatelessProperties {
      */
     private String path;
     private Object t;
+    /**
+     * 版本
+     */
+    private String version;
+
+    public void setVersion(String version) {
+        this.version = version;
+        this.put("version", version);
+    }
 
     /**
      * 初始化
@@ -218,5 +227,14 @@ public class NetProperties extends Properties implements StatelessProperties {
     @Override
     public <T> void setEntity(T t) {
         this.t = t;
+    }
+
+    /**
+     * 获取值不存在获取默认值
+     * @param defaultValue 默认值
+     * @return
+     */
+    public int getPort(int defaultValue) {
+        return port <= 0 ? defaultValue: port;
     }
 }

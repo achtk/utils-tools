@@ -18,7 +18,9 @@ import static com.chua.utils.tools.constant.StringConstant.EXTENSION_NULL;
  * Map工具类
  *
  * @author CH
+ * @see com.chua.utils.tools.common.MapOperableHelper
  */
+@Deprecated
 public class MapHelper {
 
     /**
