@@ -4,6 +4,8 @@ import com.chua.utils.tools.entity.FieldInfoProperties;
 import com.chua.utils.tools.entity.MethodInfoProperties;
 import javassist.NotFoundException;
 
+import java.lang.reflect.Method;
+
 /**
  * 可被修改类解释器
  *
@@ -28,6 +30,16 @@ public interface ModifiableClassResolver {
      * @throws Exception Exception
      */
     ModifiableClassResolver addMethod(String methodFunction) throws Exception;
+
+    /**
+     * 替换方法
+     *
+     * @param method 方法
+     * @param methodFunction 添加方法
+     * @return ModifiableClassResolver
+     * @throws Exception Exception
+     */
+    ModifiableClassResolver replaceMethod(Method method, String methodFunction) throws Exception;
 
     /**
      * 添加方法

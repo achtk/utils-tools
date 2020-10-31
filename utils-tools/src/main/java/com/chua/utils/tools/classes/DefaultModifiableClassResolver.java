@@ -7,7 +7,9 @@ import com.chua.utils.tools.entity.FieldInfoProperties;
 import com.chua.utils.tools.entity.MethodInfoProperties;
 import javassist.*;
 import javassist.bytecode.*;
+import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
@@ -17,6 +19,7 @@ import java.util.Set;
  * @version 1.0.0
  * @since 2020/10/24
  */
+@Slf4j
 public class DefaultModifiableClassResolver implements ModifiableClassResolver {
 
     private final ClassPool classPool;
@@ -48,6 +51,25 @@ public class DefaultModifiableClassResolver implements ModifiableClassResolver {
     @Override
     public ModifiableClassResolver addMethod(String methodFunction) throws Exception {
         this.ctClass.addMethod(CtMethod.make(methodFunction, ctClass));
+        return this;
+    }
+
+    @Override
+    public ModifiableClassResolver replaceMethod(Method method, String methodFunction) throws Exception {
+        String name = method.getName();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        CtClass[] ctClasses = new CtClass[parameterTypes.length];
+        for (int i = 0; i < parameterTypes.length; i++) {
+            Class<?> aClass = parameterTypes[i];
+            ctClasses[i] = classPool.get(aClass.getName());
+        }
+
+        CtMethod declaredMethod = this.ctClass.getDeclaredMethod(name, ctClasses);
+        if (null == declaredMethod) {
+            log.warn("找不到指定方法");
+            return this;
+        }
+        declaredMethod.setBody(methodFunction);
         return this;
     }
 
