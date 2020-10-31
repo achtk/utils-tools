@@ -42,6 +42,12 @@
 <!--            <version>${commons-jexl3.version}</version>-->
 <!--        </dependency>-->
 
+        <dependency>
+            <groupId>org.beanshell</groupId>
+            <artifactId>bsh-core</artifactId>
+            <version>${bsh.version}</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
         <!--<dependency>
             <groupId>com.google.code.gson</groupId>

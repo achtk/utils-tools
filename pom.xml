@@ -123,6 +123,8 @@
         <javassist.version>3.27.0-GA</javassist.version>
         <snakeyaml.version>1.26</snakeyaml.version>
 
+        <bsh.version>2.0b4</bsh.version>
+
         <slf4j.version>1.7.30</slf4j.version>
 
         <hikaricp.version>3.4.5</hikaricp.version>
@@ -213,6 +215,7 @@
         <module>utils-tools-extension-office</module>
         <module>utils-tools-extension-template</module>
         <module>utils-tools-extension-feign</module>
+        <module>utils-tools-extension-operator</module>
 
         <module>utils-example</module>
 
@@ -239,6 +242,7 @@
         <module>utils-netx-extension-datasource-sqlite</module>
         <module>utils-netx-extension-datasource-hsqldb</module>
         <module>utils-netx-extension-datasource-h2</module>
+        <module>utils-netx-extension-datasource-mysql</module>
     </modules>
 
     <build>
