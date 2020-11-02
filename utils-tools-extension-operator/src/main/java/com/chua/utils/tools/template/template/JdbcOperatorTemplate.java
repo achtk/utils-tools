@@ -1,5 +1,11 @@
 package com.chua.utils.tools.template.template;
 
+import com.chua.utils.tools.dsl.CreateTableStep;
+import com.chua.utils.tools.dsl.CreateTableStepSqlBuilder;
+import com.chua.utils.tools.dsl.SqlBuilder;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +17,7 @@ import java.util.Map;
  * @since 2020/10/31
  */
 public interface JdbcOperatorTemplate {
+
     /**
      * 操作
      *
@@ -71,4 +78,20 @@ public interface JdbcOperatorTemplate {
      * @throws Exception
      */
     <T> List<T> queryForList(String express, Class<T> tClass, final Object... params) throws Exception;
+
+    /**
+     * 创建表
+     *
+     * @param createTableStepSqlBuilder 创建步骤
+     * @throws Exception Exception
+     */
+    void createTable(CreateTableStepSqlBuilder createTableStepSqlBuilder) throws Exception;
+
+    /**
+     * 获取连接
+     *
+     * @return Connection
+     * @throws SQLException SQLException
+     */
+    Connection getConnection() throws SQLException;
 }
