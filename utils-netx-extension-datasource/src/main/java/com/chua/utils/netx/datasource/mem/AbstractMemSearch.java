@@ -1,18 +1,20 @@
 package com.chua.utils.netx.datasource.mem;
 
-import com.chua.utils.netx.datasource.factory.DataSourceFactory;
 import com.chua.utils.netx.datasource.info.TableInfo;
 import com.chua.utils.netx.datasource.properties.DataSourceProperties;
+import com.chua.utils.netx.datasource.template.SimpleJdbcOperatorTemplate;
+import com.chua.utils.netx.datasource.transform.JdbcOperatorTransform;
+import com.chua.utils.tools.properties.OperatorProperties;
+import com.chua.utils.tools.template.template.JdbcOperatorTemplate;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.apache.commons.dbutils.handlers.MapListHandler;
+import net.sf.cglib.beans.BeanMap;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.function.BiConsumer;
 
 /**
@@ -25,17 +27,21 @@ import java.util.function.BiConsumer;
 @Slf4j
 public abstract class AbstractMemSearch<T> implements MemSearch<T> {
 
-    private final DataSourceFactory dataSourceFactory;
+    private final JdbcOperatorTemplate jdbcOperatorTemplate;
     private TableInfo tableInfo;
 
     protected abstract DataSourceProperties dataSourceProperties();
 
     public AbstractMemSearch() {
-        this.dataSourceFactory = DataSourceFactory.newBuilder().dataSourceProperties(dataSourceProperties()).build();
+        OperatorProperties operatorProperties = new OperatorProperties();
+        Properties properties = new Properties();
+        properties.putAll(BeanMap.create(dataSourceProperties()));
+        operatorProperties.properties(properties);
+        this.jdbcOperatorTemplate = new SimpleJdbcOperatorTemplate(new JdbcOperatorTransform().transform(operatorProperties));
     }
 
     @Override
-    public MemSearch addData(List<T> data) throws Throwable {
+    public MemSearch addData(List<T> data) throws Exception {
         if (null == data || data.size() == 0) {
             return this;
         }
@@ -44,13 +50,12 @@ public abstract class AbstractMemSearch<T> implements MemSearch<T> {
                 if (null == tableInfo) {
                     tableInfo = new TableInfo();
                     tableInfo.objectToTable(data.get(0));
-                    dataSourceFactory.getQueryRunner().execute(tableInfo.initialConfig());
+                    this.jdbcOperatorTemplate.execute(tableInfo.initialConfig());
                 }
             }
         }
-        QueryRunner queryRunner = dataSourceFactory.getQueryRunner();
         //获取连接对象
-        Connection connection = queryRunner.getDataSource().getConnection();
+        Connection connection = jdbcOperatorTemplate.getConnection();
         //设置禁用自动提交
         connection.setAutoCommit(false);
         //创建执行对象
@@ -82,15 +87,13 @@ public abstract class AbstractMemSearch<T> implements MemSearch<T> {
     }
 
     @Override
-    public List<Map<String, Object>> query(String ddl) throws SQLException {
-        QueryRunner queryRunner = dataSourceFactory.getQueryRunner();
-        return queryRunner.query(tableInfo.parser(ddl), new MapListHandler());
+    public List<Map<String, Object>> query(String ddl) throws Exception {
+        return jdbcOperatorTemplate.queryForList(tableInfo.parser(ddl));
     }
 
     @Override
-    public List<T> queryForObject(String ddl) throws SQLException {
-        QueryRunner queryRunner = dataSourceFactory.getQueryRunner();
-        return (List<T>) queryRunner.query(tableInfo.parser(ddl), new BeanListHandler(tableInfo.getObjClass()));
+    public List<T> queryForObject(String ddl) throws Exception {
+        return (List<T>) jdbcOperatorTemplate.queryForList(tableInfo.parser(ddl), tableInfo.getObjClass());
     }
 
 }

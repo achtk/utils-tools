@@ -1,16 +1,20 @@
 package com.chua.utils.netx.datasource.template;
 
+import com.chua.utils.netx.datasource.transform.JdbcOperatorTransform;
+import com.chua.utils.tools.dsl.CreateTableStepSqlBuilder;
+import com.chua.utils.tools.properties.OperatorProperties;
 import com.chua.utils.tools.template.template.JdbcOperatorTemplate;
+import com.chua.utils.tools.transform.OperatorTransform;
+import com.google.common.base.Preconditions;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * commons-dbutils实现方式
@@ -22,10 +26,16 @@ import java.util.function.Supplier;
 public class SimpleJdbcOperatorTemplate implements JdbcOperatorTemplate {
 
     private final QueryRunner queryRunner;
+    private OperatorTransform<DataSource> operatorTransform = new JdbcOperatorTransform();
     private DataSource dataSource;
 
     public SimpleJdbcOperatorTemplate(DataSource dataSource) {
         this.dataSource = dataSource;
+        this.queryRunner = new QueryRunner(dataSource);
+    }
+
+    public SimpleJdbcOperatorTemplate(OperatorProperties operatorProperties) {
+        this.dataSource = operatorTransform.transform(operatorProperties);
         this.queryRunner = new QueryRunner(dataSource);
     }
 
@@ -65,4 +75,18 @@ public class SimpleJdbcOperatorTemplate implements JdbcOperatorTemplate {
     public <T> List<T> queryForList(String express, Class<T> tClass, Object... params) throws Exception {
         return (List<T>) queryRunner.query(express, new BeanHandler(tClass), params);
     }
+
+    @Override
+    public void createTable(CreateTableStepSqlBuilder createTableStepSqlBuilder) throws Exception {
+        Preconditions.checkArgument(null != createTableStepSqlBuilder);
+        String sql = createTableStepSqlBuilder.toSql();
+        execute(sql, null);
+    }
+
+    @Override
+    public Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
+
+
 }

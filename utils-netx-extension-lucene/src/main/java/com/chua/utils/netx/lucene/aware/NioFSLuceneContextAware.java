@@ -11,15 +11,11 @@ import com.chua.utils.tools.common.BooleanHelper;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.cglib.beans.BeanMap;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.queryparser.flexible.core.QueryParserHelper;
+import org.apache.lucene.index.*;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -78,6 +74,20 @@ public class NioFSLuceneContextAware implements DocumentContextAware<Map<String,
     }
 
     @Override
+    public void updateDocument(DocumentMap documentMap) throws Exception {
+        Document document = DocumentUtil.map2Document(documentMap);
+        indexWriter.updateDocument(new Term(DocumentUtil.ID, document.get(DocumentUtil.ID)), document);
+        indexWriter.commit();
+    }
+
+    @Override
+    public void updateDocuments(List<DocumentMap> documentMaps) throws Exception {
+        for (DocumentMap document : documentMaps) {
+            updateDocument(document);
+        }
+    }
+
+    @Override
     public void addDocument(DocumentMap documentMap) throws Exception {
         Document document = DocumentUtil.map2Document(documentMap);
         indexWriter.addDocument(document);
@@ -92,8 +102,13 @@ public class NioFSLuceneContextAware implements DocumentContextAware<Map<String,
     }
 
     @Override
-    public Integer deleteDocument(DocumentMap documentMap) {
-        return null;
+    public long deleteDocument(String expression) throws Exception {
+        StandardQueryParser queryParser = new StandardQueryParser(analyzer);
+        // 支持后缀匹配，如*国 则可以搜索中国、美国等以国字结尾的词，*:*可以查询所有索引
+        queryParser.setAllowLeadingWildcard(true);
+        // 2 使用查询解析器对象, 实例化Query对象
+        Query query = queryParser.parse(expression, DocumentUtil.CREATE_TIME);
+        return indexWriter.deleteDocuments(query);
     }
 
     @Override
@@ -103,15 +118,8 @@ public class NioFSLuceneContextAware implements DocumentContextAware<Map<String,
         if (searchMatch == Search.Match.FIELD && !BooleanHelper.hasLength(fields)) {
             return null;
         }
-        if (indexReader == null) {
-            synchronized (this) {
-                if (!DirectoryReader.indexExists(directory)) {
-                    log.warn("索引数据不存在无法查询");
-                    return null;
-                }
-                this.indexReader = DirectoryReader.open(directory);
-            }
-        }
+        //初始化读取器
+        checkIndexReader();
         // 1 创建查询解析器对象
         // 参数一:默认的搜索域, 参数二:使用的分析器
         StandardQueryParser queryParser = new StandardQueryParser(analyzer);
@@ -119,6 +127,34 @@ public class NioFSLuceneContextAware implements DocumentContextAware<Map<String,
         queryParser.setAllowLeadingWildcard(true);
         // 2 使用查询解析器对象, 实例化Query对象
         Query query = queryParser.parse(search.getSearch(), DocumentUtil.CREATE_TIME);
+        return queryForDocument(query, search);
+    }
+
+    /**
+     * 初始化读取器
+     */
+    private void checkIndexReader() throws IOException {
+        if (indexReader == null) {
+            synchronized (this) {
+                if (!DirectoryReader.indexExists(directory)) {
+                    log.warn("索引数据不存在无法查询");
+                    throw new IOException();
+                }
+                this.indexReader = DirectoryReader.open(directory);
+            }
+        }
+    }
+
+    /**
+     * 查询数据
+     *
+     * @param query  查询对象
+     * @param search 查询条件
+     * @return
+     */
+    private DocumentData<Map<String, Object>> queryForDocument(Query query, Search search) throws IOException {
+        List<String> fields = search.getFields();
+        Search.Match searchMatch = search.getMatch();
         // 3. 创建索引搜索对象(IndexSearcher), 用于执行索引
         IndexSearcher searcher = new IndexSearcher(indexReader);
         // 4. 使用IndexSearcher对象执行搜索, 返回搜索结果集TopDocs
@@ -166,7 +202,7 @@ public class NioFSLuceneContextAware implements DocumentContextAware<Map<String,
     @Override
     public <T> DocumentData<T> search(Search search, Class<T> mapClass) throws Exception {
         DocumentData<Map<String, Object>> documentData = search(search);
-        if(null == documentData) {
+        if (null == documentData) {
             return null;
         }
         DocumentData<T> documentData1 = new DocumentData<>();
@@ -192,6 +228,21 @@ public class NioFSLuceneContextAware implements DocumentContextAware<Map<String,
         }
         documentData1.setData(newData);
         return documentData1;
+    }
+
+    @Override
+    public DocumentData<Map<String, Object>> searchKeyword(Search search) throws Exception {
+        //多字段的查询转换器
+        MultiFieldQueryParser queryParser = new MultiFieldQueryParser(search.getFields().toArray(new String[0]), analyzer);
+        List<String> fields = search.getFields();
+        Search.Match searchMatch = search.getMatch();
+        if (searchMatch == Search.Match.FIELD && !BooleanHelper.hasLength(fields)) {
+            return null;
+        }
+        //初始化读取器
+        checkIndexReader();
+
+        return queryForDocument(queryParser.parse(search.getSearch()), search);
     }
 
     @Override

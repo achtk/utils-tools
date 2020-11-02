@@ -22,6 +22,7 @@ public class DocumentUtil {
 
     private static final Pattern PATTERN = Pattern.compile("(and|or){1}");
     public static final String CREATE_TIME = "#createTime_";
+    public static final String ID = "id";
     public static ConcurrentMap<String, String> javaProperty2SqlColumnMap = new ConcurrentHashMap<>();
 
     static {
@@ -57,6 +58,9 @@ public class DocumentUtil {
      * @return Document
      */
     public static Document map2Document(Map<String, Object> article) {
+        if (!article.containsKey(ID)) {
+            throw new NullPointerException("Data needs to contain a unique ID");
+        }
         Document document = new Document();
 
         for (Map.Entry<String, Object> entry : article.entrySet()) {

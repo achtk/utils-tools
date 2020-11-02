@@ -6,7 +6,10 @@ import com.chua.utils.netx.entity.Search;
 import com.chua.utils.netx.function.DocumentContextAware;
 import com.chua.utils.netx.lucene.aware.MemoryLuceneContextAware;
 import com.chua.utils.netx.lucene.aware.NioFSLuceneContextAware;
+import com.chua.utils.netx.lucene.template.MMapLuceneOperatorTemplate;
+import com.chua.utils.netx.lucene.template.SingleLuceneOperatorTemplate;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.template.template.LuceneOperatorTemplate;
 import lombok.Data;
 import org.mockito.Mockito;
 
@@ -40,11 +43,18 @@ public class LuceneContextExample {
         search.setMax(1300);
         search.setSearch("id:1~10");
         search.setMatch(Search.Match.FULL);
+//
+//        DocumentContextAware documentContextAware = new MemoryLuceneContextAware();
+//        documentContextAware.addDocuments(documentMapList);
+//        DocumentData documentData = documentContextAware.search(search);
+//        System.out.println(documentData);
+        String name = "demo";
 
-        DocumentContextAware documentContextAware = new MemoryLuceneContextAware();
-        documentContextAware.addDocuments(documentMapList);
-        DocumentData documentData = documentContextAware.search(search);
-        System.out.println(documentData);
+        LuceneOperatorTemplate luceneOperatorTemplate = new SingleLuceneOperatorTemplate("demo");
+        luceneOperatorTemplate.createTable(name);
+        luceneOperatorTemplate.addDocuments(name, documentMapList);
+        List list = luceneOperatorTemplate.queryForList(name, search);
+        System.out.println(list);
     }
 
     @Data

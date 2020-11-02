@@ -16,18 +16,18 @@ public interface MemSearch<T> {
      * @param data
      * @return
      */
-    MemSearch addData(List<T> data) throws Exception, Throwable;
+    MemSearch addData(List<T> data) throws Exception;
 
     /**
      * 查询数据
      * @param ddl
      * @return
      */
-    List<Map<String, Object>> query(String ddl) throws SQLException;
+    List<Map<String, Object>> query(String ddl) throws Exception;
     /**
      * 查询数据
      * @param ddl
      * @return
      */
-    List<T> queryForObject(String ddl) throws SQLException;
+    List<T> queryForObject(String ddl) throws Exception;
 }
