@@ -17,6 +17,7 @@ import static com.chua.utils.tools.constant.StringConstant.TRUE;
 
 /**
  * boolean工具类
+ *
  * @author CH
  */
 public class BooleanHelper {
@@ -29,6 +30,7 @@ public class BooleanHelper {
     public static boolean hasLength(final Enumeration<URL> urls) {
         return null != urls && urls.hasMoreElements();
     }
+
     /**
      * 判断是否有长度
      *
@@ -212,6 +214,7 @@ public class BooleanHelper {
     public static <T> boolean hasLength(final Collection<T> collection) {
         return null != collection && !collection.isEmpty();
     }
+
     /**
      * 判断集合是否有长度
      *
@@ -345,6 +348,7 @@ public class BooleanHelper {
     public static <T, V> boolean hasLength(final Map<T, V> sources, final int length) {
         return hasLength(sources) && sources.keySet().size() >= length;
     }
+
     /**
      * 是否包含value
      *
@@ -420,6 +424,7 @@ public class BooleanHelper {
     public static boolean hasLength(Properties source, Properties... ts) {
         return hasAllLength(ts);
     }
+
     /**
      * 判断数组是否有长度
      *
@@ -429,6 +434,7 @@ public class BooleanHelper {
     public static boolean hasValue(Properties source, Object value) {
         return !hasLength(source) || null == value ? null : source.containsValue(value);
     }
+
     /**
      * 判断数组是否有长度
      *
@@ -438,6 +444,7 @@ public class BooleanHelper {
     public static boolean hasKey(Properties source, Object value) {
         return !hasLength(source) || null == value ? null : source.containsKey(value);
     }
+
     /**
      * 判断数组是否有长度
      *
@@ -467,6 +474,7 @@ public class BooleanHelper {
     public static <T, V> boolean hasLength(final Preferences preferences) {
         return null != preferences;
     }
+
     /**
      * 是否包含value
      *
@@ -550,6 +558,7 @@ public class BooleanHelper {
 
     /**
      * 判断数据是否有长度
+     *
      * @param stringBuffer
      * @return
      */
@@ -559,12 +568,14 @@ public class BooleanHelper {
 
     /**
      * 判断数据是否有长度
+     *
      * @param stringBuilder
      * @return
      */
     public static boolean hasLength(final StringBuilder stringBuilder) {
         return null != stringBuilder && stringBuilder.length() > 0;
     }
+
     /**
      * 判断是否有值
      *
@@ -1306,31 +1317,33 @@ public class BooleanHelper {
     }
 
     /**
-     *
      * 获取默认对象
-     * @param t 源对象
+     *
+     * @param t            源对象
      * @param defaultValue 默认对象
      * @param <T>
      * @return
      */
-    public static <T>T[] ifNulls(T[] t, T... defaultValue) {
+    public static <T> T[] ifNulls(T[] t, T... defaultValue) {
         return BooleanHelper.hasLength(t) ? t : defaultValue;
     }
+
     /**
-     *
      * 获取默认对象
-     * @param t 源对象
+     *
+     * @param t            源对象
      * @param defaultValue 默认对象
      * @param <T>
      * @return
      */
-    public static <T>T ifNull(T t, T defaultValue) {
+    public static <T> T ifNull(T t, T defaultValue) {
         Optional<T> optional = Optional.ofNullable(t);
         return optional.isPresent() ? optional.get() : defaultValue;
     }
 
     /**
      * 文件是否存在
+     *
      * @param file 文件
      * @return
      */
@@ -1343,6 +1356,7 @@ public class BooleanHelper {
 
     /**
      * isWin
+     *
      * @return
      */
     public static boolean isWin() {
@@ -1351,6 +1365,7 @@ public class BooleanHelper {
 
     /**
      * isWin
+     *
      * @return
      */
     public static boolean isLinux() {
@@ -1359,17 +1374,18 @@ public class BooleanHelper {
 
     /**
      * 有效索引
+     *
      * @param properties 数据
-     * @param index 索引
+     * @param index      索引
      * @return
      */
     public static boolean isValid(Map<?, ?> properties, String index) {
-        if(null == properties || StringHelper.isBlank(index) || !properties.containsKey(index)) {
+        if (null == properties || StringHelper.isBlank(index) || !properties.containsKey(index)) {
             return false;
         }
 
         Object o = properties.get(index);
-        if(null != o && (o instanceof String)) {
+        if (null != o && (o instanceof String)) {
             return !com.google.common.base.Strings.isNullOrEmpty(String.valueOf(o));
         }
 
@@ -1379,22 +1395,27 @@ public class BooleanHelper {
 
     /**
      * 是否是class
+     *
      * @param object
      * @return
      */
     public static boolean isClass(final Object object) {
         return null == object || object instanceof Class;
     }
+
     /**
      * 是否是class
+     *
      * @param object
      * @return
      */
     public static boolean isNotNullClass(final Object object) {
         return null != object && object instanceof Class;
     }
+
     /**
      * 是否是class
+     *
      * @param object
      * @return
      */
@@ -1404,10 +1425,26 @@ public class BooleanHelper {
 
     /**
      * 是否是基础类
+     *
      * @param type
      * @return
      */
     public static boolean isBasicClass(Class<?> type) {
         return ClassHelper.isBasicClass(type) || String.class.isAssignableFrom(type);
+    }
+
+    /**
+     * 字符串是否包含中文
+     *
+     * @param source 待校验字符串
+     * @return true 包含中文字符 false 不包含中文字符
+     */
+    public static boolean isContainerChinese(String source) {
+        if (StringHelper.isEmpty(source)) {
+            throw new NullPointerException("sms context is empty!");
+        }
+        Pattern p = Pattern.compile("[\u4E00-\u9FA5|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\“|\\”|\\？|\\：|\\；|\\【|\\】]");
+        Matcher m = p.matcher(source);
+        return m.find();
     }
 }

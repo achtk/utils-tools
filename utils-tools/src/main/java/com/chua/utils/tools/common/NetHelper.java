@@ -273,46 +273,49 @@ public class NetHelper {
     /**
      * 获取IP
      * <p>
-     *     127.0.0.1:8080 -> 127.0.0.1
+     * 127.0.0.1:8080 -> 127.0.0.1
      * </p>
+     *
      * @param host
      * @return
      */
     public static String getHost(String host) {
-        if(Strings.isNullOrEmpty(host)) {
+        if (Strings.isNullOrEmpty(host)) {
             return null;
         }
 
         int index = host.indexOf("://");
-        if(index > -1) {
+        if (index > -1) {
             host = host.substring(index + 3);
         }
 
-        if(host.indexOf(":") == -1) {
+        if (host.indexOf(":") == -1) {
             return host;
         }
         String[] strings = host.split(":");
         return strings[0];
     }
+
     /**
      * 获取端口
      * <p>
-     *     127.0.0.1:8080 -> 8080
+     * 127.0.0.1:8080 -> 8080
      * </p>
+     *
      * @param host
      * @return
      */
     public static int getPort(String host) {
-        if(Strings.isNullOrEmpty(host)) {
+        if (Strings.isNullOrEmpty(host)) {
             return -1;
         }
 
         int index = host.indexOf("://");
-        if(index > -1) {
+        if (index > -1) {
             host = host.substring(index + 3);
         }
 
-        if(host.indexOf(":") == -1) {
+        if (host.indexOf(":") == -1) {
             return -1;
         }
         String[] strings = host.split(":");
@@ -321,30 +324,43 @@ public class NetHelper {
 
     /**
      * 去除重复 /
+     *
      * @param uri uri
      * @return
      */
     public static String removeDuplicateSymbols(String uri) {
-        if(null == uri) {
+        if (null == uri) {
             return "";
         }
-        String newUri = uri.replace("\\", "/").replaceAll("//", "/");
-        if(newUri.startsWith(HTTPS)) {
-            return newUri;
+        int index = uri.indexOf(":");
+        if (index != -1) {
+            uri = uri.substring(index +1);
         }
-        return newUri.startsWith(HTTP) ? newUri : HTTP + newUri;
+        uri = uri.replace("\\", "/").replaceAll("//", "/");
+        if (uri.startsWith("/")) {
+            uri = uri.substring(1);
+        }
+        if (uri.startsWith("/")) {
+            uri = uri.substring(1);
+        }
+
+        if (uri.startsWith(HTTPS)) {
+            return uri;
+        }
+        return uri.startsWith(HTTP) ? uri : HTTP + uri;
     }
 
     /**
      * 获取protocol
+     *
      * @param address 地址
      * @return
      */
-	public static String getProtocol(String address) {
-	    if(Strings.isNullOrEmpty(address)) {
-	        return "";
+    public static String getProtocol(String address) {
+        if (Strings.isNullOrEmpty(address)) {
+            return "";
         }
         int index = address.indexOf("://");
-	    return index == -1 ? "" : address.substring(0, index);
+        return index == -1 ? "" : address.substring(0, index);
     }
 }

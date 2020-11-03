@@ -88,6 +88,31 @@ public class LuceneTemplateResolver implements TemplateResolver {
      * 构造
      *
      * @param storePath     存储位置
+     * @param directoryType 目录类型
+     */
+    public LuceneTemplateResolver(DirectoryFactory.DirectoryType directoryType) {
+        this.encrypt.append(Encrypt.ENCRYPT_KEY, this.secret);
+        this.directoryType = directoryType;
+        this.directoryFactory = new DirectoryFactory(this.directoryType);
+        this.indexOperatorTemplate = new DefaultIndexOperatorTemplate(this.storePath, this.encrypt, directoryFactory);
+    }
+    /**
+     * 构造
+     *
+     * @param storePath     存储位置
+     * @param directoryType 目录类型
+     */
+    public LuceneTemplateResolver(@NonNull Path storePath, DirectoryFactory.DirectoryType directoryType) {
+        this.storePath = storePath;
+        this.encrypt.append(Encrypt.ENCRYPT_KEY, this.secret);
+        this.directoryType = directoryType;
+        this.directoryFactory = new DirectoryFactory(this.directoryType);
+        this.indexOperatorTemplate = new DefaultIndexOperatorTemplate(this.storePath, this.encrypt, directoryFactory);
+    }
+    /**
+     * 构造
+     *
+     * @param storePath     存储位置
      * @param encrypt       加密算法
      * @param secret        秘钥
      * @param directoryType 目录类型
