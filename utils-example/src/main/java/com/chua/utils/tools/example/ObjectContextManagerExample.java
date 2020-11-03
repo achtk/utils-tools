@@ -1,6 +1,6 @@
 package com.chua.utils.tools.example;
 
-import com.chua.utils.tools.encrypt.IEncrypt;
+import com.chua.utils.tools.encrypt.Encrypt;
 import com.chua.utils.tools.manager.DefaultObjectContextManager;
 import com.chua.utils.tools.manager.ObjectContextManager;
 
@@ -18,7 +18,7 @@ public class ObjectContextManagerExample {
         ObjectContextManager objectContextManager = new DefaultObjectContextManager();
         objectContextManager.loadingFinished();
 
-        Set<Class<? extends IEncrypt>> types = objectContextManager.getSubTypesOf(IEncrypt.class);
+        Set<Class<? extends Encrypt>> types = objectContextManager.getSubTypesOf(Encrypt.class);
         System.out.println(types);
     }
 }

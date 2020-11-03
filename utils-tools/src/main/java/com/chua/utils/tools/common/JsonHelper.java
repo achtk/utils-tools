@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Charsets;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.net.URL;
@@ -24,6 +25,7 @@ import java.util.Set;
  *
  * @author CH
  */
+@Slf4j
 public class JsonHelper {
     /**
      * 对象绑定
@@ -50,7 +52,6 @@ public class JsonHelper {
         //忽略对象不存在属性异常
         XML_OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         //OBJECT_MAPPER.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
-
     }
 
     /**

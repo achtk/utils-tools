@@ -1,8 +1,11 @@
 package com.chua.utils.netx.lucene.util;
 
+import com.chua.utils.netx.lucene.entity.DataDocument;
+import com.google.common.base.Strings;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexableField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +67,28 @@ public class DocumentUtil {
         Document document = new Document();
 
         for (Map.Entry<String, Object> entry : article.entrySet()) {
+            TextField textField = new TextField(entry.getKey(), entry.getValue() + "", Store.YES);
+            document.add(textField);
+        }
+        TextField createTimeField = new TextField(CREATE_TIME, System.currentTimeMillis() + "", Store.YES);
+        document.add(createTimeField);
+
+        return document;
+    }
+
+    /**
+     * DataDocumenDataDocument 转 document
+     *
+     * @param dataDocument
+     * @return
+     */
+    public static Iterable<? extends IndexableField> map2Document(DataDocument dataDocument) {
+        if (Strings.isNullOrEmpty(dataDocument.getDataId())) {
+            throw new NullPointerException("Data needs to contain a unique dataId");
+        }
+        Document document = new Document();
+
+        for (Map.Entry<String, Object> entry : dataDocument.getData().entrySet()) {
             TextField textField = new TextField(entry.getKey(), entry.getValue() + "", Store.YES);
             document.add(textField);
         }

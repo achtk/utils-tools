@@ -1,11 +1,18 @@
 package com.chua.utils.tools.example;
 
+import com.chua.utils.netx.centor.resolver.TemplateResolver;
 import com.chua.utils.netx.entity.DocumentData;
 import com.chua.utils.netx.entity.DocumentMap;
 import com.chua.utils.netx.entity.Search;
 import com.chua.utils.netx.function.DocumentContextAware;
 import com.chua.utils.netx.lucene.aware.MemoryLuceneContextAware;
 import com.chua.utils.netx.lucene.aware.NioFSLuceneContextAware;
+import com.chua.utils.netx.lucene.entity.DataDocument;
+import com.chua.utils.netx.lucene.entity.HitData;
+import com.chua.utils.netx.lucene.operator.DocumentOperatorTemplate;
+import com.chua.utils.netx.lucene.operator.IndexOperatorTemplate;
+import com.chua.utils.netx.lucene.operator.SearchOperatorTemplate;
+import com.chua.utils.netx.lucene.resolver.LuceneTemplateResolver;
 import com.chua.utils.netx.lucene.template.MMapLuceneOperatorTemplate;
 import com.chua.utils.netx.lucene.template.SingleLuceneOperatorTemplate;
 import com.chua.utils.tools.common.StringHelper;
@@ -15,8 +22,7 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.mockito.Mockito.mock;
 
@@ -28,13 +34,16 @@ import static org.mockito.Mockito.mock;
 public class LuceneContextExample {
 
     public static void main(String[] args) throws Exception {
-        List<DocumentMap> documentMapList = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            DocumentMap documentMap = new DocumentMap();
-            documentMap.append("time", System.currentTimeMillis())
-                    .append("uuid", StringHelper.uuid())
-                    .append("name", "demo" + i)
-                    .append("id", i);
+        List<DataDocument> documentMapList = new ArrayList<>();
+        for (int i = 1000; i < 100000; i++) {
+            DataDocument documentMap = new DataDocument();
+            Map<String, Object> properties = new HashMap<>();
+
+            documentMap.setData(properties);
+            properties.put("time", System.currentTimeMillis());
+            properties.put("uuid", StringHelper.uuid());
+            properties.put("name", "demo" + i);
+            properties.put("id", i);
 
             documentMapList.add(documentMap);
         }
@@ -43,18 +52,23 @@ public class LuceneContextExample {
         search.setMax(1300);
         search.setSearch("id:1~10");
         search.setMatch(Search.Match.FULL);
-//
-//        DocumentContextAware documentContextAware = new MemoryLuceneContextAware();
-//        documentContextAware.addDocuments(documentMapList);
-//        DocumentData documentData = documentContextAware.search(search);
-//        System.out.println(documentData);
-        String name = "demo";
 
-        LuceneOperatorTemplate luceneOperatorTemplate = new SingleLuceneOperatorTemplate("demo");
-        luceneOperatorTemplate.createTable(name);
-        luceneOperatorTemplate.addDocuments(name, documentMapList);
-        List list = luceneOperatorTemplate.queryForList(name, search);
-        System.out.println(list);
+        String index = "t_test_info";
+
+        LuceneTemplateResolver luceneTemplateResolver = new LuceneTemplateResolver();
+        IndexOperatorTemplate indexOperatorTemplate = luceneTemplateResolver.getIndexOperatorTemplate();
+        if(!indexOperatorTemplate.exist(index)) {
+            indexOperatorTemplate.create(index, 5);
+        }
+       // DocumentOperatorTemplate documentOperatorTemplate = luceneTemplateResolver.getDocumentOperatorTemplate(index);
+       // documentOperatorTemplate.addDocuments(documentMapList);
+
+        SearchOperatorTemplate searchOperatorTemplate = luceneTemplateResolver.getSearchOperatorTemplate(index);
+        HitData search1 = searchOperatorTemplate.search("*:*", null, null, 1, 10000);
+        HitData search2 = searchOperatorTemplate.quickSearch("*:*", null, null, 1, 10000);
+        System.out.println(search1);
+        System.out.println(search2);
+        System.out.println();
     }
 
     @Data

@@ -41,7 +41,7 @@ public class CfgConfig {
     /**
      * 文件类型
      */
-    private Set<String> suffix = Sets.newHashSet("json");
+    private Set<String> suffix = Sets.newHashSet("json", "properties");
     /**
      * 文件所在目录
      */

@@ -1,12 +1,9 @@
 package com.chua.utils.tools.example;
 
 import com.chua.utils.tools.classes.DefaultModifiableClassResolver;
-import com.chua.utils.tools.classes.ModifiableClassResolver;
 import com.chua.utils.tools.classes.field.DefaultFieldResolver;
 import com.chua.utils.tools.classes.field.FieldResolver;
 import com.chua.utils.tools.encrypt.Base64Encrypt;
-import com.chua.utils.tools.encrypt.IEncrypt;
-import javassist.NotFoundException;
 
 /**
  * @author CH

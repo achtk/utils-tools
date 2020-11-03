@@ -8,7 +8,7 @@ import java.security.MessageDigest;
  * MD5
  * @author CH
  */
-public class Md5Encrypt implements IEncrypt {
+public class Md5Encrypt implements Encrypt {
 
     @Override
     public byte[] encode(byte[] bytes) {

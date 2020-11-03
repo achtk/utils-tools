@@ -1,9 +1,6 @@
 package com.chua.utils.tools.cfg;
 
-import com.chua.utils.tools.common.FileHelper;
-import com.chua.utils.tools.common.FinderHelper;
-import com.chua.utils.tools.common.MapHelper;
-import com.chua.utils.tools.common.PropertiesHelper;
+import com.chua.utils.tools.common.*;
 import com.chua.utils.tools.prop.loader.*;
 import com.chua.utils.tools.prop.placeholder.EnvPropertyPlaceholder;
 import com.chua.utils.tools.prop.placeholder.PropertyPlaceholder;
@@ -21,9 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.function.BiConsumer;
+import java.util.concurrent.*;
 
 import static com.chua.utils.tools.constant.StringConstant.EXTENSION_DOT;
 import static com.chua.utils.tools.constant.StringConstant.SYSTEM_PRIORITY_PROP;
@@ -42,13 +37,9 @@ public class CfgOptions {
     private static final ConcurrentHashMap<String, PropertiesLoader> LOADER_CACHE = new ConcurrentHashMap<>();
     private static final String KEY_NAME = "KEY#NAME";
     /**
-     * 文件路径
-     */
-    private Set<String> slavers;
-    /**
      * 占位符
      */
-    private Set<PropertyPlaceholder> placeholder = new HashSet<>();
+    private final Set<PropertyPlaceholder> placeholder = new HashSet<>();
     /**
      * 默认占位符
      */
@@ -85,7 +76,7 @@ public class CfgOptions {
     /**
      * 获取HashMultimap
      *
-     * @return
+     * @return List
      */
     public List<Properties> toHashMultimap() {
         return cache.get(getCacheKey(cfgConfig));
@@ -104,7 +95,7 @@ public class CfgOptions {
      * 初始化cfg信息
      *
      * @param cfgConfig 文件名称
-     * @return
+     * @return List
      */
     public List<Properties> analysis(CfgConfig cfgConfig) {
         this.cfgConfig = cfgConfig;
@@ -119,12 +110,11 @@ public class CfgOptions {
         //文件名称
         this.master = cfgConfig.getMaster();
         //文件路径
-        this.slavers = cfgConfig.getSlaver();
+        Set<String> slavers = cfgConfig.getSlaver();
         //文件后缀
         this.suffixes = cfgConfig.getSuffix();
         //类加载器
         this.classLoader = cfgConfig.getClassLoader();
-
         HashMultimap<String, Properties> allData = HashMultimap.create();
         for (String slaver : slavers) {
             allData.putAll(doAnalysisSlaver(slaver));
@@ -137,44 +127,31 @@ public class CfgOptions {
         return properties;
     }
 
-    private void insertResult(HashMultimap<String, Properties> result, String s, List<Properties> properties) {
-        for (Properties property : properties) {
-            result.put(s, property);
-        }
-    }
-
     /**
      * 排序
      *
      * @param source
-     * @return
+     * @return List
      */
     private List<Properties> sortPropertiesList(HashMultimap<String, Properties> source) {
-        HashMultimap<String, Properties> hashMultimap = HashMultimap.create();
         List<Properties> values = new ArrayList<>();
-        source.asMap().forEach(new BiConsumer<String, Collection<Properties>>() {
-            @Override
-            public void accept(String s, Collection<Properties> properties) {
-                List<Properties> result = new ArrayList<>();
-                for (Properties property : properties) {
-                    Properties properties1 = new Properties();
-                    properties1.putAll(property);
-                    properties1.put(KEY_NAME, s);
+        source.asMap().forEach((s, properties) -> {
+            List<Properties> result = new ArrayList<>();
+            for (Properties property : properties) {
+                Properties properties1 = new Properties();
+                properties1.putAll(property);
+                properties1.put(KEY_NAME, s);
 
-                    result.add(properties1);
-                }
-
-                values.addAll(result);
+                result.add(properties1);
             }
+
+            values.addAll(result);
         });
 
-        Collections.sort(values, new Comparator<Properties>() {
-            @Override
-            public int compare(Properties o1, Properties o2) {
-                int int1 = MapHelper.ints(SYSTEM_PRIORITY_PROP, 0, o1);
-                int int2 = MapHelper.ints(SYSTEM_PRIORITY_PROP, 0, o2);
-                return int1 > int2 ? 1 : -1;
-            }
+        Collections.sort(values, (o1, o2) -> {
+            int int1 = MapHelper.ints(SYSTEM_PRIORITY_PROP, 0, o1);
+            int int2 = MapHelper.ints(SYSTEM_PRIORITY_PROP, 0, o2);
+            return int1 > int2 ? 1 : -1;
         });
 
 
@@ -185,7 +162,7 @@ public class CfgOptions {
      * 获取缓存索引
      *
      * @param cfgConfig 配置文件
-     * @return
+     * @return 缓存索引
      */
     private static String getCacheKey(CfgConfig cfgConfig) {
         return cfgConfig.getMaster();
@@ -195,7 +172,7 @@ public class CfgOptions {
      * 解析文件
      *
      * @param slaver 文件路径
-     * @return
+     * @return 文件内容
      */
     private HashMultimap<String, Properties> doAnalysisSlaver(String slaver) {
         HashMultimap<String, Properties> result = HashMultimap.create();
@@ -215,7 +192,7 @@ public class CfgOptions {
      *
      * @param path   文件路径
      * @param suffix 后缀
-     * @return
+     * @return 文件内容
      */
     private Properties doAnalysisLocationFile(final String path, final String suffix) {
         PropertiesLoader propertiesLoader = ExtensionFactory.getExtensionLoader(PropertiesLoader.class).getExtension(suffix);
@@ -241,7 +218,7 @@ public class CfgOptions {
      */
     private HashMultimap<String, Properties> doAnalysisClasspathFile(final String path, final ClassLoader classLoader, final String suffix) {
         HashMultimap<String, Properties> result = HashMultimap.create();
-        Enumeration<URL> resources = null;
+        Enumeration<URL> resources;
         try {
             resources = classLoader.getResources(path);
         } catch (IOException e) {
@@ -253,14 +230,14 @@ public class CfgOptions {
             if (null == propertiesLoader) {
                 continue;
             }
-            Properties properties = null;
             try {
-                properties = propertiesLoader.toProp(url.openStream());
+                Properties properties = propertiesLoader.toProp(url.openStream());
+                result.put(url.toExternalForm(), properties);
             } catch (IOException e) {
                 continue;
             }
-            result.put(url.toExternalForm(), properties);
         }
+
         return result;
     }
 
@@ -308,7 +285,7 @@ public class CfgOptions {
     /**
      * 判断文件类型
      *
-     * @param suffix
+     * @param suffix 后缀
      * @return PropertiesLoader
      */
     private PropertiesLoader getExtension(String suffix) {

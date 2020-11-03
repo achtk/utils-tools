@@ -8,7 +8,7 @@ import java.security.MessageDigest;
  * Sha384
  * @author CH
  */
-public class Sha384Encrypt implements IEncrypt {
+public class Sha384Encrypt implements Encrypt {
 
     @Override
     public byte[] encode(byte[] bytes) {

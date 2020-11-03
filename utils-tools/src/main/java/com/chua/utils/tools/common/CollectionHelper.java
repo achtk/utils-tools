@@ -841,16 +841,30 @@ public class CollectionHelper {
      * @return List
      */
     public static <T> List<T> getListIfFeasible(T value) {
-        if(null == value) {
+        if (null == value) {
             return Collections.emptyList();
         }
-        if(value instanceof Collection) {
-            return new ArrayList<T>((Collection)value);
+        if (value instanceof Collection) {
+            return new ArrayList<T>((Collection) value);
         }
         Class<?> aClass = value.getClass();
-        if(aClass.isArray()) {
-            return Arrays.asList((T[])value);
+        if (aClass.isArray()) {
+            return Arrays.asList((T[]) value);
         }
         return Lists.newArrayList(value);
+    }
+
+    /**
+     * 随机获取数据
+     *
+     * @param source
+     */
+    public static <T> T getRandom(List<T> source) {
+        if (isEmpty(source)) {
+            return null;
+        }
+        Random random = new Random();
+        int i = random.nextInt(source.size());
+        return source.get(i);
     }
 }

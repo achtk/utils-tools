@@ -10,7 +10,7 @@ import java.security.SecureRandom;
  * des加解密
  * @author CH
  */
-public class DesEncrypt implements IEncrypt {
+public class DesEncrypt implements Encrypt {
     private static final String DES = "DES";
 
     @Override

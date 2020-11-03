@@ -10,7 +10,7 @@ import java.io.IOException;
  * base64
  * @author CH
  */
-public class Base64Encrypt implements IEncrypt {
+public class Base64Encrypt implements Encrypt {
 
     private static final BASE64Encoder BASE_64_ENCODER = new BASE64Encoder();
     private static final BASE64Decoder BASE_64_DECODER = new BASE64Decoder();

@@ -8,14 +8,18 @@ import com.chua.utils.tools.spi.entity.SpiConfig;
 import com.chua.utils.tools.spi.processor.CustomExtensionProcessor;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * spi扩展器
@@ -93,12 +97,19 @@ public class ExtensionLoader<T> {
             if (null == extensionProcessor) {
                 extensionProcessor = new CustomExtensionProcessor();
             }
+
             extensionProcessor.init(spiConfig);
             Collection<ExtensionClass<T>> collection = extensionProcessor.analyze(service, classLoader);
 
             if (null == collection) {
                 collection = Collections.emptyList();
             }
+            collection.parallelStream().forEach(new Consumer<ExtensionClass<T>>() {
+                @Override
+                public void accept(ExtensionClass<T> tExtensionClass) {
+                    EXTENSION_CACHE.put(tExtensionClass.getName(), tExtensionClass);
+                }
+            });
             EXTENSION_CACHE.putAll(service.getName(), collection);
         }
         if (log.isDebugEnabled()) {

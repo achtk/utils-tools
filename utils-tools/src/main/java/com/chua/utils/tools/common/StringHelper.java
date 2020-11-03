@@ -2465,15 +2465,15 @@ public class StringHelper {
      *
      * @param str 源数据
      *            <pre>
-     *                                                                                                               StringHelper.stripToEmpty(null)     = ""
-     *                                                                                                               StringHelper.stripToEmpty("")       = ""
-     *                                                                                                               StringHelper.stripToEmpty("   ")    = ""
-     *                                                                                                               StringHelper.stripToEmpty("abc")    = "abc"
-     *                                                                                                               StringHelper.stripToEmpty("  abc")  = "abc"
-     *                                                                                                               StringHelper.stripToEmpty("abc  ")  = "abc"
-     *                                                                                                               StringHelper.stripToEmpty(" abc ")  = "abc"
-     *                                                                                                               StringHelper.stripToEmpty(" ab c ") = "ab c"
-     *                                                                                                               </pre>
+     *                                                                                                                                                                                 StringHelper.stripToEmpty(null)     = ""
+     *                                                                                                                                                                                 StringHelper.stripToEmpty("")       = ""
+     *                                                                                                                                                                                 StringHelper.stripToEmpty("   ")    = ""
+     *                                                                                                                                                                                 StringHelper.stripToEmpty("abc")    = "abc"
+     *                                                                                                                                                                                 StringHelper.stripToEmpty("  abc")  = "abc"
+     *                                                                                                                                                                                 StringHelper.stripToEmpty("abc  ")  = "abc"
+     *                                                                                                                                                                                 StringHelper.stripToEmpty(" abc ")  = "abc"
+     *                                                                                                                                                                                 StringHelper.stripToEmpty(" ab c ") = "ab c"
+     *                                                                                                                                                                                 </pre>
      * @return
      */
     public static String stripToEmpty(final String str) {
@@ -3151,10 +3151,45 @@ public class StringHelper {
 
     /**
      * 逗号分隔列表到字符串数组
+     *
      * @param str 字符串
      * @return String[]
      */
     public static String[] commaDelimitedListToStringArray(String str) {
         return delimitedListToStringArray(str, ",");
+    }
+
+    /**
+     * 字符串转ascii
+     *
+     * @param source 数据
+     * @return ascii字符串
+     */
+    public static String stringToAscii(String source) {
+        StringBuffer sbu = new StringBuffer();
+        char[] chars = source.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (i != chars.length - 1) {
+                sbu.append((int) chars[i]).append(",");
+            } else {
+                sbu.append((int) chars[i]);
+            }
+        }
+        return sbu.toString();
+    }
+
+    /**
+     * ascii转字符串
+     *
+     * @param ascii ascii数据
+     * @return 字符串
+     */
+    public static String asciiToString(String ascii) {
+        StringBuffer sbu = new StringBuffer();
+        String[] chars = ascii.split(",");
+        for (int i = 0; i < chars.length; i++) {
+            sbu.append((char) Integer.parseInt(chars[i]));
+        }
+        return sbu.toString();
     }
 }

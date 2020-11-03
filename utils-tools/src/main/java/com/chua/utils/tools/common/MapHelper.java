@@ -4,6 +4,7 @@ import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.function.intercept.MethodIntercept;
 import com.google.common.base.Strings;
 import com.google.common.collect.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -20,6 +21,7 @@ import static com.chua.utils.tools.constant.StringConstant.EXTENSION_NULL;
  * @author CH
  * @see com.chua.utils.tools.common.MapOperableHelper
  */
+@Slf4j
 @Deprecated
 public class MapHelper {
 
@@ -1634,7 +1636,6 @@ public class MapHelper {
      * 获取唯一值或者字段值
      *
      * @param source     元数据
-     * @param name       索引
      * @param valueClass 数据类型
      * @param <T>
      * @return

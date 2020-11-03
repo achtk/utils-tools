@@ -51,7 +51,7 @@ public class CustomExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
     @Override
     public Collection<ExtensionClass<?>> analyze(Class<T> service, ClassLoader classLoader) {
         if (null == this.extensionLoadPath) {
-            log.warn("spi机制忽略，原因: 找不到配置文件: spi-config-default.json");
+            log.warn("spi机制忽略，原因: 找不到配置文件: spi-config-default");
             return Collections.emptyList();
         }
         if (CACHE.containsKey(service.getName())) {

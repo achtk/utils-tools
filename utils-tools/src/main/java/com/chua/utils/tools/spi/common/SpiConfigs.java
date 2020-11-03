@@ -6,6 +6,7 @@ import com.chua.utils.tools.common.FileHelper;
 import com.chua.utils.tools.common.IOHelper;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.options.IOptions;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +31,7 @@ import static com.google.common.base.Charsets.UTF_8;
  * @version 1.0.0
  * @since 2020/6/3 15:46
  */
+@Slf4j
 public class SpiConfigs implements IOptions {
 
     /**
@@ -43,6 +45,10 @@ public class SpiConfigs implements IOptions {
     public static IOptions options = null;
 
     private static void init() {
+        long startTime = System.currentTimeMillis();
+        if(log.isDebugEnabled()) {
+            log.debug("{}开始初始化", SPI_CONFIG_DEFAULT);
+        }
         CfgConfig cfgConfig = new CfgConfig();
         cfgConfig.setMaster(SPI_CONFIG_DEFAULT);
         cfgConfig.setOrder(SPI_CFG_ORDER);
@@ -58,6 +64,9 @@ public class SpiConfigs implements IOptions {
                 return CFG;
             }
         };
+        if(log.isDebugEnabled()) {
+            log.debug("{}完成初始化, 耗时: {}ms", SPI_CONFIG_DEFAULT, System.currentTimeMillis() - startTime);
+        }
     }
 
     /**

@@ -6,7 +6,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import java.security.Key;
-import java.security.SecureRandom;
 
 /**
  * DESede加解密
@@ -14,7 +13,7 @@ import java.security.SecureRandom;
  * @author CH
  * @date 2020-09-28
  */
-public class DESedeEncrypt implements IEncrypt {
+public class DESedeEncrypt implements Encrypt {
     /**
      * 密钥算法
      */

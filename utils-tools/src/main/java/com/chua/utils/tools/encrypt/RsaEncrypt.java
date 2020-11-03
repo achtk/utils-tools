@@ -1,5 +1,7 @@
 package com.chua.utils.tools.encrypt;
 
+import com.google.common.base.Charsets;
+
 import javax.crypto.Cipher;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
@@ -18,7 +20,7 @@ import java.util.Properties;
  * @author kongqz
  * @update CH
  */
-public class RsaEncrypt implements IEncrypt, IEncryptKeySpec {
+public class RsaEncrypt implements Encrypt, EncryptKeySpec {
     //非对称密钥算法
     public static final String KEY_ALGORITHM = "RSA";
     /**
@@ -37,10 +39,10 @@ public class RsaEncrypt implements IEncrypt, IEncryptKeySpec {
     private static final String PRIVATE_KEY = "RSAPrivateKey";
     private static final String TYPE = "rsa-type";
     private static final String TYPE_PUBLIC = "public";
-    /*
+    /**
     环境
      */
-    private Properties properties;
+    private Properties properties = getEnvironment();
 
     {
         //初始化密钥
@@ -78,16 +80,19 @@ public class RsaEncrypt implements IEncrypt, IEncryptKeySpec {
         if(null == properties || !properties.containsKey(ENCRYPT_KEY)) {
             return null;
         }
+        byte[] keyBytes;
         Object key = properties.get(ENCRYPT_KEY);
         if(!(key instanceof byte[])) {
-            return null;
+            keyBytes = key.toString().getBytes(Charsets.UTF_8);
+        } else {
+            keyBytes = (byte[]) key;
         }
         String type = properties.getProperty(TYPE, TYPE_PUBLIC);
         try {
             if(TYPE_PUBLIC.equals(type)) {
-                return encryptByPublicKey(bytes, (byte[]) key);
+                return encryptByPublicKey(bytes, keyBytes);
             }
-            return encryptByPrivateKey(bytes, (byte[]) key);
+            return encryptByPrivateKey(bytes, keyBytes);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -126,16 +131,6 @@ public class RsaEncrypt implements IEncrypt, IEncryptKeySpec {
     public byte[] getPublicKey(Map<String, Object> keyMap) throws Exception {
         Key key = (Key) keyMap.get(PUBLIC_KEY);
         return key.getEncoded();
-    }
-
-    @Override
-    public Properties getEnvironment() {
-        return properties;
-    }
-
-    @Override
-    public void setEnvironment(Properties properties) {
-        this.properties = properties;
     }
 
     /**

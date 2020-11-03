@@ -15,7 +15,7 @@ import java.util.Properties;
  * @author CH
  */
 @Spi("md5")
-public interface IEncrypt extends IEnvironmentProducer {
+public interface Encrypt extends IEnvironmentProducer {
 
     /**
      *
@@ -42,7 +42,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @throws Exception
      * @return byte[]
      */
-    public byte[] encode(final byte[] bytes) throws Exception;
+    byte[] encode(final byte[] bytes) throws Exception;
     /**
      * 加密
      *
@@ -50,7 +50,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @throws Exception
      * @return byte[]
      */
-    default public String toHexString(final byte[] bytes) throws Exception {
+    default String toHexString(final byte[] bytes) throws Exception {
         byte[] encode = encode(bytes);
         return null == encode ? null : StringHelper.toHexString(encode);
     }
@@ -61,7 +61,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @throws Exception
      * @return byte[]
      */
-    default public String toString(final byte[] bytes) throws Exception {
+    default String toString(final byte[] bytes) throws Exception {
         byte[] encode = encode(bytes);
         return null == encode ? null : StringHelper.toString(encode, Charsets.UTF_8);
     }
@@ -72,7 +72,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @throws Exception
      * @return byte[]
      */
-    default public String toHexString(final String source) throws Exception {
+    default String toHexString(final String source) throws Exception {
         byte[] encode = encode(source.getBytes(Charsets.UTF_8));
         return null == encode ? null : StringHelper.toHexString(encode);
     }
@@ -83,7 +83,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @throws Exception
      * @return byte[]
      */
-    default public String toString(final String source) throws Exception {
+    default String toString(final String source) throws Exception {
         byte[] encode = encode(source);
         return null == encode ? null : StringHelper.toString(encode, Charsets.UTF_8);
     }
@@ -113,7 +113,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @throws Exception
      * @return byte[]
      */
-    default public String fromHexString(final byte[] bytes) throws Exception {
+    default String fromHexString(final byte[] bytes) throws Exception {
         byte[] decode = decode(bytes);
         return null == decode ? null : StringHelper.toHexString(decode);
     }
@@ -124,7 +124,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @throws Exception
      * @return byte[]
      */
-    default public String fromString(final byte[] bytes) throws Exception {
+    default String fromString(final byte[] bytes) throws Exception {
         byte[] decode = decode(bytes);
         return null == decode ? null : StringHelper.toString(decode, Charsets.UTF_8);
     }
@@ -135,7 +135,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @throws Exception
      * @return byte[]
      */
-    default public String fromHexString(final String source) throws Exception {
+    default String fromHexString(final String source) throws Exception {
         byte[] decode = decode(StringHelper.fromHexString(source));
         return null == decode ? null : StringHelper.toHexString(decode);
     }
@@ -146,7 +146,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @throws Exception
      * @return byte[]
      */
-    default public String fromHexToString(final String source) throws Exception {
+    default String fromHexToString(final String source) throws Exception {
         byte[] decode = decode(StringHelper.fromHexString(source));
         return null == decode ? null : StringHelper.toString(decode, Charsets.UTF_8);
     }
@@ -157,7 +157,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @throws Exception
      * @return byte[]
      */
-    default public String fromString(final String source) throws Exception {
+    default String fromString(final String source) throws Exception {
         byte[] decode = decode(ByteHelper.getBytes(source, Charsets.UTF_8));
         return null == decode ? null : StringHelper.toString(decode, Charsets.UTF_8);
     }
@@ -168,7 +168,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @throws Exception
      * @return byte[]
      */
-    default public byte[] toHexByte(final String source) throws Exception {
+    default byte[] toHexByte(final String source) throws Exception {
         return decode(StringHelper.fromHexString(source));
     }
     /**
@@ -176,7 +176,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * @param algorithm
      * @return
      */
-    default public MessageDigest messageDigest(String algorithm) {
+    default MessageDigest messageDigest(String algorithm) {
         try {
            return MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
@@ -185,12 +185,12 @@ public interface IEncrypt extends IEnvironmentProducer {
     }
 
     @Override
-    default public Properties getEnvironment() {
+    default Properties getEnvironment() {
         return PROPERTIES;
     }
 
     @Override
-    default public void setEnvironment(Properties properties) {
+    default void setEnvironment(Properties properties) {
         PROPERTIES.putAll(properties);
     }
 
@@ -198,7 +198,7 @@ public interface IEncrypt extends IEnvironmentProducer {
      * 获取索引
      * @return
      */
-    default public byte[] getKey(final int size) {
+    default byte[] getKey(final int size) {
         if(null == getEnvironment()) {
             return null;
         }

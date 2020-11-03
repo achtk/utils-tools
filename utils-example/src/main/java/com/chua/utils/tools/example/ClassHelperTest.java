@@ -1,7 +1,7 @@
 package com.chua.utils.tools.example;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.encrypt.IEncrypt;
+import com.chua.utils.tools.encrypt.Encrypt;
 import org.testng.annotations.Test;
 
 import java.util.Set;
@@ -13,7 +13,7 @@ public class ClassHelperTest {
 
     @Test
     public void getSubTypesOf() {
-        Set<Class<? extends IEncrypt>> typesOf = (Set<Class<? extends IEncrypt>>) ClassHelper.getSubTypesOf(IEncrypt.class);
+        Set<Class<? extends Encrypt>> typesOf = (Set<Class<? extends Encrypt>>) ClassHelper.getSubTypesOf(Encrypt.class);
         System.out.println(typesOf);
     }
 }

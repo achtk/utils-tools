@@ -2,9 +2,6 @@ package com.chua.utils.tools.encrypt;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Properties;
 
 /**
@@ -12,7 +9,7 @@ import java.util.Properties;
  *
  * @author CH
  */
-public class AesEncrypt implements IEncrypt {
+public class AesEncrypt implements Encrypt {
     private static final String DEFAULT_CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding";
     private Properties properties;
     private static final String AES = "AES";
