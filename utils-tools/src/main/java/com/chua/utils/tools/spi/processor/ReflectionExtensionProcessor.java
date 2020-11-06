@@ -22,9 +22,9 @@ import java.util.Set;
  * @version 1.0.0
  * @since 2020/10/30
  */
-public class ReflectionExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
+public class ReflectionExtensionProcessor<T> extends AbstractSimpleExtensionProcessor<T> {
 
-    private static Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
+    private static final Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
     private ReflectionsFactory reflections;
 
     @Override
@@ -52,7 +52,10 @@ public class ReflectionExtensionProcessor<T> extends SimpleExtensionProcessor<T>
         Set<Class<? extends T>> subTypesOf = reflections.getSubTypesOf(service);
         for (Class<? extends T> aClass : subTypesOf) {
             List<ExtensionClass<T>> extensionClasses = buildExtensionClassByClass(aClass);
-            result.addAll(extensionClasses);
+            for (ExtensionClass<T> extensionClass : extensionClasses) {
+                extensionClass.setUrl(reflections.getClassFromUrl(extensionClass.getImplClass().getName()));
+                result.add(extensionClass);
+            }
         }
 
         CACHE.putAll(service.getName(), result);

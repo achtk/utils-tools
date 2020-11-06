@@ -3,14 +3,16 @@ package com.chua.utils.netx.lucene.resolver;
 import com.chua.utils.netx.centor.resolver.TemplateResolver;
 import com.chua.utils.netx.lucene.factory.DirectoryFactory;
 import com.chua.utils.netx.lucene.operator.*;
-import com.chua.utils.tools.encrypt.Encrypt;
+import com.chua.utils.tools.common.codec.encrypt.AbstractStandardEncrypt;
+import com.chua.utils.tools.common.codec.encrypt.Encrypt;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static com.chua.utils.tools.common.codec.encrypt.AbstractStandardEncrypt.ENCRYPT_KEY;
 
 /**
  * lucene模板
@@ -52,7 +54,7 @@ public class LuceneTemplateResolver implements TemplateResolver {
     private DirectoryFactory directoryFactory = new DirectoryFactory(this.directoryType);
 
     public LuceneTemplateResolver() {
-        this.encrypt.append(Encrypt.ENCRYPT_KEY, this.secret);
+        this.encrypt.append(ENCRYPT_KEY, this.secret);
         this.indexOperatorTemplate = new DefaultIndexOperatorTemplate(this.storePath, this.encrypt, directoryFactory);
     }
 
@@ -65,7 +67,7 @@ public class LuceneTemplateResolver implements TemplateResolver {
     public LuceneTemplateResolver(@NonNull Path storePath, @NonNull Encrypt encrypt) {
         this.storePath = storePath;
         this.encrypt = encrypt;
-        this.encrypt.append(Encrypt.ENCRYPT_KEY, this.secret);
+        this.encrypt.append(ENCRYPT_KEY, this.secret);
         this.indexOperatorTemplate = new DefaultIndexOperatorTemplate(this.storePath, this.encrypt, directoryFactory);
     }
 
@@ -80,18 +82,17 @@ public class LuceneTemplateResolver implements TemplateResolver {
         this.storePath = storePath;
         this.encrypt = encrypt;
         this.secret = secret;
-        this.encrypt.append(Encrypt.ENCRYPT_KEY, this.secret);
+        this.encrypt.append(ENCRYPT_KEY, this.secret);
         this.indexOperatorTemplate = new DefaultIndexOperatorTemplate(this.storePath, this.encrypt, directoryFactory);
     }
 
     /**
      * 构造
      *
-     * @param storePath     存储位置
      * @param directoryType 目录类型
      */
     public LuceneTemplateResolver(DirectoryFactory.DirectoryType directoryType) {
-        this.encrypt.append(Encrypt.ENCRYPT_KEY, this.secret);
+        this.encrypt.append(ENCRYPT_KEY, this.secret);
         this.directoryType = directoryType;
         this.directoryFactory = new DirectoryFactory(this.directoryType);
         this.indexOperatorTemplate = new DefaultIndexOperatorTemplate(this.storePath, this.encrypt, directoryFactory);
@@ -104,7 +105,7 @@ public class LuceneTemplateResolver implements TemplateResolver {
      */
     public LuceneTemplateResolver(@NonNull Path storePath, DirectoryFactory.DirectoryType directoryType) {
         this.storePath = storePath;
-        this.encrypt.append(Encrypt.ENCRYPT_KEY, this.secret);
+        this.encrypt.append(ENCRYPT_KEY, this.secret);
         this.directoryType = directoryType;
         this.directoryFactory = new DirectoryFactory(this.directoryType);
         this.indexOperatorTemplate = new DefaultIndexOperatorTemplate(this.storePath, this.encrypt, directoryFactory);
@@ -121,7 +122,7 @@ public class LuceneTemplateResolver implements TemplateResolver {
         this.storePath = storePath;
         this.encrypt = encrypt;
         this.secret = secret;
-        this.encrypt.append(Encrypt.ENCRYPT_KEY, this.secret);
+        this.encrypt.append(ENCRYPT_KEY, this.secret);
         this.directoryType = directoryType;
         this.directoryFactory = new DirectoryFactory(this.directoryType);
         this.indexOperatorTemplate = new DefaultIndexOperatorTemplate(this.storePath, this.encrypt, directoryFactory);
@@ -139,7 +140,7 @@ public class LuceneTemplateResolver implements TemplateResolver {
         this.storePath = storePath;
         this.encrypt = encrypt;
         this.secret = secret;
-        this.encrypt.append(Encrypt.ENCRYPT_KEY, this.secret);
+        this.encrypt.append(ENCRYPT_KEY, this.secret);
         this.directoryType = directoryFactory.getDirectoryType();
         this.directoryFactory = directoryFactory;
         this.indexOperatorTemplate = new DefaultIndexOperatorTemplate(storePath, encrypt, directoryFactory);

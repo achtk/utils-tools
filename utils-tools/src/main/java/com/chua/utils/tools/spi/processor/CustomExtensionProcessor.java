@@ -14,9 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static com.chua.utils.tools.constant.StringConstant.FILE_LEFT_SLASH;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_LEFT_SLASH;
 
 /**
  * 以自主读取接口/类文件实现扩展接口
@@ -26,9 +27,9 @@ import static com.chua.utils.tools.constant.StringConstant.FILE_LEFT_SLASH;
  * @since 2020/10/30
  */
 @Slf4j
-public class CustomExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
+public class CustomExtensionProcessor<T> extends AbstractSimpleExtensionProcessor<T> {
 
-    private static Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
+    private static final Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
 
     private List<String> extensionLoadPath;
 
@@ -86,19 +87,18 @@ public class CustomExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
      * 加载文件配置
      *
      * @param path path必须以/结尾
-     * @return
+     * @return List<ExtensionClass < T>>
      */
     protected synchronized List<ExtensionClass<T>> loadFromFile(String path) {
         if (log.isDebugEnabled()) {
             log.debug("Loading extension of extensible {} from path: {}", getInterfaceName(), path);
         }
-        if (!path.endsWith(FILE_LEFT_SLASH)) {
-            path += FILE_LEFT_SLASH;
+        if (!path.endsWith(SYMBOL_LEFT_SLASH)) {
+            path += SYMBOL_LEFT_SLASH;
         }
         // 默认如果不指定文件名字，就是接口名
         String fullFileName = path + getInterfaceName();
         try {
-            // ClassLoader classLoader = ClassHelper.getClassLoader(getClass());
             return loadFromClassLoader(fullFileName);
         } catch (Throwable t) {
             if (log.isDebugEnabled()) {
@@ -112,8 +112,8 @@ public class CustomExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
      * 从类加载器中加载文件
      *
      * @param fullFileName 文件全称
-     * @return
-     * @throws Throwable
+     * @return List<ExtensionClass < T>
+     * @throws Throwable Throwable
      */
     private List<ExtensionClass<T>> loadFromClassLoader(final String fullFileName) throws Throwable {
         Enumeration<URL> urls = getClassLoader().getResources(fullFileName);
@@ -126,12 +126,10 @@ public class CustomExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
                 if (log.isDebugEnabled()) {
                     log.debug("Loading extension of extensible {} from classloader: {} and file: {}", getInterfaceName(), getClassLoader(), url);
                 }
-                BufferedReader reader = null;
-                try {
-                    reader = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
                     String line;
                     while ((line = reader.readLine()) != null) {
-                        List<ExtensionClass<T>> classList = readLine(line);
+                        List<ExtensionClass<T>> classList = readLine(line, url);
                         if (null == classList) {
                             continue;
                         }
@@ -139,11 +137,7 @@ public class CustomExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
                     }
                 } catch (Throwable t) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Failed to load extension of extensible {} from classloader: {} and file:", getInterfaceName(), getClassLoader(), url, t);
-                    }
-                } finally {
-                    if (reader != null) {
-                        reader.close();
+                        log.debug("Failed to load extension of extensible {} from classloader: {} and file:", getInterfaceName(), getClassLoader());
                     }
                 }
             }
@@ -155,9 +149,10 @@ public class CustomExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
      * 读取文件
      *
      * @param line 一行数据
-     * @return
+     * @param url  链接
+     * @return List<ExtensionClass < T>>
      */
-    protected List<ExtensionClass<T>> readLine(final String line) {
+    protected List<ExtensionClass<T>> readLine(final String line, URL url) {
         String[] aliasAndClassName = parseSpiNameAndClassName(line);
         if (aliasAndClassName == null || aliasAndClassName.length != 3) {
             return null;
@@ -183,13 +178,14 @@ public class CustomExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
         }
         int orderInteger = 0;
         try {
-            orderInteger = Integer.valueOf(order);
-        } catch (NumberFormatException e) {
+            orderInteger = Integer.parseInt(order);
+        } catch (NumberFormatException ignored) {
         }
         List<ExtensionClass<T>> byClass = buildExtensionClassByClass(tmp);
         for (ExtensionClass<T> aClass : byClass) {
             aClass.setName(alias);
             aClass.setOrder(orderInteger);
+            aClass.setUrl(url);
         }
         return byClass;
     }
@@ -198,7 +194,7 @@ public class CustomExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
      * 解析名字以及类名
      *
      * @param line 一行数据
-     * @return
+     * @return String[]{名称, 类, 优先级}
      */
     protected String[] parseSpiNameAndClassName(String line) {
         if (StringHelper.isBlank(line)) {

@@ -1,7 +1,7 @@
 package com.chua.utils.tools.prop.loader;
 
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.JsonHelper;
-import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.common.PropertiesHelper;
 import com.google.common.base.Charsets;
 
@@ -28,7 +28,7 @@ public class XmlPropertiesLoader implements PropertiesLoader {
         }
         try(InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charsets.UTF_8)) {
             Map properties = JsonHelper.fromXmlJson(inputStreamReader, Map.class);
-            return MapHelper.map2Yaml(properties);
+            return MapOperableHelper.toProfile(properties);
         } catch (IOException e) {
             return PropertiesHelper.emptyProperties();
         }

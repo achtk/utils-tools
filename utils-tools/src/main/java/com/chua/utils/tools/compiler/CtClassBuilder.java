@@ -1,14 +1,13 @@
 package com.chua.utils.tools.compiler;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.constant.SymbolConstant;
 import javassist.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.chua.utils.tools.constant.StringConstant.EXTENSION_DOT;
 
 /**
  * @author CH
@@ -103,7 +102,7 @@ public class CtClassBuilder {
      * @param className super class name, maybe qualified or not
      */
     protected String getQualifiedClassName(String className) {
-        if (className.contains(EXTENSION_DOT)) {
+        if (className.contains(SymbolConstant.SYMBOL_DOT)) {
             return className;
         }
 

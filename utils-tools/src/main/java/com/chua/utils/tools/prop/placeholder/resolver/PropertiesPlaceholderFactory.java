@@ -1,9 +1,9 @@
 package com.chua.utils.tools.prop.placeholder.resolver;
 
 import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.common.CollectionHelper;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.FinderHelper;
-import com.chua.utils.tools.common.ListHelper;
+import com.chua.utils.tools.collects.collections.ListHelper;
 import com.chua.utils.tools.prop.mapper.FileDataMapper;
 import com.chua.utils.tools.prop.mapper.FileMapper;
 import com.chua.utils.tools.prop.parser.FileParser;

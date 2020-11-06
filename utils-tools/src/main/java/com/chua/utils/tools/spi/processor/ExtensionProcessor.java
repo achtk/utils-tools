@@ -13,14 +13,14 @@ import java.util.Collection;
  * @see com.chua.utils.tools.spi.entity.SpiConfig
  * @see com.chua.utils.tools.spi.entity.ExtensionClass
  * @see com.chua.utils.tools.spi.factory.ExtensionFactory
- * @see com.chua.utils.tools.spi.processor.SimpleExtensionProcessor
+ * @see AbstractSimpleExtensionProcessor
  * @since 2020/6/3 15:22
  */
 public interface ExtensionProcessor<T> {
     /**
      * spi初始化配置
      *
-     * @param spiConfig
+     * @param spiConfig 配置
      */
     void init(SpiConfig spiConfig);
 

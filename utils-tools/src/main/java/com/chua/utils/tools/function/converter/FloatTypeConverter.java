@@ -10,7 +10,7 @@ import java.math.BigInteger;
  * @version 1.0.0
  * @since 2020/10/30
  */
-public class FloatTypeConverter extends TypeConverter<Float> {
+public class FloatTypeConverter implements TypeConverter<Float> {
     @Override
     public Float convert(Object value) {
         if (null == value) {
@@ -30,7 +30,11 @@ public class FloatTypeConverter extends TypeConverter<Float> {
         }
 
         if (value instanceof String) {
-            return Float.valueOf(value.toString());
+            try {
+                return Float.valueOf(value.toString());
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
 
         return null;

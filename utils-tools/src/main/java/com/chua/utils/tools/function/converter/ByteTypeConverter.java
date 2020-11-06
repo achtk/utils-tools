@@ -10,7 +10,7 @@ import java.math.BigInteger;
  * @version 1.0.0
  * @since 2020/10/30
  */
-public class ByteTypeConverter extends TypeConverter<Byte> {
+public class ByteTypeConverter implements TypeConverter<Byte> {
     @Override
     public Byte convert(Object value) {
         if (null == value) {
@@ -30,7 +30,11 @@ public class ByteTypeConverter extends TypeConverter<Byte> {
         }
 
         if (value instanceof String) {
-            return Byte.valueOf(value.toString());
+            try {
+                return Byte.valueOf(value.toString());
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
 
         return null;

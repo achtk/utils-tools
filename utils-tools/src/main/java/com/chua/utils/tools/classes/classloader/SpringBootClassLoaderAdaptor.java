@@ -60,7 +60,7 @@ public class SpringBootClassLoaderAdaptor implements IClassLoaderAdaptor {
      * @return
      */
     private boolean isSpringBoot(final URL url) {
-        List<String> strings = parsingMF(url);
+        List<String> strings = parsingMf(url);
         if(null == strings) {
             return false;
         }
@@ -78,7 +78,7 @@ public class SpringBootClassLoaderAdaptor implements IClassLoaderAdaptor {
      * @param url  url
      * @return
      */
-    private List<String> parsingMF(URL url) {
+    private List<String> parsingMf(URL url) {
         if (null != url) {
             String mf =  formatUrl(url) + META_INFO + MF;
             try {

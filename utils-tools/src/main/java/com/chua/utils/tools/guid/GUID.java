@@ -40,8 +40,8 @@ public class GUID {
     /**
      * 随机生成GUID码
      */
-    public static GUID randomGUID() {
-        return randomGUID(false);
+    public static GUID randomGuid() {
+        return randomGuid(false);
     }
 
     /**
@@ -49,9 +49,9 @@ public class GUID {
      *
      * @param secure
      */
-    public static GUID randomGUID(boolean secure) {
+    public static GUID randomGuid(boolean secure) {
         MessageDigest md5 = null;
-        StringBuffer sbValueBeforeMD5 = new StringBuffer();
+        StringBuffer buffer = new StringBuffer();
 
         try {
             md5 = MessageDigest.getInstance("MD5");
@@ -69,13 +69,13 @@ public class GUID {
                 rand = myRand.nextLong();
             }
 
-            sbValueBeforeMD5.append(sId);
-            sbValueBeforeMD5.append(":");
-            sbValueBeforeMD5.append(Long.toString(time));
-            sbValueBeforeMD5.append(":");
-            sbValueBeforeMD5.append(Long.toString(rand));
+            buffer.append(sId);
+            buffer.append(":");
+            buffer.append(Long.toString(time));
+            buffer.append(":");
+            buffer.append(Long.toString(rand));
 
-            valueBeforeMD5 = sbValueBeforeMD5.toString();
+            valueBeforeMD5 = buffer.toString();
             md5.update(valueBeforeMD5.getBytes());
 
             byte[] array = md5.digest();

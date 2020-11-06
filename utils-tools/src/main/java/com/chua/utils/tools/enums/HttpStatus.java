@@ -92,21 +92,21 @@ public enum  HttpStatus {
             CLIENT_ERROR = 4,
             SERVER_ERROR = 5;
 
-    HttpStatus(int code, String reasonPhraseUS, String reasonPhraseCN) {
+    HttpStatus(int code, String reasonPhraseUs, String reasonPhraseCn) {
         this.code = code;
-        this.reasonPhraseUS = reasonPhraseUS;
-        this.reasonPhraseCN = reasonPhraseCN;
+        this.reasonPhraseUS = reasonPhraseUs;
+        this.reasonPhraseCN = reasonPhraseCn;
     }
 
     public int code() {
         return code;
     }
 
-    public String reasonPhraseUS() {
+    public String reasonPhraseUs() {
         return reasonPhraseUS;
     }
 
-    public String reasonPhraseCN() {
+    public String reasonPhraseCn() {
         return reasonPhraseCN;
     }
 

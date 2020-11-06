@@ -1,9 +1,10 @@
 package com.chua.utils.tools.resource.matcher;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.common.ThreadHelper;
+import com.chua.utils.tools.constant.ClassConstant;
+import com.chua.utils.tools.constant.SuffixConstant;
 import com.chua.utils.tools.matcher.ApachePathMatcher;
 import com.chua.utils.tools.matcher.PathMatcher;
 import com.chua.utils.tools.resource.Resource;
@@ -16,11 +17,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.chua.utils.tools.constant.StringConstant.CLASS_OBJECT;
-import static com.chua.utils.tools.constant.StringConstant.EXTENSION_CLASS_SUFFIX;
+import static com.chua.utils.tools.constant.SymbolConstant.*;
 
 /**
  * subclass:匹配
+ *
  * @author CH
  * @since 1.0
  */
@@ -34,7 +35,7 @@ public class SubClassMatcher implements IPathMatcher {
     private AtomicInteger atomicInteger;
     private IPathMatcher pathMatcher;
     private static final ConcurrentHashMap<String, Set<Resource>> CACHE = new ConcurrentHashMap<>();
-    private static final HashMultimap<Class, Resource> HASH_MULTIMAP = MapHelper.newHashMultimap();
+    private static final HashMultimap<Class, Resource> HASH_MULTIMAP = HashMultimap.create();
 
     public SubClassMatcher(String name, String[] excludes, ClassLoader classLoader, AtomicInteger atomicInteger) {
         this.name = name;
@@ -46,8 +47,8 @@ public class SubClassMatcher implements IPathMatcher {
 
     @Override
     public Set<Resource> matcher() throws Throwable {
-        if(HASH_MULTIMAP.size()  == 0) {
-            Set<Resource> matcher =  this.pathMatcher.matcher();
+        if (HASH_MULTIMAP.size() == 0) {
+            Set<Resource> matcher = this.pathMatcher.matcher();
             return findAllSubClassAndInCache(matcher);
         } else {
             Class<?> aClass = ClassHelper.forName(name.replace("subclass:", ""));
@@ -57,16 +58,17 @@ public class SubClassMatcher implements IPathMatcher {
 
     /**
      * 缓存所有子类
+     *
      * @param matcher
      * @return
      */
     private Set<Resource> findAllSubClassAndInCache(Set<Resource> matcher) throws InterruptedException {
         Class<?> aClass = ClassHelper.forName(name.replace("subclass:", ""));
-        if(null == aClass) {
+        if (null == aClass) {
             return null;
         }
         long startTime = 0L;
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             startTime = System.currentTimeMillis();
         }
         ExecutorService executorService = ThreadHelper.newProcessorThreadExecutor();
@@ -77,8 +79,8 @@ public class SubClassMatcher implements IPathMatcher {
                 @Override
                 public void run() {
                     String name = resource.getName();
-                    name = StringHelper.startsWithAndEmpty(name, "/");
-                    name = name.replace("/", ".").replace(EXTENSION_CLASS_SUFFIX, "");
+                    name = StringHelper.startsWithAndEmpty(name, SYMBOL_LEFT_SLASH);
+                    name = name.replace(SYMBOL_LEFT_SLASH, SYMBOL_DOT).replace(SuffixConstant.SUFFIX_CLASS, SYMBOL_EMPTY);
                     Class<?> aClass = ClassHelper.forName(name);
                     renderCache(aClass, resource);
                     countDownLatch.countDown();
@@ -90,13 +92,13 @@ public class SubClassMatcher implements IPathMatcher {
                  * @param resource
                  */
                 private void renderCache(Class<?> aClass, Resource resource) {
-                    if(null == aClass) {
+                    if (null == aClass) {
                         return;
                     }
                     String name = aClass.getSimpleName().toLowerCase();
-                    while (!CLASS_OBJECT.equals(name)) {
+                    while (!ClassConstant.OBJECT_CLASS.equals(name)) {
                         Class<?> superclass = aClass.getSuperclass();
-                        if(null == superclass) {
+                        if (null == superclass) {
                             break;
                         }
                         Class[] genericInterfaces = aClass.getInterfaces();
@@ -114,7 +116,7 @@ public class SubClassMatcher implements IPathMatcher {
         countDownLatch.await();
 
         executorService.shutdown();
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("检索子类【{}】耗时: {}ms", aClass.getName(), System.currentTimeMillis() - startTime);
         }
         return HASH_MULTIMAP.get(aClass);

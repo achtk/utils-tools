@@ -67,7 +67,7 @@ public class NetHelper {
      * @param host 地址
      * @return 是否默认地址
      */
-    public static boolean isIPv4Host(String host) {
+    public static boolean isIpv4Host(String host) {
         return StringHelper.isNotBlank(host) && IPV4_PATTERN.matcher(host).matches();
     }
 
@@ -95,7 +95,7 @@ public class NetHelper {
         return (name != null
                 && !isAnyHost(name)
                 && !isLocalHost(name)
-                && isIPv4Host(name));
+                && isIpv4Host(name));
     }
 
     /**

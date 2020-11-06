@@ -2,7 +2,7 @@ package com.chua.utils.netx.elasticsearch.spring.factory;
 
 import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.common.CollectionHelper;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.PropertiesHelper;
 import com.chua.utils.tools.properties.NetProperties;
 import lombok.NoArgsConstructor;

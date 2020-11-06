@@ -3,6 +3,7 @@ package com.chua.utils.tools.classes.reflections;
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
 import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.classes.ClassExtensionHelper;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.*;
 import com.chua.utils.tools.common.skip.SkipPatterns;
 import com.google.common.base.Function;
@@ -162,7 +163,7 @@ public class ReflectionsHelper extends ClassExtensionHelper {
      * @param classLoader 类加载器
      * @return
      */
-    public static URL[] getUrlsByClassLoaderExcludeJDK(ClassLoader classLoader) {
+    public static URL[] getUrlsByClassLoaderExcludeJdk(ClassLoader classLoader) {
         URL[] urlsByClassLoader = getUrlsByClassLoader(classLoader);
         List<URL> cache = new ArrayList<>(urlsByClassLoader.length);
         Arrays.stream(urlsByClassLoader).parallel().forEach(new Consumer<URL>() {

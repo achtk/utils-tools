@@ -2,6 +2,7 @@ package com.chua.utils.tools.classes.reflections;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BeansHelper;
+import javassist.bytecode.ClassFile;
 import lombok.Getter;
 import org.reflections.*;
 import org.reflections.scanners.Scanner;
@@ -10,6 +11,7 @@ import org.reflections.vfs.Vfs;
 
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -31,6 +33,7 @@ public class ReflectionsFactory extends Reflections {
 
     private transient Configuration configuration;
     private static StoreFactory STORE = new StoreFactory();
+    private static final ConcurrentHashMap<String, URL> URL_CACHE = new ConcurrentHashMap<>();
     @Getter
     private Map<String, Throwable> throwableMap = new HashMap<>();
 
@@ -38,6 +41,16 @@ public class ReflectionsFactory extends Reflections {
         super.store = STORE;
         this.configuration = configuration;
         this.scanUrl();
+    }
+
+    /**
+     * 通过类名获取类所在URL
+     *
+     * @param className 类名
+     * @return  URL
+     */
+    public URL getClassFromUrl(String className) {
+        return URL_CACHE.get(className);
     }
 
     /**
@@ -49,8 +62,8 @@ public class ReflectionsFactory extends Reflections {
             for (Scanner scanner : configuration.getScanners()) {
                 if (!STORE.container(scanner)) {
                     scanner.setConfiguration(configuration);
+                    longAdder.increment();
                 }
-                longAdder.increment();
             }
             if (longAdder.intValue() != 0) {
                 this.scan();
@@ -176,6 +189,9 @@ public class ReflectionsFactory extends Reflections {
                         try {
                             if (scanner.acceptsInput(path) || scanner.acceptsInput(fqn)) {
                                 classObject = scanner.scan(file, classObject, store);
+                                if (classObject instanceof ClassFile) {
+                                    URL_CACHE.put(((ClassFile) classObject).getName(), url);
+                                }
                             }
                         } catch (Exception e) {
                             if (log != null) {

@@ -689,11 +689,11 @@ public class FileFilterHelper {
 
     //-----------------------------------------------------------------------
     /* Constructed on demand and then cached */
-    private static final FileFilter cvsFilter = notFileFilter(
+    private static final FileFilter CVS_FILTER = notFileFilter(
             and(directoryFileFilter(), nameFileFilter("CVS")));
 
     /* Constructed on demand and then cached */
-    private static final FileFilter svnFilter = notFileFilter(
+    private static final FileFilter SVN_FILTER = notFileFilter(
             and(directoryFileFilter(), nameFileFilter(".svn")));
 
     /**
@@ -705,11 +705,11 @@ public class FileFilterHelper {
      * @return the decorated filter, never null
      * @since 1.1 (method existed but had bug in 1.0)
      */
-    public static FileFilter makeCVSAware(final FileFilter filter) {
+    public static FileFilter makeCvsAware(final FileFilter filter) {
         if (filter == null) {
-            return cvsFilter;
+            return CVS_FILTER;
         } else {
-            return and(filter, cvsFilter);
+            return and(filter, CVS_FILTER);
         }
     }
 
@@ -722,11 +722,11 @@ public class FileFilterHelper {
      * @return the decorated filter, never null
      * @since 1.1
      */
-    public static FileFilter makeSVNAware(final FileFilter filter) {
+    public static FileFilter makeSvnAware(final FileFilter filter) {
         if (filter == null) {
-            return svnFilter;
+            return SVN_FILTER;
         } else {
-            return and(filter, svnFilter);
+            return and(filter, SVN_FILTER);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.chua.utils.tools.example;
 
-import com.chua.utils.tools.encrypt.Encrypt;
+import com.chua.utils.tools.common.codec.encrypt.Encrypt;
 import com.chua.utils.tools.manager.DefaultObjectContextManager;
 import com.chua.utils.tools.manager.ObjectContextManager;
 

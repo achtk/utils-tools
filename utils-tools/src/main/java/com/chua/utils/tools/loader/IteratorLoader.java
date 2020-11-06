@@ -1,6 +1,6 @@
 package com.chua.utils.tools.loader;
 
-import com.chua.utils.tools.common.CollectionHelper;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.google.common.collect.HashMultimap;
 
@@ -77,9 +77,9 @@ public class IteratorLoader<V> implements IIteratorLoader<V> {
 	 */
 	private Class<?> getInterfaceByLength() {
 		int size = copyOnWriteArraySet.size();
-		HashMultimap<Class, V> classVHashMultimap = threadLocal.get();
-		for (Class aClass : classVHashMultimap.keySet()) {
-			Set<V> vs = classVHashMultimap.get(aClass);
+		HashMultimap<Class, V> multimap = threadLocal.get();
+		for (Class aClass : multimap.keySet()) {
+			Set<V> vs = multimap.get(aClass);
 			if(vs.size() != size) {
 				continue;
 			}

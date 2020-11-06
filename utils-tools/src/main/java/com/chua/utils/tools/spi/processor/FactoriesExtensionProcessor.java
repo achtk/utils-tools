@@ -25,7 +25,7 @@ import java.util.function.Consumer;
  * @since 2020/10/30
  */
 @Slf4j
-public class FactoriesExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
+public class FactoriesExtensionProcessor<T> extends AbstractSimpleExtensionProcessor<T> {
 
     private List<String> extensionLoadPath;
     private static final String FACTORIES_RESOURCE_LOCATION = "spring.factories";
@@ -90,6 +90,7 @@ public class FactoriesExtensionProcessor<T> extends SimpleExtensionProcessor<T> 
                             @Override
                             public void accept(ExtensionClass<T> tExtensionClass) {
                                 tExtensionClass.setName(factoryTypeName);
+                                tExtensionClass.setUrl(url);
                             }
                         });
                         all.addAll(extensionClassList);

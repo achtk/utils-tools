@@ -1,6 +1,7 @@
 package com.chua.utils.tools.function.converter;
 
 import com.chua.utils.tools.function.Converter;
+import lombok.EqualsAndHashCode;
 
 /**
  * 类型转String
@@ -9,23 +10,24 @@ import com.chua.utils.tools.function.Converter;
  * @version 1.0.0
  * @since 2020/10/30
  */
-public abstract class TypeConverter<O> implements Converter<Object, O> {
+public interface TypeConverter<O> extends Converter<Object, O> {
     /**
      * 类型转化
      *
      * @param value 值
      * @return O
      */
-    abstract public O convert(Object value);
+    O convert(Object value);
 
     /**
      * 转化类型
+     *
      * @return O
      */
-    abstract public Class<? extends O> getType();
+    Class<? extends O> getType();
 
     @Override
-    public O convert(Object value, Class<? extends O> tClass) {
+    default public O convert(Object value, Class<? extends O> tClass) {
         return convert(value);
     }
 }

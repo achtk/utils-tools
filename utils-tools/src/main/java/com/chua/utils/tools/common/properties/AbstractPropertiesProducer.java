@@ -2,9 +2,9 @@ package com.chua.utils.tools.common.properties;
 
 import com.chua.utils.tools.cfg.CfgConfig;
 import com.chua.utils.tools.cfg.CfgOptions;
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
-import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.google.common.collect.Sets;
 
@@ -805,7 +805,7 @@ public abstract class AbstractPropertiesProducer {
     public void cfgLoader(CfgConfig cfgConfig) {
         CfgOptions cfgOptions = new CfgOptions(cfgConfig);
         ConcurrentHashMap<String, Object> initialCfg = cfgOptions.toConcurrentHashMap();
-        Properties properties = MapHelper.toProperties(initialCfg);
+        Properties properties = MapOperableHelper.toProp(initialCfg);
         put(StringHelper.uuid(), properties);
     }
 }

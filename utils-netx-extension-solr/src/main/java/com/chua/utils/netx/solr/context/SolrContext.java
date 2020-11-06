@@ -8,7 +8,7 @@ import com.chua.utils.netx.solr.factory.CloudSolrFactory;
 import com.chua.utils.netx.solr.factory.SingleSolrFactory;
 import com.chua.utils.tools.common.ArraysHelper;
 import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.common.MapHelper;
+import com.chua.utils.tools.collects.map.MapHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;

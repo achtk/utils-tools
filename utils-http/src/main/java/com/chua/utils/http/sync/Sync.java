@@ -205,7 +205,7 @@ public class Sync {
             if (null != sslSocketFactory && sslSocketFactory instanceof SSLSocketFactory) {
                 httpsURLConnection.setSSLSocketFactory((SSLSocketFactory) sslSocketFactory);
             } else {
-                HttpsURLConnection.setDefaultSSLSocketFactory(HttpClientHelper.createSSLSocketFactory());
+                HttpsURLConnection.setDefaultSSLSocketFactory(HttpClientHelper.createSslSocketFactory());
                 HttpsURLConnection.setDefaultHostnameVerifier(HttpClientHelper.createDefaultHostnameVerifier());
             }
             return httpsURLConnection;

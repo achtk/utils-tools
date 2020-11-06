@@ -10,24 +10,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.chua.utils.tools.constant.StringConstant.EXTENSION_ASTERISK;
-import static com.chua.utils.tools.constant.StringConstant.EXTENSION_ASTERISKS;
+import static com.chua.utils.tools.constant.SymbolConstant.*;
 
 /**
  * ant 风格匹配
  *
- * @author  CH
+ * @author CH
  * @since 1.0
  */
 public class AntPathMatcher implements PathMatcher {
     /**
      * Default path separator: "/"
      */
-    public static final String DEFAULT_PATH_SEPARATOR = "/";
+    public static final String DEFAULT_PATH_SEPARATOR = SYMBOL_LEFT_SLASH;
 
     private static final int CACHE_TURNOFF_THRESHOLD = 65536;
 
-    private static final char[] WILDCARD_CHARS = {'*', '?', '{'};
+    private static final char[] WILDCARD_CHARS = {SYMBOL_DOLLAR_CHAR, SYMBOL_QUESTION_CHAR, SYMBOL_LEFT_BIG_PARANTHESES_CHAR};
 
 
     private String pathSeparator;
@@ -76,9 +75,10 @@ public class AntPathMatcher implements PathMatcher {
 
     /**
      * 数据匹配
-     * @param pattern 表达式
-     * @param path 路径
-     * @param fullMatch 全词匹配
+     *
+     * @param pattern              表达式
+     * @param path                 路径
+     * @param fullMatch            全词匹配
      * @param uriTemplateVariables 模板
      * @return boolean
      */
@@ -120,11 +120,11 @@ public class AntPathMatcher implements PathMatcher {
             if (!fullMatch) {
                 return true;
             }
-            if (pattIdxStart == pattIdxEnd && EXTENSION_ASTERISK.equals(patternDirs[pattIdxStart]) && path.endsWith(this.pathSeparator)) {
+            if (pattIdxStart == pattIdxEnd && SYMBOL_ASTERISK.equals(patternDirs[pattIdxStart]) && path.endsWith(this.pathSeparator)) {
                 return true;
             }
             for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
-                if (!EXTENSION_ASTERISKS.equals(patternDirs[i])) {
+                if (!SYMBOL_ASTERISKS.equals(patternDirs[i])) {
                     return false;
                 }
             }
@@ -132,7 +132,7 @@ public class AntPathMatcher implements PathMatcher {
         } else if (pattIdxStart > pattIdxEnd) {
             // String not exhausted, but pattern is. Failure.
             return false;
-        } else if (!fullMatch && EXTENSION_ASTERISKS.equals(patternDirs[pattIdxStart])) {
+        } else if (!fullMatch && SYMBOL_ASTERISKS.equals(patternDirs[pattIdxStart])) {
             // Path start definitely matches due to "**" part in pattern.
             return true;
         }
@@ -140,7 +140,7 @@ public class AntPathMatcher implements PathMatcher {
         // up to last '**'
         while (pattIdxStart <= pattIdxEnd && pathIdxStart <= pathIdxEnd) {
             String partDir = patternDirs[pattIdxEnd];
-            if (EXTENSION_ASTERISK.equals(partDir)) {
+            if (SYMBOL_ASTERISK.equals(partDir)) {
                 break;
             }
             if (!matchStrings(partDir, pathDirs[pathIdxEnd], uriTemplateVariables)) {
@@ -152,7 +152,7 @@ public class AntPathMatcher implements PathMatcher {
         if (pathIdxStart > pathIdxEnd) {
             // String is exhausted
             for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
-                if (!EXTENSION_ASTERISKS.equals(patternDirs[i])) {
+                if (!SYMBOL_ASTERISKS.equals(patternDirs[i])) {
                     return false;
                 }
             }
@@ -162,7 +162,7 @@ public class AntPathMatcher implements PathMatcher {
         while (pattIdxStart != pattIdxEnd && pathIdxStart <= pathIdxEnd) {
             int patIdxTmp = -1;
             for (int i = pattIdxStart + 1; i <= pattIdxEnd; i++) {
-                if (EXTENSION_ASTERISKS.equals(patternDirs[i])) {
+                if (SYMBOL_ASTERISKS.equals(patternDirs[i])) {
                     patIdxTmp = i;
                     break;
                 }
@@ -200,7 +200,7 @@ public class AntPathMatcher implements PathMatcher {
         }
 
         for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
-            if (!EXTENSION_ASTERISKS.equals(patternDirs[i])) {
+            if (!SYMBOL_ASTERISKS.equals(patternDirs[i])) {
                 return false;
             }
         }
@@ -210,7 +210,8 @@ public class AntPathMatcher implements PathMatcher {
 
     /**
      * 忽略匹配
-     * @param path 匹配路径
+     *
+     * @param path        匹配路径
      * @param patternDirs 匹配目录
      * @return boolean
      */
@@ -232,8 +233,9 @@ public class AntPathMatcher implements PathMatcher {
 
     /**
      * 跳过通配符
-     * @param path 路径
-     * @param pos 索引
+     *
+     * @param path   路径
+     * @param pos    索引
      * @param prefix 前缀
      * @return int
      */
@@ -257,8 +259,9 @@ public class AntPathMatcher implements PathMatcher {
 
     /**
      * 跳过分隔符
-     * @param path 路径
-     * @param pos 索引
+     *
+     * @param path      路径
+     * @param pos       索引
      * @param separator 分隔符
      * @return int
      */
@@ -272,6 +275,7 @@ public class AntPathMatcher implements PathMatcher {
 
     /**
      * 是否是正则
+     *
      * @param source 元数据
      * @return boolean
      */
@@ -283,6 +287,7 @@ public class AntPathMatcher implements PathMatcher {
         }
         return false;
     }
+
     /**
      * 正则转数组
      *
@@ -320,8 +325,9 @@ public class AntPathMatcher implements PathMatcher {
 
     /**
      * 匹配字符串
-     * @param pattern 表达式
-     * @param str 字符串
+     *
+     * @param pattern              表达式
+     * @param str                  字符串
      * @param uriTemplateVariables 模版
      * @return boolean
      */
@@ -331,6 +337,7 @@ public class AntPathMatcher implements PathMatcher {
 
     /**
      * 生成 AntPathStringMatcher
+     *
      * @param pattern 正则
      * @return com.chua.utils.tools.matcher.AntPathStringMatcher
      */

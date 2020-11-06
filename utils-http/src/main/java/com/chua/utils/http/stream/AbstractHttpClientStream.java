@@ -212,7 +212,7 @@ public abstract class AbstractHttpClientStream {
      * @return
      */
     public AbstractHttpClientStream sslSocketFactory(final Object sslSocketFactory) {
-        requestConfig.setSslSocketFactory(null == sslSocketFactory ? HttpClientHelper.createSSLSocketFactory() : sslSocketFactory);
+        requestConfig.setSslSocketFactory(null == sslSocketFactory ? HttpClientHelper.createSslSocketFactory() : sslSocketFactory);
         return this;
     }    /**
      * 构建

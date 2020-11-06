@@ -2,6 +2,7 @@ package com.chua.utils.tools.strategy.handler;
 
 /**
  * 策略动作
+ *
  * @author CH
  */
 public interface IAsyncStrategyPolicy<T> {
@@ -50,22 +51,26 @@ public interface IAsyncStrategyPolicy<T> {
      *   <td>com.chua.utils.tools.strategy.resolver.RetryConditionStrategyResolver</td>
      *   <td>返回结果</td>
      * </tr>
-
+     *
      *
      * </table>
+     *
+     * @param result 对象
+     * @return T
      */
     void result(T result);
 
     /**
      * 失败
+     *
      * @param throwable 异常
-     * @return
      */
     void failure(Throwable throwable);
 
     /**
      * 降级
-     * @return
+     *
+     * @return T
      */
     default T degrade() {
         return null;
@@ -73,6 +78,7 @@ public interface IAsyncStrategyPolicy<T> {
 
     /**
      * 异常降级结果
+     *
      * @param throwable 异常
      */
     default void degradeResult(Throwable throwable) {

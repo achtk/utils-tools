@@ -1,5 +1,6 @@
 package com.chua.utils.tools.common;
 
+import com.chua.utils.tools.common.charset.CharsetHelper;
 import com.chua.utils.tools.common.filecase.FileWildcard;
 import com.chua.utils.tools.common.filecase.IOCase;
 import com.chua.utils.tools.common.filefilter.*;
@@ -28,7 +29,7 @@ import java.util.jar.JarFile;
 
 import static com.chua.utils.tools.common.IOHelper.toCharset;
 import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
-import static com.chua.utils.tools.constant.StringConstant.*;
+import static com.chua.utils.tools.constant.SymbolConstant.*;
 import static com.google.common.base.Charsets.UTF_8;
 
 /**
@@ -77,20 +78,7 @@ public class FileHelper {
     private static final List<Object> IGNORE = new ArrayList<>();
 
     public static boolean isSystemWindows() {
-        return SYSTEM_SEPARATOR == WINDOWS_SEPARATOR;
-    }
-
-    /**
-     * The separator character that is the opposite of the system separator.
-     */
-    private static final char OTHER_SEPARATOR;
-
-    static {
-        if (isSystemWindows()) {
-            OTHER_SEPARATOR = UNIX_SEPARATOR;
-        } else {
-            OTHER_SEPARATOR = WINDOWS_SEPARATOR;
-        }
+        return SYMBOL_LEFT_SLASH_CHAR == SYMBOL_RIGHT_SLASH_CHAR;
     }
 
     /**
@@ -664,11 +652,11 @@ public class FileHelper {
      */
     public static String getParent(String filePath) {
         if (StringHelper.isNotBlank(filePath)) {
-            filePath = filePath.replace(FILE_RIGHT_SLASH, FILE_LEFT_SLASH);
-            int index = filePath.lastIndexOf(FILE_LEFT_SLASH);
+            filePath = filePath.replace(SYMBOL_RIGHT_SLASH, SYMBOL_LEFT_SLASH);
+            int index = filePath.lastIndexOf(SYMBOL_LEFT_SLASH);
             return index > -1 ? filePath.substring(0, index + 1) : filePath;
         }
-        return EXTENSION_EMPTY;
+        return SYMBOL_EMPTY;
     }
 
     /**
@@ -681,7 +669,7 @@ public class FileHelper {
         if (null != file && file.exists()) {
             return getParent(file.getPath());
         }
-        return EXTENSION_EMPTY;
+        return SYMBOL_EMPTY;
     }
 
     /**
@@ -694,7 +682,7 @@ public class FileHelper {
         if (null != file && file.exists()) {
             return getParentPath(file.getPath());
         }
-        return EXTENSION_EMPTY;
+        return SYMBOL_EMPTY;
     }
 
     /**
@@ -708,7 +696,7 @@ public class FileHelper {
         if (StringHelper.isNotBlank(parent)) {
             return getPath(parent);
         }
-        return EXTENSION_EMPTY;
+        return SYMBOL_EMPTY;
     }
 
     /**
@@ -721,7 +709,7 @@ public class FileHelper {
         if (null != file && file.exists()) {
             return getParentParent(file.getPath());
         }
-        return EXTENSION_EMPTY;
+        return SYMBOL_EMPTY;
     }
 
     /**
@@ -735,7 +723,7 @@ public class FileHelper {
         if (StringHelper.isNotBlank(parent)) {
             return getParent(parent);
         }
-        return EXTENSION_EMPTY;
+        return SYMBOL_EMPTY;
     }
 
     /**
@@ -748,7 +736,7 @@ public class FileHelper {
         if (null != file && file.exists()) {
             return getPath(file.getPath());
         }
-        return EXTENSION_EMPTY;
+        return SYMBOL_EMPTY;
     }
 
     /**
@@ -761,7 +749,7 @@ public class FileHelper {
         if (null != file && file.exists()) {
             return getName(file.getPath());
         }
-        return EXTENSION_EMPTY;
+        return SYMBOL_EMPTY;
     }
 
     /**
@@ -771,7 +759,7 @@ public class FileHelper {
      * @return
      */
     public static String realyPath(String path) {
-        return StringHelper.isNotBlank(path) ? new File(path).getPath() : EXTENSION_EMPTY;
+        return StringHelper.isNotBlank(path) ? new File(path).getPath() : SYMBOL_EMPTY;
     }
 
     /**
@@ -1073,7 +1061,7 @@ public class FileHelper {
                 JarEntry jarEntry = jarFile.getJarEntry(fileName);
                 if (null != jarEntry) {
                     try (InputStream inputStream = jarFile.getInputStream(jarEntry)) {
-                        return IOHelper.toString(inputStream, CHARSET_UTF_8);
+                        return IOHelper.toString(inputStream, CharsetHelper.UTF_8);
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
@@ -1101,7 +1089,7 @@ public class FileHelper {
      */
     public static String getSuffix(String filePath) {
         int lastIndexOf = filePath.lastIndexOf(".");
-        return lastIndexOf > -1 ? filePath.substring(lastIndexOf + 1) : EXTENSION_EMPTY;
+        return lastIndexOf > -1 ? filePath.substring(lastIndexOf + 1) : SYMBOL_EMPTY;
     }
 
     /**
@@ -1109,7 +1097,7 @@ public class FileHelper {
      *
      * @return
      */
-    public static URL emptyURL() {
+    public static URL emptyUrl() {
         try {
             return new URL("file:.");
         } catch (MalformedURLException e) {
@@ -1573,9 +1561,9 @@ public class FileHelper {
         if (null == filepath) {
             return null;
         }
-        String newFilepath = filepath.replace(EXTENSION_REG_RIGHT_SLASH, EXTENSION_LEFT_SLASH);
-        return newFilepath.replace("//", EXTENSION_LEFT_SLASH)
-                .replace("/./", EXTENSION_LEFT_SLASH);
+        String newFilepath = filepath.replace(SYMBOL_RIGHT_SLASH, SYMBOL_LEFT_SLASH);
+        return newFilepath.replace("//", SYMBOL_LEFT_SLASH)
+                .replace("/./", SYMBOL_LEFT_SLASH);
     }
 
     /**
@@ -1787,8 +1775,8 @@ public class FileHelper {
             return null;
         }
         if (len > filename.length()) {
-            failIfNullBytePresent(filename + UNIX_SEPARATOR);
-            return filename + UNIX_SEPARATOR;
+            failIfNullBytePresent(filename + SYMBOL_LEFT_SLASH);
+            return filename + SYMBOL_LEFT_SLASH;
         }
         final String path = filename.substring(0, len);
         failIfNullBytePresent(path);
@@ -1885,8 +1873,8 @@ public class FileHelper {
             return isSeparator(ch0) ? 1 : 0;
         } else {
             if (ch0 == '~') {
-                int posUnix = filename.indexOf(UNIX_SEPARATOR, 1);
-                int posWin = filename.indexOf(WINDOWS_SEPARATOR, 1);
+                int posUnix = filename.indexOf(SYMBOL_LEFT_SLASH, 1);
+                int posWin = filename.indexOf(SYMBOL_RIGHT_SLASH, 1);
                 if (posUnix == INDEX_NOT_FOUND && posWin == INDEX_NOT_FOUND) {
                     return len + 1;
                 }
@@ -1902,14 +1890,14 @@ public class FileHelper {
                         return 2;
                     }
                     return 3;
-                } else if (ch0 == UNIX_SEPARATOR) {
+                } else if (ch0 == SYMBOL_LEFT_SLASH_CHAR) {
                     return 1;
                 }
                 return INDEX_NOT_FOUND;
 
             } else if (isSeparator(ch0) && isSeparator(ch1)) {
-                int posUnix = filename.indexOf(UNIX_SEPARATOR, 2);
-                int posWin = filename.indexOf(WINDOWS_SEPARATOR, 2);
+                int posUnix = filename.indexOf(SYMBOL_LEFT_SLASH, 2);
+                int posWin = filename.indexOf(SYMBOL_RIGHT_SLASH, 2);
                 if (posUnix == INDEX_NOT_FOUND && posWin == INDEX_NOT_FOUND || posUnix == 2 || posWin == 2) {
                     return INDEX_NOT_FOUND;
                 }
@@ -1929,7 +1917,7 @@ public class FileHelper {
      * @return true if it is a separator character
      */
     private static boolean isSeparator(final char ch) {
-        return ch == UNIX_SEPARATOR || ch == WINDOWS_SEPARATOR;
+        return ch == SYMBOL_LEFT_SLASH_CHAR || ch == SYMBOL_RIGHT_SLASH_CHAR;
     }
 
     /**
@@ -1965,7 +1953,7 @@ public class FileHelper {
         if (filename == null) {
             return INDEX_NOT_FOUND;
         }
-        final int extensionPos = filename.lastIndexOf(EXTENSION_DOT);
+        final int extensionPos = filename.lastIndexOf(SYMBOL_DOT);
         final int lastSeparator = indexOfLastSeparator(filename);
         return lastSeparator > extensionPos ? INDEX_NOT_FOUND : extensionPos;
     }
@@ -1980,8 +1968,8 @@ public class FileHelper {
         if (filename == null) {
             return INDEX_NOT_FOUND;
         }
-        final int lastUnixPos = filename.lastIndexOf(UNIX_SEPARATOR);
-        final int lastWindowsPos = filename.lastIndexOf(WINDOWS_SEPARATOR);
+        final int lastUnixPos = filename.lastIndexOf(SYMBOL_LEFT_SLASH);
+        final int lastWindowsPos = filename.lastIndexOf(SYMBOL_RIGHT_SLASH);
         return Math.max(lastUnixPos, lastWindowsPos);
     }
 
@@ -2043,27 +2031,31 @@ public class FileHelper {
 
     /**
      * 文件转流
+     *
      * @param path
      * @return
      */
-    public static InputStream toInputStream(String path) throws IOException{
-        if(null == path) {
+    public static InputStream toInputStream(String path) throws IOException {
+        if (null == path) {
             return null;
         }
         return toInputStream(new File(path));
     }
+
     /**
      * 文件转流
+     *
      * @param file 文件
      * @return
      */
-    public static InputStream toInputStream(File file) throws IOException{
-        if(null == file) {
+    public static InputStream toInputStream(File file) throws IOException {
+        if (null == file) {
             return null;
         }
         URL url = file.toURI().toURL();
         return url.openStream();
     }
+
     /**
      * 写文件
      *
@@ -2189,10 +2181,34 @@ public class FileHelper {
 
     /**
      * 获取文件夹
+     *
      * @param folder 文件夹
      * @return
      */
     public static String toFolder(final String folder) {
-        return Strings.isNullOrEmpty(folder) ? EMPTY : (folder.endsWith("/") ? folder : folder + FILE_LEFT_SLASH);
+        return Strings.isNullOrEmpty(folder) ? SYMBOL_EMPTY : (folder.endsWith(SYMBOL_LEFT_SLASH) ? folder : folder + SYMBOL_LEFT_SLASH);
+    }
+
+    /**
+     * 是否是window
+     *
+     * @return boolean
+     */
+    public static boolean isWindows() {
+        return SYMBOL_RIGHT_SLASH_CHAR == File.separatorChar;
+    }
+
+    /**
+     * 获取流
+     *
+     * @param file 文件
+     * @return
+     */
+    public static BufferedInputStream getInputStream(File file) {
+        try {
+            return new BufferedInputStream(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            return null;
+        }
     }
 }

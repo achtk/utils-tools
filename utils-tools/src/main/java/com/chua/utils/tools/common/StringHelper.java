@@ -1,5 +1,8 @@
 package com.chua.utils.tools.common;
 
+import com.chua.utils.tools.collects.collections.ListHelper;
+import com.chua.utils.tools.collects.map.MapOperableHelper;
+import com.chua.utils.tools.common.charset.CharsetHelper;
 import com.chua.utils.tools.function.IPreMatcher;
 import com.chua.utils.tools.guid.GUID;
 import com.google.common.base.Charsets;
@@ -15,9 +18,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
-import static com.chua.utils.tools.constant.PatternConstant.PATTERN_BLANK;
+import static com.chua.utils.tools.constant.NumberConstant.*;
+import static com.chua.utils.tools.constant.PatternConstant.*;
 import static com.chua.utils.tools.constant.StringConstant.*;
+import static com.chua.utils.tools.constant.SymbolConstant.*;
 
 /**
  * 字符串工具类
@@ -438,7 +442,7 @@ public class StringHelper {
                 pos = delPos + delimiter.length();
             }
             if (str.length() > 0 && pos <= str.length()) {
-                // Add rest of String, but not in case of empty input.
+                // Add rest of String, but not in case of SYMBOL_EMPTY input.
                 result.add(deleteAny(str.substring(pos), charsToDelete));
             }
         }
@@ -630,7 +634,7 @@ public class StringHelper {
      * @return
      */
     public static String noRepeatSlash(String source) {
-        return isBlank(source) ? source : source.replaceAll("(/){1,}", EXTENSION_LEFT_SLASH);
+        return isBlank(source) ? source : source.replaceAll("(/){1,}", SYMBOL_LEFT_SLASH);
     }
 
     /**
@@ -764,7 +768,7 @@ public class StringHelper {
      */
     public static String uuid(boolean b) {
         String s = UUID.randomUUID().toString();
-        return b ? s : s.replace(EXTENSION_MINS, EXTENSION_EMPTY);
+        return b ? s : s.replace(SYMBOL_MINS, SYMBOL_EMPTY);
     }
 
     /**
@@ -782,17 +786,7 @@ public class StringHelper {
      * @return
      */
     public static String guid() {
-        return GUID.randomGUID().toString();
-    }
-
-    /**
-     * 随机
-     *
-     * @param defaultGroupName
-     * @return
-     */
-    public static String radon(String defaultGroupName) {
-        return UUID.randomUUID().toString() + "-" + defaultGroupName;
+        return GUID.randomGuid().toString();
     }
 
     /**
@@ -837,65 +831,19 @@ public class StringHelper {
      */
     public static String split(String key, String split, int index) {
         if (isBlank(key)) {
-            return EXTENSION_EMPTY;
+            return SYMBOL_EMPTY;
         }
-        String[] split1 = key.split("#");
+        String[] split1 = key.split(SYMBOL_WELL);
         index = index + 1;
         int max = split1.length;
         index = index > max ? max : index;
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < index; i++) {
-            sb.append("#").append(split1[i]);
+            sb.append(SYMBOL_WELL).append(split1[i]);
         }
-        return sb.length() > 0 ? sb.substring(1) : EXTENSION_EMPTY;
+        return sb.length() > 0 ? sb.substring(1) : SYMBOL_EMPTY;
     }
 
-    /**
-     * 格式化信息
-     * <pre>
-     *     StringHelper.formatMessage("test{}, {}, {}", "sdsds", 1) = testsdsds, 1, {}
-     *     StringHelper.formatMessage("test{}, {}", "sdsds", 1, 2) = testsdsds, 1
-     * </pre>
-     *
-     * @param message 数据包含占位符
-     * @param params  替换数据
-     * @return
-     */
-    public static String formatMessage(String message, Object... params) {
-        Matcher matcher = PLACE_HOLDER.matcher(message);
-        int cnt = 0;
-        int length = params.length;
-        while (matcher.find()) {
-            if (cnt < length) {
-                Object obj = params[cnt++];
-                message = matcher.replaceFirst(null == obj ? "" : String.valueOf(obj));
-                matcher = PLACE_HOLDER.matcher(message);
-            } else {
-                break;
-            }
-        }
-        return message;
-    }
-
-    /**
-     * 默认值渲染
-     *
-     * @param defaultValue    默认值
-     * @param replaceNonExist 不存在占位符是否置为""
-     * @param matcher         正则
-     * @param key1            索引
-     * @return
-     */
-    private static String defaultRender(String defaultValue, boolean replaceNonExist, Matcher matcher, String key1) {
-        if (StringHelper.isBlank(defaultValue)) {
-            if (replaceNonExist) {
-                return matcher.replaceFirst("");
-            } else {
-                return matcher.replaceFirst("€" + key1 + "￥");
-            }
-        }
-        return matcher.replaceFirst(defaultValue);
-    }
 
     /**
      * join.
@@ -975,26 +923,6 @@ public class StringHelper {
             sb.append(s);
         }
         return sb.toString();
-    }
-
-    /**
-     * 解析key-value字符串
-     *
-     * @param str           字符串.
-     * @param itemSeparator 分隔符.
-     * @return key-value map;
-     */
-    private static Map<String, String> parseKeyValuePair(String str, String itemSeparator) {
-        String[] tmp = str.split(itemSeparator);
-        Map<String, String> map = new HashMap<>(tmp.length);
-        for (int i = 0; i < tmp.length; i++) {
-            Matcher matcher = KVP_PATTERN.matcher(tmp[i]);
-            if (matcher.matches() == false) {
-                continue;
-            }
-            map.put(matcher.group(1), matcher.group(2));
-        }
-        return map;
     }
 
     /**
@@ -1453,11 +1381,11 @@ public class StringHelper {
 
         String newWildcard = wildcard;
         newWildcard = newWildcard.replace('.', '#');
-        newWildcard = newWildcard.replaceAll("#", "\\\\.");
+        newWildcard = newWildcard.replaceAll(SYMBOL_WELL, "\\\\.");
         newWildcard = newWildcard.replace('*', '#');
-        newWildcard = newWildcard.replaceAll("#", ".*");
+        newWildcard = newWildcard.replaceAll(SYMBOL_WELL, ".*");
         newWildcard = newWildcard.replace('?', '#');
-        newWildcard = newWildcard.replaceAll("#", ".?");
+        newWildcard = newWildcard.replaceAll(SYMBOL_WELL, ".?");
 
         return "^" + newWildcard + "$";
     }
@@ -1513,7 +1441,7 @@ public class StringHelper {
      */
     public static String compress(final String source, final String charset) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(source));
-        return GzipHelper.compressToString(source, defaultIfBlank(charset, CHARSET_UTF_8));
+        return GzipHelper.compressToString(source, defaultIfBlank(charset, CharsetHelper.UTF_8));
     }
 
     /**
@@ -1523,7 +1451,7 @@ public class StringHelper {
      * @return
      */
     public static String compress(final String source) {
-        return compress(source, CHARSET_UTF_8);
+        return compress(source, CharsetHelper.UTF_8);
     }
 
     /**
@@ -1534,7 +1462,7 @@ public class StringHelper {
      */
     public static String uncompress(final String source, final String charset) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(source));
-        return GzipHelper.uncompress(source, defaultIfBlank(charset, CHARSET_UTF_8));
+        return GzipHelper.uncompress(source, defaultIfBlank(charset, CharsetHelper.UTF_8));
     }
 
     /**
@@ -1544,7 +1472,7 @@ public class StringHelper {
      * @return
      */
     public static String uncompress(final String source) {
-        return uncompress(source, CHARSET_UTF_8);
+        return uncompress(source, CharsetHelper.UTF_8);
     }
 
     /**
@@ -1984,7 +1912,7 @@ public class StringHelper {
      */
     public static String toString(final Object value) {
         if (null == value) {
-            return EMPTY;
+            return SYMBOL_EMPTY;
         }
         if (value instanceof byte[]) {
             return toString((byte[]) value, Charsets.UTF_8);
@@ -2099,7 +2027,7 @@ public class StringHelper {
      * 获取字符串之间值
      * <pre>
      *     StringHelper.cut("@test@", "@", "@") == test
-     *     StringHelper.cut("@test#", "@", "#") == test
+     *     StringHelper.cut("@test#", "@", SYMBOL_WELL) == test
      * </pre>
      *
      * @param start    开始符号
@@ -2108,7 +2036,7 @@ public class StringHelper {
      * @return
      */
     public static final List<String> cut(final String srcValue, final String start, final String end) {
-        return pattern(srcValue, start + REGEXP_ALL + end, -1);
+        return pattern(srcValue, start + REGEXP_ANY + end, -1);
     }
 
     /**
@@ -2122,7 +2050,7 @@ public class StringHelper {
      * @return
      */
     public static final List<String> startsWith(final String srcValue, final String start, int limit) {
-        return pattern(srcValue, start + REGEXP_ALL, limit);
+        return pattern(srcValue, start + REGEXP_ANY, limit);
     }
 
     /**
@@ -2131,7 +2059,7 @@ public class StringHelper {
      * @return
      */
     public static final List<String> startsWith(final String srcValue, final String start) {
-        return pattern(srcValue, start + REGEXP_ALL, -1);
+        return pattern(srcValue, start + REGEXP_ANY, -1);
     }
 
     /**
@@ -2140,7 +2068,7 @@ public class StringHelper {
      * @return
      */
     public static final List<String> endsWith(final String srcValue, final String end, final int limit) {
-        return pattern(srcValue, REGEXP_ALL + end, limit);
+        return pattern(srcValue, REGEXP_ANY + end, limit);
     }
 
     /**
@@ -2149,7 +2077,7 @@ public class StringHelper {
      * @return
      */
     public static final List<String> endsWith(final String srcValue, final String end) {
-        return pattern(srcValue, REGEXP_ALL + end, -1);
+        return pattern(srcValue, REGEXP_ANY + end, -1);
     }
 
     /**
@@ -2158,7 +2086,7 @@ public class StringHelper {
      * @return
      */
     public static final String endsWithString(final String srcValue, final String end) {
-        final List<String> pattern = pattern(srcValue, REGEXP_ALL + end, 1);
+        final List<String> pattern = pattern(srcValue, REGEXP_ANY + end, 1);
         return ListHelper.one(pattern);
     }
 
@@ -2194,7 +2122,7 @@ public class StringHelper {
         while (matcher.find()) {
             final String group = patternHandler.matcher(matcher);
             if (-1 == limit || lStrings.size() <= limit) {
-                lStrings.add(null != group ? group.trim() : EXTENSION_EMPTY);
+                lStrings.add(null != group ? group.trim() : SYMBOL_EMPTY);
             } else {
                 break;
             }
@@ -2213,9 +2141,9 @@ public class StringHelper {
         if (isEmpty(srcValue)) {
             return ListHelper.newArrayList();
         }
-        String regex = EXTENSION_EMPTY;
+        String regex = SYMBOL_EMPTY;
         for (String s : condition) {
-            regex = regex.concat(EXTENSION_OR).concat(s);
+            regex = regex.concat(SYMBOL_OR).concat(s);
         }
         if (regex.length() > 0) {
             regex = regex.substring(1);
@@ -2237,7 +2165,7 @@ public class StringHelper {
             return defaultValue;
         }
         final String s = endsWithString(srcValue, condition);
-        List<String> strings = Splitter.onPattern(REGEXP_EMPTY).trimResults().splitToList(s);
+        List<String> strings = Splitter.onPattern(PATTERN_EMPTY.pattern()).trimResults().splitToList(s);
         String endValue = strings.get(strings.size() - 1);
         return isEmpty(endValue) ? defaultValue : endValue;
     }
@@ -2249,7 +2177,7 @@ public class StringHelper {
      * @param condition 前缀符号
      */
     public static final String preffix(String srcValue, String condition) {
-        return preffix(srcValue, condition, EXTENSION_EMPTY);
+        return preffix(srcValue, condition, SYMBOL_EMPTY);
     }
 
     /**
@@ -2260,7 +2188,7 @@ public class StringHelper {
      * @return
      */
     public static String remove(final String srcValue, final String extensionPer) {
-        return srcValue.replace(extensionPer, EXTENSION_EMPTY);
+        return srcValue.replace(extensionPer, SYMBOL_EMPTY);
     }
 
     /**
@@ -2270,7 +2198,7 @@ public class StringHelper {
      * @return
      */
     public static String asString(byte[] data) {
-        return new String(data, Charset.forName(CHARSET_UTF_8));
+        return new String(data, Charset.forName(CharsetHelper.UTF_8));
     }
 
     /**
@@ -2281,7 +2209,7 @@ public class StringHelper {
      * @return
      */
     public static List<String> asList(byte[] data, final String separator) {
-        String s = new String(data, Charset.forName(CHARSET_UTF_8));
+        String s = new String(data, Charset.forName(CharsetHelper.UTF_8));
         return Splitter.on(separator).trimResults().splitToList(s);
     }
 
@@ -2299,7 +2227,7 @@ public class StringHelper {
      * @return
      */
     public static String trim(final String srcValue) {
-        return null == srcValue ? EXTENSION_EMPTY : srcValue.trim();
+        return null == srcValue ? SYMBOL_EMPTY : srcValue.trim();
     }
 
     /**
@@ -2317,7 +2245,7 @@ public class StringHelper {
      * @return
      */
     public static String trim(String srcValue, String reg) {
-        return null == srcValue || null == reg ? EXTENSION_EMPTY : srcValue.replaceAll(reg, EXTENSION_EMPTY);
+        return null == srcValue || null == reg ? SYMBOL_EMPTY : srcValue.replaceAll(reg, SYMBOL_EMPTY);
     }
 
     /**
@@ -2351,7 +2279,7 @@ public class StringHelper {
      * @return
      */
     public static String trimToEmpty(final String str) {
-        return str == null ? EXTENSION_EMPTY : str.trim();
+        return str == null ? SYMBOL_EMPTY : str.trim();
     }
 
     /**
@@ -2421,10 +2349,10 @@ public class StringHelper {
             return null;
         }
         if (offset > str.length()) {
-            return EXTENSION_EMPTY;
+            return SYMBOL_EMPTY;
         }
         if (length == 0) {
-            return EXTENSION_EMPTY;
+            return SYMBOL_EMPTY;
         }
 
         if (offset >= 0 && length > 0) {
@@ -2465,19 +2393,19 @@ public class StringHelper {
      *
      * @param str 源数据
      *            <pre>
-     *                                                                                                                                                                                 StringHelper.stripToEmpty(null)     = ""
-     *                                                                                                                                                                                 StringHelper.stripToEmpty("")       = ""
-     *                                                                                                                                                                                 StringHelper.stripToEmpty("   ")    = ""
-     *                                                                                                                                                                                 StringHelper.stripToEmpty("abc")    = "abc"
-     *                                                                                                                                                                                 StringHelper.stripToEmpty("  abc")  = "abc"
-     *                                                                                                                                                                                 StringHelper.stripToEmpty("abc  ")  = "abc"
-     *                                                                                                                                                                                 StringHelper.stripToEmpty(" abc ")  = "abc"
-     *                                                                                                                                                                                 StringHelper.stripToEmpty(" ab c ") = "ab c"
-     *                                                                                                                                                                                 </pre>
+     *                                                                                                                                                                                            StringHelper.stripToEmpty(null)     = ""
+     *                                                                                                                                                                                            StringHelper.stripToEmpty("")       = ""
+     *                                                                                                                                                                                            StringHelper.stripToEmpty("   ")    = ""
+     *                                                                                                                                                                                            StringHelper.stripToEmpty("abc")    = "abc"
+     *                                                                                                                                                                                            StringHelper.stripToEmpty("  abc")  = "abc"
+     *                                                                                                                                                                                            StringHelper.stripToEmpty("abc  ")  = "abc"
+     *                                                                                                                                                                                            StringHelper.stripToEmpty(" abc ")  = "abc"
+     *                                                                                                                                                                                            StringHelper.stripToEmpty(" ab c ") = "ab c"
+     *                                                                                                                                                                                            </pre>
      * @return
      */
     public static String stripToEmpty(final String str) {
-        return str == null ? EMPTY : strip(str, null);
+        return str == null ? SYMBOL_EMPTY : strip(str, null);
     }
 
     /**
@@ -2590,7 +2518,7 @@ public class StringHelper {
      */
     public final static String changeCharset(String srcValue, String newCharset) throws UnsupportedEncodingException {
         if (srcValue != null) {
-            byte[] bs = srcValue.getBytes(CHARSET_UTF_8);
+            byte[] bs = srcValue.getBytes(CharsetHelper.UTF_8);
             // 用新的字符编码生成字符串
             return new String(bs, newCharset);
         }
@@ -2649,12 +2577,12 @@ public class StringHelper {
         }
         int startIndex = value.indexOf(start);
         if (startIndex > -1 && value.indexOf(end, startIndex) > -1) {
-            String patternStr = FILE_RIGHT_SLASH + start + REGEXP_ALL_1 + FILE_RIGHT_SLASH + end;
+            String patternStr = SYMBOL_RIGHT_SLASH + start + REGEXP_ANY + SYMBOL_RIGHT_SLASH + end;
             Pattern pattern = Pattern.compile(patternStr);
             Matcher matcher = pattern.matcher(value);
             while (matcher.find()) {
                 String group = matcher.group();
-                value = value.replace(group, MapHelper.strings(group.replace(start, EXTENSION_EMPTY).replace(end, EXTENSION_EMPTY), EXTENSION_EMPTY, data));
+                value = value.replace(group, MapOperableHelper.getString(data, group.replace(start, SYMBOL_EMPTY).replace(end, SYMBOL_EMPTY), SYMBOL_EMPTY));
             }
 
         }
@@ -2669,7 +2597,7 @@ public class StringHelper {
      */
     public static String lastEnd(final String srcValue, final String... extensions) {
         if (isNotBlank(srcValue)) {
-            String extension = EXTENSION_DOT;
+            String extension = SYMBOL_DOT;
             if (null != extensions && extensions.length > 0) {
                 extension = extensions[0];
             }
@@ -2687,7 +2615,7 @@ public class StringHelper {
      */
     public static String firstEnd(final String srcValue, final String... extensions) {
         if (isNotBlank(srcValue)) {
-            String extension = EXTENSION_DOT;
+            String extension = SYMBOL_DOT;
             if (null != extensions && extensions.length > 0) {
                 extension = extensions[0];
             }
@@ -2830,7 +2758,7 @@ public class StringHelper {
      * @return
      */
     public static String substring(String srcValue, int start) {
-        return hasLength(srcValue) ? srcValue.substring(start) : EXTENSION_EMPTY;
+        return hasLength(srcValue) ? srcValue.substring(start) : SYMBOL_EMPTY;
     }
 
     /**
@@ -2855,7 +2783,7 @@ public class StringHelper {
             return str;
         }
         if (separator.length() == 0) {
-            return EMPTY;
+            return SYMBOL_EMPTY;
         }
         int pos = str.indexOf(separator);
         if (pos == -1) {
@@ -2886,11 +2814,11 @@ public class StringHelper {
             return str;
         }
         if (separator == null) {
-            return EMPTY;
+            return SYMBOL_EMPTY;
         }
         int pos = str.indexOf(separator);
         if (pos < 0) {
-            return EMPTY;
+            return SYMBOL_EMPTY;
         }
         return str.substring(pos + separator.length());
     }
@@ -2909,7 +2837,7 @@ public class StringHelper {
      * @return
      */
     public static String substring(String srcValue, int start, int end) {
-        return hasLength(srcValue) && start < end ? srcValue.substring(start, end) : EXTENSION_EMPTY;
+        return hasLength(srcValue) && start < end ? srcValue.substring(start, end) : SYMBOL_EMPTY;
     }
 
     /**
@@ -2926,7 +2854,7 @@ public class StringHelper {
      * @return
      */
     public static String first(String value) {
-        return hasLength(value) ? value.substring(0, 1) : EXTENSION_EMPTY;
+        return hasLength(value) ? value.substring(0, 1) : SYMBOL_EMPTY;
     }
 
     /**
@@ -3008,7 +2936,7 @@ public class StringHelper {
      */
     public static String join(String[] strings, String separator) {
         if (strings == null || strings.length == 0) {
-            return EMPTY;
+            return SYMBOL_EMPTY;
         }
         StringBuilder sb = new StringBuilder();
         for (String string : strings) {
@@ -3016,7 +2944,7 @@ public class StringHelper {
                 sb.append(string).append(separator);
             }
         }
-        return sb.length() > 0 ? sb.substring(0, sb.length() - separator.length()) : EMPTY;
+        return sb.length() > 0 ? sb.substring(0, sb.length() - separator.length()) : SYMBOL_EMPTY;
     }
 
     /**
@@ -3027,7 +2955,7 @@ public class StringHelper {
      */
     public static String toHexString(byte[] source) {
         if (null == source) {
-            return EMPTY;
+            return SYMBOL_EMPTY;
         }
         String strHex = "";
         StringBuilder sb = new StringBuilder("");

@@ -18,7 +18,7 @@ import java.util.concurrent.*;
 @AllArgsConstructor
 public class ScheduleMethodIntercept implements MethodIntercept {
 
-    private final ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1);
+    private final ScheduledExecutorService executorService = ThreadHelper.newScheduledThreadPoolExecutor(1);
     private IAsyncStrategyPolicy asyncStrategyPolicy;
     private String[] exclude = ArraysHelper.emptyString();
     private long delay;

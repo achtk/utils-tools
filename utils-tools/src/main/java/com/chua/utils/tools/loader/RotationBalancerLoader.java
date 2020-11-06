@@ -1,8 +1,7 @@
 package com.chua.utils.tools.loader;
 
-import com.chua.utils.tools.common.CollectionHelper;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.FinderHelper;
-import com.chua.utils.tools.common.SizeHelper;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.impl.TrueFilter;
 

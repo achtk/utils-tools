@@ -1,6 +1,8 @@
 package com.chua.utils.tools.resource.matcher;
+
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.*;
+import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.matcher.ApachePathMatcher;
 import com.chua.utils.tools.matcher.PathMatcher;
 import com.chua.utils.tools.resource.Resource;
@@ -21,8 +23,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import static com.chua.utils.tools.constant.StringConstant.EXTENSION_PREFIX_JAR;
 
 /**
  * Classpath:匹配
@@ -262,12 +262,12 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
         String rootEntryPath = null;
 
         if (urlConnection instanceof JarURLConnection) {
-            JarURLConnection jarURLConnection = (JarURLConnection) urlConnection;
-            jarURLConnection.setUseCaches(jarURLConnection.getClass().getSimpleName().startsWith("JNLP"));
-            jarFile = jarURLConnection.getJarFile();
-            JarEntry jarEntry = jarURLConnection.getJarEntry();
+            JarURLConnection urlConnection1 = (JarURLConnection) urlConnection;
+            urlConnection1.setUseCaches(urlConnection1.getClass().getSimpleName().startsWith("JNLP"));
+            jarFile = urlConnection1.getJarFile();
+            JarEntry jarEntry = urlConnection1.getJarEntry();
 
-            jarUrl = jarURLConnection.getJarFileURL().toExternalForm();
+            jarUrl = urlConnection1.getJarFileURL().toExternalForm();
             rootEntryPath = (jarEntry != null ? jarEntry.getName() : "");
         } else {
             String file = url.getFile();
@@ -331,7 +331,7 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
     protected JarFile getJarFile(String jarFileUrl) throws IOException {
         if (jarFileUrl.startsWith(FILE_URL_PREFIX)) {
             try {
-                return new JarFile(toURI(jarFileUrl).getSchemeSpecificPart());
+                return new JarFile(toUri(jarFileUrl).getSchemeSpecificPart());
             } catch (IOException ex) {
                 return new JarFile(jarFileUrl.substring(FILE_URL_PREFIX.length()));
             }
@@ -460,10 +460,10 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
                     }
 
                     Resource resource = null;
-                    if (EXTENSION_PREFIX_JAR.equals(url.getProtocol())) {
+                    if (StringConstant.JAR.equals(url.getProtocol())) {
                         resource = Resource.getResource(url);
                     } else {
-                        resource = Resource.getResource(toURL(JAR_URL_PREFIX + url + JAR_URL_SEPARATOR));
+                        resource = Resource.getResource(toUrl(JAR_URL_PREFIX + url + JAR_URL_SEPARATOR));
                     }
 
                     if(additionalCollections.contains(resource.getUrl().toExternalForm())) {
@@ -521,7 +521,7 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
                     continue;
                 }
 
-                Resource resource = Resource.getResource(toURL(JAR_URL_PREFIX + FILE_URL_PREFIX + "/" + filePath.replace("\\", "/") + JAR_URL_SEPARATOR));
+                Resource resource = Resource.getResource(toUrl(JAR_URL_PREFIX + FILE_URL_PREFIX + "/" + filePath.replace("\\", "/") + JAR_URL_SEPARATOR));
 
                 if(additionalCollections.contains(resource.getUrl().toExternalForm())) {
                     continue;

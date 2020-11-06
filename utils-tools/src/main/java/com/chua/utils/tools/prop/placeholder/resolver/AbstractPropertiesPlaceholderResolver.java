@@ -1,8 +1,8 @@
 package com.chua.utils.tools.prop.placeholder.resolver;
 
-import java.util.regex.Pattern;
+import com.chua.utils.tools.constant.PatternConstant;
 
-import static com.chua.utils.tools.constant.StringConstant.REGEXP_ALL;
+import java.util.regex.Pattern;
 
 /**
  * 抽象占位符
@@ -29,7 +29,7 @@ public abstract class AbstractPropertiesPlaceholderResolver implements Propertie
 
     public Pattern getCompile() {
         //占位符正则
-        String compileString = this.before() + REGEXP_ALL + this.after();
+        String compileString = this.before() + PatternConstant.REGEXP_ANY + this.after();
         //占位符对象
         return Pattern.compile(compileString, Pattern.CASE_INSENSITIVE);
     }

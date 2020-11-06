@@ -1,7 +1,7 @@
 package com.chua.utils.tools.common.loader;
 
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.FinderHelper;
-import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.common.properties.AbstractPropertiesProducer;
 
@@ -72,6 +72,7 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
         }
         return this;
     }
+
     /**
      * 吸收数据
      *
@@ -80,7 +81,7 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
      */
     public PropertiesLoader add(final Map<String, Object> objectMap) {
         if (null != objectMap) {
-            Properties properties = MapHelper.toProperties(objectMap);
+            Properties properties = MapOperableHelper.toProp(objectMap);
             this.put(StringHelper.uuid(), properties);
         }
         return this;
@@ -102,6 +103,7 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
 
     /**
      * 获取map
+     *
      * @param name 名称
      * @return
      */
@@ -109,8 +111,10 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
         ConcurrentHashMap<String, Properties> concurrentHashMap = allMap();
         return concurrentHashMap.get(name);
     }
+
     /**
      * 获取map
+     *
      * @return
      */
     public Properties asMapIfOnly() {

@@ -3,7 +3,7 @@ package com.chua.utils.netx.redis.redission.factory;
 import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.common.MapHelper;
+import com.chua.utils.tools.collects.map.MapHelper;
 import com.google.common.base.Strings;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

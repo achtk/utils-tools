@@ -1,7 +1,7 @@
 package com.chua.utils.tools.example;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.encrypt.Encrypt;
+import com.chua.utils.tools.common.codec.encrypt.Encrypt;
 import org.testng.annotations.Test;
 
 import java.util.Set;

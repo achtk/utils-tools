@@ -1,9 +1,12 @@
 package com.chua.utils.netx.vertx.util;
 
 import com.chua.utils.tools.common.BeansHelper;
-import com.chua.utils.tools.common.ByteHelper;
+import com.chua.utils.tools.common.codec.binary.Hex;
 import com.chua.utils.tools.enums.HandlerType;
-import com.chua.utils.tools.handler.*;
+import com.chua.utils.tools.handler.DataWriteHandler;
+import com.chua.utils.tools.handler.Handler;
+import com.chua.utils.tools.handler.HandlerResolver;
+import com.chua.utils.tools.handler.ThrowableHandler;
 import com.chua.utils.tools.loader.IIteratorLoader;
 import com.chua.utils.tools.loader.IteratorLoader;
 import com.chua.utils.tools.properties.NetProperties;
@@ -110,7 +113,7 @@ public class NetSocketUtil {
 		netSocket.write(buffer, new io.vertx.core.Handler<AsyncResult<Void>>() {
 			@Override
 			public void handle(AsyncResult<Void> event) {
-				String s = ByteHelper.bytesToHex(buffer.getBytes());
+				String s = Hex.encodeHexString(buffer.getBytes());
 				if(event.succeeded()) {
 					log.info("写入数据成功, 数据: {}", s);
 					return;

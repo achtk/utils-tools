@@ -10,7 +10,7 @@ import java.math.BigInteger;
  * @version 1.0.0
  * @since 2020/10/30
  */
-public class DoubleTypeConverter extends TypeConverter<Double> {
+public class DoubleTypeConverter implements TypeConverter<Double> {
     @Override
     public Double convert(Object value) {
         if (null == value) {
@@ -30,7 +30,11 @@ public class DoubleTypeConverter extends TypeConverter<Double> {
         }
 
         if (value instanceof String) {
-            return Double.valueOf(value.toString());
+            try {
+                return Double.valueOf(value.toString());
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
 
         return null;

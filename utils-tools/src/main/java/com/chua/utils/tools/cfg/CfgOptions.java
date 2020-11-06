@@ -1,6 +1,8 @@
 package com.chua.utils.tools.cfg;
 
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.*;
+import com.chua.utils.tools.constant.SymbolConstant;
 import com.chua.utils.tools.prop.loader.*;
 import com.chua.utils.tools.prop.placeholder.EnvPropertyPlaceholder;
 import com.chua.utils.tools.prop.placeholder.PropertyPlaceholder;
@@ -20,7 +22,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static com.chua.utils.tools.constant.StringConstant.EXTENSION_DOT;
 import static com.chua.utils.tools.constant.StringConstant.SYSTEM_PRIORITY_PROP;
 
 /**
@@ -149,8 +150,8 @@ public class CfgOptions {
         });
 
         Collections.sort(values, (o1, o2) -> {
-            int int1 = MapHelper.ints(SYSTEM_PRIORITY_PROP, 0, o1);
-            int int2 = MapHelper.ints(SYSTEM_PRIORITY_PROP, 0, o2);
+            int int1 = MapOperableHelper.getInteger(o1, SYSTEM_PRIORITY_PROP, 0);
+            int int2 = MapOperableHelper.getInteger(o2, SYSTEM_PRIORITY_PROP, 0);
             return int1 > int2 ? 1 : -1;
         });
 
@@ -177,7 +178,7 @@ public class CfgOptions {
     private HashMultimap<String, Properties> doAnalysisSlaver(String slaver) {
         HashMultimap<String, Properties> result = HashMultimap.create();
         for (String suffix : suffixes) {
-            String path = FileHelper.toFolder(slaver) + master + EXTENSION_DOT + suffix;
+            String path = FileHelper.toFolder(slaver) + master + SymbolConstant.SYMBOL_DOT + suffix;
             if (FileHelper.isFile(path)) {
                 result.put(path, doAnalysisLocationFile(path, suffix));
             } else {
@@ -306,6 +307,7 @@ public class CfgOptions {
             case "properties":
                 propertiesLoader = new PropertiesPropertiesLoader();
                 break;
+            default:
         }
         LOADER_CACHE.put(suffix, propertiesLoader);
         return propertiesLoader;

@@ -22,11 +22,11 @@ import java.util.*;
  * @since 2020/10/30
  */
 @Slf4j
-public class JsonExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
+public class JsonExtensionProcessor<T> extends AbstractSimpleExtensionProcessor<T> {
 
     private List<String> extensionLoadPath;
     private static final String FACTORIES_RESOURCE_LOCATION = "tools-extension.json";
-    private static Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
+    private static final Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
 
     @Override
     public void init(SpiConfig spiConfig) {
@@ -55,7 +55,7 @@ public class JsonExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
             if (!path.endsWith("/")) {
                 path += "/";
             }
-            result.addAll((Collection<? extends ExtensionClass<?>>) loadFromFile(path));
+            result.addAll(loadFromFile(path));
         }
         CACHE.putAll(service.getName(), result);
         return result;
@@ -74,18 +74,19 @@ public class JsonExtensionProcessor<T> extends SimpleExtensionProcessor<T> {
     /**
      * 加载Json
      *
-     * @param path
-     * @return
+     * @param path 路径
+     * @return List
      */
-    private List<? extends ExtensionClass> loadFromFile(String path) {
-        List<ExtensionClass> all = new ArrayList<>();
+    private List<? extends ExtensionClass<T>> loadFromFile(String path) {
+        List<ExtensionClass<T>> all = new ArrayList<>();
         try {
             Enumeration<URL> urls = getClassLoader().getResources(path + FACTORIES_RESOURCE_LOCATION);
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 List<ExtensionClass> list = JsonHelper.fromJson2List(url, ExtensionClass.class);
-                if (null != all) {
-                    all.addAll(list);
+                for (ExtensionClass extensionClass : list) {
+                    extensionClass.setUrl(url);
+                    all.add(extensionClass);
                 }
             }
         } catch (IOException ex) {

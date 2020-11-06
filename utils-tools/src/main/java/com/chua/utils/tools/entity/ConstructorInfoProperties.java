@@ -1,5 +1,6 @@
 package com.chua.utils.tools.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
+@EqualsAndHashCode
 public class ConstructorInfoProperties {
     /**
      * 参数类型

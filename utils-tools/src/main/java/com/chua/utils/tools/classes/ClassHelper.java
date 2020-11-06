@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static com.chua.utils.tools.constant.StringConstant.*;
+import static com.chua.utils.tools.constant.ClassConstant.*;
 
 /**
  * class工具
@@ -27,12 +27,16 @@ import static com.chua.utils.tools.constant.StringConstant.*;
  */
 @Slf4j
 public class ClassHelper extends ReflectionsHelper {
-    private static final Map<Class<?>, Object> DEFAULT_TYPE_VALUES;
+
+    public static final Map<Class<?>, Object> DEFAULT_TYPE_VALUES;
 
     static {
         Map<Class<?>, Object> values = new HashMap<>();
         values.put(boolean.class, false);
         values.put(byte.class, (byte) 0);
+        values.put(float.class, (float) 0);
+        values.put(double.class, (double) 0);
+        values.put(char.class, (char) 0);
         values.put(short.class, (short) 0);
         values.put(int.class, 0);
         values.put(long.class, (long) 0);
@@ -290,28 +294,28 @@ public class ClassHelper extends ReflectionsHelper {
         if (CLASS_DOUBLE.equals(className)) {
             return double.class;
         }
-        if ("boolean[]".equals(className)) {
+        if (CLASS_BOOLEANS.equals(className)) {
             return boolean[].class;
         }
-        if ("byte[]".equals(className)) {
+        if (CLASS_BYTES.equals(className)) {
             return byte[].class;
         }
-        if ("char[]".equals(className)) {
+        if (CLASS_CHARS.equals(className)) {
             return char[].class;
         }
-        if ("short[]".equals(className)) {
+        if (CLASS_SHORTS.equals(className)) {
             return short[].class;
         }
-        if ("int[]".equals(className)) {
+        if (CLASS_INTS.equals(className)) {
             return int[].class;
         }
-        if ("long[]".equals(className)) {
+        if (CLASS_LONGS.equals(className)) {
             return long[].class;
         }
-        if ("float[]".equals(className)) {
+        if (CLASS_FLOATS.equals(className)) {
             return float[].class;
         }
-        if ("double[]".equals(className)) {
+        if (CLASS_DOUBLES.equals(className)) {
             return double[].class;
         }
         try {
@@ -386,23 +390,23 @@ public class ClassHelper extends ReflectionsHelper {
             Constructor<?>[] declaredConstructors = aClass.getDeclaredConstructors();
             for (Constructor<?> declaredConstructor : declaredConstructors) {
                 Class<?>[] parameterTypes1 = declaredConstructor.getParameterTypes();
-                if(parameterTypes1.length != parameterTypes.length) {
+                if (parameterTypes1.length != parameterTypes.length) {
                     continue;
                 }
                 boolean isSimilar = true;
                 for (int i = 0; i < parameterTypes1.length; i++) {
                     Class<?> aClass1 = parameterTypes1[i];
-                    if(!aClass1.isAssignableFrom(parameterTypes[i].getClass())) {
+                    if (!aClass1.isAssignableFrom(parameterTypes[i].getClass())) {
                         isSimilar = false;
                         break;
                     }
                 }
-                
-                if(isSimilar) {
+
+                if (isSimilar) {
                     constructor = declaredConstructor;
                 }
             }
-            if(null == constructor) {
+            if (null == constructor) {
                 return null;
             }
             constructor.setAccessible(true);
@@ -420,7 +424,7 @@ public class ClassHelper extends ReflectionsHelper {
      * @return
      */
     public static <T> T forConstructor(Class<?> className, Object... parameterTypes) {
-        if(null == className) {
+        if (null == className) {
             return null;
         }
         return forConstructor(className.getName(), parameterTypes);

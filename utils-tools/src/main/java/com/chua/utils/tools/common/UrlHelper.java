@@ -1,6 +1,7 @@
 package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.common.charset.CharsetHelper;
 import com.chua.utils.tools.resource.Resource;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,6 +18,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
+import static com.chua.utils.tools.constant.SymbolConstant.*;
 
 /**
  * @author CH
@@ -49,15 +51,15 @@ public class UrlHelper {
     /**
      *
      */
-    private static final String EXTENSION_FILE = "file";
+    private static final String SYMBOL_FILE = "file";
     /**
      *
      */
-    private static final String EXTENSION_WAR = "war";
+    private static final String SYMBOL_WAR = "war";
     /**
      *
      */
-    private static final String EXTENSION_JAR = "jar";
+    private static final String SYMBOL_JAR = "jar";
 
     /**
      *
@@ -171,15 +173,15 @@ public class UrlHelper {
      * 拼接url
      *
      * @param url url
-     * @return
+     * @return url
      */
-    public static URL toURL(String url) {
+    public static URL toUrl(String url) {
         try {
             return new URL(url);
         } catch (MalformedURLException e) {
             try {
                 return new File(url).toURI().toURL();
-            } catch (MalformedURLException malformedURLException) {
+            } catch (MalformedURLException e1) {
                 return null;
             }
         }
@@ -234,9 +236,9 @@ public class UrlHelper {
      * @param host     地址
      * @param port     端口
      * @param path     地址
-     * @return
+     * @return String
      */
-    public static String toURL(String protocol, String host, int port, String path) {
+    public static String toUrl(String protocol, String host, int port, String path) {
         StringBuilder sb = new StringBuilder();
         sb.append(protocol).append("://");
         sb.append(host).append(':').append(port);
@@ -257,16 +259,16 @@ public class UrlHelper {
     private static Map<String, Object> doFileMatching(URL fileUrl, String packages) {
         Map<String, Object> result = new HashMap<>();
         String path = fileUrl.getPath();
-        path = path.startsWith(EXTENSION_LEFT_SLASH) ? path.substring(1) : path;
+        path = path.startsWith(SYMBOL_LEFT_SLASH) ? path.substring(1) : path;
         List<String> strings = FileHelper.listFiles(path);
         Resource resource;
 
         Set<String> names = new HashSet<>();
         Map<String, Resource> resources = new HashMap<>();
         for (String string : strings) {
-            if (!string.contains("*") && !string.contains("$") && !string.endsWith("*") && !string.endsWith("/")) {
-                String tempString = string.replace(FILE_RIGHT_SLASH, FILE_LEFT_SLASH).replace(path, EXTENSION_EMPTY);
-                if (tempString.startsWith("/")) {
+            if (!string.contains(SYMBOL_ASTERISK) && !string.contains(SYMBOL_DOLLAR) && !string.endsWith(SYMBOL_ASTERISK) && !string.endsWith(SYMBOL_LEFT_SLASH)) {
+                String tempString = string.replace(SYMBOL_RIGHT_SLASH, SYMBOL_LEFT_SLASH).replace(path, SYMBOL_EMPTY);
+                if (tempString.startsWith(SYMBOL_LEFT_SLASH)) {
                     tempString = tempString.substring(1);
                 }
                 if (names.contains(tempString) && !tempString.startsWith("sun/")) {
@@ -371,10 +373,10 @@ public class UrlHelper {
     /**
      * file://
      *
-     * @param url
-     * @return
+     * @param url url
+     * @return boolean
      */
-    public static boolean isFileURL(URL url) {
+    public static boolean isFileUrl(URL url) {
         String protocol = url.getProtocol();
         return (URL_PROTOCOL_FILE.equals(protocol) || URL_PROTOCOL_VFSFILE.equals(protocol) ||
                 URL_PROTOCOL_VFS.equals(protocol));
@@ -384,9 +386,9 @@ public class UrlHelper {
      * 是否是jar://
      *
      * @param url url
-     * @return
+     * @return boolean
      */
-    public static boolean isJarURL(URL url) {
+    public static boolean isJarUrl(URL url) {
         String protocol = url.getProtocol();
         return (URL_PROTOCOL_JAR.equals(protocol) || URL_PROTOCOL_WAR.equals(protocol) ||
                 URL_PROTOCOL_ZIP.equals(protocol) || URL_PROTOCOL_VFSZIP.equals(protocol) ||
@@ -397,9 +399,9 @@ public class UrlHelper {
      * 是否是jar url
      *
      * @param url url
-     * @return
+     * @return boolean
      */
-    public static boolean isJarFileURL(URL url) {
+    public static boolean isJarFileUrl(URL url) {
         return (URL_PROTOCOL_FILE.equals(url.getProtocol()) &&
                 url.getPath().toLowerCase().endsWith(JAR_FILE_EXTENSION));
     }
@@ -408,10 +410,10 @@ public class UrlHelper {
      * url转url
      *
      * @param jarUrl jar url
-     * @return
+     * @return URL
      * @throws MalformedURLException
      */
-    public static URL extractJarFileURL(URL jarUrl) throws MalformedURLException {
+    public static URL extractJarFileUrl(URL jarUrl) throws MalformedURLException {
         String urlFile = jarUrl.getFile();
         int separatorIndex = urlFile.indexOf("!/");
         if (separatorIndex != -1) {
@@ -435,10 +437,10 @@ public class UrlHelper {
      * url转url
      *
      * @param jarUrl jar url
-     * @return
+     * @return url
      * @throws MalformedURLException
      */
-    public static URL extractArchiveURL(URL jarUrl) throws MalformedURLException {
+    public static URL extractArchiveUrl(URL jarUrl) throws MalformedURLException {
         String urlFile = jarUrl.getFile();
         int endIndex = urlFile.indexOf("*/");
         if (endIndex != -1) {
@@ -453,17 +455,17 @@ public class UrlHelper {
             }
         }
 
-        return extractJarFileURL(jarUrl);
+        return extractJarFileUrl(jarUrl);
     }
 
     /**
      * url转uri
      *
      * @param url url
-     * @return
+     * @return URI
      * @throws URISyntaxException
      */
-    public static URI toURI(URL url) {
+    public static URI toUri(URL url) {
         try {
             return url.toURI();
         } catch (URISyntaxException e) {
@@ -476,10 +478,10 @@ public class UrlHelper {
      * 字符串转uri
      *
      * @param location 字符串
-     * @return
+     * @return URI
      * @throws URISyntaxException
      */
-    public static URI toURI(String location) {
+    public static URI toUri(String location) {
         try {
             return new URI(StringHelper.replace(location, " ", "%20"));
         } catch (URISyntaxException e) {
@@ -590,7 +592,7 @@ public class UrlHelper {
                 String protocol = urL.getProtocol();
                 String path = urL.getPath();
                 try {
-                    path = URLDecoder.decode(path, CHARSET_UTF_8);
+                    path = URLDecoder.decode(path, CharsetHelper.UTF_8);
                 } catch (UnsupportedEncodingException e) {
                     //ignore
                 }
@@ -609,10 +611,10 @@ public class UrlHelper {
      * 获取url
      *
      * @param resourceLocation 资源文件地址
-     * @return
+     * @return URL
      * @throws FileNotFoundException
      */
-    public static URL getURL(String resourceLocation) throws FileNotFoundException {
+    public static URL getUrl(String resourceLocation) throws FileNotFoundException {
         Assert.notNull(resourceLocation, "Resource location must not be null");
         if (resourceLocation.startsWith("classpath:")) {
             String path = resourceLocation.substring("classpath:".length());
@@ -682,7 +684,7 @@ public class UrlHelper {
         if (!"file".equals(resourceUrl.getProtocol())) {
             throw new FileNotFoundException(description + " cannot be resolved to absolute file path because it does not reside in the file system: " + resourceUrl);
         } else {
-            return new File(toURI(resourceUrl).getSchemeSpecificPart());
+            return new File(toUri(resourceUrl).getSchemeSpecificPart());
         }
     }
 
@@ -746,6 +748,7 @@ public class UrlHelper {
                 URL_PROTOCOL_ZIP.equals(protocol) || URL_PROTOCOL_VFSZIP.equals(protocol) ||
                 URL_PROTOCOL_WSJAR.equals(protocol));
     }
+
     /**
      * 是否是 jar
      *
@@ -758,6 +761,7 @@ public class UrlHelper {
                 URL_PROTOCOL_ZIP.equals(extension) || URL_PROTOCOL_VFSZIP.equals(extension) ||
                 URL_PROTOCOL_WSJAR.equals(extension));
     }
+
     /**
      * 是否是 war
      *
@@ -808,12 +812,14 @@ public class UrlHelper {
         }
         return url;
     }
+
     /**
-     * string 转url
-     * @param strings
-     * @return
+     * 批量转化字符串为URL
+     *
+     * @param strings 批量字符串
+     * @return URL[]
      */
-    public static URL[] toURLs(String[] strings) {
+    public static URL[] toUrls(String[] strings) {
         List<URL> urls = new ArrayList<>();
         for (String s : strings) {
             try {
@@ -824,12 +830,14 @@ public class UrlHelper {
         }
         return urls.toArray(new URL[urls.size()]);
     }
+
     /**
      * file转url
-     * @param file
-     * @return
+     *
+     * @param file 文件
+     * @return url
      */
-    public static URL[] toURLs(File[] file) {
+    public static URL[] toUrls(File[] file) {
         List<URL> urls = new ArrayList<>();
         for (File file1 : file) {
             try {
@@ -840,34 +848,38 @@ public class UrlHelper {
         }
         return urls.toArray(new URL[urls.size()]);
     }
+
     /**
+     * 字符串转 url
      *
-     * @param tempFileJarURLs
-     * @return
+     * @param strings 字符串
+     * @return List<URL>
      */
-    public static List<URL> toURL(String[] tempFileJarURLs) {
-        if(null == tempFileJarURLs) {
+    public static List<URL> toUrl(String[] strings) {
+        if (null == strings) {
             return Collections.EMPTY_LIST;
         }
-        return toURL(Arrays.asList(tempFileJarURLs));
+        return toUrl(Arrays.asList(strings));
     }
+
     /**
+     * 字符串转 url
      *
-     * @param tempFileJarURLs
-     * @return
+     * @param strings 字符串
+     * @return List<URL>
      */
-    public static List<URL> toURL(List<String> tempFileJarURLs) {
-        if(!BooleanHelper.hasLength(tempFileJarURLs)) {
+    public static List<URL> toUrl(List<String> strings) {
+        if (!BooleanHelper.hasLength(strings)) {
             return Collections.EMPTY_LIST;
         }
-        List<URL> urls = new ArrayList<>(tempFileJarURLs.size());
-        for (String tempFileJarURL : tempFileJarURLs) {
+        List<URL> urls = new ArrayList<>(strings.size());
+        for (String s : strings) {
             try {
-                urls.add(new URL(tempFileJarURL));
+                urls.add(new URL(s));
             } catch (MalformedURLException e) {
                 try {
-                    urls.add(new File(tempFileJarURL).toURI().toURL());
-                } catch (MalformedURLException malformedURLException) {
+                    urls.add(new File(s).toURI().toURL());
+                } catch (MalformedURLException e1) {
                     continue;
                 }
             }
@@ -876,12 +888,11 @@ public class UrlHelper {
     }
 
     /**
-     *
      * @param urlList
      * @return
      */
     public static List<String> toStrings(List<URL> urlList) {
-        if(!BooleanHelper.hasLength(urlList)) {
+        if (!BooleanHelper.hasLength(urlList)) {
             return Collections.EMPTY_LIST;
         }
         List<String> result = new ArrayList<>(urlList.size());

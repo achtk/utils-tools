@@ -2,6 +2,8 @@ package com.chua.utils.tools.compiler;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.UrlHelper;
+import com.chua.utils.tools.constant.SuffixConstant;
+import com.chua.utils.tools.constant.SymbolConstant;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.tools.*;
@@ -13,9 +15,6 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
-
-import static com.chua.utils.tools.constant.StringConstant.EXTENSION_CLASS_SUFFIX;
-import static com.chua.utils.tools.constant.StringConstant.EXTENSION_JAVA_SUFFIX;
 
 /**
  * javassist 编译器
@@ -72,7 +71,7 @@ public class Jdk2CompilerFactory extends AbstractCompiler {
         String className = i < 0 ? name : name.substring(i + 1);
         JavaFileObjectImpl javaFileObject = new JavaFileObjectImpl(className, sourceCode);
         javaFileManager.putFileForInput(StandardLocation.SOURCE_PATH, packageName,
-                className + EXTENSION_JAVA_SUFFIX, javaFileObject);
+                className + SuffixConstant.SUFFIX_JAVA, javaFileObject);
         Boolean result = compiler.getTask(null, javaFileManager, diagnosticCollector, options,
                 null, Arrays.asList(javaFileObject)).call();
         if (result == null || !result) {
@@ -87,12 +86,12 @@ public class Jdk2CompilerFactory extends AbstractCompiler {
         private ByteArrayOutputStream bytecode;
 
         public JavaFileObjectImpl(final String baseName, final CharSequence source) {
-            super(UrlHelper.toURI(baseName + EXTENSION_JAVA_SUFFIX), Kind.SOURCE);
+            super(UrlHelper.toUri(baseName + SuffixConstant.SUFFIX_JAVA), Kind.SOURCE);
             this.source = source;
         }
 
         JavaFileObjectImpl(final String name, final Kind kind) {
-            super(UrlHelper.toURI(name), kind);
+            super(UrlHelper.toUri(name), kind);
             source = null;
         }
 
@@ -149,7 +148,7 @@ public class Jdk2CompilerFactory extends AbstractCompiler {
         }
 
         private URI uri(Location location, String packageName, String relativeName) {
-            return UrlHelper.toURI(location.getName() + '/' + packageName + '/' + relativeName);
+            return UrlHelper.toUri(location.getName() + '/' + packageName + '/' + relativeName);
         }
 
         @Override
@@ -243,8 +242,8 @@ public class Jdk2CompilerFactory extends AbstractCompiler {
 
         @Override
         public InputStream getResourceAsStream(final String name) {
-            if (name.endsWith(EXTENSION_CLASS_SUFFIX)) {
-                String qualifiedClassName = name.substring(0, name.length() - EXTENSION_CLASS_SUFFIX.length()).replace('/', '.');
+            if (name.endsWith(SuffixConstant.SUFFIX_CLASS)) {
+                String qualifiedClassName = name.substring(0, name.length() - SuffixConstant.SUFFIX_CLASS.length()).replace(SymbolConstant.SYMBOL_LEFT_SLASH_CHAR, SymbolConstant.SYMBOL_DOT_CHAR);
                 JavaFileObjectImpl file = (JavaFileObjectImpl) classes.get(qualifiedClassName);
                 if (file != null) {
                     return new ByteArrayInputStream(file.getByteCode());

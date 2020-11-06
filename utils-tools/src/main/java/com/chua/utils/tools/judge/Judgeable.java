@@ -1,15 +1,12 @@
 package com.chua.utils.tools.judge;
 
-import com.chua.utils.tools.common.CollectionHelper;
-import lombok.AllArgsConstructor;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 可判断

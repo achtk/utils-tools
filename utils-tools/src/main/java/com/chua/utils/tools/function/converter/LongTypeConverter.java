@@ -10,7 +10,7 @@ import java.math.BigInteger;
  * @version 1.0.0
  * @since 2020/10/30
  */
-public class LongTypeConverter extends TypeConverter<Long> {
+public class LongTypeConverter implements TypeConverter<Long> {
     @Override
     public Long convert(Object value) {
         if (null == value) {
@@ -30,7 +30,11 @@ public class LongTypeConverter extends TypeConverter<Long> {
         }
 
         if (value instanceof String) {
-            return Long.valueOf(value.toString());
+            try {
+                return Long.valueOf(value.toString());
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
 
         return null;

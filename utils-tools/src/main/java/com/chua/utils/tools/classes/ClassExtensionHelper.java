@@ -507,11 +507,11 @@ public class ClassExtensionHelper<T> {
         if (null == obj) {
             return null;
         }
-        Map<String, T> stringTMap = doProcessingThroughBeanMap(obj, fieldName, fieldType);
-        if (stringTMap.isEmpty()) {
+        Map<String, T> tMap = doProcessingThroughBeanMap(obj, fieldName, fieldType);
+        if (tMap.isEmpty()) {
             return doProcessingThroughReflection(obj, fieldName, fieldType);
         }
-        return stringTMap;
+        return tMap;
     }
 
     /**

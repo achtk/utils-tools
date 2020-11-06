@@ -1,17 +1,8 @@
 package com.chua.utils.tools.spring.placeholder;
 
-import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.prop.placeholder.PropertiesPropertyPlaceholder;
-import com.chua.utils.tools.prop.placeholder.PropertyPlaceholder;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertySource;
-import org.springframework.core.env.StandardEnvironment;
-
-import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * spring占位符

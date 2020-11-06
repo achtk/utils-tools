@@ -113,7 +113,7 @@ public class DirectoryFactory {
         if (directoryType == DirectoryType.NIO) {
             return null == lockFactory ? new NIOFSDirectory(path) : new NIOFSDirectory(path, lockFactory);
         } else if (directoryType == DirectoryType.MEM) {
-            return null == path ? new RAMDirectory() : new RAMDirectory(lockFactory);
+            return null == path ? new RAMDirectory() : (null == lockFactory ? new RAMDirectory() : new RAMDirectory(lockFactory));
         } else if (directoryType == DirectoryType.MMP) {
             return null == lockFactory ? new MMapDirectory(path) : new MMapDirectory(path, lockFactory);
         } else if (directoryType == DirectoryType.SIMPLE) {

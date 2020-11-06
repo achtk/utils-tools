@@ -186,7 +186,7 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
         if (requestConfig.isHttps()) {
             Object sslSocketFactory = requestConfig.getSslSocketFactory();
             if(null == sslSocketFactory) {
-                sslSocketFactory = HttpClientHelper.createSSLSocketFactory();
+                sslSocketFactory = HttpClientHelper.createSslSocketFactory();
             }
             if(sslSocketFactory instanceof SSLSocketFactory) {
                 try {

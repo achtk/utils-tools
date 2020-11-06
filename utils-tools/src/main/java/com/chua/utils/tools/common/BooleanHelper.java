@@ -12,8 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.chua.utils.tools.constant.PatternConstant.*;
-import static com.chua.utils.tools.constant.StringConstant.REG_EMAIL;
-import static com.chua.utils.tools.constant.StringConstant.TRUE;
 
 /**
  * boolean工具类
@@ -813,110 +811,6 @@ public class BooleanHelper {
         return bool ? 1 : 0;
     }
 
-    /**
-     * <pre>
-     *   BooleanHelper.toBooleanObject(null)    = null
-     *   BooleanHelper.toBooleanObject("true")  = Boolean.TRUE
-     *   BooleanHelper.toBooleanObject("T")     = Boolean.TRUE
-     *   BooleanHelper.toBooleanObject("false") = Boolean.FALSE
-     *   BooleanHelper.toBooleanObject("f")     = Boolean.FALSE
-     *   BooleanHelper.toBooleanObject("No")    = Boolean.FALSE
-     *   BooleanHelper.toBooleanObject("n")     = Boolean.FALSE
-     *   BooleanHelper.toBooleanObject("on")    = Boolean.TRUE
-     *   BooleanHelper.toBooleanObject("ON")    = Boolean.TRUE
-     *   BooleanHelper.toBooleanObject("off")   = Boolean.FALSE
-     *   BooleanHelper.toBooleanObject("oFf")   = Boolean.FALSE
-     *   BooleanHelper.toBooleanObject("yes")   = Boolean.TRUE
-     *   BooleanHelper.toBooleanObject("Y")     = Boolean.TRUE
-     *   BooleanHelper.toBooleanObject("blue")  = null
-     *   BooleanHelper.toBooleanObject("true ") = null
-     *   BooleanHelper.toBooleanObject("ono")   = null
-     * </pre>
-     *
-     * @param str
-     */
-    public static Boolean toBooleanObject(final String str) {
-        if (str == null) {
-            return null;
-        }
-        if (TRUE.equals(str)) {
-            return Boolean.TRUE;
-        }
-        switch (str.length()) {
-            case 1: {
-                final char ch0 = str.charAt(0);
-                if (ch0 == 'y' || ch0 == 'Y' ||
-                        ch0 == 't' || ch0 == 'T') {
-                    return Boolean.TRUE;
-                }
-                if (ch0 == 'n' || ch0 == 'N' ||
-                        ch0 == 'f' || ch0 == 'F') {
-                    return Boolean.FALSE;
-                }
-                break;
-            }
-            case 2: {
-                final char ch0 = str.charAt(0);
-                final char ch1 = str.charAt(1);
-                if ((ch0 == 'o' || ch0 == 'O') && (ch1 == 'n' || ch1 == 'N')) {
-                    return Boolean.TRUE;
-                }
-                if ((ch0 == 'n' || ch0 == 'N') &&
-                        (ch1 == 'o' || ch1 == 'O')) {
-                    return Boolean.FALSE;
-                }
-                break;
-            }
-            case 3: {
-                final char ch0 = str.charAt(0);
-                final char ch1 = str.charAt(1);
-                final char ch2 = str.charAt(2);
-                if ((ch0 == 'y' || ch0 == 'Y') &&
-                        (ch1 == 'e' || ch1 == 'E') &&
-                        (ch2 == 's' || ch2 == 'S')) {
-                    return Boolean.TRUE;
-                }
-                if ((ch0 == 'o' || ch0 == 'O') &&
-                        (ch1 == 'f' || ch1 == 'F') &&
-                        (ch2 == 'f' || ch2 == 'F')) {
-                    return Boolean.FALSE;
-                }
-                break;
-            }
-            case 4: {
-                final char ch0 = str.charAt(0);
-                final char ch1 = str.charAt(1);
-                final char ch2 = str.charAt(2);
-                final char ch3 = str.charAt(3);
-                if ((ch0 == 't' || ch0 == 'T') &&
-                        (ch1 == 'r' || ch1 == 'R') &&
-                        (ch2 == 'u' || ch2 == 'U') &&
-                        (ch3 == 'e' || ch3 == 'E')) {
-                    return Boolean.TRUE;
-                }
-                break;
-            }
-            case 5: {
-                final char ch0 = str.charAt(0);
-                final char ch1 = str.charAt(1);
-                final char ch2 = str.charAt(2);
-                final char ch3 = str.charAt(3);
-                final char ch4 = str.charAt(4);
-                if ((ch0 == 'f' || ch0 == 'F') &&
-                        (ch1 == 'a' || ch1 == 'A') &&
-                        (ch2 == 'l' || ch2 == 'L') &&
-                        (ch3 == 's' || ch3 == 'S') &&
-                        (ch4 == 'e' || ch4 == 'E')) {
-                    return Boolean.FALSE;
-                }
-                break;
-            }
-            default:
-                break;
-        }
-
-        return null;
-    }
 
 
     /**
@@ -1003,20 +897,6 @@ public class BooleanHelper {
 
 
     /**
-     * 判断是否是符合邮箱
-     *
-     * @param email 判断的字符串
-     * @return 是否是符合的邮箱
-     */
-    public final static boolean isEmail(final String email) {
-        if (email == null || email.length() < 1 || email.length() > 256) {
-            return false;
-        }
-        Pattern pattern = Pattern.compile(REG_EMAIL);
-        return pattern.matcher(email).matches();
-    }
-
-    /**
      * 是否为空
      *
      * @param entity        实体对象
@@ -1076,7 +956,7 @@ public class BooleanHelper {
      * @return
      */
     public static boolean isJarFile(final URL url) {
-        return UrlHelper.isJarFileURL(url);
+        return UrlHelper.isJarFileUrl(url);
     }
 
     /**
@@ -1443,8 +1323,7 @@ public class BooleanHelper {
         if (StringHelper.isEmpty(source)) {
             throw new NullPointerException("sms context is empty!");
         }
-        Pattern p = Pattern.compile("[\u4E00-\u9FA5|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\“|\\”|\\？|\\：|\\；|\\【|\\】]");
-        Matcher m = p.matcher(source);
+        Matcher m = CHINESE.matcher(source);
         return m.find();
     }
 }

@@ -3,6 +3,7 @@ package com.chua.utils.tools.properties;
 
 import com.chua.utils.tools.common.NetHelper;
 import com.chua.utils.tools.constant.StringConstant;
+import com.chua.utils.tools.constant.SymbolConstant;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -111,7 +112,7 @@ public class NetProperties extends Properties implements StatelessProperties {
      */
     public void setHost(String host) {
         this.host = new String[]{host};
-        if (host.contains(StringConstant.EXTENSION_COLON)) {
+        if (host.contains(SymbolConstant.SYMBOL_COMMA)) {
             int port = NetHelper.getPort(host);
             setPort(port);
         }

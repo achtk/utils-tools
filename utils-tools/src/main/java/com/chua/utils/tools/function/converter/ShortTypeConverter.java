@@ -10,7 +10,7 @@ import java.math.BigInteger;
  * @version 1.0.0
  * @since 2020/10/30
  */
-public class ShortTypeConverter extends TypeConverter<Short> {
+public class ShortTypeConverter implements TypeConverter<Short> {
     @Override
     public Short convert(Object value) {
         if (null == value) {
@@ -31,7 +31,11 @@ public class ShortTypeConverter extends TypeConverter<Short> {
 
 
         if (value instanceof String) {
-            return Short.valueOf(value.toString());
+            try {
+                return Short.valueOf(value.toString());
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
 
         return null;

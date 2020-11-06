@@ -1,12 +1,17 @@
 package com.chua.utils.tools.spi.factory;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.common.ThreadHelper;
+import com.chua.utils.tools.spi.entity.ExtensionClass;
 import com.chua.utils.tools.spi.extension.ExtensionLoader;
-import com.chua.utils.tools.spi.processor.ExtensionProcessor;
+import com.chua.utils.tools.spi.processor.*;
 import com.google.common.base.Strings;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.io.File;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * 扩展工厂类
@@ -15,18 +20,36 @@ import java.util.concurrent.ConcurrentMap;
  * @version 1.0.0
  * @since 2020/6/3 18:24
  */
-public class ExtensionFactory {
+public class ExtensionFactory implements Runnable {
+    /**
+     * 时间周期
+     */
+    public static int TIME_PERIOD = 5;
+    /**
+     * 时间类型
+     */
+    public static TimeUnit TIME_UNIT = TimeUnit.SECONDS;
     /**
      * loader缓存
      */
-    private static final ConcurrentMap<Class, ExtensionLoader> LOADER_MAP = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Class<?>, ExtensionLoader> LOADER_MAP = new ConcurrentHashMap<>();
+    /**
+     * 单例监控线程
+     */
+    private static final ExecutorService EXECUTOR_SERVICE = ThreadHelper.newSingleThreadExecutor("monitor-spi");
+
+    static {
+        if (TIME_PERIOD > 0) {
+            EXECUTOR_SERVICE.execute(new ExtensionFactory());
+        }
+    }
 
     /**
      * 获取扩展加载器
      *
+     * @param <T>   类型
      * @param clazz 类
-     * @param <T>
-     * @return
+     * @return ExtensionLoader
      */
     public static synchronized <T> ExtensionLoader<T> getExtensionLoader(Class<T> clazz) {
         return getExtensionLoader(clazz, null);
@@ -36,9 +59,9 @@ public class ExtensionFactory {
     /**
      * 获取扩展类
      *
-     * @param <T>
+     * @param <T>       类型
      * @param className 类名
-     * @return
+     * @return 类
      */
     public static synchronized <T> T getExtensionLoader(final String className, final String extensionName, final ClassLoader... classLoaders) {
         if (Strings.isNullOrEmpty(className)) {
@@ -90,18 +113,18 @@ public class ExtensionFactory {
      * </tr>
      * </table>
      *
+     * @param <T>                类型
      * @param clazz              类
      * @param extensionProcessor 扩展器
-     * @param <T>
-     * @return
-     * @see com.chua.utils.tools.spi.processor.ReflectionExtensionProcessor
-     * @see com.chua.utils.tools.spi.processor.CustomExtensionProcessor
-     * @see com.chua.utils.tools.spi.processor.JsonExtensionProcessor
-     * @see com.chua.utils.tools.spi.processor.FactoriesExtensionProcessor
-     * @see com.chua.utils.tools.spi.processor.ServiceLoaderProcessor
+     * @return ExtensionLoader
+     * @see ReflectionExtensionProcessor
+     * @see CustomExtensionProcessor
+     * @see JsonExtensionProcessor
+     * @see FactoriesExtensionProcessor
+     * @see ServiceLoaderProcessor
      */
     public static synchronized <T> ExtensionLoader<T> getExtensionLoader(Class<T> clazz, final ExtensionProcessor extensionProcessor) {
-        ExtensionLoader<T> loader = LOADER_MAP.get(clazz);
+        ExtensionLoader loader = LOADER_MAP.get(clazz);
         if (null == loader) {
             loader = new ExtensionLoader<>(clazz, extensionProcessor);
             loader.search();
@@ -139,17 +162,17 @@ public class ExtensionFactory {
      * </tr>
      * </table>
      *
+     * @param <T>                类型
      * @param clazz              类
      * @param extensionProcessor 扩展器
-     * @param <T>
-     * @return
-     * @see com.chua.utils.tools.spi.processor.ReflectionExtensionProcessor
-     * @see com.chua.utils.tools.spi.processor.CustomExtensionProcessor
-     * @see com.chua.utils.tools.spi.processor.JsonExtensionProcessor
-     * @see com.chua.utils.tools.spi.processor.FactoriesExtensionProcessor
-     * @see com.chua.utils.tools.spi.processor.ServiceLoaderProcessor
+     * @return ExtensionLoader
+     * @see ReflectionExtensionProcessor
+     * @see CustomExtensionProcessor
+     * @see JsonExtensionProcessor
+     * @see FactoriesExtensionProcessor
+     * @see ServiceLoaderProcessor
      */
-    public static synchronized <T> ExtensionLoader<T> getRefreshExtensionLoader(Class<T> clazz, final ExtensionProcessor extensionProcessor) {
+    public static synchronized <T> ExtensionLoader<T> getRefreshExtensionLoader(Class<T> clazz, final ExtensionProcessor<T> extensionProcessor) {
         remove(clazz);
         return getExtensionLoader(clazz, extensionProcessor);
     }
@@ -158,12 +181,12 @@ public class ExtensionFactory {
      * 获取@Spi服务
      *
      * @param clazz 类
-     * @param <T>
-     * @return
+     * @param <T>   类型
+     * @return 对象
      */
     public static synchronized <T> T getSpiService(Class<T> clazz) {
-        ExtensionLoader<T> extensionLoader = getExtensionLoader(clazz);
-        return null == extensionLoader ? null : extensionLoader.getSpiService();
+        ExtensionLoader extensionLoader = getExtensionLoader(clazz);
+        return null == extensionLoader ? null : (T) extensionLoader.getSpiService();
     }
 
     /**
@@ -176,7 +199,7 @@ public class ExtensionFactory {
             return;
         }
         if (LOADER_MAP.containsKey(tClass)) {
-            ExtensionLoader extensionLoader = LOADER_MAP.get(tClass);
+            ExtensionLoader<T> extensionLoader = LOADER_MAP.get(tClass);
             if (null != extensionLoader) {
                 extensionLoader.refresh();
             }
@@ -187,16 +210,16 @@ public class ExtensionFactory {
     /**
      * 删除所有缓存
      */
-    public static synchronized <T> void removeAll() {
+    public static synchronized void removeAll() {
         LOADER_MAP.clear();
     }
 
     /**
      * 刷新缓存
      *
-     * @param <T>
+     * @param <T>    类型
      * @param tClass 类
-     * @return
+     * @return ExtensionLoader
      */
     public static synchronized <T> ExtensionLoader<T> refresh(Class<T> tClass) {
         if (null == tClass) {
@@ -208,4 +231,51 @@ public class ExtensionFactory {
     }
 
 
+    @Override
+    public void run() {
+        ScheduledExecutorService scheduledExecutorService = ThreadHelper.newScheduledThreadPoolExecutor(1);
+        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                if (LOADER_MAP.isEmpty()) {
+                    return;
+                }
+                for (Map.Entry<Class<?>, ExtensionLoader> loaderEntry : LOADER_MAP.entrySet()) {
+                    ExtensionLoader extensionLoader = loaderEntry.getValue();
+                    checkTime(extensionLoader, loaderEntry.getKey());
+                }
+            }
+        }, 0, TIME_PERIOD, TIME_UNIT);
+    }
+
+    /**
+     * 检测时间
+     *
+     * @param extensionLoader 加载器
+     * @param key             索引
+     */
+    private synchronized void checkTime(ExtensionLoader extensionLoader, Class key) {
+        Collection<ExtensionClass> loaderExtension = extensionLoader.getExtensionClasses(key.getName());
+
+        boolean reload = false;
+        for (ExtensionClass extensionClass : loaderExtension) {
+            long recordTime = extensionClass.getRecordTime();
+            if (0L == recordTime) {
+                continue;
+            }
+            URL url = extensionClass.getUrl();
+            if ("file".equals(url.getProtocol())) {
+                boolean newTime = new File(url.getFile()).lastModified() > recordTime;
+                if (newTime) {
+                    reload = true;
+                    extensionClass.setUrl(url);
+                }
+            }
+        }
+
+        if (reload) {
+            extensionLoader.refresh();
+            reload = false;
+        }
+    }
 }

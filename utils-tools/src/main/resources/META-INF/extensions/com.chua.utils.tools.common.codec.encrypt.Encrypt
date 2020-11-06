@@ -1,0 +1,8 @@
+base64=com.chua.utils.tools.common.codec.encrypt.Base64Encrypt
+md5=com.chua.utils.tools.common.codec.encrypt.Md5Encrypt
+rsa=com.chua.utils.tools.common.codec.encrypt.RsaEncrypt
+sha256=com.chua.utils.tools.common.codec.encrypt.Sha256Encrypt
+sha512=com.chua.utils.tools.common.codec.encrypt.Sha512Encrypt
+des=com.chua.utils.tools.common.codec.encrypt.DesEncrypt
+aes=com.chua.utils.tools.common.codec.encrypt.AesEncrypt
+desede=com.chua.utils.tools.common.codec.encrypt.DESedeEncrypt

@@ -1,7 +1,7 @@
 package com.chua.utils.tools.prop.loader;
 
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.JsonHelper;
-import com.chua.utils.tools.common.MapHelper;
 import com.chua.utils.tools.common.PropertiesHelper;
 import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
 
@@ -31,7 +30,7 @@ public class JsonPropertiesLoader implements PropertiesLoader {
         }
         try(InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charsets.UTF_8)) {
             Map properties1 = JsonHelper.fromJson(inputStreamReader, Map.class);
-            return MapHelper.map2Yaml(properties1);
+            return MapOperableHelper.toProfile(properties1);
         } catch (IOException e) {
             return PropertiesHelper.emptyProperties();
         }

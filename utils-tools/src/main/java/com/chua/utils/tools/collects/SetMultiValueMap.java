@@ -1,6 +1,6 @@
 package com.chua.utils.tools.collects;
 
-import com.chua.utils.tools.common.CollectionHelper;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;

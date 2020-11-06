@@ -1,7 +1,7 @@
 package com.chua.utils.netx.lucene.operator;
 
 import com.chua.utils.netx.lucene.factory.DirectoryFactory;
-import com.chua.utils.tools.encrypt.Encrypt;
+import com.chua.utils.tools.common.codec.encrypt.Encrypt;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -60,12 +59,12 @@ public class DefaultIndexOperatorTemplate implements IndexOperatorTemplate {
 
     @Override
     public String getStoreIndexName(String index) throws Exception {
-        return encrypt.toHexString(index);
+        return encrypt.encode(index);
     }
 
     @Override
     public String getRealIndexName(String index) throws Exception {
-        return encrypt.fromHexString(index);
+        return encrypt.decode(index);
     }
 
     @Override

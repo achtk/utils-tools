@@ -1,9 +1,15 @@
 package com.chua.utils.tools.function;
 
-import com.chua.utils.tools.common.MapOperableHelper;
+import bsh.EvalError;
+import bsh.Interpreter;
+import com.chua.utils.tools.collects.map.MapOperableHelper;
+import com.chua.utils.tools.common.BeansHelper;
+import com.chua.utils.tools.function.converter.TypeConverter;
+import com.google.common.base.Converter;
 
 import java.text.NumberFormat;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Map可操作
@@ -222,6 +228,116 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
      * 以null安全的方式从Map中获取Long。
      * <p> Long是从{@link #getNumber（Object）}的结果中获得的。
      *
+     * @param key 查找的关键
+     * @return 如果输入的Map为空，则将Map中的值返回为Long，<code> null </ code>
+     */
+    default Date getDate(final K key) {
+        return MapOperableHelper.getDate(getMap(), key);
+    }
+
+    /**
+     * 以null安全的方式从Map中格式化时间。
+     * <p> 时间是从{@link #getObject（Object）}的结果中获得的。
+     *
+     * @param key    查找的关键
+     * @param format 格式
+     * @return 如果输入的Map为空，则将Map中的值返回为Long，<code> null </ code>
+     */
+    default String dateFormatter(final K key, final String format) {
+        return MapOperableHelper.dateFormatter(getMap(), key, format);
+    }
+
+    /**
+     * 以null安全的方式从Map中分隔数据。
+     * <p> 数据从{@link #getObject（Object）}的结果中获得的。
+     *
+     * @param key   查找的关键
+     * @param regex 分隔符
+     * @return 如果输入的Map为空，则将Map中的值返回为Long，<code> null </ code>
+     */
+    default String[] splitToArray(final K key, final String regex) {
+        Object object = getObject(key);
+        if (null == object) {
+            return null;
+        }
+
+        if (object instanceof String) {
+            return ((String) object).split(regex);
+        }
+
+        return null;
+    }
+
+    /**
+     * 以null安全的方式从Map中分隔数据。
+     * <p> 数据从{@link #splitToArray}的结果中获得的。
+     *
+     * @param key    查找的关键
+     * @param regex  分隔符
+     * @param <T>    类型
+     * @param tClass 基础原型封装类
+     * @return 如果输入的Map为空，则将Map中的值返回为 List，<code> null </ code>
+     */
+    default <T> List<T> splitToList(final K key, final String regex, final Class<T> tClass) {
+        String[] strings = splitToArray(key, regex);
+        if (null == strings) {
+            return null;
+        }
+        ConcurrentMap<Class, TypeConverter> concurrentMap = BeansHelper.CLASS_TYPE_CONVERTER_CONCURRENT_MAP;
+        if (!concurrentMap.containsKey(tClass)) {
+            return Collections.emptyList();
+
+        }
+
+        List<T> result = new ArrayList<>(strings.length);
+        TypeConverter<T> typeConverter = concurrentMap.get(tClass);
+
+        for (String string : strings) {
+            T convert = typeConverter.convert(string);
+            if (null == convert) {
+                continue;
+            }
+            result.add(convert);
+        }
+        return result;
+    }
+
+    /**
+     * 以null安全的方式从Map中分隔数据。
+     * <p> 数据从{@link #splitToArray}的结果中获得的。
+     *
+     * @param key   查找的关键
+     * @param regex 分隔符
+     * @return 如果输入的Map为空，则将Map中的值返回为 List，<code> null </ code>
+     */
+    default List<String> splitToList(final K key, final String regex) {
+        String[] strings = splitToArray(key, regex);
+        if (null == strings) {
+            return null;
+        }
+        return Arrays.asList(strings.clone());
+    }
+
+    /**
+     * 以null安全的方式从Map中分隔数据。
+     * <p> 数据从{@link #splitToArray}的结果中获得的。
+     *
+     * @param key   查找的关键
+     * @param regex 分隔符
+     * @return 如果输入的Map为空，则将Map中的值返回为 Set，<code> null </ code>
+     */
+    default Set<String> splitToSet(final K key, final String regex) {
+        List<String> strings = splitToList(key, regex);
+        if (null == strings) {
+            return null;
+        }
+        return new HashSet<>(strings);
+    }
+
+    /**
+     * 以null安全的方式从Map中获取Long。
+     * <p> Long是从{@link #getNumber（Object）}的结果中获得的。
+     *
      * @param key          查找的关键
      * @param defaultValue 默认值
      * @return 如果输入的Map为空，则将Map中的值返回为Long，<code> null </ code>
@@ -404,4 +520,5 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
     default Object getObject(final K key, final Object defaultValue) {
         return MapOperableHelper.getObject(getMap(), key, defaultValue);
     }
+
 }

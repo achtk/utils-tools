@@ -2,7 +2,7 @@ package com.chua.utils.netx.elasticsearch.search;
 
 import com.chua.utils.netx.elasticsearch.condition.Condition;
 import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.common.MapHelper;
+import com.chua.utils.tools.collects.map.MapHelper;
 import com.chua.utils.tools.common.NumberHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.google.common.collect.Maps;

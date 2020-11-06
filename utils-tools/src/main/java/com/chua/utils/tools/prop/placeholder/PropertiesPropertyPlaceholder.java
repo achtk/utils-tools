@@ -1,5 +1,6 @@
 package com.chua.utils.tools.prop.placeholder;
 
+import com.chua.utils.tools.constant.PatternConstant;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -7,8 +8,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.chua.utils.tools.constant.StringConstant.REGEXP_ALL;
 
 /**
  * properties 占位符处理
@@ -133,7 +132,7 @@ public class PropertiesPropertyPlaceholder implements PropertyPlaceholder {
     @Override
     public Pattern pattern() {
         //占位符正则
-        String compileString = this.before + REGEXP_ALL + this.after;
+        String compileString = this.before + PatternConstant.REGEXP_ANY + this.after;
         //占位符对象
         return Pattern.compile(compileString, Pattern.CASE_INSENSITIVE);
     }

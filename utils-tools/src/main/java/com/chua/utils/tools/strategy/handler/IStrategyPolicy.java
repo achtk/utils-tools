@@ -2,6 +2,7 @@ package com.chua.utils.tools.strategy.handler;
 
 /**
  * 策略动作
+ *
  * @author CH
  */
 public interface IStrategyPolicy<T> {
@@ -50,21 +51,25 @@ public interface IStrategyPolicy<T> {
      *   <td>com.chua.utils.tools.strategy.resolver.RetryConditionStrategyResolver</td>
      *   <td>返回结果</td>
      * </tr>
-
+     *
      *
      * </table>
+     *
+     * @return T t
      */
     T policy();
 
     /**
      * 失败
+     *
      * @param throwable 异常
-     * @return
+     * @return T
      */
     T failure(Throwable throwable);
 
     /**
      * 降级
+     *
      * @return
      */
     default T degrade() {

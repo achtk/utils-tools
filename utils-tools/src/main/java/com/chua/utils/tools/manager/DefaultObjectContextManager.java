@@ -4,7 +4,7 @@ import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.reflections.ReflectionsFactory;
-import com.chua.utils.tools.common.CollectionHelper;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
@@ -119,7 +119,7 @@ public class DefaultObjectContextManager implements Runnable, ObjectContextManag
                 new TypeAnnotationsScanner(),
                 new MethodParameterNamesScanner(), new MethodParameterScanner());
         configurationBuilder.setExecutorService(ForkJoinPool.commonPool());
-        configurationBuilder.addUrls(CollectionHelper.toList(ClassHelper.getUrlsByClassLoaderExcludeJDK(ClassHelper.getDefaultClassLoader())));
+        configurationBuilder.addUrls(CollectionHelper.toList(ClassHelper.getUrlsByClassLoaderExcludeJdk(ClassHelper.getDefaultClassLoader())));
         configurationBuilder.setClassLoaders(new ClassLoader[]{ClassHelper.getDefaultClassLoader()});
         this.reflectionsFactory = new ReflectionsFactory(configurationBuilder);
     }

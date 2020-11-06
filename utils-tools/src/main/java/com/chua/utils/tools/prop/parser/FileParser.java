@@ -1,6 +1,6 @@
 package com.chua.utils.tools.prop.parser;
 
-import com.chua.utils.tools.common.CollectionHelper;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.FileHelper;
 import com.chua.utils.tools.function.AbstractConverter;
 import com.chua.utils.tools.prop.decorator.FileDecorator;

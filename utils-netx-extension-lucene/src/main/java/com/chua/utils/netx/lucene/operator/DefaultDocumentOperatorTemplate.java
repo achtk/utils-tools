@@ -2,14 +2,12 @@ package com.chua.utils.netx.lucene.operator;
 
 import com.chua.utils.netx.lucene.entity.DataDocument;
 import com.chua.utils.netx.lucene.util.DocumentUtil;
-import com.chua.utils.tools.common.CollectionHelper;
-import com.chua.utils.tools.common.NumberHelper;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 
-import java.util.Collection;
 import java.util.List;
 
 /**

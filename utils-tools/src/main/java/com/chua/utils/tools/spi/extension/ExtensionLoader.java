@@ -7,19 +7,17 @@ import com.chua.utils.tools.spi.entity.ExtensionClass;
 import com.chua.utils.tools.spi.entity.SpiConfig;
 import com.chua.utils.tools.spi.processor.CustomExtensionProcessor;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
+import com.chua.utils.tools.spi.processor.AbstractSimpleExtensionProcessor;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * spi扩展器
@@ -51,7 +49,7 @@ public class ExtensionLoader<T> {
     /**
      *
      */
-    private final Multimap<String, ExtensionClass<T>> EXTENSION_CACHE = HashMultimap.create();
+    private final Multimap<String, ExtensionClass<T>> extensionClassMultimap = HashMultimap.create();
 
     private ExtensionLoader() {
     }
@@ -93,27 +91,17 @@ public class ExtensionLoader<T> {
             startTime = System.currentTimeMillis();
         }
 
-        if (!EXTENSION_CACHE.containsKey(service.getName())) {
+        if (!extensionClassMultimap.containsKey(service.getName())) {
             if (null == extensionProcessor) {
                 extensionProcessor = new CustomExtensionProcessor();
             }
 
             extensionProcessor.init(spiConfig);
             Collection<ExtensionClass<T>> collection = extensionProcessor.analyze(service, classLoader);
-
-            if (null == collection) {
-                collection = Collections.emptyList();
-            }
-            collection.parallelStream().forEach(new Consumer<ExtensionClass<T>>() {
-                @Override
-                public void accept(ExtensionClass<T> tExtensionClass) {
-                    EXTENSION_CACHE.put(tExtensionClass.getName(), tExtensionClass);
-                }
-            });
-            EXTENSION_CACHE.putAll(service.getName(), collection);
+            cache(collection);
         }
         if (log.isDebugEnabled()) {
-            log.debug("[{}]共检索类/接口[{}: {}], 耗时: {}ms", extensionProcessor.getClass().getSimpleName(), service.getName(), EXTENSION_CACHE.size(), (System.currentTimeMillis() - startTime));
+            log.debug("[{}]共检索类/接口[{}: {}], 耗时: {}ms", extensionProcessor.getClass().getSimpleName(), service.getName(), extensionClassMultimap.size(), (System.currentTimeMillis() - startTime));
         }
         return this;
     }
@@ -128,7 +116,7 @@ public class ExtensionLoader<T> {
         if (Strings.isNullOrEmpty(name)) {
             return null;
         }
-        return EXTENSION_CACHE.get(name);
+        return extensionClassMultimap.get(name);
     }
 
     /**
@@ -197,7 +185,7 @@ public class ExtensionLoader<T> {
      * @return
      */
     public T getExtension() {
-        Set<String> strings = EXTENSION_CACHE.keySet();
+        Set<String> strings = extensionClassMultimap.keySet();
         if (!BooleanHelper.hasLength(strings)) {
             return null;
         }
@@ -239,7 +227,7 @@ public class ExtensionLoader<T> {
      * @return
      */
     public synchronized Multimap<String, ExtensionClass<T>> getAllExtensionClassess() {
-        return EXTENSION_CACHE;
+        return extensionClassMultimap;
     }
 
     /**
@@ -248,7 +236,7 @@ public class ExtensionLoader<T> {
      * @return
      */
     public Set<T> getAllSpiService() {
-        Multimap<String, ExtensionClass<T>> multimap = EXTENSION_CACHE;
+        Multimap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
         if (null == multimap) {
             return null;
         }
@@ -291,7 +279,7 @@ public class ExtensionLoader<T> {
      * @return
      */
     public Set<String> keys() {
-        Multimap<String, ExtensionClass<T>> multimap = EXTENSION_CACHE;
+        Multimap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
         return null == multimap ? null : multimap.keySet();
     }
 
@@ -301,7 +289,7 @@ public class ExtensionLoader<T> {
      * @return
      */
     public Map<String, ExtensionClass<T>> asMap() {
-        Multimap<String, ExtensionClass<T>> multimap = EXTENSION_CACHE;
+        Multimap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
         if (null == multimap) {
             return null;
         }
@@ -320,6 +308,30 @@ public class ExtensionLoader<T> {
     public void refresh() {
         if (null != extensionProcessor) {
             extensionProcessor.removeAll();
+            if (extensionProcessor instanceof AbstractSimpleExtensionProcessor) {
+                AbstractSimpleExtensionProcessor abstractSimpleExtensionProcessor = (AbstractSimpleExtensionProcessor) extensionProcessor;
+                Collection<ExtensionClass<T>> analyze = extensionProcessor.analyze(abstractSimpleExtensionProcessor.getInterfaceClass(), abstractSimpleExtensionProcessor.getClassLoader());
+                extensionClassMultimap.clear();
+                cache(analyze);
+            }
         }
+    }
+
+    /**
+     * 缓存
+     *
+     * @param collection 数据
+     */
+    private void cache(Collection<ExtensionClass<T>> collection) {
+        if (null == collection) {
+            collection = Collections.emptyList();
+        }
+        collection.parallelStream().forEach(new Consumer<ExtensionClass<T>>() {
+            @Override
+            public void accept(ExtensionClass<T> tExtensionClass) {
+                extensionClassMultimap.put(tExtensionClass.getName(), tExtensionClass);
+            }
+        });
+        extensionClassMultimap.putAll(service.getName(), collection);
     }
 }

@@ -1,6 +1,7 @@
 package com.chua.utils.tools.entity;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
 public class FieldInfoProperties {
     /**
      * 方法名称

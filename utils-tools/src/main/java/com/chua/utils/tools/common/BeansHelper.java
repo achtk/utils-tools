@@ -23,7 +23,7 @@ import java.util.function.BiFunction;
  */
 public class BeansHelper {
 
-    private static final ConcurrentMap<Class, TypeConverter> CLASS_TYPE_CONVERTER_CONCURRENT_MAP = new ConcurrentHashMap<Class, TypeConverter>() {
+    public static final ConcurrentMap<Class, TypeConverter> CLASS_TYPE_CONVERTER_CONCURRENT_MAP = new ConcurrentHashMap<Class, TypeConverter>() {
         {
             Set<TypeConverter> allSpiService = ExtensionFactory.getExtensionLoader(TypeConverter.class).getAllSpiService();
             for (TypeConverter typeConverter : allSpiService) {
@@ -37,7 +37,6 @@ public class BeansHelper {
      *
      * @param entity 对象
      * @param params 值
-     * @param <T>
      * @return
      */
     public static void reflectionAssignment(final Object entity, final Map<String, Object> params) {

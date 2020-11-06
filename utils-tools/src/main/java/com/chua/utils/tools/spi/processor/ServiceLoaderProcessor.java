@@ -14,9 +14,9 @@ import java.util.*;
  * @version 1.0.0
  * @since 2020/10/30
  */
-public class ServiceLoaderProcessor<T> extends SimpleExtensionProcessor<T> {
+public class ServiceLoaderProcessor<T> extends AbstractSimpleExtensionProcessor<T> {
 
-    private static Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
+    private static final Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
 
     @Override
     public void init(SpiConfig spiConfig) {
@@ -33,10 +33,8 @@ public class ServiceLoaderProcessor<T> extends SimpleExtensionProcessor<T> {
 
         List<ExtensionClass<?>> result = new ArrayList<>();
         ServiceLoader<T> serviceLoader = ServiceLoader.load(service, getClassLoader());
-        if (null != serviceLoader) {
-            for (T t : serviceLoader) {
-                result.addAll(buildExtensionClassByObject(t));
-            }
+        for (T t : serviceLoader) {
+            result.addAll(buildExtensionClassByObject(t));
         }
         CACHE.putAll(service.getName(), result);
         return result;

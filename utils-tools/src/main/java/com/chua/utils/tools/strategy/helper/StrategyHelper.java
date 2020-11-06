@@ -2,6 +2,7 @@ package com.chua.utils.tools.strategy.helper;
 
 import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
+import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.function.intercept.*;
 import com.chua.utils.tools.proxy.CglibProxyAgent;
 import com.chua.utils.tools.proxy.DefaultProxyAgent;
@@ -16,9 +17,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
@@ -300,14 +299,8 @@ public class StrategyHelper {
         Preconditions.checkArgument(timoutMs > 0, "time should be bigger than 0");
         Preconditions.checkArgument(null != strategyPolicy, "strategyPolicy should not be null");
 
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-        Future<T> submit = threadPoolExecutor.submit(new Callable<T>() {
-
-            @Override
-            public T call() throws Exception {
-                return strategyPolicy.policy();
-            }
-        });
+        ExecutorService executorService = ThreadHelper.newSingleThreadExecutor();
+        Future<T> submit = executorService.submit(() -> strategyPolicy.policy());
         try {
             return submit.get(timoutMs, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
@@ -317,7 +310,7 @@ public class StrategyHelper {
         } catch (TimeoutException e) {
             return strategyPolicy.failure(e);
         } finally {
-            threadPoolExecutor.shutdownNow();
+            executorService.shutdownNow();
         }
     }
 }

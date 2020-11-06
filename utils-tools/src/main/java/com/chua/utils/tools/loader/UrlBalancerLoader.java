@@ -1,10 +1,9 @@
 package com.chua.utils.tools.loader;
 
 import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.common.CollectionHelper;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.ThreadHelper;
-import com.chua.utils.tools.entity.HttpBody;
 import com.chua.utils.tools.enums.HttpStatus;
 import com.chua.utils.tools.function.Filter;
 
@@ -12,10 +11,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * url均衡
@@ -94,8 +91,8 @@ public class UrlBalancerLoader implements BalancerLoader<String> {
         }
         try {
             URL url1 = new URL(url);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url1.openConnection();
-            return httpURLConnection.getResponseCode();
+            HttpURLConnection urlConnection = (HttpURLConnection) url1.openConnection();
+            return urlConnection.getResponseCode();
         } catch (IOException e) {
             return checkUrlCode(null);
         }

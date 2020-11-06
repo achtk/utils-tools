@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class DocumentMap extends HashMap<String, Object> implements BiAppendable<String, Object> {
 
     @Override
-    public BiAppendable append(String v1, Object v2) throws IOException {
+    public BiAppendable append(String v1, Object v2) {
         this.put(v1, v2);
         return this;
     }

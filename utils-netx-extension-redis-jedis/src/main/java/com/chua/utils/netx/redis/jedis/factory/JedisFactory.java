@@ -2,7 +2,7 @@ package com.chua.utils.netx.redis.jedis.factory;
 
 import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.factory.INetFactory;
-import com.chua.utils.tools.common.MapHelper;
+import com.chua.utils.tools.collects.map.MapHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

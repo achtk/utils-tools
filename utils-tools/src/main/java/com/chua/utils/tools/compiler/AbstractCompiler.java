@@ -1,13 +1,11 @@
 package com.chua.utils.tools.compiler;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.constant.StringConstant;
+import com.chua.utils.tools.constant.SymbolConstant;
 import com.chua.utils.tools.spi.Spi;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.chua.utils.tools.constant.StringConstant.EXTENSION_RIGHT_BIG_PARANTHESES;
 
 /**
  * 编译器
@@ -52,7 +50,7 @@ public abstract class AbstractCompiler {
         try {
             return Class.forName(className, true, ClassHelper.getCallerClassLoader(getClass()));
         } catch (ClassNotFoundException e) {
-            if (!code.endsWith(EXTENSION_RIGHT_BIG_PARANTHESES)) {
+            if (!code.endsWith(SymbolConstant.SYMBOL_RIGHT_BIG_PARANTHESES)) {
                 throw new IllegalStateException("The java code not endsWith \"}\", code: \n" + code + "\n");
             }
             try {

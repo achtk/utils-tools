@@ -1,29 +1,10 @@
 package com.chua.utils.tools.common;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import java.util.List;
-import java.util.Map;
-
 /**
  * 类型工具类
  * @author CH
  */
 public class TypeHelper {
-    @SuppressWarnings("unchecked")
-    public static final Class<Map<String, String>> MAP_STRING_STRING = (Class<Map<String, String>>) MapHelper.newMapStringString().getClass();
-    @SuppressWarnings("unchecked")
-    public static final Class<Map<String, Object>> MAP_STRING_OBJECT = (Class<Map<String, Object>>) MapHelper.newMapStringObject().getClass();
-    @SuppressWarnings("unchecked")
-    public static final Class<Map<Object, Object>> MAP_OBJECT_OBJECT = (Class<Map<Object, Object>>) MapHelper.newMapObjectObject().getClass();
-    @SuppressWarnings("unchecked")
-    public static final Class<List<String>> LIST_STRING = (Class<List<String>>) ListHelper.newArrayList().getClass();
-    @SuppressWarnings("unchecked")
-    public static final Class<List<Map<String, Object>>> LIST_MAP_STRING_OBJECT = (Class<List<Map<String, Object>>>) ListHelper.newArrayList().getClass();
-
-    public static final Class<Map<String, List<Map<String, Object>>>> MAP_LIST_MAP = (Class<Map<String, List<Map<String, Object>>>>) MapHelper.newArrayList().getClass();
-
     /**
      * 获取int
      * @param objects

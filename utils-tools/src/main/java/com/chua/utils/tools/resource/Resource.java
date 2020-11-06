@@ -17,7 +17,8 @@ import java.net.URL;
 import java.util.jar.JarEntry;
 
 import static com.chua.utils.tools.common.UrlHelper.JAR_URL_SEPARATOR;
-import static com.chua.utils.tools.constant.StringConstant.*;
+import static com.chua.utils.tools.constant.SuffixConstant.SUFFIX_CLASS;
+import static com.chua.utils.tools.constant.SymbolConstant.*;
 
 /**
  * 资源对象
@@ -157,9 +158,9 @@ public class Resource implements Serializable {
      * @return
      */
     private Class<?> renderClassInfo(ClassLoader... classLoader) {
-        if (null != name && name.endsWith(EXTENSION_CLASS)) {
-            name = StringHelper.startsWithAndEmpty(name, "/");
-            String classPath = name.replace(EXTENSION_LEFT_SLASH, EXTENSION_DOT).replace(EXTENSION_CLASS_SUFFIX, EXTENSION_EMPTY);
+        if (null != name && name.endsWith(SUFFIX_CLASS)) {
+            name = StringHelper.startsWithAndEmpty(name, SYMBOL_LEFT_SLASH);
+            String classPath = name.replace(SYMBOL_LEFT_SLASH, SYMBOL_DOT).replace(SUFFIX_CLASS, SYMBOL_EMPTY);
             this.classes = ClassHelper.forName(classPath, BooleanHelper.hasLength(classLoader) ? FinderHelper.firstElement(classLoader) : this.getClass().getClassLoader());
             return this.classes;
         }

@@ -698,7 +698,7 @@ public class IOHelper {
      * @return
      * @throws UnsupportedEncodingException
      */
-    public static InputStreamReader toUTF8InputStreamReader(InputStream inputStream) throws UnsupportedEncodingException {
+    public static InputStreamReader toUtf8InputStreamReader(InputStream inputStream) throws UnsupportedEncodingException {
         return new InputStreamReader(inputStream, "UTF-8");
     }
 

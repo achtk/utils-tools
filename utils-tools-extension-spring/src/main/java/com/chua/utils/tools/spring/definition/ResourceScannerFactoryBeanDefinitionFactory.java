@@ -3,7 +3,7 @@ package com.chua.utils.tools.spring.definition;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
-import com.chua.utils.tools.common.MapHelper;
+import com.chua.utils.tools.collects.map.MapHelper;
 import com.chua.utils.tools.spring.scanner.ResourceClassPathScanningProvider;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;

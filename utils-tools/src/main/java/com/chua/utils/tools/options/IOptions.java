@@ -1,7 +1,7 @@
 package com.chua.utils.tools.options;
 
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.JsonHelper;
-import com.chua.utils.tools.common.MapHelper;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
@@ -12,27 +12,37 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * options
+ *
  * @author CH
  * @since 1.0
  */
 public interface IOptions {
     /**
      * 获取values
-     * @return
+     *
+     * @return ConcurrentMap
      */
     ConcurrentMap<String, Object> values();
 
     /**
      * 处理占位符信息
-     * @return
+     *
+     * @return ConcurrentMap
      */
     default ConcurrentMap<String, Object> valuesFinal() {
         return values();
     }
 
+    /**
+     * 数据 properties化
+     *
+     * @return Properties
+     */
+    @SuppressWarnings("all")
     default Properties yamlValue() {
-        return MapHelper.map2Yaml(values());
+        return MapOperableHelper.toProfile(values());
     }
+
     /**
      * Gets boolean value.
      *
@@ -99,10 +109,10 @@ public interface IOptions {
      */
     default String getStringValue(String primaryKey) {
         Object object = valuesFinal().get(primaryKey);
-        if(null == object) {
+        if (null == object) {
             return null;
         }
-        if(object instanceof String) {
+        if (object instanceof String) {
             return (String) object;
         } else {
             return JsonHelper.toJson(object);
@@ -116,40 +126,44 @@ public interface IOptions {
      * @param secondaryKey the secondary key
      * @return the string value
      */
-   default String getStringValue(String primaryKey, String secondaryKey) {
-       String stringValue = getStringValue(primaryKey);
-       if(null == stringValue) {
-           return getStringValue(secondaryKey);
-       }
-       return stringValue;
-   }
-    /**
-     * Gets list value.
-     *
-     * @param primaryKey the primary key
-     * @return the list value
-     */
-    default List getListValue(String primaryKey) {
-        return getListValue(primaryKey, ",");
+    default String getStringValue(String primaryKey, String secondaryKey) {
+        String stringValue = getStringValue(primaryKey);
+        if (null == stringValue) {
+            return getStringValue(secondaryKey);
+        }
+        return stringValue;
     }
+
     /**
      * Gets list value.
      *
      * @param primaryKey the primary key
-     * @param separator the separator key
      * @return the list value
      */
-    default List getListValue(String primaryKey, String separator) {
+    @SuppressWarnings("all")
+    default List<String> getListValue(String primaryKey) {
+        return (List<String>) getListValue(primaryKey, ",");
+    }
+
+    /**
+     * Gets list value.
+     *
+     * @param primaryKey the primary key
+     * @param separator  the separator key
+     * @return the list value
+     */
+    @SuppressWarnings("all")
+    default List<? extends CharSequence> getListValue(String primaryKey, String separator) {
         Object item = valuesFinal().get(primaryKey);
-        if(null == item) {
+        if (null == item) {
             return null;
         }
 
-        if(item instanceof List) {
+        if (item instanceof List) {
             return (List) item;
-        } else if(item instanceof CharSequence){
-            if(null == separator) {
-                return Lists.newArrayList(item);
+        } else if (item instanceof CharSequence) {
+            if (null == separator) {
+                return Lists.newArrayList((CharSequence) item);
             }
             return Splitter.on(separator).splitToList((CharSequence) item);
         } else {
