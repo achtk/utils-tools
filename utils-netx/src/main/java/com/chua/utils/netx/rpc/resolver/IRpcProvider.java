@@ -5,6 +5,7 @@ import com.chua.utils.netx.rpc.config.RpcProviderConfig;
 
 /**
  * rpc提供者
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/5/30 14:14
@@ -12,20 +13,17 @@ import com.chua.utils.netx.rpc.config.RpcProviderConfig;
 public interface IRpcProvider<T> {
     /**
      * 暴露服务
-     * @param rpcProviderConfig
+     *
+     * @param rpcProviderConfig 配置
      */
-    public T provider(RpcProviderConfig rpcProviderConfig);
+    T provider(RpcProviderConfig rpcProviderConfig);
 
     /**
      * 暴露服务
-     * @param rpcProviderConfig
+     *
+     * @param rpcProviderConfig 配置
      */
-    default public void providerAsync(final RpcProviderConfig rpcProviderConfig) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                provider(rpcProviderConfig);
-            }
-        }).start();
+    default void providerAsync(final RpcProviderConfig rpcProviderConfig) {
+        new Thread(() -> provider(rpcProviderConfig)).start();
     }
 }

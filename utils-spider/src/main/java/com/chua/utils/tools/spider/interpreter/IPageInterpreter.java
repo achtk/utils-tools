@@ -7,17 +7,20 @@ import java.util.function.Consumer;
 
 /**
  * 页面解释器
+ *
  * @author CH
  */
 public interface IPageInterpreter {
     /**
      * 修饰符
+     *
      * @return
      */
     Set<String> getModifier();
 
     /**
      * 修饰符
+     *
      * @param modifiers 修饰符
      * @return
      */
@@ -25,6 +28,7 @@ public interface IPageInterpreter {
 
     /**
      * 修饰符
+     *
      * @param modifiers 修饰符
      * @return
      */
@@ -32,13 +36,16 @@ public interface IPageInterpreter {
 
     /**
      * 数据回调
+     *
      * @return
      */
     Consumer<Map<String, List<String>>> callback();
 
     /**
      * 数据回调
-     * @param consumer
+     *
+     * @param consumer 消费者
+     * @return IPageInterpreter
      */
     IPageInterpreter callback(Consumer<Map<String, List<String>>> consumer);
 

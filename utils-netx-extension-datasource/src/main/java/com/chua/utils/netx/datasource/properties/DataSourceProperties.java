@@ -85,8 +85,6 @@ public class DataSourceProperties {
      */
     private volatile String password;
 
-    // Properties NOT changeable at runtime
-    //
     private long initializationFailTimeout;
     /**
      * 该属性设置一个SQL语句，在将每个新连接创建后，将其添加到池中之前执行该语句。

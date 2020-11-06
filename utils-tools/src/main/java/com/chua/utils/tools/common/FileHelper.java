@@ -1900,8 +1900,7 @@ public class FileHelper {
             } else if (isSeparator(ch0) && isSeparator(ch1)) {
                 int posUnix = filename.indexOf(SYMBOL_LEFT_SLASH, 2);
                 int posWin = filename.indexOf(SYMBOL_RIGHT_SLASH, 2);
-                if (posUnix == INDEX_NOT_FOUND
-                        && posWin == posUnix || posUnix == TWE || posWin == posUnix) {
+                if (isNotFound(posUnix, posWin)) {
                     return INDEX_NOT_FOUND;
                 }
                 posUnix = posUnix == INDEX_NOT_FOUND ? posWin : posUnix;
@@ -1911,6 +1910,18 @@ public class FileHelper {
                 return isSeparator(ch0) ? 1 : 0;
             }
         }
+    }
+
+    /**
+     * 未找到
+     *
+     * @param posUnix unix
+     * @param posWin  win
+     * @return boolean
+     */
+    private static boolean isNotFound(int posUnix, int posWin) {
+        return posUnix == INDEX_NOT_FOUND
+                && posWin == posUnix || posUnix == TWE || posWin == posUnix;
     }
 
     /**

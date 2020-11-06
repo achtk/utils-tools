@@ -3,6 +3,7 @@ package com.chua.utils.tools.spring.environment;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.constant.BeanConstant;
 import com.chua.utils.tools.prop.placeholder.PropertyPlaceholder;
 import com.chua.utils.tools.spring.placeholder.SpringPropertyPlaceholder;
 import com.google.common.base.Strings;
@@ -18,6 +19,9 @@ import org.springframework.core.env.Environment;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Map;
+
+import static com.chua.utils.tools.constant.BeanConstant.BEAN_CONFIGURATION_BEAN_BINDING_POST_PROCESSOR;
+import static com.chua.utils.tools.constant.BeanConstant.BEAN_CONFIGURATION_PROPERTIES;
 
 /**
  * 环境变量读取
@@ -36,14 +40,8 @@ public class EnvironmentFactory {
      * PropertyResolver 集合
      */
     private Environment environment;
-    private String CONFIGURATION_PROPERTIES = "org.springframework.boot.context.properties.ConfigurationProperties";
-    public static final String BEAN_NAME = "configurationBeanBindingPostProcessor";
+    private String CONFIGURATION_PROPERTIES = BEAN_CONFIGURATION_PROPERTIES;
 
-    static final String CONFIGURATION_PROPERTIES_ATTRIBUTE_NAME = "configurationProperties";
-
-    static final String IGNORE_UNKNOWN_FIELDS_ATTRIBUTE_NAME = "ignoreUnknownFields";
-
-    static final String IGNORE_INVALID_FIELDS_ATTRIBUTE_NAME = "ignoreInvalidFields";
     public EnvironmentFactory(ApplicationContext applicationContext) {
         this.environment = null == applicationContext ? null : applicationContext.getEnvironment();
         this.beanFactory = null == applicationContext ? null : applicationContext.getAutowireCapableBeanFactory();
@@ -87,6 +85,7 @@ public class EnvironmentFactory {
         }
         return autoConfigurationAnnotation(obj, annotation);
     }
+
     /**
      * 自动配置
      *
@@ -98,7 +97,7 @@ public class EnvironmentFactory {
         if (null == tClass) {
             return null;
         }
-       return autoConfiguration(ClassHelper.forObject(tClass));
+        return autoConfiguration(ClassHelper.forObject(tClass));
     }
 
     /**
@@ -237,6 +236,7 @@ public class EnvironmentFactory {
      * 尝试获取参数是否存在
      * <p>1、默认值</p>
      * <p>2、'-'</p>
+     *
      * @param name
      * @return
      */
@@ -248,15 +248,16 @@ public class EnvironmentFactory {
      * 获取值
      * <p>1、默认值</p>
      * <p>2、'-'</p>
+     *
      * @param name
      * @return
      */
     public Object tryGetProperty(String name) {
-        if(environment.containsProperty(name)) {
+        if (environment.containsProperty(name)) {
             return placeholderResolver.placeholder(environment.getProperty(name));
         }
         String newName = StringHelper.humpToLine2(name, "-");
-        if(environment.containsProperty(newName)) {
+        if (environment.containsProperty(newName)) {
             return placeholderResolver.placeholder(environment.getProperty(newName));
         }
         return null;
@@ -266,16 +267,17 @@ public class EnvironmentFactory {
      * 获取值
      * <p>1、默认值</p>
      * <p>2、'-'</p>
+     *
      * @param name
      * @return
      */
     public String tryGetStringProperty(String name) {
-        if(environment.containsProperty(name)) {
+        if (environment.containsProperty(name)) {
             Object o = placeholderResolver.placeholder(environment.getProperty(name));
             return o instanceof String ? o.toString() : "";
         }
         String newName = StringHelper.humpToLine2(name, "-");
-        if(environment.containsProperty(newName)) {
+        if (environment.containsProperty(newName)) {
             Object o = placeholderResolver.placeholder(environment.getProperty(newName));
             return o instanceof String ? o.toString() : "";
         }

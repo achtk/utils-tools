@@ -23,6 +23,8 @@ import java.net.URLConnection;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.chua.utils.tools.constant.HttpConstant.*;
+
 /**
  * 同步操作
  *
@@ -200,15 +202,15 @@ public class Sync {
             // 打开和URL之间的连接
             return (HttpURLConnection) realUrl.openConnection();
         } else {
-            HttpsURLConnection httpsURLConnection = (HttpsURLConnection) realUrl.openConnection();
+            HttpsURLConnection urlConnection = (HttpsURLConnection) realUrl.openConnection();
             Object sslSocketFactory = requestConfig.getSslSocketFactory();
             if (null != sslSocketFactory && sslSocketFactory instanceof SSLSocketFactory) {
-                httpsURLConnection.setSSLSocketFactory((SSLSocketFactory) sslSocketFactory);
+                urlConnection.setSSLSocketFactory((SSLSocketFactory) sslSocketFactory);
             } else {
                 HttpsURLConnection.setDefaultSSLSocketFactory(HttpClientHelper.createSslSocketFactory());
                 HttpsURLConnection.setDefaultHostnameVerifier(HttpClientHelper.createDefaultHostnameVerifier());
             }
-            return httpsURLConnection;
+            return urlConnection;
         }
     }
 
@@ -259,18 +261,18 @@ public class Sync {
             connection.setRequestProperty(entry.getKey(), entry.getValue());
         }
         // 设置通用的请求属性
-        if (Strings.isNullOrEmpty(connection.getRequestProperty("accept"))) {
-            connection.setRequestProperty("accept", "*/*");
+        if (Strings.isNullOrEmpty(connection.getRequestProperty(ACCEPT))) {
+            connection.setRequestProperty(ACCEPT, ANY);
         }
 
         // 设置通用的请求属性
-        if (Strings.isNullOrEmpty(connection.getRequestProperty("connection"))) {
-            connection.setRequestProperty("connection", "Keep-Alive");
+        if (Strings.isNullOrEmpty(connection.getRequestProperty(CONNECTION))) {
+            connection.setRequestProperty(CONNECTION, KEEP_ALIVE);
         }
 
         // 设置通用的请求属性
-        if (Strings.isNullOrEmpty(connection.getRequestProperty("connection"))) {
-            connection.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+        if (Strings.isNullOrEmpty(connection.getRequestProperty(CONNECTION))) {
+            connection.setRequestProperty(USER_AGENT, USER_AGENT_VALUE);
         }
         if (log.isDebugEnabled()) {
             if (log.isDebugEnabled()) {

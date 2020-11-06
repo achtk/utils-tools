@@ -1,7 +1,7 @@
 package com.chua.utils.netx.zookeeper.factory;
 
 import com.chua.utils.netx.factory.INetFactory;
-import com.chua.utils.tools.collects.map.MapHelper;
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.properties.NetProperties;
 import com.google.common.base.Joiner;
 import lombok.Getter;
@@ -58,15 +58,15 @@ public class ZookeeperFactory implements INetFactory<CuratorFramework> {
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
         builder.connectString(Joiner.on(",").join(netProperties.getHost()));
 
-        if (MapHelper.isValid(NetProperties.CONFIG_FIELD_SESSION_TIMEOUT, netProperties)) {
-            builder.sessionTimeoutMs(MapHelper.ints(NetProperties.CONFIG_FIELD_SESSION_TIMEOUT, netProperties));
+        if (MapOperableHelper.isValid(NetProperties.CONFIG_FIELD_SESSION_TIMEOUT, netProperties)) {
+            builder.sessionTimeoutMs(MapOperableHelper.getIntValue(netProperties, NetProperties.CONFIG_FIELD_SESSION_TIMEOUT));
         }
 
-        if (MapHelper.isValid(NetProperties.CONFIG_FIELD_CONNECTION_TIMEOUT, netProperties)) {
-            builder.connectionTimeoutMs(MapHelper.ints(NetProperties.CONFIG_FIELD_CONNECTION_TIMEOUT, netProperties));
+        if (MapOperableHelper.isValid(NetProperties.CONFIG_FIELD_CONNECTION_TIMEOUT, netProperties)) {
+            builder.connectionTimeoutMs(MapOperableHelper.getIntValue(netProperties, NetProperties.CONFIG_FIELD_CONNECTION_TIMEOUT));
         }
 
-        builder.retryPolicy(new RetryNTimes(MapHelper.ints(NetProperties.CONFIG_FIELD_RETRY, netProperties), 1000));
+        builder.retryPolicy(new RetryNTimes(MapOperableHelper.getIntValue(netProperties, NetProperties.CONFIG_FIELD_RETRY), 1000));
         CountDownLatch countDownLatch = new CountDownLatch(1);
         this.curatorFramework = builder.build();
         this.curatorFramework.start();

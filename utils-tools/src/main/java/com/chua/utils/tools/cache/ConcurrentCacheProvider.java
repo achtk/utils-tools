@@ -41,7 +41,7 @@ public class ConcurrentCacheProvider<K, V> implements CacheProvider<K, V>, Cache
 
     @Override
     public ConcurrentMap<K, V> asMap() {
-        ConcurrentHashMap<K, V> temp = new ConcurrentHashMap<>();
+        ConcurrentHashMap<K, V> temp = new ConcurrentHashMap<>(cache.size());
         for (K k : cache.keySet()) {
             V v = get(k);
             if (v == null) {

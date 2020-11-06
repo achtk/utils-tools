@@ -43,12 +43,9 @@ public interface IClassLoaderAdaptor {
      * @param url
      * @return
      */
-    default public String formatUrl(URL url) {
+    default String formatUrl(URL url) {
         String externalForm = url.toExternalForm();
-        if ((externalForm.endsWith(JAR) ||
-                externalForm.endsWith(WAR) ||
-                externalForm.endsWith(ZIP)) &&
-                !externalForm.startsWith(JAR_URL_PREFIX)) {
+        if (isSimpleUrl(externalForm)) {
             externalForm = JAR_URL_PREFIX + externalForm;
         }
         if (!externalForm.endsWith(JAR_URL_SEPARATOR)) {
@@ -56,5 +53,18 @@ public interface IClassLoaderAdaptor {
         }
 
         return externalForm;
+    }
+
+    /**
+     * 简单的url
+     *
+     * @param externalForm url
+     * @return boolean
+     */
+    default boolean isSimpleUrl(String externalForm) {
+        return (externalForm.endsWith(JAR) ||
+                externalForm.endsWith(WAR) ||
+                externalForm.endsWith(ZIP)) &&
+                !externalForm.startsWith(JAR_URL_PREFIX);
     }
 }

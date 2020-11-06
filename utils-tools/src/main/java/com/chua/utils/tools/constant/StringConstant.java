@@ -162,6 +162,18 @@ public class StringConstant {
      */
     public static final String COUNTRY = "CN";
     /**
+     * /jre
+     */
+    public static final String PATH_JRE = "/jre";
+    /**
+     * sun
+     */
+    public static final String SUN = "sun";
+    /**
+     * 0
+     */
+    public static final String ZERO = "0";
+    /**
      *
      */
     private static final String SYMBOL_FILE = "file";
@@ -281,5 +293,20 @@ public class StringConstant {
      * .class
      */
     public static final String CLASS_FILE_EXTENSION = SuffixConstant.SUFFIX_CLASS;
-
+    /**
+     * GET
+     */
+    public static final String GET = "GET";
+    /**
+     * POST
+     */
+    public static final String POST = "POST";
+    /**
+     * DELETE
+     */
+    public static final String DELETE = "DELETE";
+    /**
+     * PUT
+     */
+    public static final String PUT = "PUT";
 }

@@ -17,6 +17,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.HttpConstant.HTTP_METHOD_GET;
+
 /**
  * HttpServletRequest 处理类
  *
@@ -269,7 +271,7 @@ public class RequestHelper {
         Map<String, Object> map = new HashMap<>();
         map.putAll(request.getParameterMap());
         String method = request.getMethod();
-        if (!"GET".equals(method)) {
+        if (!HTTP_METHOD_GET.equals(method)) {
             Map<String, Object> json = getJsonParamByRequest(request);
             if(null != json) {
                 map.putAll(json);

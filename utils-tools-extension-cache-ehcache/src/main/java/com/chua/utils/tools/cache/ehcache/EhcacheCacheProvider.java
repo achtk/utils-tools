@@ -1,6 +1,7 @@
 package com.chua.utils.tools.cache.ehcache;
 
 import com.chua.utils.tools.cache.CacheProvider;
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.SizeHelper;
 import com.chua.utils.tools.config.CacheProperties;
@@ -47,8 +48,6 @@ public class EhcacheCacheProvider implements CacheProvider<Object, Object> {
             builder.withExpiry(ExpiryPolicyBuilder.noExpiration());
         }
         //可缓存的最大对象大小
-        //builder.withSizeOfMaxObjectSize(cacheConfig.getDiskMaximumSize(), MemoryUnit.MB);
-        //添加监听器
         builder.withService(CacheEventListenerConfigurationBuilder.newEventListenerConfiguration(
                 new CacheEventAdapter() {
 
@@ -74,7 +73,7 @@ public class EhcacheCacheProvider implements CacheProvider<Object, Object> {
     @Override
     public ConcurrentMap<Object, Object> asMap() {
         Iterator<Cache.Entry<Object, Object>> iterator = cache.iterator();
-        ConcurrentHashMap<Object, Object> concurrentHashMap = new ConcurrentHashMap<>();
+        ConcurrentHashMap<Object, Object> concurrentHashMap = MapOperableHelper.newConcurrentHashMap();
         if (!BooleanHelper.hasLength(iterator)) {
             return null;
         }

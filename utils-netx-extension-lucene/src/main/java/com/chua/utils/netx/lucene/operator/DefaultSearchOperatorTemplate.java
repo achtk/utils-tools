@@ -3,6 +3,7 @@ package com.chua.utils.netx.lucene.operator;
 import com.chua.utils.netx.lucene.entity.DataDocument;
 import com.chua.utils.netx.lucene.entity.HitData;
 import com.chua.utils.tools.common.ThreadHelper;
+import com.chua.utils.tools.constant.NumberConstant;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
+
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_MINS;
 
 /**
  * 查询模板
@@ -232,7 +236,7 @@ public class DefaultSearchOperatorTemplate implements SearchOperatorTemplate {
             e.printStackTrace();
             return Collections.emptyMap();
         }
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         if (null == columns || columns.isEmpty()) {
             List<IndexableField> documentFields = document.getFields();
             for (IndexableField indexableField : documentFields) {
@@ -269,7 +273,7 @@ public class DefaultSearchOperatorTemplate implements SearchOperatorTemplate {
             @Override
             public void accept(String s) {
                 String name = s.trim();
-                if (s.startsWith("-")) {
+                if (s.startsWith(SYMBOL_MINS)) {
                     name = s.substring(1);
                 }
                 SortField sortField = new SortField(name, Type.LONG);

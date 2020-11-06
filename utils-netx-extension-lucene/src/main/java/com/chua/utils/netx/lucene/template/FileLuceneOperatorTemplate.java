@@ -31,7 +31,7 @@ public class FileLuceneOperatorTemplate implements LuceneOperatorTemplate<Docume
         if (isExist(name)) {
             log.info("[" + name + "] existed");
         }
-        try (DocumentContextAware nioFSLuceneContextAware = getDocumentContextAware(name)) {
+        try (DocumentContextAware documentContextAware = getDocumentContextAware(name)) {
             return;
         }
     }
@@ -47,8 +47,8 @@ public class FileLuceneOperatorTemplate implements LuceneOperatorTemplate<Docume
         if (!isExist(name)) {
             throw new IllegalStateException("Table [" + name + "] does not exist ");
         }
-        try (DocumentContextAware nioFSLuceneContextAware = getDocumentContextAware(name)) {
-            nioFSLuceneContextAware.updateDocument(doc);
+        try (DocumentContextAware documentContextAware = getDocumentContextAware(name)) {
+            documentContextAware.updateDocument(doc);
         }
     }
 
@@ -57,8 +57,8 @@ public class FileLuceneOperatorTemplate implements LuceneOperatorTemplate<Docume
         if (!isExist(name)) {
             throw new IllegalStateException("Table [" + name + "] does not exist ");
         }
-        try (DocumentContextAware nioFSLuceneContextAware = getDocumentContextAware(name)) {
-            nioFSLuceneContextAware.addDocument(doc);
+        try (DocumentContextAware documentContextAware = getDocumentContextAware(name)) {
+            documentContextAware.addDocument(doc);
         }
     }
 
@@ -67,8 +67,8 @@ public class FileLuceneOperatorTemplate implements LuceneOperatorTemplate<Docume
         if (!isExist(name)) {
             throw new IllegalStateException("Table [" + name + "] does not exist ");
         }
-        try (DocumentContextAware nioFSLuceneContextAware = getDocumentContextAware(name)) {
-            return nioFSLuceneContextAware.deleteDocument(expression);
+        try (DocumentContextAware documentContextAware = getDocumentContextAware(name)) {
+            return documentContextAware.deleteDocument(expression);
         }
     }
 
@@ -78,8 +78,8 @@ public class FileLuceneOperatorTemplate implements LuceneOperatorTemplate<Docume
         if (!isExist(name)) {
             throw new IllegalStateException("Table [" + name + "] does not exist ");
         }
-        try (DocumentContextAware nioFSLuceneContextAware = getDocumentContextAware(name)) {
-            nioFSLuceneContextAware.addDocuments(docs);
+        try (DocumentContextAware documentContextAware = getDocumentContextAware(name)) {
+            documentContextAware.addDocuments(docs);
             return;
         }
     }
@@ -89,8 +89,8 @@ public class FileLuceneOperatorTemplate implements LuceneOperatorTemplate<Docume
         if (!isExist(name)) {
             throw new IllegalStateException("Table [" + name + "] does not exist ");
         }
-        try (DocumentContextAware nioFSLuceneContextAware = getDocumentContextAware(name)) {
-            DocumentData<Map<String, Object>> documentData = nioFSLuceneContextAware.search(search);
+        try (DocumentContextAware documentContextAware = getDocumentContextAware(name)) {
+            DocumentData<Map<String, Object>> documentData = documentContextAware.search(search);
             return documentData.getData();
         }
 
@@ -102,8 +102,8 @@ public class FileLuceneOperatorTemplate implements LuceneOperatorTemplate<Docume
             throw new IllegalStateException("Table [" + name + "] does not exist ");
         }
 
-        try (DocumentContextAware nioFSLuceneContextAware = getDocumentContextAware(name)) {
-            DocumentData<Map<String, Object>> documentData = nioFSLuceneContextAware.searchKeyword(search);
+        try (DocumentContextAware documentContextAware = getDocumentContextAware(name)) {
+            DocumentData<Map<String, Object>> documentData = documentContextAware.searchKeyword(search);
             return documentData.getData();
         }
     }
@@ -113,8 +113,8 @@ public class FileLuceneOperatorTemplate implements LuceneOperatorTemplate<Docume
         if (!isExist(name)) {
             throw new IllegalStateException("Table [" + name + "] does not exist ");
         }
-        try (DocumentContextAware nioFSLuceneContextAware = getDocumentContextAware(name)) {
-            DocumentData<Entity> documentData = nioFSLuceneContextAware.search(search, tClass);
+        try (DocumentContextAware documentContextAware = getDocumentContextAware(name)) {
+            DocumentData<Entity> documentData = documentContextAware.search(search, tClass);
             return documentData.getData();
         }
     }

@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * 消息头
+ * @author Administrator
+ */
 @Getter
 @Setter
 @AllArgsConstructor

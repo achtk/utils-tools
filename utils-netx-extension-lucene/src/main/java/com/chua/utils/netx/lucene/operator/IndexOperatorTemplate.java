@@ -47,7 +47,7 @@ public interface IndexOperatorTemplate {
      *
      * @param index 索引
      * @return 索引真实名称
-     * @Exception Exception Exception
+     * @throws Exception Exception
      */
     String getStoreIndexName(String index) throws Exception;
 
@@ -70,7 +70,7 @@ public interface IndexOperatorTemplate {
      *
      * @param index 索引
      * @return 索引名称
-     * @Exception Exception Exception
+     * @throws Exception Exception
      */
     String getRealIndexName(String index) throws Exception;
 
@@ -114,6 +114,7 @@ public interface IndexOperatorTemplate {
 
     /**
      * 获取解析器
+     *
      * @return Analyzer
      */
     Analyzer getAnalyzer();

@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
  * @version 1.0.0
  * @since 2020/10/21
  */
-public class SQLDialect {
+public class SqlDialect {
     
     public static final String DB_NAME = "<db_name>";
     public static final String PORT = "<port>";

@@ -89,6 +89,7 @@ public interface RKv<K, V> {
      *
      * @param keys 索引
      * @return Map
+     * @throws Exception Exception
      */
     Map<K, V> get(List<K> keys) throws Exception;
 
@@ -104,18 +105,19 @@ public interface RKv<K, V> {
      * 删除前缀
      *
      * @param key_ 前缀
+     * @throws Exception Exception
      */
     void delPrefix(String key_) throws Exception;
 
     /**
      * 返回所有通配值
-     * @param key_
-     * @throws Exception
+     * @param key_ keys
+     * @throws Exception Exception
      */
     List<V> keys(String key_) throws Exception;
     /**
      * 返回所有通配值
-     * @param key_
+     * @param key_ keys
      * @throws Exception
      */
     List<K> getKeys(String key_) throws Exception;

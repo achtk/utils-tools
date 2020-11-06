@@ -368,8 +368,8 @@ public class BeansHelper {
      * @return
      */
     public static Map<String, Object> getAttributes(Object obj) {
-        Map<String, Object> result = new HashMap<>();
         BeanMap beanMap = BeanMap.create(obj);
+        Map<String, Object> result = new HashMap<>(beanMap.size());
         result.putAll(beanMap);
         return result;
     }

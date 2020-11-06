@@ -49,7 +49,7 @@ public class MultipartFileHelper {
         File partFile = new File(path, originalFilename);
         try {
             IoHelper.write(multipartFile.getBytes(), new FileOutputStream(partFile));
-            return partFile.toURL();
+            return partFile.toURI().toURL();
         } catch (IOException e) {
             e.printStackTrace();
         }

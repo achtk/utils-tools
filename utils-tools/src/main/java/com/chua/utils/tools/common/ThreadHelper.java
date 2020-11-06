@@ -1,9 +1,12 @@
 package com.chua.utils.tools.common;
 
+import com.chua.utils.tools.constant.NumberConstant;
+
 import java.io.OutputStream;
 import java.lang.management.*;
 import java.util.concurrent.*;
 
+import static com.chua.utils.tools.constant.NumberConstant.THIRTY_TWO;
 import static com.chua.utils.tools.constant.StringConstant.DEFAULT;
 
 /**
@@ -360,7 +363,7 @@ public class ThreadHelper {
 
         StackTraceElement[] stackTrace = threadInfo.getStackTrace();
         MonitorInfo[] lockedMonitors = threadInfo.getLockedMonitors();
-        for (; i < stackTrace.length && i < 32; i++) {
+        for (; i < stackTrace.length && i < THIRTY_TWO; i++) {
             StackTraceElement ste = stackTrace[i];
             sb.append("\tat " + ste.toString());
             sb.append('\n');

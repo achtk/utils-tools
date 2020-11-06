@@ -2,6 +2,7 @@ package com.chua.utils.netx.rpc.adaptor;
 
 /**
  * 接口适配器
+ *
  * @author CH
  * @version 1.0.0
  * @ClassName IAdaptor.java
@@ -9,10 +10,12 @@ package com.chua.utils.netx.rpc.adaptor;
  */
 public interface IAdaptor {
     /**
-     *  代理类
-     * @param obj 实现
+     * 代理类
+     *
+     * @param obj   实现
      * @param clazz 原类
-     * @return
+     * @return T
+     * @throws Throwable Throwable
      */
-    public <T>T adaptor(T obj, Class<?> clazz) throws Throwable;
+    <T> T adaptor(T obj, Class<?> clazz) throws Throwable;
 }

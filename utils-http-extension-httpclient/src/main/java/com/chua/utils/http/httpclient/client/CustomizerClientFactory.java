@@ -12,6 +12,7 @@ import java.io.IOException;
 
 /**
  * 自定义HttpClient
+ * @author Administrator
  */
 public class CustomizerClientFactory {
 

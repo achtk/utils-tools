@@ -41,4 +41,16 @@ public class NumberConstant {
      * 3
      */
     public static final int THREE = 3;
+    /**
+     * 16
+     */
+    public static final int DEFAULT_INITIAL_CAPACITY = 1 << 4;
+    /**
+     * 32
+     */
+    public static final int THIRTY_TWO = 4 * 8;
+    /**
+     * 0x01
+     */
+    public static final int HEX_0X01 = 0x01;
 }

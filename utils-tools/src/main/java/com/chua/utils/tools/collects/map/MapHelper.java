@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_SIZE;
 import static com.chua.utils.tools.constant.SymbolConstant.*;
 
@@ -32,7 +33,7 @@ public class MapHelper {
      * @return
      */
     public static <K, V> ConcurrentHashMap<K, V> newConcurrentHashMap() {
-        return new ConcurrentHashMap();
+        return new ConcurrentHashMap(DEFAULT_INITIAL_CAPACITY);
     }
 
     /**
@@ -151,7 +152,7 @@ public class MapHelper {
         if (null == properties) {
             return null;
         }
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             result.put(entry.getKey().toString(), entry.getValue());
         }
@@ -337,7 +338,7 @@ public class MapHelper {
      */
     public static <K, V> void putAll(Map<K, V> source, final Map<K, V> target) {
         if (BooleanHelper.isEmpty(source)) {
-            source = new HashMap<>();
+            source = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         }
 
         if (BooleanHelper.isEmpty(target)) {
@@ -1377,7 +1378,7 @@ public class MapHelper {
             return null;
         }
 
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             result.put(entry.getKey().toString(), entry.getValue());
         }
@@ -1508,7 +1509,7 @@ public class MapHelper {
      * @return
      */
     public static ConcurrentMap<String, Object> toConcurrentMap(Properties properties) {
-        ConcurrentHashMap<String, Object> concurrentHashMap = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, Object> concurrentHashMap = new ConcurrentHashMap<>(DEFAULT_INITIAL_CAPACITY);
         if (null == properties) {
             return concurrentHashMap;
         }
@@ -1525,7 +1526,7 @@ public class MapHelper {
      * @return
      */
     public static ConcurrentMap<String, Object> toConcurrentMap(Map<String, Properties> source) {
-        ConcurrentHashMap<String, Object> concurrentHashMap = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, Object> concurrentHashMap = new ConcurrentHashMap<>(DEFAULT_INITIAL_CAPACITY);
         if (null == source) {
             return concurrentHashMap;
         }

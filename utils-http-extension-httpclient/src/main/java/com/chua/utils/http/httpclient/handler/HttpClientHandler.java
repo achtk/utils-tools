@@ -5,6 +5,8 @@ import com.chua.utils.http.entity.HttpClientResponse;
 import com.chua.utils.http.httpclient.action.HttpAsyncAction;
 import com.chua.utils.http.meta.MetaType;
 import com.chua.utils.tools.common.JsonHelper;
+import com.chua.utils.tools.common.charset.CharsetHelper;
+import com.chua.utils.tools.constant.HttpConstant;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
@@ -53,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.chua.utils.tools.constant.HttpConstant.HTTP_HEADER_CONTENT_TYPE;
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 
 /**
@@ -64,8 +67,10 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 @Slf4j
 public class HttpClientHandler {
 
-    // 编码格式。发送编码格式统一用UTF-8
-    private final String ENCODING = "UTF-8";
+    /**
+     * 编码格式。发送编码格式统一用UTF-8
+     */
+    private final String ENCODING = CharsetHelper.UTF_8;
 
     protected RequestConfig requestConfig;
 
@@ -384,7 +389,7 @@ public class HttpClientHandler {
      * @throws UnsupportedEncodingException
      * @return
      */
-    public URIBuilder packageURIBuilder(final String url, final Map<String, Object> params) throws URISyntaxException {
+    public URIBuilder packageUriBuilder(final String url, final Map<String, Object> params) throws URISyntaxException {
         // 创建访问的地址
         URIBuilder uriBuilder = new URIBuilder(url);
         if (params != null) {
@@ -510,8 +515,8 @@ public class HttpClientHandler {
             Object text = requestConfig.getText();
             MetaType metaType = requestConfig.getMetaType();
             String value = metaType.getValue();
-            if(!httpEntityEnclosingRequestBase.containsHeader("Content-Type")) {
-                httpEntityEnclosingRequestBase.addHeader("Content-Type", value + ";charset=utf-8");
+            if(!httpEntityEnclosingRequestBase.containsHeader(HTTP_HEADER_CONTENT_TYPE)) {
+                httpEntityEnclosingRequestBase.addHeader(HTTP_HEADER_CONTENT_TYPE, value + ";charset=utf-8");
             }
 
             if(text instanceof String) {

@@ -46,7 +46,7 @@ public class StandardProxyStrategy<T> implements ProxyStrategy<T, MethodProxy> {
 
     @Override
     public T proxy(T source) {
-        if(!(source instanceof Class)) {
+        if (!(source instanceof Class)) {
             this.source = source;
         }
         Enhancer enhancer = new Enhancer();
@@ -59,7 +59,7 @@ public class StandardProxyStrategy<T> implements ProxyStrategy<T, MethodProxy> {
             @Override
             public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
                 String name = method.getName();
-                if (isSkip(name) || (null == methodIntercept && !(source instanceof Class))) {
+                if (isSkip(name)) {
                     return proxy.invokeSuper(obj, args);
                 }
 
@@ -79,6 +79,6 @@ public class StandardProxyStrategy<T> implements ProxyStrategy<T, MethodProxy> {
      * @return boolean
      */
     private boolean isSkip(String name) {
-        return SKIP_METHOD_NAME.contains(name);
+        return SKIP_METHOD_NAME.contains(name) || (null == methodIntercept && !(source instanceof Class));
     }
 }

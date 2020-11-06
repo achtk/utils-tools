@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 import static com.chua.utils.tools.constant.StringConstant.FILE_URL_PREFIX;
 
 /**
@@ -47,7 +48,7 @@ public class LocationFinder implements IResourceAdaptor {
         String parentPath = substring.substring(0, index).trim();
         String patternRegex = substring.substring(index);
 
-        Map<String, Resource> resourceSet = new HashMap<>();
+        Map<String, Resource> resourceSet = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         if(!Strings.isNullOrEmpty(parentPath)) {
             File parents = new File(parentPath);
             //深度检索

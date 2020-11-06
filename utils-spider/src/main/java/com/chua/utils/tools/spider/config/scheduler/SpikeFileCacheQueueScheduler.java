@@ -28,6 +28,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SpikeFileCacheQueueScheduler extends DuplicateRemovedScheduler implements MonitorableScheduler, Closeable {
 
     private String fileUrlAllName = ".urls.txt";
+    private static final String LEFT_SYMBOL = "/";
+    private static final String RIGHT_SYMBOL = "\\";
 
     private Set<String> cacheUrl = new HashSet<>();
 
@@ -35,8 +37,8 @@ public class SpikeFileCacheQueueScheduler extends DuplicateRemovedScheduler impl
     private File file;
 
     public SpikeFileCacheQueueScheduler(String filePath, Set<String> urls) {
-        if (!filePath.endsWith("/") && !filePath.endsWith("\\")) {
-            filePath += "/";
+        if (!filePath.endsWith(LEFT_SYMBOL) && !filePath.endsWith(RIGHT_SYMBOL)) {
+            filePath += LEFT_SYMBOL;
         }
         for (String url : urls) {
             queue.add(new Request(url));
@@ -60,7 +62,7 @@ public class SpikeFileCacheQueueScheduler extends DuplicateRemovedScheduler impl
 
         try {
             file.createNewFile();
-            cacheUrl.addAll(IOUtils.readLines(file.toURL().openStream()));
+            cacheUrl.addAll(IOUtils.readLines(file.toURI().toURL().openStream(), Charsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }

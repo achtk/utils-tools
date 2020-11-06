@@ -5,6 +5,7 @@ import com.chua.utils.http.config.RequestConfig;
 import com.chua.utils.http.entity.HttpClientResponse;
 import com.chua.utils.http.httpclient.action.HttpAsyncAction;
 import com.chua.utils.http.httpclient.handler.HttpClientHandler;
+import com.chua.utils.tools.constant.NumberConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -16,8 +17,11 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
- *
+ * 异步
+ * @author CH
  */
 @Slf4j
 public class Async extends HttpClientHandler {
@@ -36,7 +40,7 @@ public class Async extends HttpClientHandler {
     public HttpClientResponse executeDelete(Callback callback) {
         Map<String, Object> bodyers = requestConfig.getBodyers();
         if (bodyers == null) {
-            bodyers = new HashMap<String, Object>();
+            bodyers = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         }
         bodyers.put("_method", "delete");
         requestConfig.setBodyers(bodyers);
@@ -156,7 +160,7 @@ public class Async extends HttpClientHandler {
         // 创建访问的地址
         URIBuilder uriBuilder = null;
         try {
-            uriBuilder = packageURIBuilder(requestConfig.getUrl(), requestConfig.getBodyers());
+            uriBuilder = packageUriBuilder(requestConfig.getUrl(), requestConfig.getBodyers());
         } catch (URISyntaxException e) {
             log.error("获取uri失败!!", e);
             return null;

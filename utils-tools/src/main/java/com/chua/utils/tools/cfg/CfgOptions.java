@@ -330,8 +330,8 @@ public class CfgOptions {
      * @return Map
      */
     public Map<String, Properties> asMap() {
-        Map<String, Properties> result = new HashMap<>();
         List<Properties> properties = toHashMultimap();
+        Map<String, Properties> result = new HashMap<>(properties.size());
         for (Properties property : properties) {
             String key = property.getProperty(KEY_NAME);
             Properties properties1 = new Properties();

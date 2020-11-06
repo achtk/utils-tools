@@ -24,7 +24,7 @@ public interface ClientConfigCenter extends AutoCloseable {
 
 	/**
 	 * 关闭
-	 * @throws Throwable
+	 * @throws Exception Exception
 	 */
 	@Override
 	void close() throws Exception;

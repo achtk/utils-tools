@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import static com.chua.utils.tools.constant.SymbolConstant.*;
+
 /**
  * 默认类解释器
  *
@@ -58,8 +60,8 @@ public class DefaultClassResolver<T> implements ClassResolver {
     @Override
     public <T> T automaticAssembly(@NonNull final T entity, String prefix, final Converter<String, Object> converter) {
         Class<?> aClass = entity.getClass();
-        if (null != prefix && !prefix.endsWith(".")) {
-            prefix += ".";
+        if (null != prefix && !prefix.endsWith(SYMBOL_DOT)) {
+            prefix += SYMBOL_DOT;
         }
         final String newPrefix = prefix;
         ClassHelper.doWithLocalFields(aClass, item -> renderingField(item, entity, newPrefix, converter));
@@ -86,7 +88,7 @@ public class DefaultClassResolver<T> implements ClassResolver {
             return;
         }
         String s = type.toGenericString();
-        if (s.startsWith("[") || name1.contains("$")) {
+        if (s.startsWith(SYMBOL_LEFT_SQUARE_BRACKET) || name1.contains(SYMBOL_DOLLAR)) {
             return;
         }
         String name = StringHelper.humpToLine2(name1, "-");

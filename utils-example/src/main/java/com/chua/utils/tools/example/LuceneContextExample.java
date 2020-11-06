@@ -1,28 +1,14 @@
 package com.chua.utils.tools.example;
 
-import com.chua.utils.netx.centor.resolver.TemplateResolver;
-import com.chua.utils.netx.entity.DocumentData;
-import com.chua.utils.netx.entity.DocumentMap;
 import com.chua.utils.netx.entity.Search;
-import com.chua.utils.netx.function.DocumentContextAware;
-import com.chua.utils.netx.lucene.aware.MemoryLuceneContextAware;
-import com.chua.utils.netx.lucene.aware.NioFSLuceneContextAware;
 import com.chua.utils.netx.lucene.entity.DataDocument;
 import com.chua.utils.netx.lucene.entity.HitData;
-import com.chua.utils.netx.lucene.operator.DocumentOperatorTemplate;
 import com.chua.utils.netx.lucene.operator.IndexOperatorTemplate;
 import com.chua.utils.netx.lucene.operator.SearchOperatorTemplate;
 import com.chua.utils.netx.lucene.resolver.LuceneTemplateResolver;
-import com.chua.utils.netx.lucene.template.MMapLuceneOperatorTemplate;
-import com.chua.utils.netx.lucene.template.SingleLuceneOperatorTemplate;
-import com.chua.utils.tools.common.StringHelper;
-import com.chua.utils.tools.template.template.LuceneOperatorTemplate;
 import com.chua.utils.tools.text.IdHelper;
 import lombok.Data;
-import org.mockito.Mockito;
 
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static org.mockito.Mockito.mock;

@@ -10,7 +10,7 @@ import java.util.function.Consumer;
  * 页面处理
  * @author CH
  */
-public abstract class PageInterpreter implements IPageInterpreter{
+public abstract class AbstractPageInterpreter implements IPageInterpreter{
 
     private Set<String> nodes = new HashSet<>();
     private Consumer<Map<String, List<String>>> consumer;

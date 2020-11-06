@@ -13,21 +13,21 @@ import java.util.Map;
 public interface MemSearch<T> {
     /**
      * 添加数据
-     * @param data
-     * @return
+     * @param data 数据
+     * @return MemSearch
      */
     MemSearch addData(List<T> data) throws Exception;
 
     /**
      * 查询数据
-     * @param ddl
-     * @return
+     * @param ddl ddl
+     * @return List
      */
     List<Map<String, Object>> query(String ddl) throws Exception;
     /**
      * 查询数据
-     * @param ddl
-     * @return
+     * @param ddl ddl
+     * @return List
      */
     List<T> queryForObject(String ddl) throws Exception;
 }

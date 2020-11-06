@@ -2,12 +2,14 @@ package com.chua.utils.tools.classes.classloader;
 
 
 import com.chua.utils.tools.common.IoHelper;
-import com.chua.utils.tools.common.UrlHelper;
 
 import java.io.IOException;
 import java.net.URL;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
+import static com.chua.utils.tools.constant.SuffixConstant.SUFFIX_CLASS;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_DOT;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_LEFT_SLASH;
 
 /**
  * @author CH
@@ -37,20 +39,20 @@ public class JarClassLoaderAdaptor implements IClassLoaderAdaptor{
 
     /**
      * 格式化名称
-     * @param name
-     * @return
+     * @param name 名称
+     * @return 格式化名称
      */
     private String formatName(String name) {
-        String newName = name.replace(".", "/");
-        if(name.startsWith("/")) {
+        String newName = name.replace(SYMBOL_DOT, SYMBOL_LEFT_SLASH);
+        if(name.startsWith(SYMBOL_LEFT_SLASH)) {
             newName = newName.substring(1);
         }
-        if(name.endsWith("/")) {
+        if(name.endsWith(SYMBOL_LEFT_SLASH)) {
             newName = newName.substring(0, newName.length() - 1);
         }
 
-        if(!name.endsWith(".class")) {
-            newName += ".class";
+        if(!name.endsWith(SUFFIX_CLASS)) {
+            newName += SUFFIX_CLASS;
         }
         return newName;
     }

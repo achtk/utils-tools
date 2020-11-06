@@ -45,7 +45,7 @@ public class WebMagicProcessor implements PageProcessor, IPageProcessor<Page> {
      * @return
      */
     private Map<String, List<String>> resolve(Page page, Set<String> modifiers) {
-        Map<String, List<String>> result = new HashMap<>();
+        Map<String, List<String>> result = new HashMap<>(16);
         for (String modifier : modifiers) {
             result.put(modifier, page.getHtml().xpath(modifier).all());
         }

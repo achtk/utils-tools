@@ -18,6 +18,9 @@ import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import static com.chua.utils.tools.constant.BeanConstant.BEAN_APPLICATION_CONTEXT;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_AT;
+
 /**
  * 处理 @RequestMapping工具
  * @author CH
@@ -87,7 +90,7 @@ public class RequestMappingHandlerMappingFactory {
         invokeFields(obj, mappingEntity.getApplicationContext());
 
         Class<?> aClass = requestMappingHandlerMapping.getClass().getSuperclass().getSuperclass();
-        if (!BooleanHelper.hasLength(mappingEntity.paths()) || "@".equals(FinderHelper.firstElement(mappingEntity.paths()))) {
+        if (!BooleanHelper.hasLength(mappingEntity.paths()) || SYMBOL_AT.equals(FinderHelper.firstElement(mappingEntity.paths()))) {
             try {
                 Method declaredMethods = aClass.getDeclaredMethod("detectHandlerMethods", Object.class);
                 declaredMethods.setAccessible(true);
@@ -220,7 +223,7 @@ public class RequestMappingHandlerMappingFactory {
      * @param applicationContext
      */
     private Object throwableBean(Class<?> type, ApplicationContext applicationContext) {
-        if(type.getName().indexOf("org.springframework.context.ApplicationContext") > -1) {
+        if(type.getName().indexOf(BEAN_APPLICATION_CONTEXT) > -1) {
             return applicationContext;
         }
         return null;

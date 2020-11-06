@@ -13,7 +13,7 @@ import java.nio.file.Paths;
  * @version 1.0.0
  * @since 2020/11/2
  */
-public class MMapLuceneOperatorTemplate extends FileLuceneOperatorTemplate {
+public class MemMapLuceneOperatorTemplate extends FileLuceneOperatorTemplate {
 
     @Override
     protected DocumentContextAware getDocumentContextAware(String name) throws IOException {

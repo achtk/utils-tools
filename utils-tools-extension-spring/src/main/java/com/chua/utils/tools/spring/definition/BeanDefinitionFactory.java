@@ -245,7 +245,8 @@ public interface BeanDefinitionFactory<T> {
      * 添加属性
      *
      * @param keys 属性
-     * @return
+     * @param value 值
+     * @return BeanDefinitionFactory
      */
     default BeanDefinitionFactory addFirstPropertyValues(String[] keys, Object value) {
         if (!BooleanHelper.hasLength(keys)) {

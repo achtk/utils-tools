@@ -70,9 +70,9 @@ public interface RList<K, V> {
     /**
      * 遍历
      *
-     * @param v 索引
+     * @param v       索引
      * @param matcher 匹配器
-     * @throws Exception
+     * @throws Throwable Exception
      */
     void iterator(K v, Matcher<V> matcher) throws Throwable;
 }

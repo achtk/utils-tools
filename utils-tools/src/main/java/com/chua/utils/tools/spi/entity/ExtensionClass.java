@@ -10,6 +10,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static com.chua.utils.tools.constant.StringConstant.FILE;
+
 /**
  * Spi扩展器
  *
@@ -67,7 +69,7 @@ public class ExtensionClass<T> {
             return;
         }
         String protocol = url.getProtocol();
-        if("file".equals(protocol)) {
+        if(FILE.equals(protocol)) {
             this.recordTime = new File(url.getFile()).lastModified();
         }
         this.url = url;

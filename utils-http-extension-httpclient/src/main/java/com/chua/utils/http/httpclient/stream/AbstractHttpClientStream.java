@@ -207,7 +207,7 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
      * 生成安全套接字工厂，用于https请求的证书跳过
      * @return
      */
-    public SSLSocketFactory createSSLSocketFactory() {
+    public SSLSocketFactory createSslSocketFactory() {
         SSLSocketFactory ssfFactory = null;
         try {
             SSLContext sc = SSLContext.getInstance("TLS");

@@ -4,6 +4,7 @@ import com.chua.utils.netx.centor.listener.Listener;
 
 /**
  * 中心服务
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/10/12
@@ -12,6 +13,7 @@ public interface EventPublishingConfigService {
 
     /**
      * Get config.
+     *
      * @param dataId    dataId
      * @param group     group
      * @param timeoutMs read timeout
@@ -22,16 +24,19 @@ public interface EventPublishingConfigService {
 
     /**
      * Get config.
+     *
      * @param dataId    dataId
      * @param group     group
      * @param timeoutMs read timeout
+     * @param listener listener
      * @return config value
-     * @throws Exception
+     * @throws Exception Exception
      */
     String getConfigAndSignListener(String dataId, String group, long timeoutMs, Listener listener) throws Exception;
 
     /**
      * Add a listener to the configuration
+     *
      * @param dataId   dataId
      * @param group    group
      * @param listener listener
@@ -66,6 +71,7 @@ public interface EventPublishingConfigService {
      * @param dataId   dataId
      * @param group    group
      * @param listener listener
+     * @throws Exception Exception
      */
     void removeListener(String dataId, String group, Listener listener) throws Exception;
 
@@ -82,5 +88,5 @@ public interface EventPublishingConfigService {
      * @throws Exception exception.
      */
     void shutDown() throws Exception;
-    
+
 }

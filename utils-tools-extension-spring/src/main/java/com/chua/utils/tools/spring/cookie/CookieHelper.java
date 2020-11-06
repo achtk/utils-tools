@@ -70,9 +70,9 @@ public class CookieHelper {
      * @param key
      */
     private static Cookie get(HttpServletRequest request, String key) {
-        Cookie[] arr_cookie = request.getCookies();
-        if (arr_cookie != null && arr_cookie.length > 0) {
-            for (Cookie cookie : arr_cookie) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(key)) {
                     return cookie;
                 }

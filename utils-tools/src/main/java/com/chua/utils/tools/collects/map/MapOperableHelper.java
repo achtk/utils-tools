@@ -4,15 +4,18 @@ import com.chua.utils.tools.common.ArraysHelper;
 import com.chua.utils.tools.empty.Empty;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
+import com.chua.utils.tools.properties.NetProperties;
 import net.sf.cglib.beans.BeanMap;
+import org.checkerframework.checker.units.qual.K;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_SIZE;
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 
 /**
  * Map工具类
@@ -36,6 +39,17 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      */
     public static <K, V> Map<K, V> newMap() {
         return new HashMap<>(DEFAULT_SIZE);
+    }
+
+    /**
+     * 创建 ConcurrentHashMap
+     *
+     * @param <K> 索引类型
+     * @param <V> 值类型
+     * @return ConcurrentHashMap
+     */
+    public static <K, V> ConcurrentHashMap<K, V> newConcurrentHashMap() {
+        return new ConcurrentHashMap<>(DEFAULT_INITIAL_CAPACITY);
     }
 
     /**
@@ -753,7 +767,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
     public static void putIfValNoNull(Map target, Object key, Object value) {
         Objects.requireNonNull(key, "key");
         if (target == null) {
-            target = new HashMap<>();
+            target = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         }
         if (value != null) {
             target.put(key, value);
@@ -770,7 +784,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
     public static void computeIfAbsent(Map target, Object key, Object value) {
         Objects.requireNonNull(key, "key");
         if (target == null) {
-            target = new HashMap<>();
+            target = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         }
         if (value != null && !target.containsKey(key)) {
             target.put(key, value);
@@ -789,7 +803,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
         if (null == map) {
             return null;
         }
-        Map<K, V> result = new HashMap<>();
+        Map<K, V> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         map.forEach((o, o2) -> {
             boolean matcher = filter.matcher(o2);
             if (matcher) {
@@ -910,7 +924,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      */
     public static Properties toProfile(Object object) {
         Properties properties1 = new Properties();
-        Map<String, Object> pendingMap = new HashMap<>();
+        Map<String, Object> pendingMap = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         if (!(object instanceof Map)) {
             BeanMap beanMap = BeanMap.create(object);
             pendingMap.putAll(beanMap);
@@ -963,5 +977,21 @@ public class MapOperableHelper extends MultiMapOperableHelper {
             Object value = entry.getValue();
             dataFormatProfile(parentName + "." + key, value, result);
         }
+    }
+
+    /**
+     * 是否存索引
+     *
+     * @param key  索引
+     * @param maps 集合
+     * @return boolean
+     */
+    public static boolean isValid(String key, Map<?, ?>... maps) {
+        for (Map<?, ?> map : maps) {
+            if (map.containsKey(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

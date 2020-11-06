@@ -8,6 +8,9 @@ import org.springframework.core.env.PropertySource;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static com.chua.utils.tools.constant.BeanConstant.BEAN_RANDOM;
+import static com.chua.utils.tools.constant.BeanConstant.BEAN_SYSTEM_PROPERTIES;
+
 /**
  * PropertySources工具
  * @author CH
@@ -43,7 +46,7 @@ public class PropertySourcesResolver {
         propertySources.stream().forEach(new Consumer<PropertySource<?>>() {
             @Override
             public void accept(PropertySource<?> propertySource) {
-                if("random".equals(propertySource.getName()) || "systemProperties".equals(propertySource.getName())) {
+                if(BEAN_RANDOM.equals(propertySource.getName()) || BEAN_SYSTEM_PROPERTIES.equals(propertySource.getName())) {
                     return;
                 }
                 Properties convert = PropertySourcesHelper.convert(propertySource, environment);

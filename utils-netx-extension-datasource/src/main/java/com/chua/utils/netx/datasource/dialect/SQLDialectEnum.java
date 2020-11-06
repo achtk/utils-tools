@@ -2,7 +2,6 @@ package com.chua.utils.netx.datasource.dialect;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.util.ArrayList;
@@ -21,79 +20,79 @@ public enum SQLDialectEnum {
     /**
      * h2嵌入式
      */
-    H2_EMBEDDED(SQLDialect.H2_DRIVER, SQLDialect.H2_EMBEDDED_URL, SQLDialect.H2),
+    H2_EMBEDDED(SqlDialect.H2_DRIVER, SqlDialect.H2_EMBEDDED_URL, SqlDialect.H2),
     /**
      * h2内存
      */
-    H2_MEMORY(SQLDialect.H2_DRIVER, SQLDialect.H2_MEMORY_URL, SQLDialect.H2),
+    H2_MEMORY(SqlDialect.H2_DRIVER, SqlDialect.H2_MEMORY_URL, SqlDialect.H2),
     /**
      * h2服务式
      */
-    H2_SERVER(SQLDialect.H2_DRIVER, SQLDialect.H2_SERVER_URL, SQLDialect.H2),
+    H2_SERVER(SqlDialect.H2_DRIVER, SqlDialect.H2_SERVER_URL, SqlDialect.H2),
     /**
      * sqlite内存
      */
-    SQLITE_MEMORY(SQLDialect.SQLITE_DRIVER, SQLDialect.SQLITE_MEMORY_URL, SQLDialect.SQLITE_MEMORY),
+    SQLITE_MEMORY(SqlDialect.SQLITE_DRIVER, SqlDialect.SQLITE_MEMORY_URL, SqlDialect.SQLITE_MEMORY),
     /**
      * sqlite文件
      */
-    SQLITE_FILE(SQLDialect.SQLITE_DRIVER, SQLDialect.SQLITE_FILE_URL, SQLDialect.SQLITE),
+    SQLITE_FILE(SqlDialect.SQLITE_DRIVER, SqlDialect.SQLITE_FILE_URL, SqlDialect.SQLITE),
     /**
      * hsqldb 内存
      */
-    HSQLDB_MEMORY(SQLDialect.HSQLDB_DRIVER, SQLDialect.HSQLDB_MEMORY_URL, SQLDialect.HSQLDB),
+    HSQLDB_MEMORY(SqlDialect.HSQLDB_DRIVER, SqlDialect.HSQLDB_MEMORY_URL, SqlDialect.HSQLDB),
     /**
      * hsqldb 服务
      */
-    HSQLDB_SERVER(SQLDialect.HSQLDB_DRIVER, SQLDialect.HSQLDB_SERVER_URL, SQLDialect.HSQLDB),
+    HSQLDB_SERVER(SqlDialect.HSQLDB_DRIVER, SqlDialect.HSQLDB_SERVER_URL, SqlDialect.HSQLDB),
     /**
      * hsqldb 文件
      */
-    HSQLDB_FILE(SQLDialect.HSQLDB_DRIVER, SQLDialect.HSQLDB_FILE_URL, SQLDialect.HSQLDB),
+    HSQLDB_FILE(SqlDialect.HSQLDB_DRIVER, SqlDialect.HSQLDB_FILE_URL, SqlDialect.HSQLDB),
     /**
      * mysql
      */
-    MYSQL(SQLDialect.MYSQL_DRIVER, SQLDialect.MYSQL_URL, SQLDialect.MYSQL),
+    MYSQL(SqlDialect.MYSQL_DRIVER, SqlDialect.MYSQL_URL, SqlDialect.MYSQL),
     /**
      * oracle
      */
-    ORACLE(SQLDialect.ORACLE_THIN_DRIVER, SQLDialect.ORACLE_THIN_URL, SQLDialect.ORACLE),
+    ORACLE(SqlDialect.ORACLE_THIN_DRIVER, SqlDialect.ORACLE_THIN_URL, SqlDialect.ORACLE),
     /**
      * PostgreSQL
      */
-    POSTGRESQL(SQLDialect.POSTGRE_SQL_DRIVER, SQLDialect.POSTGRE_SQL_URL, SQLDialect.POSTGRESQL),
+    POSTGRESQL(SqlDialect.POSTGRE_SQL_DRIVER, SqlDialect.POSTGRE_SQL_URL, SqlDialect.POSTGRESQL),
     /**
      * JDBC-ODBC
      */
-    JDBC_ODBC(SQLDialect.JDBC_ODBC_DRIVER, SQLDialect.JDBC_ODBC_URL, SQLDialect.JDBC_ODBC),
+    JDBC_ODBC(SqlDialect.JDBC_ODBC_DRIVER, SqlDialect.JDBC_ODBC_URL, SqlDialect.JDBC_ODBC),
     /**
      * Informix
      */
-    INFORMIX(SQLDialect.INFORMIX_DRIVER, SQLDialect.INFORMIX_URL, SQLDialect.INFORMIX),
+    INFORMIX(SqlDialect.INFORMIX_DRIVER, SqlDialect.INFORMIX_URL, SqlDialect.INFORMIX),
     /**
      * db2
      */
-    DB2(SQLDialect.DB2_DRIVER, SQLDialect.DB2_URL, SQLDialect.DB2),
+    DB2(SqlDialect.DB2_DRIVER, SqlDialect.DB2_URL, SqlDialect.DB2),
     /**
      * db2-net
      */
-    DB2_NET(SQLDialect.DB2_NET_DRIVER, SQLDialect.DB2_URL, SQLDialect.DB2),
+    DB2_NET(SqlDialect.DB2_NET_DRIVER, SqlDialect.DB2_URL, SqlDialect.DB2),
     /**
      * sysbase
      */
-    SYSBASE(SQLDialect.SYSBASE_DRIVER, SQLDialect.SYSBASE_URL, SQLDialect.SYSBASE),
+    SYSBASE(SqlDialect.SYSBASE_DRIVER, SqlDialect.SYSBASE_URL, SqlDialect.SYSBASE),
     /**
      * sql_server_2_0
      */
-    SQL_SERVER_2_0(SQLDialect.SQL_SERVER_DRIVER_2_0, SQLDialect.SQL_SERVER_URL_2_0, SQLDialect.SQL_SERVER_2_0),
+    SQL_SERVER_2_0(SqlDialect.SQL_SERVER_DRIVER_2_0, SqlDialect.SQL_SERVER_URL_2_0, SqlDialect.SQL_SERVER_2_0),
     /**
      * sql_server_3_0
      */
-    SQL_SERVER_3_0(SQLDialect.SQL_SERVER_DRIVER_3_0, SQLDialect.SQL_SERVER_URL_3_0, SQLDialect.SQL_SERVER_3_0),
+    SQL_SERVER_3_0(SqlDialect.SQL_SERVER_DRIVER_3_0, SqlDialect.SQL_SERVER_URL_3_0, SqlDialect.SQL_SERVER_3_0),
     /**
      * mariadb
      */
-    MARIADB(SQLDialect.MARIADB_URL, SQLDialect.MARIADB_DRIVER, SQLDialect.MARIADB);
+    MARIADB(SqlDialect.MARIADB_URL, SqlDialect.MARIADB_DRIVER, SqlDialect.MARIADB);
 
 
     private String driver;
@@ -121,7 +120,7 @@ public enum SQLDialectEnum {
             return temp.get(0);
         }
         for (SQLDialectEnum sqlDialectEnum : temp) {
-            String replace = sqlDialectEnum.getUrl().replace(SQLDialect.DB_NAME, "*").replace(SQLDialect.IP, "*").replace(SQLDialect.PORT, "*");
+            String replace = sqlDialectEnum.getUrl().replace(SqlDialect.DB_NAME, "*").replace(SqlDialect.IP, "*").replace(SqlDialect.PORT, "*");
             if(FilenameUtils.wildcardMatch(url, replace)) {
                 return sqlDialectEnum;
             }

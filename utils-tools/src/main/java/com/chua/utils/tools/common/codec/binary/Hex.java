@@ -2,12 +2,16 @@ package com.chua.utils.tools.common.codec.binary;
 
 import com.chua.utils.tools.common.codec.BinaryDecoder;
 import com.chua.utils.tools.common.codec.BinaryEncoder;
+import com.chua.utils.tools.constant.NumberConstant;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.chua.utils.tools.constant.NumberConstant.HEX_0X01;
+import static com.chua.utils.tools.constant.NumberConstant.TWE;
 
 /**
  * Hex
@@ -171,7 +175,7 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
         StringBuilder sb = new StringBuilder();
         List<Byte> tempCache = new ArrayList<>();
 
-        for (int i = 0; i < hex.length() - 1; i += 2) {
+        for (int i = 0; i < hex.length() - 1; i += TWE) {
             String output = hex.substring(i, (i + 2));
             int decimal = Integer.parseInt(output, 16);
             if (decimal > 0 && decimal < 128) {
@@ -255,7 +259,7 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
     public static int decodeHex(final char[] data, final byte[] out, final int outOffset) throws Exception {
         final int len = data.length;
 
-        if ((len & 0x01) != 0) {
+        if ((len & HEX_0X01) != 0) {
             throw new Exception("Odd number of characters.");
         }
 

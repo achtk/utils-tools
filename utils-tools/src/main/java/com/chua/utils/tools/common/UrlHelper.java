@@ -2,6 +2,8 @@ package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.charset.CharsetHelper;
+import com.chua.utils.tools.constant.StringConstant;
+import com.chua.utils.tools.constant.SuffixConstant;
 import com.chua.utils.tools.resource.Resource;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +19,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 import static com.chua.utils.tools.constant.StringConstant.*;
+import static com.chua.utils.tools.constant.SuffixConstant.SUFFIX_CLASS;
+import static com.chua.utils.tools.constant.SuffixConstant.SUFFIX_JAR_SUFFIX;
 import static com.chua.utils.tools.constant.SymbolConstant.*;
 
 /**
@@ -130,14 +135,14 @@ public class UrlHelper {
      * @return
      */
     private static Map<String, Object> doFileMatching(URL fileUrl, String packages) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         String path = fileUrl.getPath();
         path = path.startsWith(SYMBOL_LEFT_SLASH) ? path.substring(1) : path;
         List<String> strings = FileHelper.listFiles(path);
         Resource resource;
 
         Set<String> names = new HashSet<>();
-        Map<String, Resource> resources = new HashMap<>();
+        Map<String, Resource> resources = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         for (String string : strings) {
             if (!string.contains(SYMBOL_ASTERISK) && !string.contains(SYMBOL_DOLLAR) && !string.endsWith(SYMBOL_ASTERISK) && !string.endsWith(SYMBOL_LEFT_SLASH)) {
                 String tempString = string.replace(SYMBOL_RIGHT_SLASH, SYMBOL_LEFT_SLASH).replace(path, SYMBOL_EMPTY);
@@ -175,7 +180,7 @@ public class UrlHelper {
      * @return
      */
     private static Map<String, Object> doJarMatching(URL jarUrl, String packages) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         JarFile jarFile = null;
         try {
             URLConnection urlConnection = jarUrl.openConnection();
@@ -185,11 +190,14 @@ public class UrlHelper {
                 JarURLConnection jarCon = (JarURLConnection) urlConnection;
                 jarFile = jarCon.getJarFile();
                 Set<String> names = new HashSet<>();
-                Map<String, Resource> resources = new HashMap<>();
+                Map<String, Resource> resources = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
                 for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements(); ) {
                     JarEntry entry = entries.nextElement();
                     String entryPath = entry.getName();
-                    if (!entryPath.contains("*") && !entryPath.contains("$") && !entryPath.endsWith("*") && !entryPath.endsWith("/")) {
+                    if (!entryPath.contains(SYMBOL_ASTERISK)
+                            && !entryPath.contains(SYMBOL_DOLLAR)
+                            && !entryPath.endsWith(SYMBOL_ASTERISK)
+                            && !entryPath.endsWith(SYMBOL_LEFT_SLASH)) {
                         if (names.contains(entryPath) && !entryPath.startsWith("sun/")) {
                             continue;
                         }
@@ -217,19 +225,15 @@ public class UrlHelper {
     /**
      * 添加Java部分信息
      *
-     * @param packages
+     * @param packages 包
      * @param resource 资源对象
      * @param parent   来源
      * @param file     文件
      * @return
      */
     public static String renderResource(String packages, Resource resource, final String parent, final String file) {
-        if (!parent.contains("/jre") && file.endsWith(CLASS_FILE_EXTENSION) && !file.startsWith("sun")) {
-            return file.replace(".class", "").replace("/", ".");
-            // if (!dotClass.contains("junit") && !dotClass.contains("$")) {
-
-
-            //  }
+        if (!parent.contains(PATH_JRE) && file.endsWith(CLASS_FILE_EXTENSION) && !file.startsWith(SUN)) {
+            return file.replace(SUFFIX_CLASS, SYMBOL_EMPTY).replace(SYMBOL_LEFT_SLASH, SYMBOL_DOT);
         }
 
         return file;
@@ -315,16 +319,16 @@ public class UrlHelper {
      */
     public static URL extractArchiveUrl(URL jarUrl) throws MalformedURLException {
         String urlFile = jarUrl.getFile();
-        int endIndex = urlFile.indexOf("*/");
+        int endIndex = urlFile.indexOf(WAR_URL_SEPARATOR);
         if (endIndex != -1) {
             String warFile = urlFile.substring(0, endIndex);
-            if ("war".equals(jarUrl.getProtocol())) {
+            if (WAR.equals(jarUrl.getProtocol())) {
                 return new URL(warFile);
             }
 
-            int startIndex = warFile.indexOf("war:");
+            int startIndex = warFile.indexOf(WAR_URL_PREFIX);
             if (startIndex != -1) {
-                return new URL(warFile.substring(startIndex + "war:".length()));
+                return new URL(warFile.substring(startIndex + WAR_URL_PREFIX.length()));
             }
         }
 
@@ -436,9 +440,9 @@ public class UrlHelper {
             return false;
         }
 
-        if (!urlPath.endsWith(".jar")) {
-            urlPath = urlPath.replace("!/", "");
-            int index = urlPath.lastIndexOf("/");
+        if (!urlPath.endsWith(SUFFIX_JAR_SUFFIX)) {
+            urlPath = urlPath.replace(JAR_URL_SEPARATOR, SYMBOL_EMPTY);
+            int index = urlPath.lastIndexOf(SYMBOL_LEFT_SLASH);
             urlPath = urlPath.substring(index > -1 ? index + 1 : 0);
         }
 

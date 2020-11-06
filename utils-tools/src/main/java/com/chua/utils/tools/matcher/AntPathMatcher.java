@@ -102,7 +102,7 @@ public class AntPathMatcher implements PathMatcher {
         // Match all elements up to the first **
         while (pattIdxStart <= pattIdxEnd && pathIdxStart <= pathIdxEnd) {
             String pattDir = patternDirs[pattIdxStart];
-            if ("**".equals(pattDir)) {
+            if (SYMBOL_ASTERISKS.equals(pattDir)) {
                 break;
             }
             if (!matchStrings(pattDir, pathDirs[pathIdxStart], uriTemplateVariables)) {
@@ -113,7 +113,6 @@ public class AntPathMatcher implements PathMatcher {
         }
 
         if (pathIdxStart > pathIdxEnd) {
-            // Path is exhausted, only match if rest of pattern is * or **'s
             if (pattIdxStart > pattIdxEnd) {
                 return (pattern.endsWith(this.pathSeparator) == path.endsWith(this.pathSeparator));
             }
@@ -149,8 +148,8 @@ public class AntPathMatcher implements PathMatcher {
             pattIdxEnd--;
             pathIdxEnd--;
         }
+
         if (pathIdxStart > pathIdxEnd) {
-            // String is exhausted
             for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
                 if (!SYMBOL_ASTERISKS.equals(patternDirs[i])) {
                     return false;

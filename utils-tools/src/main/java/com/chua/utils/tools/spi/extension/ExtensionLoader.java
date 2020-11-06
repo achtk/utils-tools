@@ -293,8 +293,9 @@ public class ExtensionLoader<T> {
         if (null == multimap) {
             return null;
         }
-        Map<String, ExtensionClass<T>> result = new HashMap<>();
         Set<String> names = multimap.keySet();
+        Map<String, ExtensionClass<T>> result = new HashMap<>(names.size());
+
         for (String name : names) {
             result.put(name, getExtensionClass(name));
         }

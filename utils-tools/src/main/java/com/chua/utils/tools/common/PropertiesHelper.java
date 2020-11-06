@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * properties工具类
  *
@@ -243,7 +245,7 @@ public class PropertiesHelper {
      * @return
      */
     public static ConcurrentHashMap<String, Object> toConcurrentHashMap(Properties properties) {
-        return null == properties ? new ConcurrentHashMap<>() : new ConcurrentHashMap(properties);
+        return null == properties ? new ConcurrentHashMap<>(DEFAULT_INITIAL_CAPACITY) : new ConcurrentHashMap(properties);
     }
 
     /**

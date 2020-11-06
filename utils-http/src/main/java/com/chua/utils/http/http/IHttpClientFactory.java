@@ -2,6 +2,8 @@ package com.chua.utils.http.http;
 
 import com.chua.utils.http.stream.AbstractHttpClientStream;
 
+import static com.chua.utils.tools.constant.HttpConstant.*;
+
 /**
  * HttpClient统一接口
  * @author CH
@@ -44,16 +46,16 @@ public interface IHttpClientFactory {
         }
 
         type = type.toUpperCase();
-        if("GET".equals(type)) {
+        if(HTTP_METHOD_GET.equals(type)) {
             return newGet();
         }
-        if("POST".equals(type)) {
+        if(HTTP_METHOD_POST.equals(type)) {
             return newPost();
         }
-        if("PUT".equals(type)) {
+        if(HTTP_METHOD_PUT.equals(type)) {
             return newPut();
         }
-        if("DELETE".equals(type)) {
+        if(HTTP_METHOD_DELETE.equals(type)) {
             return newDelete();
         }
         return newGet();

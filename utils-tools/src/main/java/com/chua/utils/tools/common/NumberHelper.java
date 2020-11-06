@@ -11,6 +11,7 @@ import java.math.RoundingMode;
 import java.util.regex.Pattern;
 
 import static com.chua.utils.tools.constant.StringConstant.HEX_16_UPPER;
+import static com.chua.utils.tools.constant.StringConstant.ZERO;
 import static com.chua.utils.tools.constant.SymbolConstant.*;
 
 /**
@@ -1223,7 +1224,7 @@ public class NumberHelper {
         } else if (value.startsWith(SYMBOL_WELL, index)) {
             index++;
             radix = 16;
-        } else if (value.startsWith("0", index) && value.length() > 1 + index) {
+        } else if (value.startsWith(ZERO, index) && value.length() > 1 + index) {
             index++;
             radix = 8;
         }
@@ -1546,47 +1547,6 @@ public class NumberHelper {
         );
     }
 
-    /**
-     * @param value 原始数据
-     * @since 3.8
-     */
-    public static BigDecimal toScaledBigDecimal(final String value) {
-        return toScaledBigDecimal(value, INTEGER_TWO, RoundingMode.HALF_EVEN);
-    }
-
-    /**
-     * @param value        原始数据
-     * @param scale        数据缩放
-     * @param roundingMode
-     * @since 3.8
-     */
-    public static BigDecimal toScaledBigDecimal(final String value, final int scale, final RoundingMode roundingMode) {
-        if (value == null) {
-            return BigDecimal.ZERO;
-        }
-        return toScaledBigDecimal(
-                createBigDecimal(value),
-                scale,
-                roundingMode
-        );
-    }
-
-    /**
-     * @param source 原始数据
-     * @throws NumberFormatException
-     */
-    public static BigDecimal createBigDecimal(final String source) {
-        if (source == null) {
-            return null;
-        }
-        if (Strings.isNullOrEmpty(source)) {
-            throw new NumberFormatException("A blank string is not a valid number");
-        }
-        if (source.trim().startsWith("--")) {
-            throw new NumberFormatException(source + " is not a valid number.");
-        }
-        return new BigDecimal(source);
-    }
 
     /**
      * is integer string.
@@ -1622,44 +1582,6 @@ public class NumberHelper {
             }
         }
         return true;
-    }
-
-    /**
-     * 随机整数
-     * <p>
-     * NumberHelper.randomInt(1) = (0, 1)
-     * NumberHelper.randomInt(100) = (0, 100)
-     * </p>
-     *
-     * @param max 最大数据
-     * @return
-     */
-    public static double randomDouble(final double max) {
-        if (max < 0D) {
-            return 0D;
-        }
-
-        return Math.random() * max;
-    }
-
-    /**
-     * 随机整数
-     * <p>
-     * NumberHelper.randomInt(1) = 0
-     * NumberHelper.randomInt(100) = (0, 100)
-     * </p>
-     *
-     * @param max 最大数据
-     * @return
-     */
-    public static int randomInt(final int max) {
-        if (max < 1) {
-            return 0;
-        }
-
-        Double maxDouble = randomDouble(max);
-        int maxInt = maxDouble.intValue();
-        return maxInt;
     }
 
     /**

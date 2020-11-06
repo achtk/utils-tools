@@ -526,13 +526,14 @@ public class ClassExtensionHelper<T> {
         if (null == obj) {
             return Collections.emptyMap();
         }
-        Map<String, T> result = new HashMap<>();
         List<Field> fieldByType = null;
         if (Strings.isNullOrEmpty(fieldName)) {
             fieldByType = getFieldByType(obj, fieldType);
         } else {
             fieldByType = findField(obj, fieldName);
         }
+
+        Map<String, T> result = new HashMap<>(fieldByType.size());
         for (Field field : fieldByType) {
             doDataAnalysis(result, obj, fieldName, field);
         }
@@ -613,8 +614,8 @@ public class ClassExtensionHelper<T> {
      * @return
      */
     public static Map<String, Field> getFieldsAsMap(final Object obj) {
-        Map<String, Field> result = new HashMap<>();
         List<MemberInfo> members = getFieldMembers(obj);
+        Map<String, Field> result = new HashMap<>(members.size());
         for (MemberInfo member : members) {
             if (!member.isField()) {
                 continue;
@@ -631,8 +632,8 @@ public class ClassExtensionHelper<T> {
      * @return
      */
     public static Map<String, Object> getFieldsValueAsMap(final Object obj) {
-        Map<String, Object> result = new HashMap<>();
         List<MemberInfo> members = getFieldMembers(obj);
+        Map<String, Object> result = new HashMap<>(members.size());
         for (MemberInfo member : members) {
             if (!member.isField()) {
                 continue;
@@ -786,8 +787,8 @@ public class ClassExtensionHelper<T> {
         if (null == obj) {
             return Collections.emptyMap();
         }
-        Map<String, T> result = new HashMap<>();
         BeanMap beanMap = BeanMap.create(obj);
+        Map<String, T> result = new HashMap<>(beanMap.size());
 
         if (Strings.isNullOrEmpty(fieldName)) {
             beanMap.forEach(new BiConsumer() {
@@ -881,20 +882,23 @@ public class ClassExtensionHelper<T> {
         if (null == method) {
             return null;
         }
-        Map<String, Object> result = new HashMap<>();
+        //获取所有注解
+        Annotation[] annotations = method.getDeclaredAnnotations();
+        //获取方法参数
+        Parameter[] parameters = method.getParameters();
+
+        Map<String, Object> result = new HashMap<>(annotations.length + parameters.length + 3);
+
         //获取方法名
         result.put("method.name", method.getName());
         //获取方法返回值
         result.put("method.return", method.getReturnType().getName());
-        //获取所有注解
-        Annotation[] annotations = method.getDeclaredAnnotations();
 
         for (int i = 0; i < annotations.length; i++) {
             Annotation annotation = annotations[i];
             result.put("method.annotation[" + i + "].name", annotation.annotationType().getName());
         }
-        //获取方法参数
-        Parameter[] parameters = method.getParameters();
+
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
             result.put("method.parameter[" + i + "].name", parameter.getName());
@@ -1316,11 +1320,12 @@ public class ClassExtensionHelper<T> {
 
     /**
      * 制作修饰符
+     *
      * @param sourceClass
      * @return
      */
     public static Class<?> makeModifiers(Class<?> sourceClass) throws Exception {
-        if(null == sourceClass) {
+        if (null == sourceClass) {
             return sourceClass;
         }
         ClassPool classPool = getClassPool();
@@ -1329,6 +1334,7 @@ public class ClassExtensionHelper<T> {
         Loader loader = new Loader();
         return loader.loadClass(ctClass.getName());
     }
+
     /**
      * 设置无障碍
      *
@@ -1438,21 +1444,23 @@ public class ClassExtensionHelper<T> {
 
     /**
      * 是否有无参构造
+     *
      * @param sourceClass
      * @return
      */
     public static boolean hasNoParamterConstructor(Class<?> sourceClass) {
-        if(null == sourceClass) {
+        if (null == sourceClass) {
             return false;
         }
         Constructor<?>[] declaredConstructors = sourceClass.getDeclaredConstructors();
         for (Constructor<?> declaredConstructor : declaredConstructors) {
-            if(declaredConstructor.getParameterTypes().length == 0) {
+            if (declaredConstructor.getParameterTypes().length == 0) {
                 return true;
             }
         }
         return false;
     }
+
     /**
      * 类是否有注解
      *
@@ -1461,19 +1469,20 @@ public class ClassExtensionHelper<T> {
      * @return
      */
     public static boolean hasAnnotation(Class<?> aClass, Class<? extends Annotation> annotationType) {
-        if(null == aClass || null == annotationType) {
+        if (null == aClass || null == annotationType) {
             return false;
         }
         String annotationTypeName = annotationType.getName();
         Annotation[] annotations = aClass.getDeclaredAnnotations();
         for (Annotation annotation : annotations) {
-            if(!annotationTypeName.equals(annotation.annotationType().getName())) {
+            if (!annotationTypeName.equals(annotation.annotationType().getName())) {
                 continue;
             }
             return true;
         }
         return false;
     }
+
     /**
      * 获取指定注解, 没有返回空
      *
@@ -1481,14 +1490,14 @@ public class ClassExtensionHelper<T> {
      * @param annotationType 注解
      * @return
      */
-    public static <T>T getAnnotation(Class<?> aClass, Class<T> annotationType) {
-        if(null == aClass || null == annotationType) {
+    public static <T> T getAnnotation(Class<?> aClass, Class<T> annotationType) {
+        if (null == aClass || null == annotationType) {
             return null;
         }
         String annotationTypeName = annotationType.getName();
         Annotation[] annotations = aClass.getDeclaredAnnotations();
         for (Annotation annotation : annotations) {
-            if(!annotationTypeName.equals(annotation.annotationType().getName())) {
+            if (!annotationTypeName.equals(annotation.annotationType().getName())) {
                 continue;
             }
             return (T) annotation;

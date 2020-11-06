@@ -687,7 +687,9 @@ public class FileFilterHelper {
         return new MagicNumberFileFilter(magicNumber, offset);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * -----------------------------------------------------------------------
+     */
     private static final FileFilter CVS_FILTER = notFileFilter(
             and(directoryFileFilter(), nameFileFilter("CVS")));
 

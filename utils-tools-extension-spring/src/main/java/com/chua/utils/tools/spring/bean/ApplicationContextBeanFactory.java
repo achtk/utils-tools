@@ -18,7 +18,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -29,6 +28,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.chua.utils.tools.constant.BeanConstant.BEAN_REQUEST_MAPPING_HANDLER_MAPPING;
 
 /**
  * applicationContext
@@ -52,11 +53,11 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
 
     @Override
     public String registerController(@NotNull Object entity, String prefix) {
-        if (null == applicationContext || !applicationContext.containsBean("requestMappingHandlerMapping")) {
+        if (null == applicationContext || !applicationContext.containsBean(BEAN_REQUEST_MAPPING_HANDLER_MAPPING)) {
             return null;
         }
 
-        RequestMappingHandlerMapping requestMappingHandlerMapping = applicationContext.getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping.class);
+        RequestMappingHandlerMapping requestMappingHandlerMapping = applicationContext.getBean(BEAN_REQUEST_MAPPING_HANDLER_MAPPING, RequestMappingHandlerMapping.class);
         MappingEntity mappingEntity = new MappingEntity();
         mappingEntity.setObj(entity);
         mappingEntity.setApplicationContext(applicationContext);

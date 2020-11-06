@@ -10,6 +10,9 @@ import java.rmi.Remote;
 import java.rmi.registry.LocateRegistry;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_COLON;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_DOT;
+
 /**
  * @author CH
  * @version 1.0.0
@@ -57,10 +60,10 @@ public class RmiProvider implements IRpcProvider {
             host = host.substring(index + 3);
         }
 
-        if(host.indexOf(":") == -1) {
+        if(host.indexOf(SYMBOL_COLON) == -1) {
             return -1;
         }
-        String[] strings = host.split(":");
+        String[] strings = host.split(SYMBOL_COLON);
         try {
             return Integer.valueOf(strings[1]);
         } catch (NumberFormatException e) {

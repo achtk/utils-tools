@@ -13,6 +13,7 @@ public interface RMq {
      *
      * @param key   索引
      * @param value 值
+     * @throws Exception Exception
      */
     void lpush(String key, String... value) throws Exception;
 
@@ -20,8 +21,8 @@ public interface RMq {
      * 获取数据
      *
      * @param key 索引
-     * @return
-     * @throws Exception
+     * @return String
+     * @throws Exception Exception
      */
     String lpop(String key) throws Exception;
 }

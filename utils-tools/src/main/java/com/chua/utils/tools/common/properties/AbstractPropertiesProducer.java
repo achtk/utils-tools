@@ -6,11 +6,14 @@ import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.constant.NumberConstant;
 import com.chua.utils.tools.text.IdHelper;
 import com.google.common.collect.Sets;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 
 /**
  * properties信息提供者
@@ -206,7 +209,7 @@ public abstract class AbstractPropertiesProducer {
         if (null == objects) {
             return isNeedEmptyCollection(Collections.emptyMap());
         }
-        Map<K, V> result = new HashMap<>();
+        Map<K, V> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         if (objects instanceof Map) {
             Map value = (Map) objects;
             if (value.size() == 0 || null == keyClass || null == valueClass) {

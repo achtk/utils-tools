@@ -15,8 +15,11 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * 同步http
+ * @author Administrator
  */
 @Slf4j
 public class Sync extends HttpClientHandler {
@@ -34,7 +37,7 @@ public class Sync extends HttpClientHandler {
     public HttpClientResponse executeDelete() {
         Map<String, Object> bodes = requestConfig.getBodyers();
         if (bodes == null) {
-            bodes = new HashMap<String, Object>();
+            bodes = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         }
         bodes.put("_method", "delete");
         requestConfig.setBodyers(bodes);
@@ -125,7 +128,7 @@ public class Sync extends HttpClientHandler {
         // 创建访问的地址
         URIBuilder uriBuilder = null;
         try {
-            uriBuilder = packageURIBuilder(requestConfig.getUrl(), requestConfig.getBodyers());
+            uriBuilder = packageUriBuilder(requestConfig.getUrl(), requestConfig.getBodyers());
         } catch (URISyntaxException e) {
             log.error("获取uri失败!!", e);
             return null;

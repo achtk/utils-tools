@@ -8,6 +8,8 @@ import com.chua.utils.http.httpclient.sync.Async;
 import com.chua.utils.http.httpclient.sync.Sync;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.chua.utils.tools.constant.HttpConstant.*;
+
 /**
  * httpClient builder
  * @author CHTK
@@ -31,13 +33,13 @@ public class HttpClientBuilder implements IHttpClientBuilder {
      */
     @Override
     public HttpClientResponse execute() {
-        if("GET".equals(requestConfig.getMethod())) {
+        if(HTTP_METHOD_GET.equals(requestConfig.getMethod())) {
             return sync.executeGet();
-        } else if("POST".equals(requestConfig.getMethod())) {
+        } else if(HTTP_METHOD_POST.equals(requestConfig.getMethod())) {
             return sync.executePost();
-        } else if("PUT".equals(requestConfig.getMethod())) {
+        } else if(HTTP_METHOD_PUT.equals(requestConfig.getMethod())) {
             return sync.executePut();
-        } else if("DELETE".equals(requestConfig.getMethod())) {
+        } else if(HTTP_METHOD_DELETE.equals(requestConfig.getMethod())) {
             return sync.executeDelete();
         }
         return null;
@@ -49,13 +51,13 @@ public class HttpClientBuilder implements IHttpClientBuilder {
      */
     @Override
     public void execute(final Callback callback) {
-        if("GET".equals(requestConfig.getMethod())) {
+        if(HTTP_METHOD_GET.equals(requestConfig.getMethod())) {
             async.executeGet(callback);
-        } else if("POST".equals(requestConfig.getMethod())) {
+        } else if(HTTP_METHOD_POST.equals(requestConfig.getMethod())) {
             async.executePost(callback);
-        } else if("PUT".equals(requestConfig.getMethod())) {
+        } else if(HTTP_METHOD_PUT.equals(requestConfig.getMethod())) {
             async.executePut(callback);
-        } else if("DELETE".equals(requestConfig.getMethod())) {
+        } else if(HTTP_METHOD_DELETE.equals(requestConfig.getMethod())) {
             async.executeDelete(callback);
         }
     }

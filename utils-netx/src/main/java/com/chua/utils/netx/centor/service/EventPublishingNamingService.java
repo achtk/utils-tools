@@ -34,23 +34,24 @@ public interface EventPublishingNamingService {
      * @param ip          地址
      * @param port        端口
      * @param clusterName 分布式
-     * @throws Exception
+     * @throws Exception Exception
      */
     void deregisterInstance(final String serviceName, final String group, final String ip, final int port, final String clusterName) throws Exception;
     /**
      * 获取服务节点
      *
      * @param serviceName 数据索引
-     * @throws Exception
-     * @return
+     * @param healthy healthy
+     * @throws Exception Exception
+     * @return List
      */
     List<Map<String, Object>> selectInstances(final String serviceName, boolean healthy) throws Exception;
     /**
      * 获取服务节点
      *
      * @param serviceName 数据索引
-     * @throws Exception
-     * @return
+     * @throws Exception Exception
+     * @return List
      */
     List<Map<String, Object>> getAllInstances(final String serviceName) throws Exception;
 
@@ -59,7 +60,7 @@ public interface EventPublishingNamingService {
      *
      * @param serviceName 数据索引
      * @param listener    监听
-     * @throws Exception
+     * @throws Exception Exception
      */
     <T>void subscribe(final String serviceName, final Listener<T> listener) throws Exception;
     /**

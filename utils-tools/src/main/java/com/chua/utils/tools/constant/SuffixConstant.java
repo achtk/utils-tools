@@ -35,7 +35,7 @@ public class SuffixConstant {
     /**
      * .jar
      */
-    public static final String EXTENSION_JAR_SUFFIX = ".jar";
+    public static final String SUFFIX_JAR_SUFFIX = ".jar";
     /**
      * dtd
      */
