@@ -338,7 +338,7 @@ public class JsonHelper {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            IOHelper.closeQuietly(inputStreamReader);
+            IoHelper.closeQuietly(inputStreamReader);
         }
         return null;
     }
@@ -389,7 +389,7 @@ public class JsonHelper {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            IOHelper.closeQuietly(inputStreamReader);
+            IoHelper.closeQuietly(inputStreamReader);
         }
         return null;
     }
@@ -440,7 +440,7 @@ public class JsonHelper {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            IOHelper.closeQuietly(inputStreamReader);
+            IoHelper.closeQuietly(inputStreamReader);
         }
         return null;
     }

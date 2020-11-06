@@ -6,6 +6,7 @@ import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.text.IdHelper;
 import com.google.common.collect.Sets;
 
 import java.util.*;
@@ -806,6 +807,6 @@ public abstract class AbstractPropertiesProducer {
         CfgOptions cfgOptions = new CfgOptions(cfgConfig);
         ConcurrentHashMap<String, Object> initialCfg = cfgOptions.toConcurrentHashMap();
         Properties properties = MapOperableHelper.toProp(initialCfg);
-        put(StringHelper.uuid(), properties);
+        this.put(IdHelper.createUuid(), properties);
     }
 }

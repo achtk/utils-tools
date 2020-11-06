@@ -201,7 +201,7 @@ public class ArraysHelper {
      * @return 有true，否则false
      */
     public static boolean hasValue(String[] args) {
-        if (null == args || 0 == args.length || (1 == args.length && null == args[0])) {
+        if (null == args || 0 == args.length ) {
             return false;
         }
         for (int i = 0, length = args.length; i < length; i++) {

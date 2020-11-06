@@ -2,7 +2,6 @@ package com.chua.utils.tools.resource.adaptor;
 
 import com.chua.utils.tools.common.FileHelper;
 import com.chua.utils.tools.common.ThreadHelper;
-import com.chua.utils.tools.common.UrlHelper;
 import com.chua.utils.tools.resource.Resource;
 import com.chua.utils.tools.resource.context.ResourceContext;
 import com.google.common.base.Strings;
@@ -17,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
+import static com.chua.utils.tools.constant.StringConstant.FILE_URL_PREFIX;
+
 /**
  * 本地文件查找器
  *
@@ -28,12 +29,12 @@ public class LocationFinder implements IResourceAdaptor {
 
     @Override
     public ResourceContext analyze(String path) throws IOException {
-        if(!path.startsWith(UrlHelper.FILE_URL_PREFIX)) {
+        if(!path.startsWith(FILE_URL_PREFIX)) {
             return null;
         }
 
         path = path.replace("\\", "/");
-        String substring = path.substring(UrlHelper.FILE_URL_PREFIX.length());
+        String substring = path.substring(FILE_URL_PREFIX.length());
         int index = substring.indexOf("*");
         if(index == -1) {
             index = substring.indexOf("?");

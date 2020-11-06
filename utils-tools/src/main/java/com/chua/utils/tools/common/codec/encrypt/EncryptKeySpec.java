@@ -21,6 +21,7 @@ public interface EncryptKeySpec {
      *
      * @param keyMap 密钥map
      * @return byte[] 公钥
+     * @throws Exception Exception
      */
     byte[] getPublicKey(Map<String, Object> keyMap) throws Exception;
 }

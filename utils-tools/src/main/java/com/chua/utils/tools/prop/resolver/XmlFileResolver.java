@@ -1,5 +1,6 @@
 package com.chua.utils.tools.prop.resolver;
 
+import com.chua.utils.tools.constant.SuffixConstant;
 import com.chua.utils.tools.prop.mapper.FileMapper;
 import com.chua.utils.tools.function.AbstractConverter;
 import com.chua.utils.tools.function.NoneAbstractConverter;
@@ -35,7 +36,7 @@ public class XmlFileResolver implements IFileResolver {
             documentBuilder.setEntityResolver(new EntityResolver() {
                 @Override
                 public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-                    if (systemId.endsWith("dtd")) {
+                    if (systemId.endsWith(SuffixConstant.DTD)) {
                         return new InputSource(new ByteArrayInputStream("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>".getBytes()));
                     }
                     return null;

@@ -26,8 +26,15 @@ public interface TypeConverter<O> extends Converter<Object, O> {
      */
     Class<? extends O> getType();
 
+    /**
+     * 转化
+     *
+     * @param value  值
+     * @param tClass 类型
+     * @return 值
+     */
     @Override
-    default public O convert(Object value, Class<? extends O> tClass) {
+    default O convert(Object value, Class<? extends O> tClass) {
         return convert(value);
     }
 }

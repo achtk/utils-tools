@@ -4,7 +4,7 @@ import com.chua.utils.http.config.RequestConfig;
 import com.chua.utils.http.entity.HttpClientResponse;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.HttpClientHelper;
-import com.chua.utils.tools.common.IOHelper;
+import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.constant.HttpConstant;
 import com.google.common.base.Strings;
@@ -122,8 +122,8 @@ public class Sync {
             String content = null;
             byte[] bytes = null;
             try (InputStream stream = connection.getInputStream()) {
-                bytes = IOHelper.toByteArray(stream);
-                content = IOHelper.toString(bytes, "UTF-8");
+                bytes = IoHelper.toByteArray(stream);
+                content = IoHelper.toString(bytes, "UTF-8");
             }
             log.info("接收到URL: {}, 响应码: {}", requestConfig.getUrl(), code);
             return new HttpClientResponse(code, content).setBytes(bytes);

@@ -1,7 +1,6 @@
 package com.chua.utils.tools.empty;
 
 import com.chua.utils.tools.collects.collections.ListHelper;
-import com.chua.utils.tools.collects.map.MapHelper;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 
 import java.util.*;
@@ -51,7 +50,7 @@ public class Empty {
     /**
      * Class<Map<String, List<Map<String, Object>>>>
      */
-    public static final Class<Map<String, List<Map<String, Object>>>> MAP_LIST_MAP = (Class<Map<String, List<Map<String, Object>>>>) MapHelper.newArrayList().getClass();
+    public static final Class<Map<String, List<Map<String, Object>>>> MAP_LIST_MAP = (Class<Map<String, List<Map<String, Object>>>>) MapOperableHelper.newArrayList().getClass();
     /**
      * Class<Map<String, String>>
      */

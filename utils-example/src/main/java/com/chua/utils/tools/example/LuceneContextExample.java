@@ -17,6 +17,7 @@ import com.chua.utils.netx.lucene.template.MMapLuceneOperatorTemplate;
 import com.chua.utils.netx.lucene.template.SingleLuceneOperatorTemplate;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.template.template.LuceneOperatorTemplate;
+import com.chua.utils.tools.text.IdHelper;
 import lombok.Data;
 import org.mockito.Mockito;
 
@@ -41,7 +42,7 @@ public class LuceneContextExample {
 
             documentMap.setData(properties);
             properties.put("time", System.currentTimeMillis());
-            properties.put("uuid", StringHelper.uuid());
+            properties.put("uuid", IdHelper.createUuid());
             properties.put("name", "demo" + i);
             properties.put("id", i);
 

@@ -22,12 +22,12 @@ import static com.chua.utils.tools.constant.NumberConstant.EOF;
  * IO工具类
  * @author CH
  */
-public class IOHelper {
+public class IoHelper {
     /**
      * 读取流
      * @param input 流
      * @param buffer 字节
-     * @return
+     * @return int
      * @throws IOException
      */
     public static int read(final InputStream input, final byte[] buffer) throws IOException {
@@ -51,7 +51,7 @@ public class IOHelper {
         while (remaining > 0) {
             final int location = length - remaining;
             final int count = input.read(buffer, offset + location, remaining);
-            if (EOF == count) { // EOF
+            if (EOF == count) {
                 break;
             }
             remaining -= count;
@@ -69,7 +69,7 @@ public class IOHelper {
         final int length = buffer.remaining();
         while (buffer.remaining() > 0) {
             final int count = input.read(buffer);
-            if (EOF == count) { // EOF
+            if (EOF == count) {
                 break;
             }
         }
@@ -103,7 +103,7 @@ public class IOHelper {
         while (remaining > 0) {
             final int location = length - remaining;
             final int count = input.read(buffer, offset + location, remaining);
-            if (EOF == count) { // EOF
+            if (EOF == count) {
                 break;
             }
             remaining -= count;

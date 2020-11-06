@@ -114,7 +114,7 @@ public class VertxWsServerConfigurationCenter extends AbstractVerticle implement
 				.allowedHeader("Content-Type"));
 		router.route().handler(BodyHandler.create().setBodyLimit(-1));
 
-		router.route(StringHelper.defaultIfBlank(netProperties.getPath(), DEFAULT_ROUTE_PATH))
+		router.route(StringHelper.getStringOrDefault(netProperties.getPath(), DEFAULT_ROUTE_PATH))
 				.handler(sockJSHandler);
 		//创建一个eventbus，用来数据通讯
 		this.eventBus = vertx.eventBus();
@@ -230,7 +230,7 @@ public class VertxWsServerConfigurationCenter extends AbstractVerticle implement
 			if(null == message) {
 				return;
 			}
-			eventBus.publish(StringHelper.defaultIfBlank(message.getName(), address), message.getData(), deliveryOptions);
+			eventBus.publish(StringHelper.getStringOrDefault(message.getName(), address), message.getData(), deliveryOptions);
 		}
 	}
 

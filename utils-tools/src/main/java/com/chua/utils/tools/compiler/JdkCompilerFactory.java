@@ -146,12 +146,6 @@ public class JdkCompilerFactory extends AbstractCompiler {
             for (URL url : urls) {
                 files.add(new File(url.getFile()));
             }
-//            if(!BooleanHelper.hasLength(urls)) {
-//                Collection<URL> classLoaderUrls = UrlHelper.classLoaderUrls();
-//                for (URL classLoaderUrl : classLoaderUrls) {
-//                    files.add(new File(classLoaderUrl.getFile()));
-//                }
-//            }
             try {
                 STANDARD_FILE_MANAGER.setLocation(StandardLocation.CLASS_PATH, files);
             } catch (IOException e) {

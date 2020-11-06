@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
+import static com.chua.utils.tools.constant.SymbolConstant.*;
 
 /**
  * 通配符
@@ -103,7 +104,7 @@ public class FileWildcard {
         // used by wildcardMatch
         // package level so a unit test may run on this
 
-        if (text.indexOf('?') == INDEX_NOT_FOUND && text.indexOf('*') == INDEX_NOT_FOUND) {
+        if (text.indexOf(SYMBOL_QUESTION_CHAR) == INDEX_NOT_FOUND && text.indexOf(SYMBOL_ASTERISK_CHAR) == INDEX_NOT_FOUND) {
             return new String[]{text};
         }
 
@@ -112,15 +113,16 @@ public class FileWildcard {
         final StringBuilder buffer = new StringBuilder();
         char prevChar = 0;
         for (final char ch : array) {
-            if (ch == '?' || ch == '*') {
+            if (ch == SYMBOL_QUESTION_CHAR || ch == SYMBOL_ASTERISK_CHAR) {
                 if (buffer.length() != 0) {
                     list.add(buffer.toString());
                     buffer.setLength(0);
                 }
-                if (ch == '?') {
-                    list.add("?");
-                } else if (prevChar != '*') {// ch == '*' here; check if previous char was '*'
-                    list.add("*");
+                if (ch == SYMBOL_QUESTION_CHAR) {
+                    list.add(SYMBOL_QUESTION);
+                } else if (prevChar != SYMBOL_ASTERISK_CHAR) {
+                    // ch == '*' here; check if previous char was '*'
+                    list.add(SYMBOL_ASTERISK);
                 }
             } else {
                 buffer.append(ch);

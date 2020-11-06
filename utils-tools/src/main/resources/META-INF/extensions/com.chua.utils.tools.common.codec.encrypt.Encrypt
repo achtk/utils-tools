@@ -5,4 +5,4 @@ sha256=com.chua.utils.tools.common.codec.encrypt.Sha256Encrypt
 sha512=com.chua.utils.tools.common.codec.encrypt.Sha512Encrypt
 des=com.chua.utils.tools.common.codec.encrypt.DesEncrypt
 aes=com.chua.utils.tools.common.codec.encrypt.AesEncrypt
-desede=com.chua.utils.tools.common.codec.encrypt.DESedeEncrypt
+desede=com.chua.utils.tools.common.codec.encrypt.DesedeEncrypt

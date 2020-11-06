@@ -4,6 +4,7 @@ import com.chua.utils.tools.common.charset.CharsetHelper;
 import com.chua.utils.tools.common.filecase.FileWildcard;
 import com.chua.utils.tools.common.filecase.IOCase;
 import com.chua.utils.tools.common.filefilter.*;
+import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.resource.Resource;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -27,8 +28,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import static com.chua.utils.tools.common.IOHelper.toCharset;
+import static com.chua.utils.tools.common.IoHelper.toCharset;
 import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
+import static com.chua.utils.tools.constant.NumberConstant.TWE;
+import static com.chua.utils.tools.constant.StringConstant.LETTER_A;
+import static com.chua.utils.tools.constant.StringConstant.LETTER_Z;
 import static com.chua.utils.tools.constant.SymbolConstant.*;
 import static com.google.common.base.Charsets.UTF_8;
 
@@ -334,7 +338,7 @@ public class FileHelper {
      * @return
      */
     public static File toFile(final URL url) {
-        if (url == null || !"file".equalsIgnoreCase(url.getProtocol())) {
+        if (url == null || !StringConstant.FILE.equalsIgnoreCase(url.getProtocol())) {
             return null;
         } else {
             String filename = url.getFile().replace('/', File.separatorChar);
@@ -452,22 +456,20 @@ public class FileHelper {
      */
     public static String decodeUrl(final String url) {
         String decoded = url;
-        if (url != null && url.indexOf('%') >= 0) {
+        if (url != null && url.indexOf(SYMBOL_PER_CHAR) >= 0) {
             final int n = url.length();
             final StringBuilder buffer = new StringBuilder();
             final ByteBuffer bytes = ByteBuffer.allocate(n);
             for (int i = 0; i < n; ) {
-                if (url.charAt(i) == '%') {
+                if (url.charAt(i) == SYMBOL_PER_CHAR) {
                     try {
                         do {
                             final byte octet = (byte) Integer.parseInt(url.substring(i + 1, i + 3), 16);
                             bytes.put(octet);
                             i += 3;
-                        } while (i < n && url.charAt(i) == '%');
+                        } while (i < n && url.charAt(i) == SYMBOL_PER_CHAR);
                         continue;
                     } catch (final RuntimeException e) {
-                        // malformed percent-encoded octet, fall through and
-                        // append characters literally
                     } finally {
                         if (bytes.position() > 0) {
                             bytes.flip();
@@ -651,7 +653,7 @@ public class FileHelper {
      * @return
      */
     public static String getParent(String filePath) {
-        if (StringHelper.isNotBlank(filePath)) {
+        if (!Strings.isNullOrEmpty(filePath)) {
             filePath = filePath.replace(SYMBOL_RIGHT_SLASH, SYMBOL_LEFT_SLASH);
             int index = filePath.lastIndexOf(SYMBOL_LEFT_SLASH);
             return index > -1 ? filePath.substring(0, index + 1) : filePath;
@@ -693,7 +695,7 @@ public class FileHelper {
      */
     public static String getParentPath(String path) {
         String parent = getPath(path);
-        if (StringHelper.isNotBlank(parent)) {
+        if (!Strings.isNullOrEmpty(parent)) {
             return getPath(parent);
         }
         return SYMBOL_EMPTY;
@@ -720,7 +722,7 @@ public class FileHelper {
      */
     public static String getParentParent(String path) {
         String parent = getParent(path);
-        if (StringHelper.isNotBlank(parent)) {
+        if (!Strings.isNullOrEmpty(parent)) {
             return getParent(parent);
         }
         return SYMBOL_EMPTY;
@@ -759,7 +761,7 @@ public class FileHelper {
      * @return
      */
     public static String realyPath(String path) {
-        return StringHelper.isNotBlank(path) ? new File(path).getPath() : SYMBOL_EMPTY;
+        return !Strings.isNullOrEmpty(path) ? new File(path).getPath() : SYMBOL_EMPTY;
     }
 
     /**
@@ -771,7 +773,7 @@ public class FileHelper {
      */
     public static List<String> matcherPath(final URL filePath, final String model) {
         List<String> matches = new ArrayList<>();
-        if (StringHelper.isAnyNotBlank(model)) {
+        if (!Strings.isNullOrEmpty(model)) {
             PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + model);
             try {
                 Path path = Paths.get(filePath.toURI());
@@ -931,7 +933,7 @@ public class FileHelper {
             throw new IllegalArgumentException(message);
         }
         final File[] files = directory.listFiles();
-        if (files == null) {  // null if security restricted
+        if (files == null) {
             throw new IOException("Failed to list contents of " + directory);
         }
         return files;
@@ -1061,7 +1063,7 @@ public class FileHelper {
                 JarEntry jarEntry = jarFile.getJarEntry(fileName);
                 if (null != jarEntry) {
                     try (InputStream inputStream = jarFile.getInputStream(jarEntry)) {
-                        return IOHelper.toString(inputStream, CharsetHelper.UTF_8);
+                        return IoHelper.toString(inputStream, CharsetHelper.UTF_8);
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
@@ -1125,11 +1127,11 @@ public class FileHelper {
      */
     public static int copyFile(InputStream inputStream, File file) {
         try {
-            return IOHelper.copy(inputStream, new FileOutputStream(file));
+            return IoHelper.copy(inputStream, new FileOutputStream(file));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            IOHelper.closeQuietly(inputStream);
+            IoHelper.closeQuietly(inputStream);
         }
         return -1;
     }
@@ -1283,7 +1285,7 @@ public class FileHelper {
         }
         File file = newFile(path);
         String[] list = file.list();
-        if (StringHelper.isBlank(extension)) {
+        if (Strings.isNullOrEmpty(extension)) {
             return Sets.newHashSet(list);
         }
 
@@ -1312,7 +1314,7 @@ public class FileHelper {
      * @return
      */
     public static boolean createParentFolder(final String path) {
-        if (StringHelper.isBlank(path)) {
+        if (Strings.isNullOrEmpty(path)) {
             return false;
         }
         File file = new File(path);
@@ -1338,7 +1340,7 @@ public class FileHelper {
      * @return
      */
     public static boolean createFolder(final String path) {
-        if (StringHelper.isBlank(path)) {
+        if (Strings.isNullOrEmpty(path)) {
             return false;
         }
         File file = new File(path);
@@ -1359,7 +1361,7 @@ public class FileHelper {
      */
     public static String file2String(Class clazz, String relativePath, String encoding) throws IOException {
         Preconditions.checkArgument(null != clazz);
-        Preconditions.checkArgument(StringHelper.isNotBlank(relativePath));
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(relativePath));
 
         try (
                 InputStream is = clazz.getResourceAsStream("/" + relativePath);
@@ -1800,7 +1802,7 @@ public class FileHelper {
         }
         if (prefix >= filename.length()) {
             if (includeSeparator) {
-                return getPrefix(filename);  // add end slash if necessary
+                return getPrefix(filename);
             } else {
                 return filename;
             }
@@ -1863,16 +1865,16 @@ public class FileHelper {
             return 0;
         }
         char ch0 = filename.charAt(0);
-        if (ch0 == ':') {
+        if (ch0 == SYMBOL_COLON_CHAR) {
             return INDEX_NOT_FOUND;
         }
         if (len == 1) {
-            if (ch0 == '~') {
+            if (ch0 == SYMBOL_WAVY_LINE_CHAR) {
                 return 2;
             }
             return isSeparator(ch0) ? 1 : 0;
         } else {
-            if (ch0 == '~') {
+            if (ch0 == SYMBOL_WAVY_LINE_CHAR) {
                 int posUnix = filename.indexOf(SYMBOL_LEFT_SLASH, 1);
                 int posWin = filename.indexOf(SYMBOL_RIGHT_SLASH, 1);
                 if (posUnix == INDEX_NOT_FOUND && posWin == INDEX_NOT_FOUND) {
@@ -1883,11 +1885,11 @@ public class FileHelper {
                 return Math.min(posUnix, posWin) + 1;
             }
             final char ch1 = filename.charAt(1);
-            if (ch1 == ':') {
+            if (ch1 == SYMBOL_COLON_CHAR) {
                 ch0 = Character.toUpperCase(ch0);
-                if (ch0 >= 'A' && ch0 <= 'Z') {
-                    if (len == 2 || isSeparator(filename.charAt(2)) == false) {
-                        return 2;
+                if (ch0 >= LETTER_A && ch0 <= LETTER_Z) {
+                    if (len == TWE || isSeparator(filename.charAt(TWE)) == false) {
+                        return TWE;
                     }
                     return 3;
                 } else if (ch0 == SYMBOL_LEFT_SLASH_CHAR) {
@@ -1898,7 +1900,8 @@ public class FileHelper {
             } else if (isSeparator(ch0) && isSeparator(ch1)) {
                 int posUnix = filename.indexOf(SYMBOL_LEFT_SLASH, 2);
                 int posWin = filename.indexOf(SYMBOL_RIGHT_SLASH, 2);
-                if (posUnix == INDEX_NOT_FOUND && posWin == INDEX_NOT_FOUND || posUnix == 2 || posWin == 2) {
+                if (posUnix == INDEX_NOT_FOUND
+                        && posWin == posUnix || posUnix == TWE || posWin == posUnix) {
                     return INDEX_NOT_FOUND;
                 }
                 posUnix = posUnix == INDEX_NOT_FOUND ? posWin : posUnix;
@@ -2131,7 +2134,7 @@ public class FileHelper {
     public static void writeStringToFile(final File file, final String data, final Charset encoding,
                                          final boolean append) throws IOException {
         try (OutputStream out = openOutputStream(file, append)) {
-            IOHelper.write(data, out, encoding);
+            IoHelper.write(data, out, encoding);
         }
     }
 

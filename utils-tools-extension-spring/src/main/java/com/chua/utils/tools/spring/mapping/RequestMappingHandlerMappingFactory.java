@@ -4,6 +4,7 @@ import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.spring.entity.MappingEntity;
+import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -150,7 +151,7 @@ public class RequestMappingHandlerMappingFactory {
         if (field.isAnnotationPresent(Resource.class)) {
             Resource annotation = field.getAnnotation(Resource.class);
             String name = annotation.name();
-            if (StringHelper.isNotBlank(name)) {
+            if (!Strings.isNullOrEmpty(name)) {
                 if (applicationContext.containsBean(name)) {
                     bean = applicationContext.getBean(name);
                     renderField(obj, field, bean);
@@ -175,7 +176,7 @@ public class RequestMappingHandlerMappingFactory {
         if (field.isAnnotationPresent(Qualifier.class)) {
             Qualifier annotation = field.getAnnotation(Qualifier.class);
             String value = annotation.value();
-            if (StringHelper.isNotBlank(value)) {
+            if (!Strings.isNullOrEmpty(value)) {
                 if (applicationContext.containsBean(value)) {
                     bean = applicationContext.getBean(value);
                     renderField(obj, field, bean);
@@ -250,7 +251,7 @@ public class RequestMappingHandlerMappingFactory {
      */
     private void renderMethods(final MappingEntity mappingEntity, final RequestMappingHandlerMapping requestMappingHandlerMapping) {
         String[] paths = mappingEntity.paths();
-        String path = StringHelper.defaultIfBlank(FinderHelper.firstElement(paths), "");
+        String path = StringHelper.getStringOrDefault(FinderHelper.firstElement(paths));
         Object obj = mappingEntity.getObj();
 
         Method[] declaredMethods = obj.getClass().getDeclaredMethods();

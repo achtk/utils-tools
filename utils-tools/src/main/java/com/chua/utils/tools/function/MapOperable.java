@@ -26,6 +26,12 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
      */
     Map<K, Object> getMap();
 
+    /**
+     * 获取 Map
+     *
+     * @param source 输入
+     * @return Map
+     */
     @Override
     default Map<K, Object> operate(K source) {
         return getMap();

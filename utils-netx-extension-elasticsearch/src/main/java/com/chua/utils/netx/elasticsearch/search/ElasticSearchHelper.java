@@ -1,8 +1,8 @@
 package com.chua.utils.netx.elasticsearch.search;
 
 import com.chua.utils.netx.elasticsearch.condition.Condition;
-import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.collects.map.MapHelper;
+import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.NumberHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.google.common.collect.Maps;
@@ -10,6 +10,8 @@ import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_ASTERISK;
 
 /**
  * @author CHTK
@@ -161,7 +163,7 @@ public class ElasticSearchHelper {
      * @return
      */
     public static Map<String, Object> generateQueryIKByFields(String key, String value) {
-        if (!StringHelper.isAllBlank(key, value) && value.contains("*")) {
+        if (!StringHelper.isNullOrEmpty(key, value) && value.contains(SYMBOL_ASTERISK)) {
             Map<String, Object> wildCard = Maps.newHashMap();
             Map<String, Object> keyValue = Maps.newHashMap();
             Map<String, Object> valueConfig = Maps.newHashMap();
@@ -181,7 +183,7 @@ public class ElasticSearchHelper {
      * @return
      */
     public static Map<String, Object> generateQueryRegexpByFields(String key, String value) {
-        if (!StringHelper.isAllBlank(key, value) && StringHelper.firstOrEndContains(value, "*")) {
+        if (!StringHelper.isNullOrEmpty(key, value) && StringHelper.firstOrEndContains(value, "*")) {
             Map<String, Object> regexp = Maps.newHashMap();
             Map<String, Object> keyValue = Maps.newHashMap();
             Map<String, Object> valueConfig = Maps.newHashMap();
@@ -202,7 +204,7 @@ public class ElasticSearchHelper {
      * @return
      */
     public static Map<String, Object> generateQueryMatchByFields(String key, Object value) {
-        if (!StringHelper.isAllBlank(key) && null != value && !"".equals(value.toString())) {
+        if (!StringHelper.isNullOrEmpty(key) && null != value && !"".equals(value.toString())) {
             Map<String, Object> matchPhrase = Maps.newHashMap();
             Map<String, Object> keyValue = Maps.newHashMap();
             keyValue.put(key, value);
@@ -218,7 +220,7 @@ public class ElasticSearchHelper {
      * @return
      */
     public static Map<String, Object> generateQueryMatchByRange(String key, String value) {
-        if (!StringHelper.isAllBlank(key, value) && StringHelper.firstAndEndContains(value, SIGNS)) {
+        if (!StringHelper.isNullOrEmpty(key, value) && StringHelper.firstAndEndContains(value, SIGNS)) {
             String newValue = value.substring(1, value.length() - 1);
             if (StringHelper.isBlank(newValue)) {
                 return null;

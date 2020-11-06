@@ -610,7 +610,7 @@ public class CollectionHelper {
 
         List<T> result = new ArrayList<>(source.size());
         for (String item : source) {
-            List<String> strings = Splitter.on(StringHelper.defaultIfBlank(delimiter, ",")).trimResults().omitEmptyStrings().splitToList(item);
+            List<String> strings = Splitter.on(StringHelper.getStringOrDefault(delimiter, ",")).trimResults().omitEmptyStrings().splitToList(item);
             T entity = BeansHelper.setProperty(tClass, strings);
             if (null == entity) {
                 continue;

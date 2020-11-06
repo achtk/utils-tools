@@ -101,7 +101,6 @@ public class DefaultClassResolver<T> implements ClassResolver {
                 return;
             }
             Object fieldValue = ClassHelper.getFieldValue(field, object);
-            //String property = environment.getProperty(newName);
 
             Object obj = ClassHelper.getEnum(convert.toString(), field.getType());
             if(fieldValue == obj) {

@@ -1,11 +1,17 @@
 package com.chua.utils.tools.common;
 
 
+import com.chua.utils.tools.constant.StringConstant;
+import com.google.common.base.Strings;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.regex.Pattern;
+
+import static com.chua.utils.tools.constant.StringConstant.HEX_16_UPPER;
+import static com.chua.utils.tools.constant.SymbolConstant.*;
 
 /**
  * 数字处理
@@ -95,6 +101,7 @@ public class NumberHelper {
     public static final Float FLOAT_MINUS_ONE = Float.valueOf(-1.0f);
 
     private static final Pattern INT_PATTERN = Pattern.compile("^\\d+$");
+
     /**
      * 保留固定位数小数<br>
      * 采用四舍五入策略 {@link RoundingMode#HALF_UP}<br>
@@ -1205,15 +1212,15 @@ public class NumberHelper {
         int index = 0;
         boolean negative = false;
 
-        if (value.startsWith("-")) {
+        if (value.startsWith(SYMBOL_MINS)) {
             negative = true;
             index++;
         }
 
-        if (value.startsWith("0x", index) || value.startsWith("0X", index)) {
+        if (value.startsWith(StringConstant.HEX_16, index) || value.startsWith(HEX_16_UPPER, index)) {
             index += 2;
             radix = 16;
-        } else if (value.startsWith("#", index)) {
+        } else if (value.startsWith(SYMBOL_WELL, index)) {
             index++;
             radix = 16;
         } else if (value.startsWith("0", index) && value.length() > 1 + index) {
@@ -1572,7 +1579,7 @@ public class NumberHelper {
         if (source == null) {
             return null;
         }
-        if (StringHelper.isBlank(source)) {
+        if (Strings.isNullOrEmpty(source)) {
             throw new NumberFormatException("A blank string is not a valid number");
         }
         if (source.trim().startsWith("--")) {
@@ -1601,7 +1608,7 @@ public class NumberHelper {
      * @return
      */
     public static boolean isNumber(final String str) {
-        if (StringHelper.isBlank(str)) {
+        if (Strings.isNullOrEmpty(str)) {
             return false;
         }
 

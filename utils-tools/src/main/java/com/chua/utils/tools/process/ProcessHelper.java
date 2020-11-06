@@ -1,6 +1,6 @@
 package com.chua.utils.tools.process;
 
-import com.chua.utils.tools.common.IOHelper;
+import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.common.charset.CharsetHelper;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -64,11 +64,11 @@ public class ProcessHelper {
         Process process = createProcess(command);
         try {
             in = process.getInputStream();
-            return IOHelper.toString(in, charset);
+            return IoHelper.toString(in, charset);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            IOHelper.closeQuietly(in);
+            IoHelper.closeQuietly(in);
             process.destroy();
         }
         return null;

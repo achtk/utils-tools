@@ -11,6 +11,7 @@ import lombok.Setter;
 public interface StatelessProperties {
 	/**
 	 * 获取数据实体
+	 * @return  实体
 	 */
 	<T>T getEntity();
 

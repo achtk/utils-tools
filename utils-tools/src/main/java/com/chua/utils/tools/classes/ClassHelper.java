@@ -2,6 +2,7 @@ package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.classes.reflections.ReflectionsHelper;
 import com.chua.utils.tools.common.*;
+import com.chua.utils.tools.constant.SymbolConstant;
 import com.chua.utils.tools.exceptions.NotSupportedException;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.proxy.CglibProxyAgent;
@@ -19,6 +20,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import static com.chua.utils.tools.constant.ClassConstant.*;
+import static com.chua.utils.tools.constant.SymbolConstant.*;
 
 /**
  * class工具
@@ -99,10 +101,10 @@ public class ClassHelper extends ReflectionsHelper {
                 return getPrimitiveTypes().get(getPrimitiveNames().indexOf(typeName));
             } else {
                 String type;
-                if (typeName.contains("[")) {
-                    int i = typeName.indexOf("[");
+                if (typeName.contains(SYMBOL_LEFT_SQUARE_BRACKET)) {
+                    int i = typeName.indexOf(SYMBOL_LEFT_SQUARE_BRACKET);
                     type = typeName.substring(0, i);
-                    String array = typeName.substring(i).replace("]", "");
+                    String array = typeName.substring(i).replace(SYMBOL_RIGHT_SQUARE_BRACKET, SYMBOL_EMPTY);
 
                     if (getPrimitiveNames().contains(type)) {
                         type = getPrimitiveDescriptors().get(getPrimitiveNames().indexOf(type));
@@ -197,10 +199,10 @@ public class ClassHelper extends ReflectionsHelper {
      *
      * @param value       子类
      * @param parentClass 父类
-     * @return
+     * @return boolean
      */
     public static boolean isAssignableFrom(final Class<?> value, final String parentClass) {
-        return null == value || StringHelper.isBlank(parentClass) ? false : isAssignableFrom(value, ClassHelper.forName(parentClass));
+        return null == value || Strings.isNullOrEmpty(parentClass) ? false : isAssignableFrom(value, ClassHelper.forName(parentClass));
     }
 
     /**
@@ -324,7 +326,7 @@ public class ClassHelper extends ReflectionsHelper {
             try {
                 return Class.forName(className, false, getDefaultClassLoader());
             } catch (Exception e1) {
-                if (className.indexOf('.') != -1) {
+                if (className.indexOf(SYMBOL_DOT_CHAR) != -1) {
                     throw e;
                 }
                 try {
@@ -551,7 +553,7 @@ public class ClassHelper extends ReflectionsHelper {
      */
     private static String setNewName(CtClass oldClass, ClassPool classPool, String tryCheckClassName) {
         int i = 0;
-        tryCheckClassName = tryCheckClassName + "#" + i;
+        tryCheckClassName = tryCheckClassName + SYMBOL_WELL + i;
         while (true) {
             try {
                 classPool.get(tryCheckClassName);
@@ -559,7 +561,7 @@ public class ClassHelper extends ReflectionsHelper {
                 oldClass.setName(tryCheckClassName);
                 break;
             }
-            tryCheckClassName = tryCheckClassName + "#" + (++i);
+            tryCheckClassName = tryCheckClassName + SYMBOL_WELL + (++i);
         }
         return tryCheckClassName;
     }

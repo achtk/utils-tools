@@ -118,7 +118,7 @@ public class ZookeeperConfigurationCenter implements EventPublishingConfigServic
      * @return String
      */
     private String createCacheKey(String dataId, String group) {
-        group = StringHelper.defaultIfBlank(group, DEFAULT_GROUP);
+        group = StringHelper.getStringOrDefault(group, DEFAULT_GROUP);
         return configName + "/" + dataId + "/" + group;
     }
 
@@ -130,7 +130,7 @@ public class ZookeeperConfigurationCenter implements EventPublishingConfigServic
      * @return String
      */
     private String createCacheKey(String cluserName, String dataId, String group) {
-        cluserName = StringHelper.defaultIfBlank(cluserName, CLUSTER_NAME_DEFAULT_GROUP);
+        cluserName = StringHelper.getStringOrDefault(cluserName, CLUSTER_NAME_DEFAULT_GROUP);
         String newKey = configName + "/" + cluserName + "/" + dataId;
         return null == group ? newKey : newKey + "/" + group;
     }

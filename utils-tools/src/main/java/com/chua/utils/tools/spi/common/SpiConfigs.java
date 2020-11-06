@@ -3,7 +3,7 @@ package com.chua.utils.tools.spi.common;
 import com.chua.utils.tools.cfg.CfgConfig;
 import com.chua.utils.tools.cfg.CfgOptions;
 import com.chua.utils.tools.common.FileHelper;
-import com.chua.utils.tools.common.IOHelper;
+import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.options.IOptions;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.LongAdder;
 
-import static com.chua.utils.tools.constant.StringConstant.SPI_CONFIG;
 import static com.chua.utils.tools.constant.StringConstant.SPI_CONFIG_DEFAULT;
 import static com.chua.utils.tools.spi.options.SpiOptions.*;
 import static com.google.common.base.Charsets.UTF_8;
@@ -109,7 +107,7 @@ public class SpiConfigs implements IOptions {
                 continue;
             }
 
-            List<String> strings = IOHelper.readLines(new FileInputStream(item), UTF_8);
+            List<String> strings = IoHelper.readLines(new FileInputStream(item), UTF_8);
             List<Map<String, Object>> infos = new ArrayList<>();
 
             meta.put(name.replace(s + "/", ""), infos);

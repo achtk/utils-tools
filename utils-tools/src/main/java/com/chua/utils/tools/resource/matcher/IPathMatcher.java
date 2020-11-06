@@ -13,7 +13,8 @@ import java.util.Set;
 public interface IPathMatcher {
     /**
      * 匹配资源
-     * @return
+     * @return 资源
+     * @throws Throwable Throwable
      */
     public Set<Resource> matcher() throws Throwable;
 }

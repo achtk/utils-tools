@@ -688,11 +688,9 @@ public class FileFilterHelper {
     }
 
     //-----------------------------------------------------------------------
-    /* Constructed on demand and then cached */
     private static final FileFilter CVS_FILTER = notFileFilter(
             and(directoryFileFilter(), nameFileFilter("CVS")));
 
-    /* Constructed on demand and then cached */
     private static final FileFilter SVN_FILTER = notFileFilter(
             and(directoryFileFilter(), nameFileFilter(".svn")));
 

@@ -16,7 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.jar.JarEntry;
 
-import static com.chua.utils.tools.common.UrlHelper.JAR_URL_SEPARATOR;
+import static com.chua.utils.tools.constant.StringConstant.JAR_URL_SEPARATOR;
 import static com.chua.utils.tools.constant.SuffixConstant.SUFFIX_CLASS;
 import static com.chua.utils.tools.constant.SymbolConstant.*;
 
@@ -200,12 +200,7 @@ public class Resource implements Serializable {
             e.printStackTrace();
         }
         resource.setName(subPath);
-        //resource.setSize(file.getTotalSpace());
-       //resource.setPath(file.getPath());
-       // resource.setLocal(file.getAbsolutePath());
         resource.setDirectory(file.isDirectory());
-       // resource.setType("file");
-
         return resource;
     }
 
@@ -224,8 +219,6 @@ public class Resource implements Serializable {
         resource.setName(jarEntry.getName());
         resource.setPath(urlExternalForm);
         resource.setDirectory(jarEntry.isDirectory());
-      //  resource.setType("jar");
-
         return resource;
     }
 

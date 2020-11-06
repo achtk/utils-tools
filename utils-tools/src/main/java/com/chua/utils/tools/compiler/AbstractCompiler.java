@@ -50,7 +50,7 @@ public abstract class AbstractCompiler {
         try {
             return Class.forName(className, true, ClassHelper.getCallerClassLoader(getClass()));
         } catch (ClassNotFoundException e) {
-            if (!code.endsWith(SymbolConstant.SYMBOL_RIGHT_BIG_PARANTHESES)) {
+            if (!code.endsWith(SymbolConstant.SYMBOL_RIGHT_BIG_PARENTHESES)) {
                 throw new IllegalStateException("The java code not endsWith \"}\", code: \n" + code + "\n");
             }
             try {
@@ -64,18 +64,20 @@ public abstract class AbstractCompiler {
     }
 
     /**
+     * 编译
      *
-     * @param name
-     * @param source
-     * @return
-     * @throws Throwable
+     * @param name   名称
+     * @param source 源码
+     * @return Class
+     * @throws Throwable Throwable
      */
     abstract protected Class<?> doCompile(String name, String source) throws Throwable;
 
     /**
      * 获取类名
      *
-     * @return
+     * @param code 源码
+     * @return 类名
      */
     public String getClassName(String code) {
         //获取类名

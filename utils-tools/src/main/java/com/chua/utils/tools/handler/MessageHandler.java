@@ -9,6 +9,10 @@ import lombok.EqualsAndHashCode;
  * @date 2020-10-08
  */
 public interface MessageHandler<Action> extends Handler<Action> {
+    /**
+     * 处理动作
+     * @param action 动作
+     */
     @Override
     default void handler(Action action) {
 

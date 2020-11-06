@@ -3,10 +3,12 @@ package com.chua.utils.tools.spi.processor;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.constant.NumberConstant;
 import com.chua.utils.tools.spi.common.SpiConfigs;
 import com.chua.utils.tools.spi.entity.ExtensionClass;
 import com.chua.utils.tools.spi.entity.SpiConfig;
 import com.chua.utils.tools.spi.options.SpiOptions;
+import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
@@ -154,7 +156,7 @@ public class CustomExtensionProcessor<T> extends AbstractSimpleExtensionProcesso
      */
     protected List<ExtensionClass<T>> readLine(final String line, URL url) {
         String[] aliasAndClassName = parseSpiNameAndClassName(line);
-        if (aliasAndClassName == null || aliasAndClassName.length != 3) {
+        if (aliasAndClassName == null || aliasAndClassName.length != NumberConstant.THREE) {
             return null;
         }
         //Spi名称
@@ -197,7 +199,7 @@ public class CustomExtensionProcessor<T> extends AbstractSimpleExtensionProcesso
      * @return String[]{名称, 类, 优先级}
      */
     protected String[] parseSpiNameAndClassName(String line) {
-        if (StringHelper.isBlank(line)) {
+        if (Strings.isNullOrEmpty(line)) {
             return null;
         }
         line = line.trim();

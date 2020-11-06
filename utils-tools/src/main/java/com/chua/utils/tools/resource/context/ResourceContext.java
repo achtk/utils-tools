@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static com.chua.utils.tools.constant.SymbolConstant.*;
+
 /**
  * 资源上下文
  * @author CH
@@ -94,7 +96,7 @@ public class ResourceContext {
             }
 
             private boolean isMatch(Resource resource) {
-                if(name.indexOf("*") == -1 && name.indexOf("?") == -1) {
+                if(name.indexOf(SYMBOL_ASTERISK) == -1 && name.indexOf(SYMBOL_QUESTION) == -1) {
                     return name.equals(resource.getName());
                 }
 

@@ -96,9 +96,9 @@ public class GUID {
         return new GUID();
     }
 
-    /*
+    /**
      * 转换成标准的GUID码
-     *例如: C2FEEEAC-CFCD-11D1-8B05-00600806D9B6
+     * 例如: C2FEEEAC-CFCD-11D1-8B05-00600806D9B6
      */
     @Override
     public String toString() {

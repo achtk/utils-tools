@@ -4,6 +4,7 @@ import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.common.properties.AbstractPropertiesProducer;
+import com.chua.utils.tools.text.IdHelper;
 
 import java.util.Map;
 import java.util.Properties;
@@ -52,7 +53,7 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
      */
     public PropertiesLoader add(final Properties properties) {
         if (null != properties) {
-            this.put(StringHelper.uuid(), properties);
+            this.put(IdHelper.createUuid(), properties);
         }
         return this;
     }
@@ -82,7 +83,7 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
     public PropertiesLoader add(final Map<String, Object> objectMap) {
         if (null != objectMap) {
             Properties properties = MapOperableHelper.toProp(objectMap);
-            this.put(StringHelper.uuid(), properties);
+            this.put(IdHelper.createUuid(), properties);
         }
         return this;
     }
@@ -96,7 +97,7 @@ public class PropertiesLoader extends AbstractPropertiesProducer {
      */
     public PropertiesLoader add(final String name, final Properties properties) {
         if (null != properties) {
-            this.put(StringHelper.defaultIfBlank(name, StringHelper.uuid()), properties);
+            this.put(StringHelper.getStringOrDefault(name, IdHelper.createUuid()), properties);
         }
         return this;
     }

@@ -1,6 +1,7 @@
 package com.chua.utils.tools.prop.placeholder;
 
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.text.IdHelper;
 
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -58,7 +59,7 @@ public interface PropertyPlaceholder {
      * @param properties 配置
      */
     default void addPropertySource(Properties properties) {
-        addPropertySource(StringHelper.uuid(), properties);
+        addPropertySource(IdHelper.createUuid(), properties);
     }
 
     /**
@@ -70,6 +71,7 @@ public interface PropertyPlaceholder {
     default Object getValue(String name) {
         return placeholder(get(name));
     }
+
     /**
      * 添加配置
      *
@@ -89,6 +91,7 @@ public interface PropertyPlaceholder {
 
     /**
      * 正则表达式
+     *
      * @return Pattern
      */
     Pattern pattern();

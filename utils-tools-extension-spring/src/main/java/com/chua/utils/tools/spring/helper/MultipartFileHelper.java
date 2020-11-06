@@ -1,7 +1,8 @@
 package com.chua.utils.tools.spring.helper;
 
-import com.chua.utils.tools.common.IOHelper;
+import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.google.common.base.Strings;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -34,7 +35,7 @@ public class MultipartFileHelper {
      * @return
      */
     public static URL createFile(final MultipartFile multipartFile, final String path, final String name) {
-        if (StringHelper.isBlank(path)) {
+        if (Strings.isNullOrEmpty(path)) {
             return null;
         }
         if (null == multipartFile) {
@@ -44,10 +45,10 @@ public class MultipartFileHelper {
         if (size <= 0) {
             return null;
         }
-        String originalFilename = StringHelper.defaultIfBlank(name, multipartFile.getOriginalFilename());
+        String originalFilename = StringHelper.getStringOrDefault(name, multipartFile.getOriginalFilename());
         File partFile = new File(path, originalFilename);
         try {
-            IOHelper.write(multipartFile.getBytes(), new FileOutputStream(partFile));
+            IoHelper.write(multipartFile.getBytes(), new FileOutputStream(partFile));
             return partFile.toURL();
         } catch (IOException e) {
             e.printStackTrace();

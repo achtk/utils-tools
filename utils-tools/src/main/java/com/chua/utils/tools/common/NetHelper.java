@@ -7,6 +7,8 @@ import java.net.*;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
 
+import static com.chua.utils.tools.constant.SymbolConstant.*;
+
 /**
  * 网络工具类
  *
@@ -48,7 +50,7 @@ public class NetHelper {
      * @return 是否本地地址
      */
     public static boolean isLocalHost(String host) {
-        return StringHelper.isNotBlank(host) && (LOCAL_IP_PATTERN.matcher(host).matches() || "localhost".equalsIgnoreCase(host));
+        return !Strings.isNullOrEmpty(host) && (LOCAL_IP_PATTERN.matcher(host).matches() || "localhost".equalsIgnoreCase(host));
     }
 
     /**
@@ -68,7 +70,7 @@ public class NetHelper {
      * @return 是否默认地址
      */
     public static boolean isIpv4Host(String host) {
-        return StringHelper.isNotBlank(host) && IPV4_PATTERN.matcher(host).matches();
+        return !Strings.isNullOrEmpty(host) && IPV4_PATTERN.matcher(host).matches();
     }
 
     /**
@@ -78,7 +80,7 @@ public class NetHelper {
      * @return 是否非法地址
      */
     static boolean isInvalidLocalHost(String host) {
-        return StringHelper.isBlank(host) || isAnyHost(host) || isLocalHost(host);
+        return Strings.isNullOrEmpty(host) || isAnyHost(host) || isLocalHost(host);
     }
 
     /**
@@ -212,7 +214,7 @@ public class NetHelper {
                 // 得到本地地址
                 host = socket.getLocalAddress();
             } finally {
-                IOHelper.closeQuietly(socket);
+                IoHelper.closeQuietly(socket);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -252,7 +254,7 @@ public class NetHelper {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
-                    IOHelper.closeQuietly(ss);
+                    IoHelper.closeQuietly(ss);
                 }
             }
         }
@@ -289,10 +291,10 @@ public class NetHelper {
             host = host.substring(index + 3);
         }
 
-        if (host.indexOf(":") == -1) {
+        if (host.indexOf(SYMBOL_COLON) == -1) {
             return host;
         }
-        String[] strings = host.split(":");
+        String[] strings = host.split(SYMBOL_COLON);
         return strings[0];
     }
 
@@ -315,10 +317,10 @@ public class NetHelper {
             host = host.substring(index + 3);
         }
 
-        if (host.indexOf(":") == -1) {
+        if (host.indexOf(SYMBOL_COLON) == -1) {
             return -1;
         }
-        String[] strings = host.split(":");
+        String[] strings = host.split(SYMBOL_COLON);
         return NumberHelper.toInt(strings[1]);
     }
 
@@ -330,17 +332,17 @@ public class NetHelper {
      */
     public static String removeDuplicateSymbols(String uri) {
         if (null == uri) {
-            return "";
+            return SYMBOL_EMPTY;
         }
-        int index = uri.indexOf(":");
+        int index = uri.indexOf(SYMBOL_COLON);
         if (index != -1) {
             uri = uri.substring(index +1);
         }
-        uri = uri.replace("\\", "/").replaceAll("//", "/");
-        if (uri.startsWith("/")) {
+        uri = uri.replace("\\", SYMBOL_LEFT_SLASH).replaceAll("//", SYMBOL_LEFT_SLASH);
+        if (uri.startsWith(SYMBOL_LEFT_SLASH)) {
             uri = uri.substring(1);
         }
-        if (uri.startsWith("/")) {
+        if (uri.startsWith(SYMBOL_LEFT_SLASH)) {
             uri = uri.substring(1);
         }
 

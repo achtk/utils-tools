@@ -50,4 +50,15 @@ public class ByteHelper {
     public static String toString(byte[] bytes, Charset charset) {
         return new String(bytes, charset);
     }
+
+    /**
+     * 字节数组转为字符串
+     *
+     * @param bytes   字节数组
+     * @param charset 编码
+     * @return 字符串
+     */
+    public static String toString(byte[] bytes, String charset) {
+        return new String(bytes, Charset.forName(charset));
+    }
 }

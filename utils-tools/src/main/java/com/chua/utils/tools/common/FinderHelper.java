@@ -6,6 +6,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_LEFT_BIG_PARENTHESES;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_LEFT_SQUARE_BRACKET;
+
 /**
  * 查询器
  *
@@ -176,7 +179,7 @@ public class FinderHelper {
      * @param source 数据源
      * @return
      */
-    public static <T> T getIfOnlyElement(final Collection<T> source)  {
+    public static <T> T getIfOnlyElement(final Collection<T> source) {
         if (!BooleanHelper.hasLength(source) || source.size() != 1) {
             throw new NonUniqueException();
         }
@@ -194,12 +197,13 @@ public class FinderHelper {
      * @param source 数据源
      * @return
      */
-    public static <K, V> V getIfOnlyElement(final Map<K, V> source)  {
+    public static <K, V> V getIfOnlyElement(final Map<K, V> source) {
         if (!BooleanHelper.hasLength(source) || source.size() != 1) {
             throw new NonUniqueException();
         }
         return firstElement(source.values());
     }
+
     /**
      * 有且只有一个元素时获取
      * <p>
@@ -467,7 +471,7 @@ public class FinderHelper {
             return null;
         }
 
-        if (source.startsWith("[") || source.startsWith(" {")) {
+        if (source.startsWith(SYMBOL_LEFT_SQUARE_BRACKET) || source.startsWith(SYMBOL_LEFT_BIG_PARENTHESES)) {
             Object object = JsonHelper.toObject(source);
             if (object instanceof Collection) {
                 return firstElement((Collection) object);
@@ -494,7 +498,7 @@ public class FinderHelper {
         if (!BooleanHelper.hasLength(source)) {
             return null;
         }
-        if (source.startsWith("[") || source.startsWith(" {")) {
+        if (source.startsWith(SYMBOL_LEFT_SQUARE_BRACKET) || source.startsWith(SYMBOL_LEFT_BIG_PARENTHESES)) {
             Object object = JsonHelper.toObject(source);
             if (object instanceof Collection) {
                 return firstElement((Collection) object);

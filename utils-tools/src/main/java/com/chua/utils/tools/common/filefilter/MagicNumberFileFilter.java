@@ -46,7 +46,8 @@ public class MagicNumberFileFilter implements FileFilter {
             throw new IllegalArgumentException("The offset cannot be negative");
         }
 
-        this.magicNumbers = magicNumber.getBytes(Charset.defaultCharset()); // explicitly uses the platform default
+        // explicitly uses the platform default
+        this.magicNumbers = magicNumber.getBytes(Charset.defaultCharset());
         // charset
         this.byteOffset = offset;
     }

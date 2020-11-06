@@ -1,11 +1,13 @@
 package com.chua.utils.tools.classes.classloader;
 
 
-import com.chua.utils.tools.common.IOHelper;
+import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.common.UrlHelper;
 
 import java.io.IOException;
 import java.net.URL;
+
+import static com.chua.utils.tools.constant.StringConstant.*;
 
 /**
  * @author CH
@@ -17,9 +19,9 @@ public class JarClassLoaderAdaptor implements IClassLoaderAdaptor{
 
     @Override
     public boolean allow(String extension) {
-        return extension.equals(UrlHelper.URL_PROTOCOL_JAR) ||
-                extension.equals(UrlHelper.URL_PROTOCOL_ZIP) ||
-                extension.equals(UrlHelper.URL_PROTOCOL_WAR);
+        return extension.equals(URL_PROTOCOL_JAR) ||
+                extension.equals(URL_PROTOCOL_ZIP) ||
+                extension.equals(URL_PROTOCOL_WAR);
     }
 
     @Override
@@ -27,7 +29,7 @@ public class JarClassLoaderAdaptor implements IClassLoaderAdaptor{
         String formatUrl = formatUrl(url);
         String formatName = formatName(name);
         try {
-            return IOHelper.toByteArray(new URL(formatUrl + formatName));
+            return IoHelper.toByteArray(new URL(formatUrl + formatName));
         } catch (IOException e) {
             return null;
         }

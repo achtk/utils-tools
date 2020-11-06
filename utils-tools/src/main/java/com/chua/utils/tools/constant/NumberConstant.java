@@ -2,6 +2,7 @@ package com.chua.utils.tools.constant;
 
 /**
  * 数字常量
+ *
  * @author CH
  */
 public class NumberConstant {
@@ -19,9 +20,25 @@ public class NumberConstant {
     /**
      * -1
      */
-    public static final int EOF = -1;
+    public static final int EOF = INDEX_NOT_FOUND;
 
     public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
     public static final int SKIP_BUFFER_SIZE = 2048;
+    /**
+     * 1
+     */
+    public static final int ONE = 1;
+    /**
+     * 1
+     */
+    public static final int FIRST = ONE;
+    /**
+     * 2
+     */
+    public static final int TWE = 2;
+    /**
+     * 3
+     */
+    public static final int THREE = 3;
 }

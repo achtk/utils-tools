@@ -1,7 +1,8 @@
 package com.chua.utils.tools.common.compress;
 
+import com.chua.utils.tools.common.ByteHelper;
 import com.chua.utils.tools.common.FileHelper;
-import com.chua.utils.tools.common.IOHelper;
+import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.common.StringHelper;
 
 import java.io.*;
@@ -164,8 +165,8 @@ public class ZipHelper {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
-                    IOHelper.closeQuietly(in);
-                    IOHelper.closeQuietly(out);
+                    IoHelper.closeQuietly(in);
+                    IoHelper.closeQuietly(out);
                 }
             }
         }
@@ -306,7 +307,7 @@ public class ZipHelper {
             in = FileHelper.getInputStream(file);
             return gzip(in, (int) file.length());
         } finally {
-            IOHelper.closeQuietly(in);
+            IoHelper.closeQuietly(in);
         }
     }
 
@@ -336,11 +337,11 @@ public class ZipHelper {
         GZIPOutputStream gos = null;
         try {
             gos = new GZIPOutputStream(bos);
-            IOHelper.copy(in, gos);
+            IoHelper.copy(in, gos);
         } catch (IOException e) {
             throw new Exception(e);
         } finally {
-            IOHelper.closeQuietly(gos);
+            IoHelper.closeQuietly(gos);
         }
         // 返回必须在关闭gos后进行，因为关闭时会自动执行finish()方法，保证数据全部写出
         return bos.toByteArray();
@@ -355,7 +356,7 @@ public class ZipHelper {
      * @throws Exception IO异常
      */
     public static String unGzip(byte[] buf, String charset) throws Exception {
-        return StringHelper.toString(unGzip(buf), charset);
+        return ByteHelper.toString(unGzip(buf), charset);
     }
 
     /**
@@ -395,11 +396,11 @@ public class ZipHelper {
         try {
             gzi = (in instanceof GZIPInputStream) ? (GZIPInputStream) in : new GZIPInputStream(in);
             bos = new ByteArrayOutputStream(length);
-            IOHelper.copy(gzi, bos);
+            IoHelper.copy(gzi, bos);
         } catch (IOException e) {
             throw new Exception(e);
         } finally {
-            IOHelper.closeQuietly(gzi);
+            IoHelper.closeQuietly(gzi);
         }
         // 返回必须在关闭gos后进行，因为关闭时会自动执行finish()方法，保证数据全部写出
         return bos.toByteArray();

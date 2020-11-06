@@ -37,135 +37,8 @@ public class UrlHelper {
     });
 
     private static final String LOG_NAME = log.getName();
-    ;
 
     private static final AtomicInteger ATOMIC_INTEGER = new AtomicInteger(0);
-    /**
-     * 系统语言环境，默认为中文zh
-     */
-    public static final String LANGUAGE = "zh";
-    /**
-     * 系统国家环境，默认为中国CN
-     */
-    public static final String COUNTRY = "CN";
-    /**
-     *
-     */
-    private static final String SYMBOL_FILE = "file";
-    /**
-     *
-     */
-    private static final String SYMBOL_WAR = "war";
-    /**
-     *
-     */
-    private static final String SYMBOL_JAR = "jar";
-
-    /**
-     *
-     */
-    private static final String EMPTY_URL = "file:.";
-
-
-    /**
-     * Pseudo URL prefix for loading from the class path: "classpath:".
-     */
-    public static final String CLASSPATH_URL_PREFIX = "classpath:";
-    /**
-     * Pseudo URL prefix for loading from the class path: "subclass:".
-     */
-    public static final String SUBCLASS_URL_PREFIX = "subclass:";
-
-    /**
-     * Pseudo URL prefix for loading from the class path: "class:".
-     */
-    public static final String CLASS_URL_PREFIX = "class:";
-
-    /**
-     * Pseudo URL prefix for loading from the class path: "remote:".
-     */
-    public static final String REMOTE_URL_PREFIX = "remote:";
-
-    /**
-     * content:
-     */
-    public static final String CONTENT_URL_PREFIX = "content:";
-    /**
-     * root:
-     */
-    public static final String ROOT_URL_PREFIX = "root:";
-
-    /**
-     * URL prefix for loading from the file system: "file:".
-     */
-    public static final String FILE_URL_PREFIX = "file:";
-
-    /**
-     * URL prefix for loading from a jar file: "jar:".
-     */
-    public static final String JAR_URL_PREFIX = "jar:";
-
-    /**
-     * URL prefix for loading from a war file on Tomcat: "war:".
-     */
-    public static final String WAR_URL_PREFIX = "war:";
-
-    /**
-     * URL protocol for a file in the file system: "file".
-     */
-    public static final String URL_PROTOCOL_FILE = "file";
-
-    /**
-     * URL protocol for an entry from a jar file: "jar".
-     */
-    public static final String URL_PROTOCOL_JAR = "jar";
-
-    /**
-     * URL protocol for an entry from a war file: "war".
-     */
-    public static final String URL_PROTOCOL_WAR = "war";
-
-    /**
-     * URL protocol for an entry from a zip file: "zip".
-     */
-    public static final String URL_PROTOCOL_ZIP = "zip";
-
-    /**
-     * URL protocol for an entry from a WebSphere jar file: "wsjar".
-     */
-    public static final String URL_PROTOCOL_WSJAR = "wsjar";
-
-    /**
-     * URL protocol for an entry from a JBoss jar file: "vfszip".
-     */
-    public static final String URL_PROTOCOL_VFSZIP = "vfszip";
-
-    /**
-     * URL protocol for a JBoss file system resource: "vfsfile".
-     */
-    public static final String URL_PROTOCOL_VFSFILE = "vfsfile";
-
-    /**
-     * URL protocol for a general JBoss VFS resource: "vfs".
-     */
-    public static final String URL_PROTOCOL_VFS = "vfs";
-
-    /**
-     * File extension for a regular jar file: ".jar".
-     */
-    public static final String JAR_FILE_EXTENSION = ".jar";
-
-    /**
-     * Separator between JAR URL and file path within the JAR: "!/".
-     */
-    public static final String JAR_URL_SEPARATOR = "!/";
-
-    /**
-     * Special separator between WAR URL and jar part on Tomcat.
-     */
-    public static final String WAR_URL_SEPARATOR = "*/";
-    private static final int NOT_FOUND = -1;
-    public static final String CLASS_FILE_EXTENSION = ".class";
 
     private static boolean isRuning = false;
 
@@ -242,8 +115,8 @@ public class UrlHelper {
         StringBuilder sb = new StringBuilder();
         sb.append(protocol).append("://");
         sb.append(host).append(':').append(port);
-        if (path.charAt(0) != '/') {
-            sb.append('/');
+        if (path.charAt(0) != SYMBOL_LEFT_SLASH_CHAR) {
+            sb.append(SYMBOL_LEFT_SLASH_CHAR);
         }
         sb.append(path);
         return sb.toString();
@@ -422,8 +295,8 @@ public class UrlHelper {
             try {
                 return new URL(jarFile);
             } catch (MalformedURLException var5) {
-                if (!jarFile.startsWith("/")) {
-                    jarFile = "/" + jarFile;
+                if (!jarFile.startsWith(SYMBOL_LEFT_SLASH)) {
+                    jarFile = SYMBOL_LEFT_SLASH + jarFile;
                 }
 
                 return new URL("file:" + jarFile);
@@ -616,7 +489,7 @@ public class UrlHelper {
      */
     public static URL getUrl(String resourceLocation) throws FileNotFoundException {
         Assert.notNull(resourceLocation, "Resource location must not be null");
-        if (resourceLocation.startsWith("classpath:")) {
+        if (resourceLocation.startsWith(CLASSPATH_URL_PREFIX)) {
             String path = resourceLocation.substring("classpath:".length());
             ClassLoader cl = ClassHelper.getDefaultClassLoader();
             URL url = cl != null ? cl.getResource(path) : ClassLoader.getSystemResource(path);
@@ -641,7 +514,7 @@ public class UrlHelper {
 
     public static File getFile(String resourceLocation) throws FileNotFoundException {
         Assert.notNull(resourceLocation, "Resource location must not be null");
-        if (resourceLocation.startsWith("classpath:")) {
+        if (resourceLocation.startsWith(CLASSPATH_URL_PREFIX)) {
             String path = resourceLocation.substring("classpath:".length());
             String description = "class path resource [" + path + "]";
             ClassLoader cl = ClassHelper.getDefaultClassLoader();
@@ -681,7 +554,7 @@ public class UrlHelper {
      */
     public static File getFile(URL resourceUrl, String description) throws FileNotFoundException {
         Assert.notNull(resourceUrl, "Resource URL must not be null");
-        if (!"file".equals(resourceUrl.getProtocol())) {
+        if (!FILE.equals(resourceUrl.getProtocol())) {
             throw new FileNotFoundException(description + " cannot be resolved to absolute file path because it does not reside in the file system: " + resourceUrl);
         } else {
             return new File(toUri(resourceUrl).getSchemeSpecificPart());
@@ -709,7 +582,7 @@ public class UrlHelper {
      */
     public static File getFile(URI resourceUri, String description) throws FileNotFoundException {
         Assert.notNull(resourceUri, "Resource URI must not be null");
-        if (!"file".equals(resourceUri.getScheme())) {
+        if (!FILE.equals(resourceUri.getScheme())) {
             throw new FileNotFoundException(description + " cannot be resolved to absolute file path because it does not reside in the file system: " + resourceUri);
         } else {
             return new File(resourceUri.getSchemeSpecificPart());

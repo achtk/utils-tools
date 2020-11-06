@@ -13,7 +13,7 @@ import java.security.Key;
  * @author CH
  * @date 2020-09-28
  */
-public class DESedeEncrypt extends AbstractStandardEncrypt {
+public class DesedeEncrypt extends AbstractStandardEncrypt {
     /**
      * 密钥算法
      */

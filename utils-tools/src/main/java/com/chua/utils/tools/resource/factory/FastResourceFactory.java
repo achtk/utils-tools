@@ -16,6 +16,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.chua.utils.tools.constant.StringConstant.CLASSPATH_URL_PREFIX;
+import static com.chua.utils.tools.constant.StringConstant.SUBCLASS_URL_PREFIX;
+
 /**
  * 资源工厂
  * @author CH

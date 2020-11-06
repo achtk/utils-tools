@@ -58,7 +58,7 @@ public class CtClassBuilder {
         if (pi > 0) {
             String pkgName = pkg.substring(0, pi);
             this.imports.add(pkgName);
-            if (!pkg.endsWith(".*")) {
+            if (!pkg.endsWith(SymbolConstant.SYMBOL_DOT_ASTERISK)) {
                 fullNames.put(pkg.substring(pi + 1), pkg);
             }
         }

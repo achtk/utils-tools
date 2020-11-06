@@ -15,7 +15,7 @@ public interface IResourceAdaptor {
      * 解析文件成 ResourceContext
      * @param path 文件路径/文件
      * @return ResourceContext
-     * @exception IOException
+     * @throws  IOException IOException
      */
     public ResourceContext analyze(String path) throws IOException;
 }

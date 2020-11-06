@@ -1,7 +1,6 @@
 package com.chua.utils.tools.resource.adaptor;
 
 
-import com.chua.utils.tools.common.UrlHelper;
 import com.chua.utils.tools.resource.Lazy;
 import com.chua.utils.tools.resource.Resource;
 import com.chua.utils.tools.resource.context.ResourceContext;
@@ -13,6 +12,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
+import static com.chua.utils.tools.constant.StringConstant.FILE_URL_PREFIX;
 
 /**
  * jar资源处理器
@@ -48,7 +49,7 @@ public class JarResourceAdaptor implements IResourceAdaptor {
                     resource.setType("jar");
                     resource.setPath("/" + entryName);
                     resource.setDirectory(entry.isDirectory());
-                    resource.setLocal(UrlHelper.FILE_URL_PREFIX + newPath);
+                    resource.setLocal(FILE_URL_PREFIX + newPath);
                     resource.setUrl(Lazy.LAZY);
                     resource.setName(entryName);
 

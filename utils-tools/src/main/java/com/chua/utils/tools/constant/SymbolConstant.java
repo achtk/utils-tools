@@ -28,6 +28,7 @@ public class SymbolConstant {
      * []
      */
     public static final String SYMBOL_ARRAY_SUFFIX = "[]";
+
     /**
      * [L
      */
@@ -36,6 +37,14 @@ public class SymbolConstant {
      * .
      */
     public static final String SYMBOL_DOT = ".";
+    /**
+     * .*
+     */
+    public static final String SYMBOL_DOT_ASTERISK = ".*";
+    /**
+     * .?
+     */
+    public static final String SYMBOL_DOT_QUESTION = ".?";
     /**
      * /
      */
@@ -135,11 +144,15 @@ public class SymbolConstant {
     /**
      * {
      */
-    public static final String SYMBOL_LEFT_BIG_PARANTHESES = "{";
+    public static final String SYMBOL_LEFT_BIG_PARENTHESES = "{";
     /**
      * }
      */
-    public static final String SYMBOL_RIGHT_BIG_PARANTHESES = "}";
+    public static final String SYMBOL_RIGHT_BIG_PARENTHESES = "}";
+    /**
+     * ~
+     */
+    public static final String SYMBOL_WAVY_LINE = "~";
     /*****************************************char******************************************/
     /**
      * .
@@ -170,5 +183,21 @@ public class SymbolConstant {
      * }
      */
     public static final char SYMBOL_RIGHT_BIG_PARANTHESES_CHAR = '}';
+    /**
+     * %
+     */
+    public static final char SYMBOL_PER_CHAR = '%';
+    /**
+     * :
+     */
+    public static final char SYMBOL_COLON_CHAR = ':';
+    /**
+     * ~
+     */
+    public static final char SYMBOL_WAVY_LINE_CHAR = '~';
+    /**
+     * *
+     */
+    public static final char SYMBOL_ASTERISK_CHAR = '*';
 
 }

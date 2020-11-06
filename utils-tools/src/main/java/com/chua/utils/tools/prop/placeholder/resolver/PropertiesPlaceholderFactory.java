@@ -30,9 +30,13 @@ public class PropertiesPlaceholderFactory {
     private FileResolverFactory fileResolverFactory;
     private List<AbstractPropertiesPlaceholderResolver> resolvers;
     private List<HashMultimap> hashMultimapList;
-    //查找路径
+    /**
+     * 查找路径
+     */
     private Set<String> paths;
-    //文件解析器
+    /**
+     * 文件解析器
+     */
     private Set<IFileResolver> fileResolvers;
 
     private PropertiesPlaceholderFactory() {}
