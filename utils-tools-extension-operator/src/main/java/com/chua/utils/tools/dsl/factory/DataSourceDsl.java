@@ -15,13 +15,13 @@ import com.chua.utils.tools.operator.enums.Case;
  * @version 1.0.0
  * @since 2020/10/31
  */
-public class DataSourceDSL {
+public class DataSourceDsl {
     /**
      * 创建表
      *
      * @return CreateStep
      */
-    public static CreateDataBaseStep createDB() {
+    public static CreateDataBaseStep createDb() {
         return new SimpleCreateDataBaseStep();
     }
     /**

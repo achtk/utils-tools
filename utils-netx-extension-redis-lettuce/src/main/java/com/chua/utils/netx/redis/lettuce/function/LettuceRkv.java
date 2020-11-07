@@ -109,8 +109,8 @@ public class LettuceRkv implements RKv<String, String> {
     }
 
     @Override
-    public void delPrefix(String key_) throws Exception {
-        List<String> keys = getKeys(key_);
+    public void delPrefix(String keyPrefix) throws Exception {
+        List<String> keys = getKeys(keyPrefix);
         if (!BooleanHelper.hasLength(keys)) {
             return;
         }
@@ -121,8 +121,8 @@ public class LettuceRkv implements RKv<String, String> {
     }
 
     @Override
-    public List<String> keys(String key_) throws Exception {
-        List<String> keys = getKeys(key_);
+    public List<String> keys(String keyPrefix) throws Exception {
+        List<String> keys = getKeys(keyPrefix);
         if (!BooleanHelper.hasLength(keys)) {
             return Collections.emptyList();
         }
@@ -134,11 +134,11 @@ public class LettuceRkv implements RKv<String, String> {
     }
 
     @Override
-    public List<String> getKeys(String key_) throws Exception {
+    public List<String> getKeys(String keyPrefix) throws Exception {
         if (null != clusterCommands) {
-            return clusterCommands.keys(key_);
+            return clusterCommands.keys(keyPrefix);
         } else {
-            return redisCommands.keys(key_);
+            return redisCommands.keys(keyPrefix);
         }
     }
 }

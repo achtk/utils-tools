@@ -12,7 +12,7 @@ public class CommonConstant {
     /**
      * Tabulator column increment.
      */
-    public final static int TabInc = 8;
+    public final static int TAB_INC = 8;
 
     /**
      * Tabulator character.

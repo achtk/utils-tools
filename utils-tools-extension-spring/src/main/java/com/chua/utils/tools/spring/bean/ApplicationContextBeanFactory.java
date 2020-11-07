@@ -3,6 +3,7 @@ package com.chua.utils.tools.spring.bean;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.constant.NumberConstant;
 import com.chua.utils.tools.spring.entity.BeanLoader;
 import com.chua.utils.tools.spring.entity.MappingEntity;
 import com.chua.utils.tools.spring.environment.EnvironmentFactory;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.chua.utils.tools.constant.BeanConstant.BEAN_REQUEST_MAPPING_HANDLER_MAPPING;
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 
 /**
  * applicationContext
@@ -327,11 +329,10 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
      * @return
      */
     public Map<String, Map<String, Object>> getMethodDisassembleByAnnotation(Class<? extends Annotation> aClass) {
-        Map<String, Map<String, Object>> result = new HashMap<>();
+        Map<String, Map<String, Object>> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(Component.class);
         for (Map.Entry<String, Object> entry : beansWithAnnotation.entrySet()) {
             Object value = entry.getValue();
-            //String mapping = getMapping(value);
             Method[] declaredMethods = value.getClass().getDeclaredMethods();
             for (Method method : declaredMethods) {
                 if(method.isAnnotationPresent(aClass)) {

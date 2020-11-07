@@ -15,6 +15,8 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * bean工厂
  *
@@ -282,7 +284,7 @@ interface IBeanFactory {
      * @return String
      */
     default String registerBean(@NonNull String beanName, @NonNull Class<?> beanClass) {
-        return registerBean(beanName, beanClass, new HashMap<>());
+        return registerBean(beanName, beanClass, new HashMap<>(DEFAULT_INITIAL_CAPACITY));
     }
 
     /**
@@ -292,7 +294,7 @@ interface IBeanFactory {
      * @return String
      */
     default String registerBean(@NonNull Class<?> beanClass) {
-        return registerBean(beanClass.getName(), beanClass, new HashMap<>());
+        return registerBean(beanClass.getName(), beanClass, new HashMap<>(DEFAULT_INITIAL_CAPACITY));
     }
 
     /**
@@ -302,7 +304,7 @@ interface IBeanFactory {
      * @return Map
      */
     default Map<String, Class> doAnalysisBeanFields(Class<?> beanClass) {
-        Map<String, Class> fieldsAndType = new HashMap<>();
+        Map<String, Class> fieldsAndType = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         Field[] fields = beanClass.getDeclaredFields();
         for (Field field : fields) {
             if (Modifier.isFinal(field.getModifiers())) {

@@ -81,7 +81,6 @@ public interface BeanDefinitionFactory<T> {
      * @see org.springframework.beans.factory.support.AbstractBeanDefinition#AUTOWIRE_BY_NAME
      * @see org.springframework.beans.factory.support.AbstractBeanDefinition#AUTOWIRE_BY_TYPE
      * @see org.springframework.beans.factory.support.AbstractBeanDefinition#AUTOWIRE_CONSTRUCTOR
-     * @see org.springframework.beans.factory.support.AbstractBeanDefinition#AUTOWIRE_AUTODETECT
      */
     BeanDefinitionFactory setAutowireMode(int autowireMode);
 

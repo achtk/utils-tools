@@ -18,6 +18,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * springhttp工具类
  * @author CH
@@ -138,7 +140,7 @@ public class SpringClientSyncHelper {
      */
     private Map<String, Object> packageBody(final Map<String, Object> params) {
         // 创建访问的地址
-        Map<String, Object> uriVariables = new HashMap<>();
+        Map<String, Object> uriVariables = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         if (params != null) {
             Set<Map.Entry<String, Object>> entrySet = params.entrySet();
             for (Map.Entry<String, Object> entry : entrySet) {

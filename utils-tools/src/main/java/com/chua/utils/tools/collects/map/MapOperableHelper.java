@@ -1,6 +1,8 @@
 package com.chua.utils.tools.collects.map;
 
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.ArraysHelper;
+import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.empty.Empty;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
@@ -993,5 +995,38 @@ public class MapOperableHelper extends MultiMapOperableHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * 获取唯一值或者字段值
+     *
+     * @param source 元数据
+     * @return Object
+     */
+    public static Object getIfOnly(final Map<String, Object> source) {
+        return getIfOnly(source, Object.class);
+    }
+
+    /**
+     * 获取唯一值或者字段值
+     *
+     * @param source     元数据
+     * @param valueClass 数据类型
+     * @param <T>
+     * @return
+     */
+    public static <T> T getIfOnly(final Map<String, Object> source, final Class<T> valueClass) {
+        if (isEmpty(source)) {
+            return null;
+        }
+        Set<String> keySet = source.keySet();
+        if (CollectionHelper.size(keySet) != 1) {
+            return null;
+        }
+        Object o = source.get(FinderHelper.firstElement(keySet));
+        if (null == valueClass) {
+            return (T) o;
+        }
+        return null == o ? null : (valueClass.isAssignableFrom(o.getClass()) ? (T) o : null);
     }
 }

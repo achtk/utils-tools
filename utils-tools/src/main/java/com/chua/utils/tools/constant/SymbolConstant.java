@@ -9,6 +9,14 @@ package com.chua.utils.tools.constant;
  */
 public class SymbolConstant {
     /**
+     * https
+     */
+    public static final String SYMBOL_PROTOCOL_HTTPS = "https";
+    /**
+     * http
+     */
+    public static final String SYMBOL_PROTOCOL_HTTP = "http";
+    /**
      * ""
      */
     public static final String SYMBOL_EMPTY = "";

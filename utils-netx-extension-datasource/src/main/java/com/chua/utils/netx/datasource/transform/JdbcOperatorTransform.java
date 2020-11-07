@@ -18,6 +18,7 @@ import java.util.Properties;
  * @version 1.0.0
  * @since 2020/11/2
  */
+@SuppressWarnings("ALL")
 public class JdbcOperatorTransform implements OperatorTransform<DataSource> {
 
     private HikariConfig hikariConfig;

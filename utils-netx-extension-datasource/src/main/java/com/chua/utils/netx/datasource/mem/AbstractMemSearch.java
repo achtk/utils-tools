@@ -30,6 +30,11 @@ public abstract class AbstractMemSearch<T> implements MemSearch<T> {
     private final JdbcOperatorTemplate jdbcOperatorTemplate;
     private TableInfo tableInfo;
 
+    /**
+     * 获取 DataSourceProperties
+     *
+     * @return DataSourceProperties
+     */
     protected abstract DataSourceProperties dataSourceProperties();
 
     public AbstractMemSearch() {

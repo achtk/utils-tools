@@ -70,13 +70,13 @@ public class KitDbRKv implements RKv<String, byte[]> {
     }
 
     @Override
-    public void delPrefix(String key_) throws Exception {
-        rKv.delPrefix(key_);
+    public void delPrefix(String keyPrefix) throws Exception {
+        rKv.delPrefix(keyPrefix);
     }
 
     @Override
-    public List<byte[]> keys(String key_) throws Exception {
-        List<String> keys = getKeys(key_);
+    public List<byte[]> keys(String keyPrefix) throws Exception {
+        List<String> keys = getKeys(keyPrefix);
         List<byte[]> value = new ArrayList<>();
         for (String key : keys) {
             value.add(get(key));
@@ -85,8 +85,8 @@ public class KitDbRKv implements RKv<String, byte[]> {
     }
 
     @Override
-    public List<String> getKeys(String key_) throws Exception {
-        return rKv.keys(key_, 0, 100);
+    public List<String> getKeys(String keyPrefix) throws Exception {
+        return rKv.keys(keyPrefix, 0, 100);
     }
 
 }

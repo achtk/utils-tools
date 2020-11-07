@@ -96,28 +96,28 @@ public class JedisRKv implements RKv<String, String> {
     }
 
     @Override
-    public void delPrefix(String key_) throws Exception {
-        for (String key : getKeys(key_)) {
+    public void delPrefix(String keyPrefix) throws Exception {
+        for (String key : getKeys(keyPrefix)) {
             del(key);
         }
     }
 
     @Override
-    public List<String> keys(String key_) throws Exception {
+    public List<String> keys(String keyPrefix) throws Exception {
         List<String> value = new ArrayList<>();
-        for (String key : getKeys(key_)) {
+        for (String key : getKeys(keyPrefix)) {
             value.add(get(key));
         }
         return value;
     }
 
     @Override
-    public List<String> getKeys(String key_) throws Exception {
+    public List<String> getKeys(String keyPrefix) throws Exception {
         List<String> allKeys = new ArrayList<>();
         try (ShardedJedis client = shardedJedisPool.getResource()) {
             Collection<Jedis> shards = client.getAllShards();
             for (Jedis shard : shards) {
-                Set<String> keys = shard.keys(key_);
+                Set<String> keys = shard.keys(keyPrefix);
                 if (BooleanHelper.hasLength(keys)) {
                     allKeys.addAll(keys);
                 }

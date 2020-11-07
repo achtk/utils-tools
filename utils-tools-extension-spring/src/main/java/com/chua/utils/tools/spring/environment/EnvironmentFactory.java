@@ -40,7 +40,7 @@ public class EnvironmentFactory {
      * PropertyResolver 集合
      */
     private Environment environment;
-    private String CONFIGURATION_PROPERTIES = BEAN_CONFIGURATION_PROPERTIES;
+    private static String CONFIGURATION_PROPERTIES = BEAN_CONFIGURATION_PROPERTIES;
 
     public EnvironmentFactory(ApplicationContext applicationContext) {
         this.environment = null == applicationContext ? null : applicationContext.getEnvironment();

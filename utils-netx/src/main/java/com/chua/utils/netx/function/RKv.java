@@ -104,21 +104,26 @@ public interface RKv<K, V> {
     /**
      * 删除前缀
      *
-     * @param key_ 前缀
+     * @param keyPrefix 前缀
      * @throws Exception Exception
      */
-    void delPrefix(String key_) throws Exception;
+    void delPrefix(String keyPrefix) throws Exception;
 
     /**
      * 返回所有通配值
-     * @param key_ keys
+     *
+     * @param keyPrefix keys
+     * @return list
      * @throws Exception Exception
      */
-    List<V> keys(String key_) throws Exception;
+    List<V> keys(String keyPrefix) throws Exception;
+
     /**
      * 返回所有通配值
-     * @param key_ keys
-     * @throws Exception
+     *
+     * @param keyPrefix keys
+     * @return list
+     * @throws Exception Exception
      */
-    List<K> getKeys(String key_) throws Exception;
+    List<K> getKeys(String keyPrefix) throws Exception;
 }

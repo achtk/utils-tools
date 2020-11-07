@@ -18,11 +18,15 @@ import org.springframework.web.client.RestClientException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * springhttp工具类
+ *
  * @author CH
  */
 @Slf4j
+@SuppressWarnings("all")
 public class SpringClientAsyncHelper {
 
     private RequestConfig requestConfig;
@@ -62,13 +66,14 @@ public class SpringClientAsyncHelper {
 
     /**
      * 组装Get-Url
+     *
      * @param requestConfig
      * @return
      */
     private String packageGetUrl(RequestConfig requestConfig) {
         String url = requestConfig.getUrl();
         Map<String, Object> bodyers = requestConfig.getBodyers();
-        if(!BooleanHelper.hasLength(bodyers)) {
+        if (!BooleanHelper.hasLength(bodyers)) {
             return url;
         }
         StringBuffer sb = new StringBuffer();
@@ -87,7 +92,7 @@ public class SpringClientAsyncHelper {
         }
         HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBodyers()), packageHeader(requestConfig.getHeaders()));
         try {
-           return asyncRestTemplate.exchange(requestConfig.getUrl(), HttpMethod.POST, httpEntity, Object.class);
+            return asyncRestTemplate.exchange(requestConfig.getUrl(), HttpMethod.POST, httpEntity, Object.class);
         } catch (RestClientException e) {
             e.printStackTrace();
             return null;
@@ -135,7 +140,7 @@ public class SpringClientAsyncHelper {
      */
     private Map<String, Object> packageBody(final Map<String, Object> params) {
         // 创建访问的地址
-        Map<String, Object> uriVariables = new HashMap<>();
+        Map<String, Object> uriVariables = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         if (params != null) {
             Set<Map.Entry<String, Object>> entrySet = params.entrySet();
             for (Map.Entry<String, Object> entry : entrySet) {
@@ -168,17 +173,18 @@ public class SpringClientAsyncHelper {
 
     /**
      * 渲染template
+     *
      * @param requestConfig 请求参数
      * @return
      */
     private AsyncRestTemplate renderTemplate(RequestConfig requestConfig) {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
 
-        if(null != requestConfig.getConnectTimeout() && requestConfig.getConnectTimeout() > 0) {
+        if (null != requestConfig.getConnectTimeout() && requestConfig.getConnectTimeout() > 0) {
             requestFactory.setConnectTimeout(requestConfig.getConnectTimeout().intValue());
         }
 
-        if(null != requestConfig.getReadTimeout() && requestConfig.getReadTimeout() > 0) {
+        if (null != requestConfig.getReadTimeout() && requestConfig.getReadTimeout() > 0) {
             requestFactory.setReadTimeout(requestConfig.getReadTimeout().intValue());
         }
 

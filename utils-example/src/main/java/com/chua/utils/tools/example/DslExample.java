@@ -3,9 +3,8 @@ package com.chua.utils.tools.example;
 import com.chua.utils.tools.dsl.CreateDataBaseStepBuilder;
 import com.chua.utils.tools.dsl.CreateTableStepSqlBuilder;
 import com.chua.utils.tools.dsl.DropTableStepBuilder;
-import com.chua.utils.tools.dsl.factory.DataSourceDSL;
+import com.chua.utils.tools.dsl.factory.DataSourceDsl;
 import com.chua.utils.tools.example.entity.TDemoInfo;
-import org.jooq.impl.DSL;
 
 /**
  * @author CH
@@ -16,11 +15,11 @@ public class DslExample {
 
     public static void main(String[] args) {
 
-        CreateTableStepSqlBuilder createTableStepSqlBuilder = DataSourceDSL.createTable().table("demo").withColumn(TDemoInfo.class).create();
+        CreateTableStepSqlBuilder createTableStepSqlBuilder = DataSourceDsl.createTable().table("demo").withColumn(TDemoInfo.class).create();
         System.out.println(createTableStepSqlBuilder.toSql());
-        CreateDataBaseStepBuilder createDataBaseStepBuilder = DataSourceDSL.createDB().db("test_db");
+        CreateDataBaseStepBuilder createDataBaseStepBuilder = DataSourceDsl.createDb().db("test_db");
         System.out.println(createDataBaseStepBuilder.toSql());
-        DropTableStepBuilder dropTableStepBuilder = DataSourceDSL.dropTable().table("demo");
+        DropTableStepBuilder dropTableStepBuilder = DataSourceDsl.dropTable().table("demo");
         System.out.println(dropTableStepBuilder.toSql());
     }
 }

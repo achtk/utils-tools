@@ -15,15 +15,8 @@ public interface IRpcProvider<T> {
      * 暴露服务
      *
      * @param rpcProviderConfig 配置
+     * @return T
      */
     T provider(RpcProviderConfig rpcProviderConfig);
 
-    /**
-     * 暴露服务
-     *
-     * @param rpcProviderConfig 配置
-     */
-    default void providerAsync(final RpcProviderConfig rpcProviderConfig) {
-        new Thread(() -> provider(rpcProviderConfig)).start();
-    }
 }

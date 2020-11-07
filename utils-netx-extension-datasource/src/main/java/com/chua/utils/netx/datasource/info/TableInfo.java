@@ -28,6 +28,8 @@ import java.util.regex.Pattern;
 public class TableInfo<T> {
     private static final String ALL = "*:*";
     private static final String MATCH_ALL = "1 = 1";
+    private static final String ANY = "*";
+    private static final String ONE = "?";
     /**
      * 表名
      */
@@ -166,20 +168,21 @@ public class TableInfo<T> {
      * @return
      */
     private String transToSql(String string) {
+        int size = 2;
         List<String> strings = Splitter.on(":").trimResults().omitEmptyStrings().splitToList(string);
-        if (null == strings || strings.size() != 2) {
+        if (null == strings || strings.size() != size) {
             return "";
         }
         String column = strings.get(0);
         String value = strings.get(1);
-        if ("*".equals(value.trim())) {
+        if (ANY.equals(value.trim())) {
             return null;
         }
         column = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, column);
-        if (value.indexOf("*") == -1 && value.indexOf("?") == -1) {
+        if (value.indexOf(ANY) == -1 && value.indexOf(ONE) == -1) {
             return column + "=" + value;
         }
-        return column + " LIKE \"" + (value.replace("*", "%").replace("?", "_")) + "\"";
+        return column + " LIKE \"" + (value.replace(ANY, "%").replace(ONE, "_")) + "\"";
 
     }
 
@@ -202,7 +205,7 @@ public class TableInfo<T> {
         sb.append("create table ").append(tableName).append(" ( \r\n");
 
         for (Map.Entry<String, Field> entry : attributes.entrySet()) {
-            if (entry.getKey().equals("serialVersionUID")) {
+            if ("serialVersionUID".equals(entry.getKey())) {
                 continue;
             }
             //一般第一个是主键

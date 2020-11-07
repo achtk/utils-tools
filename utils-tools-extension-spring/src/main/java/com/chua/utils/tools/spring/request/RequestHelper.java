@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.chua.utils.tools.constant.HttpConstant.HTTP_METHOD_GET;
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 
 /**
  * HttpServletRequest 处理类
@@ -268,7 +269,7 @@ public class RequestHelper {
      */
     @SneakyThrows
     public static Map<String, Object> getBody(HttpServletRequest request) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         map.putAll(request.getParameterMap());
         String method = request.getMethod();
         if (!HTTP_METHOD_GET.equals(method)) {
