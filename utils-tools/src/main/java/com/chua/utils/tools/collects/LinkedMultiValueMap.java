@@ -3,23 +3,16 @@ package com.chua.utils.tools.collects;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * 多值Map
- *
  * @author CH
  * @version 1.0.0
  * @since 2020/10/17
  */
-public class HashSetMultiValueMap<K, V> implements SetMultiValueMap<K, V>, Cloneable, Serializable {
+public class LinkedMultiValueMap<K, V> implements MultiValueMap<K, V>, Cloneable, Serializable {
 
-    private transient final ConcurrentMap<K, Set<V>> targetMap = new ConcurrentHashMap<>();
-
-    public static <V, K> HashSetMultiValueMap<K, V> create() {
-        return new HashSetMultiValueMap<>();
-    }
+    private final transient Map<K, List<V>> targetMap = new HashMap<>();
 
     @Override
     public int size() {
@@ -42,22 +35,22 @@ public class HashSetMultiValueMap<K, V> implements SetMultiValueMap<K, V>, Clone
     }
 
     @Override
-    public Set<V> get(Object key) {
+    public List<V> get(Object key) {
         return targetMap.get(key);
     }
 
     @Override
-    public Set<V> put(K key, Set<V> value) {
+    public List<V> put(K key, List<V> value) {
         return targetMap.put(key, value);
     }
 
     @Override
-    public Set<V> remove(Object key) {
+    public List<V> remove(Object key) {
         return targetMap.remove(key);
     }
 
     @Override
-    public void putAll(Map<? extends K, ? extends Set<V>> m) {
+    public void putAll(Map<? extends K, ? extends List<V>> m) {
         targetMap.putAll(m);
     }
 
@@ -72,35 +65,35 @@ public class HashSetMultiValueMap<K, V> implements SetMultiValueMap<K, V>, Clone
     }
 
     @Override
-    public Collection<Set<V>> values() {
+    public Collection<List<V>> values() {
         return targetMap.values();
     }
 
     @Override
-    public Set<Entry<K, Set<V>>> entrySet() {
+    public Set<Entry<K, List<V>>> entrySet() {
         return targetMap.entrySet();
     }
 
     @Override
     public void add(K key, @Nullable V value) {
-        Set<V> values = targetMap.computeIfAbsent(key, k -> new HashSet<>());
+        List<V> values = targetMap.computeIfAbsent(key, k -> new LinkedList<>());
         values.add(value);
     }
 
     @Override
-    public void addAll(K key, Set<? extends V> values) {
-        Set<V> keyValues = targetMap.computeIfAbsent(key, k -> new HashSet<>());
+    public void addAll(K key, List<? extends V> values) {
+        List<V> keyValues = targetMap.computeIfAbsent(key, k -> new LinkedList<>());
         keyValues.addAll(values);
     }
 
     @Override
-    public void addAll(SetMultiValueMap<K, V> values) {
+    public void addAll(MultiValueMap<K, V> values) {
         targetMap.putAll(values);
     }
 
     @Override
     public void set(K key, @Nullable V value) {
-        Set<V> values = new HashSet<>();
+        List<V> values = new LinkedList<>();
         values.add(value);
         this.targetMap.put(key, values);
     }

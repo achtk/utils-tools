@@ -1,6 +1,6 @@
 package com.chua.utils.tools.cache;
 
-import com.chua.utils.tools.collects.HashSetMultiValueMap;
+import com.chua.utils.tools.collects.MultiValueSetMap;
 import com.chua.utils.tools.collects.SetMultiValueMap;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.config.CacheProperties;
@@ -20,7 +20,7 @@ public class ConcurrentSetValueCacheProvider<K, V> implements MultiValueCachePro
     private final ThreadLocal<SetMultiValueMap<K, V>> threadLocal = new ThreadLocal<SetMultiValueMap<K, V>>() {
         @Override
         protected SetMultiValueMap<K, V> initialValue() {
-            HashSetMultiValueMap<K, V> valueMap = HashSetMultiValueMap.create();
+            MultiValueSetMap<K, V> valueMap = MultiValueSetMap.create();
             return valueMap;
         }
     };

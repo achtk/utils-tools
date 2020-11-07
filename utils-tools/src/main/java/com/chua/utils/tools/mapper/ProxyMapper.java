@@ -1,7 +1,7 @@
 package com.chua.utils.tools.mapper;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.collects.HashSetMultiValueMap;
+import com.chua.utils.tools.collects.MultiValueSetMap;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.function.intercept.MethodIntercept;
@@ -21,7 +21,7 @@ public class ProxyMapper {
     /**
      * 方法代理缓存
      */
-    private static final HashSetMultiValueMap<String, MethodIntercept> CACHE_INTERCEPT = new HashSetMultiValueMap<>();
+    private static final MultiValueSetMap<String, MethodIntercept> CACHE_INTERCEPT = new MultiValueSetMap<>();
 
     /**
      * 执行方法
