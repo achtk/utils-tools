@@ -384,5 +384,13 @@ public class BeansHelper {
         return getAttributes(obj);
     }
 
-
+    /**
+     * 获取类型转化器
+     *
+     * @param type 类型
+     * @return 类型转化器
+     */
+    public static TypeConverter getTypeConverter(Class<?> type) {
+        return null == type ? null : CLASS_TYPE_CONVERTER_CONCURRENT_MAP.get(type);
+    }
 }

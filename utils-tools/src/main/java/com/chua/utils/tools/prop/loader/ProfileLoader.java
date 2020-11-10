@@ -7,7 +7,7 @@ import java.util.Properties;
  * properties数据加载器
  * @author CH
  */
-public interface PropertiesLoader {
+public interface ProfileLoader {
     /**
      * 支持的后缀
      * @return

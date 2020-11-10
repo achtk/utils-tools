@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_COMMA;
+
 /**
  * 简单的扩展解释器
  *
@@ -161,7 +163,7 @@ public abstract class AbstractSimpleExtensionProcessor<T> implements ExtensionPr
      */
     private ExtensionClass<T> buildExtensionClass(String name, Class<?> tClass, boolean isSingle, int order, T t) {
         ExtensionClass<T> extensionClass = new ExtensionClass<>();
-        extensionClass.setName(name);
+        extensionClass.setName(name.toLowerCase());
         extensionClass.setOrder(order);
         extensionClass.setImplClass(tClass);
         extensionClass.setObj(t);
@@ -187,7 +189,7 @@ public abstract class AbstractSimpleExtensionProcessor<T> implements ExtensionPr
         //实现OrderAware
         if (NamedAware.class.isAssignableFrom(tClass)) {
             NamedAware namedAware = (NamedAware) t;
-            return new String[]{namedAware.named()};
+            return namedAware.named().split(SYMBOL_COMMA);
         }
         return null;
     }

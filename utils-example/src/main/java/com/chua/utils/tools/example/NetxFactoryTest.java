@@ -11,7 +11,7 @@ public class NetxFactoryTest {
 
     @Test
     public void testNetxFactory() {
-        INetFactory netxFactory = ExtensionFactory.getExtensionLoader(INetFactory.class).getExtension();
+        INetFactory netxFactory = ExtensionFactory.getExtensionLoader(INetFactory.class).getFirst();
         System.out.println(netxFactory);
     }
 }

@@ -78,7 +78,7 @@ public class PropertiesHelper {
      * @return
      */
     public static long longs(Properties properties, String index, long defaultValue) {
-        if (BooleanHelper.isValid(properties, index)) {
+        if (!BooleanHelper.isValid(properties, index)) {
             return defaultValue;
         }
         String property = properties.getProperty(index);

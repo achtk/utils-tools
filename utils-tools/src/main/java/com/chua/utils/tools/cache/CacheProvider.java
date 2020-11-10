@@ -1,8 +1,12 @@
 package com.chua.utils.tools.cache;
 
+import com.chua.utils.tools.collects.map.MapOperableHelper;
+import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.config.CacheProperties;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -18,6 +22,15 @@ public interface CacheProvider<K, V> {
      * @return CacheProvider
      */
     CacheProvider configure(CacheProperties cacheProperties);
+
+    /**
+     * 初始化
+     *
+     * @return map
+     */
+    default Map<K, V> initialValue() {
+        return Collections.emptyMap();
+    }
 
     /**
      * 是否存在缓存
@@ -50,6 +63,21 @@ public interface CacheProvider<K, V> {
      * @return T
      */
     V put(K name, V value);
+
+    /**
+     * 保存缓存
+     *
+     * @param params 缓存数据
+     * @return T
+     */
+    default void putAll(Map<K, V> params) {
+        if (MapOperableHelper.isEmpty(params)) {
+            return;
+        }
+        for (Map.Entry<K, V> entry : params.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
+    }
 
     /**
      * 更新缓存

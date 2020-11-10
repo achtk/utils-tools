@@ -23,6 +23,7 @@ public class GuavaCacheProvider<K, T> implements CacheProvider<K, T>, CacheManag
 
     public GuavaCacheProvider() {
         this.configure(new CacheProperties());
+        this.putAll(initialValue());
     }
 
     @Override
@@ -62,7 +63,7 @@ public class GuavaCacheProvider<K, T> implements CacheProvider<K, T>, CacheManag
         } else {
             cache = objectObjectCacheBuilder.build();
         }
-
+        this.putAll(initialValue());
         return this;
     }
 

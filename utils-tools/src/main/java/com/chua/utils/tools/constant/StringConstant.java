@@ -174,6 +174,10 @@ public class StringConstant {
      */
     public static final String ZERO = "0";
     /**
+     * any
+     */
+    public static final String ANY = "any";
+    /**
      *
      */
     private static final String SYMBOL_FILE = "file";

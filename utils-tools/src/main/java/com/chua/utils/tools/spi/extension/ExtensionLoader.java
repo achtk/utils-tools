@@ -1,7 +1,9 @@
 package com.chua.utils.tools.spi.extension;
 
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.spi.Spi;
 import com.chua.utils.tools.spi.entity.ExtensionClass;
 import com.chua.utils.tools.spi.entity.SpiConfig;
@@ -29,7 +31,10 @@ import java.util.function.Consumer;
 @Getter
 @Setter
 @Slf4j
+@SuppressWarnings("all")
 public class ExtensionLoader<T> {
+
+    public static final String ANY = StringConstant.ANY;
     /**
      * 待查询类
      */
@@ -43,11 +48,11 @@ public class ExtensionLoader<T> {
      */
     private SpiConfig spiConfig;
     /**
-     *
+     * 处理器
      */
     private ExtensionProcessor extensionProcessor = new CustomExtensionProcessor();
     /**
-     *
+     * 缓存数据
      */
     private final Multimap<String, ExtensionClass<T>> extensionClassMultimap = HashMultimap.create();
 
@@ -79,9 +84,9 @@ public class ExtensionLoader<T> {
     }
 
     /**
-     * 检索数据
+     * 检索扩展对象
      *
-     * @return
+     * @return this
      */
     public ExtensionLoader<T> search() {
         Preconditions.checkArgument(null != service);
@@ -109,8 +114,8 @@ public class ExtensionLoader<T> {
     /**
      * 获取当前spi下的所有加载器
      *
-     * @param name
-     * @return
+     * @param name 扩展名称
+     * @return 返回所有的扩展对象
      */
     public Collection<ExtensionClass<T>> getExtensionClasses(String name) {
         if (Strings.isNullOrEmpty(name)) {
@@ -122,24 +127,29 @@ public class ExtensionLoader<T> {
     /**
      * 获取当前spi下优先级最高的加载器
      *
-     * @param name
-     * @return
+     * @param name 扩展名称
+     * @return 当前spi下优先级最高的加载器
      */
     public ExtensionClass<T> getExtensionClass(String name) {
         if (null == name) {
             return null;
         }
         Collection<ExtensionClass<T>> classes = getExtensionClasses(name.toLowerCase());
-        if (null == classes) {
+        if (CollectionHelper.isEmpty(classes)) {
+            if (ANY.equals(name)) {
+                return FinderHelper.firstElement(extensionClassMultimap.values());
+            }
             return null;
         }
 
         int maxOrder = -1;
         ExtensionClass<T> result = null;
+
         for (ExtensionClass<T> aClass : classes) {
             int order = aClass.getOrder();
             if (order > maxOrder) {
                 result = aClass;
+                maxOrder = order;
             }
         }
         return result;
@@ -148,8 +158,9 @@ public class ExtensionLoader<T> {
     /**
      * 获取当前spi下的所有实现
      *
-     * @param name
-     * @return
+     * @param name 扩展名称
+     * @param <T>  类型
+     * @return 当前spi下的所有实现
      */
     public List<T> getExtensions(String name) {
         Collection<ExtensionClass<T>> extensionClasses = getExtensionClasses(name);
@@ -165,10 +176,10 @@ public class ExtensionLoader<T> {
     }
 
     /**
-     * 获取当前spi下的实现
+     * 获取优先级最高的扩展实现
      *
-     * @param name
-     * @return
+     * @param name 扩展名称
+     * @return 优先级最高的扩展实现
      */
     public T getExtension(String name) {
         ExtensionClass<T> extensionClasses = getExtensionClass(name);
@@ -184,7 +195,7 @@ public class ExtensionLoader<T> {
      *
      * @return
      */
-    public T getExtension() {
+    public T getFirst() {
         Set<String> strings = extensionClassMultimap.keySet();
         if (!BooleanHelper.hasLength(strings)) {
             return null;
@@ -195,17 +206,18 @@ public class ExtensionLoader<T> {
     /**
      * 获取当前spi下的实现
      *
-     * @param name
-     * @return
+     * @param name 扩展名称
+     * @return 优先级最高的扩展实现
+     * @see #getExtension(String)
      */
     public T getSpiService(String name) {
         return getExtension(name);
     }
 
     /**
-     * 获取当前spi下的实现
+     * 获取当前spi注解标识的实现
      *
-     * @return
+     * @return 当前spi注解标识的实现
      */
     public T getSpiService() {
         Preconditions.checkArgument(null != service);
@@ -224,7 +236,7 @@ public class ExtensionLoader<T> {
     /**
      * 获取所有缓存
      *
-     * @return
+     * @return 所有缓存
      */
     public synchronized Multimap<String, ExtensionClass<T>> getAllExtensionClassess() {
         return extensionClassMultimap;
@@ -233,7 +245,7 @@ public class ExtensionLoader<T> {
     /**
      * 获取所有的Spi服务
      *
-     * @return
+     * @return 所有的Spi服务
      */
     public Set<T> getAllSpiService() {
         Multimap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
@@ -255,7 +267,7 @@ public class ExtensionLoader<T> {
     /**
      * 获取不为空的服务
      *
-     * @return
+     * @return 获取不为空的实现
      */
     public T getNotNullSpiService() {
         return FinderHelper.firstElement(getAllSpiService());
@@ -264,7 +276,7 @@ public class ExtensionLoader<T> {
     /**
      * 获取随机spi
      *
-     * @return
+     * @return 随机实现
      */
     public T getRandomSpiService() {
         Set<T> spiService = getAllSpiService();
@@ -276,7 +288,7 @@ public class ExtensionLoader<T> {
     /**
      * 获取所有Spi名称
      *
-     * @return
+     * @return 所有Spi名称
      */
     public Set<String> keys() {
         Multimap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
@@ -286,7 +298,7 @@ public class ExtensionLoader<T> {
     /**
      * 获取优先级高的所有实现
      *
-     * @return
+     * @return 优先级高的所有实现
      */
     public Map<String, ExtensionClass<T>> asMap() {
         Multimap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
@@ -304,7 +316,7 @@ public class ExtensionLoader<T> {
     }
 
     /**
-     * 重置
+     * 重置缓存
      */
     public void refresh() {
         if (null != extensionProcessor) {
@@ -319,7 +331,7 @@ public class ExtensionLoader<T> {
     }
 
     /**
-     * 缓存
+     * 缓存数据
      *
      * @param collection 数据
      */
@@ -334,5 +346,29 @@ public class ExtensionLoader<T> {
             }
         });
         extensionClassMultimap.putAll(service.getName(), collection);
+    }
+
+    /**
+     * 获取优先级最高的扩展数据
+     *
+     * @return 优先级最高的扩展数据
+     */
+    public Map<String, T> getPriorityExtension() {
+        Set<String> keySet = extensionClassMultimap.keySet();
+        Map<String, T> result = new HashMap<>(keySet.size());
+
+        for (String key : keySet) {
+            result.put(key, getExtension(key));
+        }
+        return result;
+    }
+
+    /**
+     * 添加/覆盖已有的缓存
+     *
+     * @param extensionClass 扩展类
+     */
+    public void appendExtension(final ExtensionClass<T> extensionClass) {
+        extensionClassMultimap.put(extensionClass.getName(), extensionClass);
     }
 }

@@ -2,6 +2,7 @@ package com.chua.utils.tools.example;
 
 import cn.hutool.core.util.RandomUtil;
 import com.chua.utils.tools.tree.BPlusTree;
+import com.chua.utils.tools.tree.PrintTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,16 @@ public class BPlusTreeExample {
 //        testOrderRemove(size, order);
 
         BPlusTree<Integer, String> bPlusTree = new BPlusTree<>(3);
+        bPlusTree.insertOrUpdate(1, "2");
+        bPlusTree.insertOrUpdate(1, "3");
+        bPlusTree.insertOrUpdate(2, "4");
+        bPlusTree.insertOrUpdate(3, "6");
+        bPlusTree.insertOrUpdate(4, "8");
+        bPlusTree.insertOrUpdate(5, "10");
+        PrintTree printTree = bPlusTree.createPrintTree();
+        printTree.print();
 
+        System.out.println(bPlusTree.get(3));
     }
 
     private static void testOrderRemove(int size, int order) {
@@ -43,7 +53,7 @@ public class BPlusTreeExample {
         for (int i = 0; i < size; i++) {
             tree.insertOrUpdate(i, i);
         }
-        tree.printBPlusTree();
+        
         System.out.println("Begin order remove...");
         long current = System.currentTimeMillis();
         for (int j = 0; j < size; j++) {
@@ -54,7 +64,7 @@ public class BPlusTreeExample {
         }
         long duration = System.currentTimeMillis() - current;
         System.out.println("time elpsed for duration: " + duration);
-        tree.printBPlusTree();
+        
         System.out.println(tree.getHeight());
     }
 
@@ -73,7 +83,7 @@ public class BPlusTreeExample {
             list.add(randomNumber);
             tree.insertOrUpdate(randomNumber, randomNumber);
         }
-        tree.printBPlusTree();
+        
         System.out.println("Begin random remove...");
         long current = System.currentTimeMillis();
         for (int j = 0; j < size; j++) {
@@ -89,7 +99,7 @@ public class BPlusTreeExample {
         }
         long duration = System.currentTimeMillis() - current;
         System.out.println("time elpsed for duration: " + duration);
-        tree.printBPlusTree();
+        
         System.out.println(tree.getHeight());
     }
 
@@ -101,7 +111,7 @@ public class BPlusTreeExample {
         for (int i = 0; i < size; i++) {
             tree.insertOrUpdate(i, i);
         }
-        tree.printBPlusTree();
+        
         System.out.println("Begin order search...");
         long current = System.currentTimeMillis();
         for (int j = 0; j < size; j++) {
@@ -126,7 +136,7 @@ public class BPlusTreeExample {
             a[randomNumber] = true;
             tree.insertOrUpdate(randomNumber, randomNumber);
         }
-        tree.printBPlusTree();
+        
         System.out.println("Begin random search...");
         long current = System.currentTimeMillis();
         for (int j = 0; j < size; j++) {
@@ -155,7 +165,7 @@ public class BPlusTreeExample {
         }
         long duration = System.currentTimeMillis() - current;
         System.out.println("time elpsed for duration: " + duration);
-        tree.printBPlusTree();
+        
         System.out.println(tree.getHeight());
     }
 
@@ -169,6 +179,6 @@ public class BPlusTreeExample {
         }
         long duration = System.currentTimeMillis() - current;
         System.out.println("time elpsed for duration: " + duration);
-        tree.printBPlusTree();
+        
     }
 }

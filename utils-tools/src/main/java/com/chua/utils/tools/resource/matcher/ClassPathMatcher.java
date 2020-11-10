@@ -252,7 +252,7 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
         List<Resource> result = new ArrayList<>();
         final Class<?> aClass = ClassHelper.forName(subPath);
         if (null == aClass) {
-            return result;
+            //return result;
         }
         //jar文件
         URLConnection urlConnection = url.openConnection();

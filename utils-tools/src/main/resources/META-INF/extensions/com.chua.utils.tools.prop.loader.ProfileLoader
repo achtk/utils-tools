@@ -1,0 +1,5 @@
+xml=com.chua.utils.tools.prop.loader.XmlProfileLoader
+yaml=com.chua.utils.tools.prop.loader.YamlProfileLoader
+yml=com.chua.utils.tools.prop.loader.YamlProfileLoader
+json=com.chua.utils.tools.prop.loader.JsonProfileLoader
+properties=com.chua.utils.tools.prop.loader.PropertiesProfileLoader

@@ -1,8 +1,5 @@
 package com.chua.utils.tools.collects;
 
-import com.chua.utils.tools.classes.ClassHelper;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.SortedMultiset;
 import lombok.NoArgsConstructor;
 
 import javax.annotation.Nullable;
@@ -17,16 +14,16 @@ import java.util.*;
  * @since 2020/10/17
  */
 @NoArgsConstructor
-public class HashSortMap<K, V> extends TreeMap<K, List<V>> implements ListMultiValueSortMap<K, V>, Cloneable, Serializable {
+public class HashLazySortMultiValueMap<K, V> extends TreeMap<K, List<V>> implements SortMultiValueMap<K, V>, Cloneable, Serializable {
 
     private Comparator comparator = new ValueComparator();
 
 
-    public HashSortMap(Comparator<V> comparator) {
+    public HashLazySortMultiValueMap(Comparator<V> comparator) {
         this.comparator = comparator;
     }
 
-    private final transient Map<K, List<V>> targetMap = new TreeMap<>();
+    private final transient ListMultiValueMap<Object, V> targetMap = new MultiValueMap<>();
 
     @Override
     public int size() {
@@ -50,20 +47,15 @@ public class HashSortMap<K, V> extends TreeMap<K, List<V>> implements ListMultiV
 
     @Override
     public List<V> get(Object key) {
-        return targetMap.get(key);
+        List<V> vs = targetMap.get(key);
+        Collections.sort(vs, comparator);
+        targetMap.put(key, vs);
+        return vs;
     }
 
     @Override
     public List<V> put(K key, List<V> value) {
-        List<V> newValue = new ArrayList<>();
-        List<V> vs = get(key);
-        if (null != vs) {
-            newValue.addAll(vs);
-        }
-        newValue.addAll(value);
-        Collections.sort(newValue, comparator);
-        targetMap.remove(key);
-        return targetMap.put(key, newValue);
+        return targetMap.put(key, value);
     }
 
     @Override
@@ -83,7 +75,7 @@ public class HashSortMap<K, V> extends TreeMap<K, List<V>> implements ListMultiV
 
     @Override
     public Set<K> keySet() {
-        return targetMap.keySet();
+        return (Set<K>) targetMap.keySet();
     }
 
     @Override
@@ -98,26 +90,19 @@ public class HashSortMap<K, V> extends TreeMap<K, List<V>> implements ListMultiV
 
     @Override
     public void addAll(K key, List<? extends V> values) {
-        List<V> newValues = new ArrayList<>();
-        newValues.addAll(values);
-        List<V> keyValues = targetMap.computeIfAbsent(key, k -> new LinkedList<>());
-        newValues.addAll(keyValues);
-
-        this.put(key, newValues);
+        this.targetMap.addAll(key, values);
     }
 
     @Override
-    public void addAll(ListMultiValueSortMap<K, V> values) {
+    public void addAll(SortMultiValueMap<K, V> values) {
         for (Map.Entry<K, List<V>> entry : values.entrySet()) {
-            this.put(entry.getKey(), entry.getValue());
+            this.addAll(entry.getKey(), entry.getValue());
         }
     }
 
     @Override
     public void set(K key, @Nullable V value) {
-        List<V> values = new LinkedList<>();
-        values.add(value);
-        this.targetMap.put(key, values);
+        this.targetMap.set(key, value);
     }
 
     @Override

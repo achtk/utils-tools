@@ -1,5 +1,6 @@
 package com.chua.utils.tools.example.entity;
 
+import com.chua.utils.tools.text.IdHelper;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -25,4 +26,10 @@ public class TDemoInfo {
     private String demoTitle;
     @Column
     private String test;
+
+    private String uuid;
+
+    public String getUuid() {
+        return IdHelper.createUuid();
+    }
 }

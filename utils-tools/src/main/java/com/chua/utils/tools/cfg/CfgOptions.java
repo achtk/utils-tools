@@ -1,7 +1,9 @@
 package com.chua.utils.tools.cfg;
 
 import com.chua.utils.tools.collects.map.MapOperableHelper;
-import com.chua.utils.tools.common.*;
+import com.chua.utils.tools.common.FileHelper;
+import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.common.PropertiesHelper;
 import com.chua.utils.tools.constant.SymbolConstant;
 import com.chua.utils.tools.prop.loader.*;
 import com.chua.utils.tools.prop.placeholder.EnvPropertyPlaceholder;
@@ -9,9 +11,6 @@ import com.chua.utils.tools.prop.placeholder.PropertyPlaceholder;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -20,7 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static com.chua.utils.tools.constant.StringConstant.SYSTEM_PRIORITY_PROP;
 
@@ -35,7 +35,7 @@ import static com.chua.utils.tools.constant.StringConstant.SYSTEM_PRIORITY_PROP;
 public class CfgOptions {
 
     private final ConcurrentMap<String, List<Properties>> cache = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, PropertiesLoader> LOADER_CACHE = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, ProfileLoader> LOADER_CACHE = new ConcurrentHashMap<>();
     private static final String KEY_NAME = "KEY#NAME";
     /**
      * 占位符
@@ -131,7 +131,7 @@ public class CfgOptions {
     /**
      * 排序
      *
-     * @param source
+     * @param source 数据源
      * @return List
      */
     private List<Properties> sortPropertiesList(HashMultimap<String, Properties> source) {
@@ -149,10 +149,10 @@ public class CfgOptions {
             values.addAll(result);
         });
 
-        Collections.sort(values, (o1, o2) -> {
+        values.sort((o1, o2) -> {
             int int1 = MapOperableHelper.getInteger(o1, SYSTEM_PRIORITY_PROP, 0);
             int int2 = MapOperableHelper.getInteger(o2, SYSTEM_PRIORITY_PROP, 0);
-            return int1 > int2 ? 1 : -1;
+            return int1 > int2 ? 0 : -1;
         });
 
 
@@ -196,13 +196,12 @@ public class CfgOptions {
      * @return 文件内容
      */
     private Properties doAnalysisLocationFile(final String path, final String suffix) {
-        PropertiesLoader propertiesLoader = ExtensionFactory.getExtensionLoader(PropertiesLoader.class).getExtension(suffix);
-        if (null == propertiesLoader) {
+        ProfileLoader profileLoader = ExtensionFactory.getExtensionLoader(ProfileLoader.class).getExtension(suffix);
+        if (null == profileLoader) {
             return PropertiesHelper.emptyProperties();
         }
-        File file = new File(path);
         try {
-            return propertiesLoader.toProp(new FileInputStream(file));
+            return profileLoader.toProp(new FileInputStream(new File(path)));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -227,15 +226,14 @@ public class CfgOptions {
         }
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            PropertiesLoader propertiesLoader = getExtension(suffix);
-            if (null == propertiesLoader) {
+            ProfileLoader profileLoader = getExtension(suffix);
+            if (null == profileLoader) {
                 continue;
             }
             try {
-                Properties properties = propertiesLoader.toProp(url.openStream());
+                Properties properties = profileLoader.toProp(url.openStream());
                 result.put(url.toExternalForm(), properties);
-            } catch (IOException e) {
-                continue;
+            } catch (IOException ignored) {
             }
         }
 
@@ -265,9 +263,7 @@ public class CfgOptions {
      * @param properties 原始数据
      */
     private void placeholderProperties(Properties properties) {
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            properties.put(entry.getKey(), placeholderValue(entry.getValue()));
-        }
+        properties.replaceAll((k, v) -> placeholderValue(v));
     }
 
     /**
@@ -289,28 +285,28 @@ public class CfgOptions {
      * @param suffix 后缀
      * @return PropertiesLoader
      */
-    private PropertiesLoader getExtension(String suffix) {
+    private ProfileLoader getExtension(String suffix) {
         if (LOADER_CACHE.containsKey(suffix)) {
             return LOADER_CACHE.get(suffix);
         }
-        PropertiesLoader propertiesLoader = null;
+        ProfileLoader profileLoader = new PropertiesProfileLoader();
         switch (suffix) {
             case "json":
-                propertiesLoader = new JsonPropertiesLoader();
+                profileLoader = new JsonProfileLoader();
                 break;
             case "yml":
-                propertiesLoader = new YamlPropertiesLoader();
+                profileLoader = new YamlProfileLoader();
                 break;
             case "xml":
-                propertiesLoader = new XmlPropertiesLoader();
+                profileLoader = new XmlProfileLoader();
                 break;
             case "properties":
-                propertiesLoader = new PropertiesPropertiesLoader();
+                profileLoader = new PropertiesProfileLoader();
                 break;
             default:
         }
-        LOADER_CACHE.put(suffix, propertiesLoader);
-        return propertiesLoader;
+        LOADER_CACHE.put(suffix, profileLoader);
+        return profileLoader;
     }
 
     /**
@@ -341,18 +337,5 @@ public class CfgOptions {
         }
 
         return result;
-    }
-
-
-    /**
-     * 用于排序的一个类
-     */
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    private static class CfgFile {
-        private final URL url;
-        private final int order;
-        private final Map map;
     }
 }

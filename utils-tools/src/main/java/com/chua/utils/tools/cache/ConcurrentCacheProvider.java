@@ -1,10 +1,10 @@
 package com.chua.utils.tools.cache;
 
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.PropertiesHelper;
 import com.chua.utils.tools.config.CacheProperties;
 import com.chua.utils.tools.manager.CacheManager;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Properties;
@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentMap;
  * @author CH
  * @date 2020-09-30
  */
-@NoArgsConstructor
 public class ConcurrentCacheProvider<K, V> implements CacheProvider<K, V>, CacheManager<K, V> {
 
     private final ConcurrentHashMap<K, Properties> cache = new ConcurrentHashMap<>();
@@ -25,8 +24,13 @@ public class ConcurrentCacheProvider<K, V> implements CacheProvider<K, V>, Cache
     private static final String DEFAULT_TIMEOUT_FIELDS = "config.cache.timeout";
     private static final String DEFAULT_KEY_FIELDS = "config.cache.key";
 
+    public ConcurrentCacheProvider() {
+        this.putAll(initialValue());
+    }
+
     public ConcurrentCacheProvider(int timeout) {
         this.timeout = timeout;
+        this.putAll(initialValue());
     }
 
     @Override
@@ -59,7 +63,7 @@ public class ConcurrentCacheProvider<K, V> implements CacheProvider<K, V>, Cache
         }
         Properties properties = cache.get(name);
         long ints = PropertiesHelper.longs(properties, DEFAULT_TIMEOUT_FIELDS);
-        V value = (V) properties.get(DEFAULT_KEY_FIELDS);
+        V value = (V) MapOperableHelper.getObject(properties, DEFAULT_KEY_FIELDS);
         if (-1L == ints) {
             return value;
         }

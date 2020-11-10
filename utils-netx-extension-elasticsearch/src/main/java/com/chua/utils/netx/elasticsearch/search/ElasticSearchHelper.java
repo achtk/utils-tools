@@ -1,7 +1,6 @@
 package com.chua.utils.netx.elasticsearch.search;
 
 import com.chua.utils.netx.elasticsearch.condition.Condition;
-import com.chua.utils.tools.collects.map.MapHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.NumberHelper;
 import com.chua.utils.tools.common.StringHelper;
@@ -30,10 +29,10 @@ public class ElasticSearchHelper {
     public static Map<String, Object> search(Condition condition) {
         Map<String, Object> conditions = Maps.newHashMap();
 
-        MapHelper.combine(conditions, generateQueryByFields(condition));
-        MapHelper.combine(conditions, generateFieldSort(condition));
-        MapHelper.combine(conditions, formAndSize(condition));
-        MapHelper.combine(conditions, _source(condition));
+       // MapHelper.combine(conditions, generateQueryByFields(condition));
+     //   MapHelper.combine(conditions, generateFieldSort(condition));
+     //   MapHelper.combine(conditions, formAndSize(condition));
+     //   MapHelper.combine(conditions, _source(condition));
 
         return conditions;
     }

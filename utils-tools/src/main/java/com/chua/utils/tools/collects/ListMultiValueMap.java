@@ -16,7 +16,7 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2020/10/17
  */
-public interface ListMultiValueSortMap<K, V> extends Map<K, List<V>> {
+public interface ListMultiValueMap<K, V> extends Map<K, List<V>> {
     /**
      * 获取第一个值
      *
@@ -81,7 +81,7 @@ public interface ListMultiValueSortMap<K, V> extends Map<K, List<V>> {
      *
      * @param values 值
      */
-    void addAll(ListMultiValueSortMap<K, V> values);
+    void addAll(ListMultiValueMap<K, V> values);
 
     /**
      * 设置值

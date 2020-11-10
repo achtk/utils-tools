@@ -1,34 +1,56 @@
 package com.chua.utils.tools.tree;
 
+import lombok.Data;
+
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("all")
+@Data
 public class BPlusNode<K extends Comparable<K>, V> {
 
-    // 是否为叶子节点
+    /**
+     * 是否为叶子节点
+     */
     protected boolean isLeaf;
 
-    // 是否为根节点
+    /**
+     * 是否为根节点
+     */
     protected boolean isRoot;
 
-    // 父节点
+    /**
+     * 父节点
+     */
     protected BPlusNode<K, V> parent;
 
-    // 叶节点的前节点
+    /**
+     * 叶节点的前节点
+     */
     protected BPlusNode<K, V> previous;
 
-    // 叶节点的后节点
+    /**
+     * 叶节点的后节点
+     */
     protected BPlusNode<K, V> next;
 
-    // 节点的关键字列表
+    /**
+     * 节点的关键字列表
+     */
     protected List<Map.Entry<K, V>> entries;
 
-    // 子节点列表
+    /**
+     * 子节点列表
+     */
     protected List<BPlusNode<K, V>> children;
 
+    /**
+     * 构造
+     *
+     * @param isLeaf 是否是叶子
+     */
     public BPlusNode(boolean isLeaf) {
         this.isLeaf = isLeaf;
         entries = new ArrayList();
@@ -38,11 +60,23 @@ public class BPlusNode<K extends Comparable<K>, V> {
         }
     }
 
+    /**
+     * 构造
+     *
+     * @param isLeaf 是否是叶子
+     * @param isRoot 是否是根
+     */
     public BPlusNode(boolean isLeaf, boolean isRoot) {
         this(isLeaf);
         this.isRoot = isRoot;
     }
 
+    /**
+     * 获取数据
+     *
+     * @param key 索引
+     * @return 数据
+     */
     public V get(K key) {
         //如果是叶子节点
         if (isLeaf) {
@@ -88,6 +122,13 @@ public class BPlusNode<K extends Comparable<K>, V> {
         }
     }
 
+    /**
+     * 插入数据
+     *
+     * @param key   索引
+     * @param value 值
+     * @param tree  树
+     */
     public void insertOrUpdate(K key, V value, BPlusTree<K, V> tree) {
         //如果是叶子节点
         if (isLeaf) {
@@ -185,6 +226,15 @@ public class BPlusNode<K extends Comparable<K>, V> {
         }
     }
 
+    /**
+     * 拷贝节点
+     *
+     * @param key   索引
+     * @param value 值
+     * @param left  左树
+     * @param right 右树
+     * @param tree  树
+     */
     private void copy2Nodes(K key, V value, BPlusNode<K, V> left,
                             BPlusNode<K, V> right, BPlusTree<K, V> tree) {
         //左右两个节点关键字长度
@@ -217,6 +267,8 @@ public class BPlusNode<K extends Comparable<K>, V> {
 
     /**
      * 插入节点后中间节点的更新
+     *
+     * @param tree 树
      */
     protected void updateInsert(BPlusTree<K, V> tree) {
 
@@ -279,6 +331,8 @@ public class BPlusNode<K extends Comparable<K>, V> {
 
     /**
      * 删除节点后中间节点的更新
+     *
+     * @param tree 树
      */
     protected void updateRemove(BPlusTree<K, V> tree) {
 
@@ -405,6 +459,13 @@ public class BPlusNode<K extends Comparable<K>, V> {
         }
     }
 
+    /**
+     * 删除数据
+     *
+     * @param key  索引
+     * @param tree 树
+     * @return 值
+     */
     public V remove(K key, BPlusTree<K, V> tree) {
         //如果是叶子节点
         if (isLeaf) {
@@ -543,7 +604,12 @@ public class BPlusNode<K extends Comparable<K>, V> {
         }
     }
 
-    // 判断当前节点是否包含该关键字
+    /**
+     * 判断当前节点是否包含该关键字
+     *
+     * @param key 索引
+     * @return 是否包含
+     */
     protected int contains(K key) {
         int low = 0, high = entries.size() - 1, mid;
         int comp;
@@ -561,7 +627,12 @@ public class BPlusNode<K extends Comparable<K>, V> {
         return -1;
     }
 
-    // 插入到当前节点的关键字中
+    /**
+     * 插入到当前节点的关键字中
+     *
+     * @param key   索引
+     * @param value 数据
+     */
     protected void insertOrUpdate(K key, V value) {
         //二叉查找，插入
         int low = 0, high = entries.size() - 1, mid;
@@ -583,7 +654,12 @@ public class BPlusNode<K extends Comparable<K>, V> {
         }
     }
 
-    // 删除节点
+    /**
+     * 删除节点
+     *
+     * @param key 索引
+     * @return 值
+     */
     protected V remove(K key) {
         int low = 0, high = entries.size() - 1, mid;
         int comp;
@@ -601,6 +677,7 @@ public class BPlusNode<K extends Comparable<K>, V> {
         return null;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("isRoot: ");
@@ -618,6 +695,11 @@ public class BPlusNode<K extends Comparable<K>, V> {
         return sb.toString();
     }
 
+    /**
+     * 打印数据
+     *
+     * @param index
+     */
     public void printBPlusTree(int index) {
         if (this.isLeaf) {
             System.out.print("层级：" + index + ",叶子节点，keys为: ");
@@ -632,5 +714,15 @@ public class BPlusNode<K extends Comparable<K>, V> {
             for (int i = 0; i < children.size(); ++i)
                 children.get(i).printBPlusTree(index + 1);
         }
+    }
+
+    /**
+     * 打印数据
+     *
+     * @param root 根节点
+     * @return 打印树
+     */
+    public PrintTree print(BPlusNode<K, V> root) {
+        return new PrintTree(root);
     }
 }

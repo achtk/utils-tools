@@ -1,6 +1,7 @@
 package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.collects.collections.ListHelper;
+import com.chua.utils.tools.empty.Empty;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -11,6 +12,7 @@ import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
 
 /**
  * 数组工具类
+ *
  * @author CH
  */
 public class ArraysHelper {
@@ -53,13 +55,13 @@ public class ArraysHelper {
      */
     public static <T> List<T> newArrays(@SuppressWarnings("unchecked") final T... t) {
         if (null != t && t.length > 0) {
-            List<T> tList = ListHelper.newArrayList(t.length);
+            List<T> tList = new ArrayList<>(t.length);
             for (T t1 : t) {
                 tList.add(t1);
             }
             return tList;
         }
-        return ListHelper.newArrayList();
+        return Collections.emptyList();
     }
 
     /**
@@ -133,7 +135,7 @@ public class ArraysHelper {
      * @param array 数组
      * @return 数组的第一个元素
      */
-    public static <T>T getFirst(T[] array) {
+    public static <T> T getFirst(T[] array) {
         if (array == null || array.length == 0) {
             return null;
         }
@@ -201,7 +203,7 @@ public class ArraysHelper {
      * @return 有true，否则false
      */
     public static boolean hasValue(String[] args) {
-        if (null == args || 0 == args.length ) {
+        if (null == args || 0 == args.length) {
             return false;
         }
         for (int i = 0, length = args.length; i < length; i++) {
@@ -271,27 +273,21 @@ public class ArraysHelper {
     }
 
     /**
-     * @param ts
-     * @return
+     * 判断数组是否为空
+     *
+     * @param array 数组
+     * @return 当数组为空或者null, 返回: true, 负责返回 false
      */
-    public static <T> boolean isEmpty(T[] ts) {
-        return null == ts ? true : Array.getLength(ts) == 0;
-    }
-
-    /**
-     * @param ts
-     * @return
-     */
-    public static <T> boolean isNotEmpty(T[] ts) {
-        return !isEmpty(ts);
+    public static <T> boolean isEmpty(T[] array) {
+        return null == array || array.length == 0;
     }
 
     /**
      * 数组复制
      *
      * @param array 原数组
-     * @param <T>
-     * @return
+     * @param <T> 类型
+     * @return 新数组
      */
     public static <T> T[] clone(final T[] array) {
         if (array == null) {
@@ -367,27 +363,29 @@ public class ArraysHelper {
      * ArraysHelper.remove([1, 0], 0)      = [1]
      * ArraysHelper.remove([1, 0, 1], 1)   = [0, 1]
      * </pre>
-     * @param array 数组
+     *
+     * @param array   数组
      * @param element 索引位置
      * @param <T>
      * @return
      */
     public static <T> T[] remove(final T[] array, final T element) {
-        if(null == array) {
+        if (null == array) {
             return null;
         }
         int index = indexOf(array, element);
         return remove(array, index);
     }
+
     /**
      * 查询数组元素
      *
-     * @param array 数组
+     * @param array   数组
      * @param element 索引位置
      * @param <T>
      * @return
      */
-    public static <T>int indexOf(final T[] array, final T element) {
+    public static <T> int indexOf(final T[] array, final T element) {
         if (array == null) {
             return INDEX_NOT_FOUND;
         }
@@ -402,7 +400,8 @@ public class ArraysHelper {
 
     /**
      * 获取元素位置
-     * @param source 源数据
+     *
+     * @param source  源数据
      * @param element 元素
      * @return
      */
@@ -426,6 +425,7 @@ public class ArraysHelper {
      * ArraysHelper.remove([1, 0], 1)       = [1]
      * ArraysHelper.remove([1, 0, 1], 1)    = [1, 1]
      * </pre>
+     *
      * @param array 数组
      * @param index 索引位置
      * @param <T>
@@ -451,31 +451,29 @@ public class ArraysHelper {
     }
 
     /**
-     *
      * @param x
      * @param y
      * @return
      */
     public static String[] join(String[] x, String[] y) {
         String[] result = new String[x.length + y.length];
-        System.arraycopy( x, 0, result, 0, x.length );
-        System.arraycopy( y, 0, result, x.length, y.length );
+        System.arraycopy(x, 0, result, 0, x.length);
+        System.arraycopy(y, 0, result, x.length, y.length);
         return result;
     }
 
     /**
-     *
      * @param x
      * @param y
      * @param use
      * @return
      */
     public static String[] join(String[] x, String[] y, boolean[] use) {
-        String[] result = new String[x.length + countTrue( use )];
-        System.arraycopy( x, 0, result, 0, x.length );
+        String[] result = new String[x.length + countTrue(use)];
+        System.arraycopy(x, 0, result, 0, x.length);
         int k = x.length;
-        for ( int i = 0; i < y.length; i++ ) {
-            if ( use[i] ) {
+        for (int i = 0; i < y.length; i++) {
+            if (use[i]) {
                 result[k++] = y[i];
             }
         }
@@ -483,22 +481,21 @@ public class ArraysHelper {
     }
 
     /**
-     *
      * @param coll
      * @return
      */
     public static String[] toStringArray(Collection coll) {
-        return (String[]) coll.toArray( new String[coll.size()] );
+        return (String[]) coll.toArray(new String[coll.size()]);
     }
+
     /**
-     *
      * @param array
      * @return
      */
     public static int countTrue(boolean... array) {
         int result = 0;
-        for ( boolean anArray : array ) {
-            if ( anArray ) {
+        for (boolean anArray : array) {
+            if (anArray) {
                 result++;
             }
         }
@@ -506,20 +503,18 @@ public class ArraysHelper {
     }
 
     /**
-     *
      * @param x
      * @param y
      * @return
      */
     public static int[] join(int[] x, int[] y) {
         int[] result = new int[x.length + y.length];
-        System.arraycopy( x, 0, result, 0, x.length );
-        System.arraycopy( y, 0, result, x.length, y.length );
+        System.arraycopy(x, 0, result, 0, x.length);
+        System.arraycopy(y, 0, result, x.length, y.length);
         return result;
     }
 
     /**
-     *
      * @param x
      * @param y
      * @param <T>
@@ -527,29 +522,31 @@ public class ArraysHelper {
      */
     @SuppressWarnings({"unchecked"})
     public static <T> T[] join(T[] x, T... y) {
-        T[] result = (T[]) Array.newInstance( x.getClass().getComponentType(), x.length + y.length );
-        System.arraycopy( x, 0, result, 0, x.length );
-        System.arraycopy( y, 0, result, x.length, y.length );
+        T[] result = (T[]) Array.newInstance(x.getClass().getComponentType(), x.length + y.length);
+        System.arraycopy(x, 0, result, 0, x.length);
+        System.arraycopy(y, 0, result, x.length, y.length);
         return result;
     }
 
     /**
      * 获取第一个节点
+     *
      * @param arrays
      * @param <T>
      * @return
      */
-    public static <T>T firstElement(T[] arrays) {
+    public static <T> T firstElement(T[] arrays) {
         return BooleanHelper.hasLength(arrays) ? arrays[0] : null;
     }
 
     /**
      * 空数组
+     *
      * @param componentType 数据类型
      * @return
      */
-    public static <T>T[] emptyArray(Class<T> componentType) {
-        if(CACHE_ARRAY.containsKey(componentType)) {
+    public static <T> T[] emptyArray(Class<T> componentType) {
+        if (CACHE_ARRAY.containsKey(componentType)) {
             return (T[]) CACHE_ARRAY.get(componentType);
         }
         T[] result = (T[]) Array.newInstance(componentType, 0);
@@ -559,6 +556,7 @@ public class ArraysHelper {
 
     /**
      * 空数组
+     *
      * @return
      */
     public static String[] emptyStringArray() {
@@ -567,6 +565,7 @@ public class ArraysHelper {
 
     /**
      * 空字符串数组
+     *
      * @return
      */
     public static String[] emptyString() {
@@ -575,10 +574,11 @@ public class ArraysHelper {
 
     /**
      * 是否包含重复值
+     *
      * @param array 数组
      * @return
      */
-    public <T>boolean containsDuplicate(final T[] array) {
+    public <T> boolean containsDuplicate(final T[] array) {
         Set<T> set = new HashSet<>();
         for (T i : array) {
             if (!set.add(i)) {
@@ -590,8 +590,9 @@ public class ArraysHelper {
 
     /**
      * 遍历
+     *
      * @param <T>
-     * @param sources         元数据
+     * @param sources  元数据
      * @param consumer 遍历方法
      * @return
      */
@@ -599,7 +600,6 @@ public class ArraysHelper {
         if (isEmpty(sources)) {
             return;
         }
-        List<T> tList = ListHelper.newArrayList(sources.length);
         T t = null;
         for (int i = 0, size = sources.length; i < size; i++) {
             t = sources[i];

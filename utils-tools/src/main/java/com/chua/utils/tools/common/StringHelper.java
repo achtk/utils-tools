@@ -6,6 +6,7 @@ import com.chua.utils.tools.common.charset.CharsetHelper;
 import com.chua.utils.tools.empty.Empty;
 import com.chua.utils.tools.function.IPreMatcher;
 import com.chua.utils.tools.guid.GUID;
+import com.chua.utils.tools.named.NamedHelper;
 import com.chua.utils.tools.text.IdHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -725,17 +726,7 @@ public class StringHelper {
      * @return
      */
     public static String lineToHump(final String source) {
-        if (Strings.isNullOrEmpty(source)) {
-            return source;
-        }
-        String sourceStr = source.toLowerCase();
-        Matcher matcher = LINE_PATTERN.matcher(sourceStr);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find()) {
-            matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
-        }
-        matcher.appendTail(sb);
-        return sb.toString();
+        return NamedHelper.toHump(source);
     }
 
     /**
@@ -1251,16 +1242,6 @@ public class StringHelper {
     }
 
     /**
-     * @param end      结束符号
-     * @param srcValue 源数据
-     * @return
-     */
-    public static String endsWithString(final String srcValue, final String end) {
-        final List<String> pattern = pattern(srcValue, REGEXP_ANY + end, 1);
-        return ListHelper.one(pattern);
-    }
-
-    /**
      * 正则匹配
      *
      * @param srcValue     源数据
@@ -1320,34 +1301,6 @@ public class StringHelper {
         }
 
         return Splitter.onPattern(regex).omitEmptyStrings().splitToList(srcValue);
-    }
-
-    /**
-     * 获取前缀
-     *
-     * @param srcValue     源数据
-     * @param condition    前缀符号
-     * @param defaultValue 默认值
-     * @return
-     */
-    public static String preffix(String srcValue, String condition, String defaultValue) {
-        if (isEmpty(srcValue)) {
-            return defaultValue;
-        }
-        final String s = endsWithString(srcValue, condition);
-        List<String> strings = Splitter.onPattern(PATTERN_EMPTY.pattern()).trimResults().splitToList(s);
-        String endValue = strings.get(strings.size() - 1);
-        return isEmpty(endValue) ? defaultValue : endValue;
-    }
-
-    /**
-     * 获取前缀
-     *
-     * @param srcValue  源数据
-     * @param condition 前缀符号
-     */
-    public static String preffix(String srcValue, String condition) {
-        return preffix(srcValue, condition, SYMBOL_EMPTY);
     }
 
     /**
@@ -1563,15 +1516,15 @@ public class StringHelper {
      *
      * @param str 源数据
      *            <pre>
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          stripToEmpty(null)     = ""
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          stripToEmpty("")       = ""
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          stripToEmpty("   ")    = ""
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          stripToEmpty("abc")    = "abc"
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          stripToEmpty("  abc")  = "abc"
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          stripToEmpty("abc  ")  = "abc"
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          stripToEmpty(" abc ")  = "abc"
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          stripToEmpty(" ab c ") = "ab c"
-     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </pre>
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                stripToEmpty(null)     = ""
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                stripToEmpty("")       = ""
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                stripToEmpty("   ")    = ""
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                stripToEmpty("abc")    = "abc"
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                stripToEmpty("  abc")  = "abc"
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                stripToEmpty("abc  ")  = "abc"
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                stripToEmpty(" abc ")  = "abc"
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                stripToEmpty(" ab c ") = "ab c"
+     *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </pre>
      * @return
      */
     public static String stripToEmpty(final String str) {

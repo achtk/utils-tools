@@ -9,11 +9,9 @@ import com.google.common.base.Predicate;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,6 +31,7 @@ public class RetryStrategy<T> extends StandardProxyStrategy<T> implements Strate
     /**
      * 重试时间
      */
+    @Setter
     private long timeout = 3000;
 
     /**
@@ -40,32 +39,43 @@ public class RetryStrategy<T> extends StandardProxyStrategy<T> implements Strate
      */
     private long increment = 0;
     /**
-     * 规则
+     * 异常规则
      */
-    private Predicate predicate;
+    @Setter
+    private Predicate throwPredicate;
+    /**
+     * 返回子规则
+     */
+    @Setter
+    private Predicate returnPredicate;
+
+    public RetryStrategy(Predicate predicate) {
+        this.throwPredicate = predicate;
+    }
 
     public RetryStrategy(int retry) {
         this.retry = retry;
     }
 
-    public RetryStrategy(Predicate predicate) {
-        this.predicate = predicate;
-    }
-
 
     @Override
     public Object invoke(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-        Retryer<Object> retries = RetryerBuilder.<T>newBuilder()
-                //抛出runtime重试，error不重试
-                .retryIfException(predicate)
-                .retryIfResult(predicate)
-                .withStopStrategy(StopStrategies.stopAfterAttempt(retry))
-                .withWaitStrategy(WaitStrategies.incrementingWait(timeout, TimeUnit.MILLISECONDS, increment, TimeUnit.MILLISECONDS))
-                .build();
+        RetryerBuilder<T> retryerBuilder = RetryerBuilder.<T>newBuilder();
+        retryerBuilder.withStopStrategy(StopStrategies.stopAfterAttempt(retry));
+        retryerBuilder.withWaitStrategy(WaitStrategies.incrementingWait(timeout, TimeUnit.MILLISECONDS, increment, TimeUnit.MILLISECONDS));
+
+        if (throwPredicate != null) {
+            retryerBuilder.retryIfException(throwPredicate);
+        }
+
+        if (throwPredicate != null) {
+            retryerBuilder.retryIfResult(returnPredicate);
+        }
+        Retryer<T> retries = retryerBuilder.build();
 
         return retries.call(() -> {
             try {
-                return method.invoke(getSource(), args);
+                return (T) method.invoke(getSource(), args);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }

@@ -1,18 +1,24 @@
 package com.chua.utils.tools.classes;
 
+import com.chua.utils.tools.cache.CacheProvider;
+import com.chua.utils.tools.cache.ConcurrentCacheProvider;
 import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.classes.callback.MethodCallback;
+import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.Assert;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.entity.*;
+import com.chua.utils.tools.function.Matcher;
+import com.chua.utils.tools.storage.CacheStorage;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import javassist.Modifier;
 import javassist.*;
 import javassist.bytecode.*;
+import javassist.bytecode.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
 import net.sf.cglib.beans.BeanMap;
@@ -23,6 +29,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 /**
  * 类信息处理工厂
@@ -39,10 +46,26 @@ public class ClassExtensionHelper<T> {
     private static List<Class> primitiveTypes;
     private static List<String> primitiveNames;
     private static List<String> primitiveDescriptors;
-
+    /**
+     * 类的字段/方法
+     */
     private static final Map<Class<?>, List<MemberInfo>> DECLARED_MEMBER_CACHE = new ConcurrentHashMap<>(256);
+    /**
+     * 类的父类
+     */
     private static final Map<Class<?>, List<MemberInfo>> DECLARED_SUPER_MEMBER_CACHE = new ConcurrentHashMap<>(256);
+    /**
+     * 类的方法
+     */
     private static final Map<Class<?>, List<Method>> DECLARED_METHODS_CACHE = new ConcurrentHashMap<>(256);
+    /**
+     * 类的接口
+     */
+    private static final CacheProvider<Class<?>, List<Class<?>>> CLASS_INTERFACES = new ConcurrentCacheProvider<>();
+    /**
+     * 类的超类
+     */
+    private static final CacheProvider<Class<?>, List<Class<?>>> CLASS_SUPER = new ConcurrentCacheProvider<>();
 
     private static final Set<String> DEFAULT_OBJECT_METHODS = Sets.newHashSet("toString", "equals", "hashCode");
 
@@ -64,7 +87,7 @@ public class ClassExtensionHelper<T> {
     private static void initPrimitives() {
         if (primitiveNames == null) {
             primitiveNames = Lists.newArrayList("boolean", "char", "byte", "short", "int", "long", "float", "double", "void");
-            primitiveTypes = Lists.<Class>newArrayList(boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class, void.class);
+            primitiveTypes = Lists.newArrayList(boolean.class, char.class, byte.class, short.class, int.class, long.class, float.class, double.class, void.class);
             primitiveDescriptors = Lists.newArrayList("Z", "C", "B", "S", "I", "J", "F", "D", "V");
         }
     }
@@ -984,6 +1007,78 @@ public class ClassExtensionHelper<T> {
     }
 
     /**
+     * 接口
+     *
+     * @param clazz   类
+     * @param matcher 回调
+     */
+    public static void doWithInterface(Class<?> clazz, Matcher<Class> matcher) {
+        for (Class anInterface : getInterfaces(clazz)) {
+            try {
+                matcher.doWith(anInterface);
+            } catch (Throwable throwable) {
+                continue;
+            }
+        }
+    }
+
+    /**
+     * 获取所有接口
+     *
+     * @param aClass 类
+     */
+    public static Collection<Class<?>> getInterfaces(final Class<?> aClass) {
+        if (null == aClass) {
+            return null;
+        }
+        return CacheStorage.doWith(new Supplier<List<Class<?>>>() {
+            @Override
+            public List<Class<?>> get() {
+                List<Class<?>> result = new ArrayList<>();
+                Class<?>[] interfaces = aClass.getInterfaces();
+                Class<?> superClass = aClass.getSuperclass();
+
+                CollectionHelper.add(result, interfaces);
+
+                while (!ClassHelper.isObject(superClass)) {
+                    Class<?>[] interfaces1 = superClass.getInterfaces();
+                    CollectionHelper.add(result, interfaces1);
+
+                    superClass = superClass.getSuperclass();
+
+                }
+                return result;
+            }
+        }, aClass, CLASS_INTERFACES);
+    }
+
+    /**
+     * 获取超类接口
+     *
+     * @param aClass 类
+     */
+    public static Collection<Class<?>> getSuperClass(final Class<?> aClass) {
+        if (null == aClass) {
+            return null;
+        }
+        return CacheStorage.doWith(new Supplier<List<Class<?>>>() {
+            @Override
+            public List<Class<?>> get() {
+                List<Class<?>> result = new ArrayList<>();
+                Class<?> superClass = aClass.getSuperclass();
+
+                CollectionHelper.add(result, superClass);
+
+                while (!ClassHelper.isObject(superClass)) {
+                    superClass = superClass.getSuperclass();
+                    CollectionHelper.add(result, superClass);
+                }
+                return result;
+            }
+        }, aClass, CLASS_SUPER);
+    }
+
+    /**
      * 字段查询
      *
      * @param clazz
@@ -1501,6 +1596,103 @@ public class ClassExtensionHelper<T> {
                 continue;
             }
             return (T) annotation;
+        }
+        return null;
+    }
+
+    /**
+     * 获取MemberValue
+     *
+     * @param value     原始值
+     * @param constPool 对象池
+     * @return MemberValue
+     */
+    public static MemberValue getMemberValue(Object value, ConstPool constPool) {
+
+        if (null == value) {
+            return null;
+        }
+        if (value instanceof Integer) {
+            return new IntegerMemberValue(constPool, (Integer) value);
+        }
+
+        if (value instanceof Long) {
+            return new LongMemberValue((Long) value, constPool);
+        }
+
+        if (value instanceof Double) {
+            return new DoubleMemberValue((Double) value, constPool);
+        }
+
+        if (value instanceof Float) {
+            return new FloatMemberValue((Float) value, constPool);
+        }
+
+        if (value instanceof Boolean) {
+            return new BooleanMemberValue((Boolean) value, constPool);
+        }
+
+        if (value instanceof Byte) {
+            return new ByteMemberValue((Byte) value, constPool);
+        }
+
+        if (value instanceof Class) {
+            return new ClassMemberValue(((Class) value).getName(), constPool);
+        }
+
+        if (value instanceof Short) {
+            return new ShortMemberValue((Short) value, constPool);
+        }
+
+        if (value instanceof Character) {
+            return new CharMemberValue((Character) value, constPool);
+        }
+        if (value instanceof String) {
+            return new StringMemberValue(value.toString(), constPool);
+        }
+
+        if (value instanceof Enum) {
+            Enum enumType = (Enum) value;
+            return new EnumMemberValue(constPool);
+        }
+
+        if (value.getClass().isArray()) {
+            Object[] objects = (Object[]) value;
+            if (objects instanceof String[]) {
+                return new ArrayMemberValue(new StringMemberValue(value.toString(), constPool), constPool);
+            }
+
+            if (objects instanceof Long[]) {
+                return new ArrayMemberValue(new LongMemberValue((Long) value, constPool), constPool);
+            }
+
+            if (objects instanceof Integer[]) {
+                return new ArrayMemberValue(new IntegerMemberValue((Integer) value, constPool), constPool);
+            }
+
+            if (objects instanceof Float[]) {
+                return new ArrayMemberValue(new FloatMemberValue((Float) value, constPool), constPool);
+            }
+
+            if (objects instanceof Double[]) {
+                return new ArrayMemberValue(new DoubleMemberValue((Double) value, constPool), constPool);
+            }
+
+            if (objects instanceof Boolean[]) {
+                return new ArrayMemberValue(new BooleanMemberValue((Boolean) value, constPool), constPool);
+            }
+
+            if (objects instanceof Class[]) {
+                return new ArrayMemberValue(new ClassMemberValue(((Class) value).getName(), constPool), constPool);
+            }
+
+            if (objects instanceof Byte[]) {
+                return new ArrayMemberValue(new ByteMemberValue((Byte) value, constPool), constPool);
+            }
+
+            if (objects instanceof Character[]) {
+                return new ArrayMemberValue(new CharMemberValue((Character) value, constPool), constPool);
+            }
         }
         return null;
     }

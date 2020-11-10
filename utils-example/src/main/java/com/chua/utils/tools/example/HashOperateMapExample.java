@@ -1,7 +1,7 @@
 package com.chua.utils.tools.example;
 
 import com.chua.utils.tools.collects.HashOperateMap;
-import com.chua.utils.tools.collects.HashSortMap;
+import com.chua.utils.tools.collects.HashLazySortMultiValueMap;
 import com.chua.utils.tools.example.entity.TDemoInfo;
 
 import java.util.Date;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class HashOperateMapExample {
 
     public static void main(String[] args) {
-        HashSortMap<String, Integer> hashSortMap = new HashSortMap<>();
+        HashLazySortMultiValueMap<String, Integer> hashSortMap = new HashLazySortMultiValueMap<>();
         hashSortMap.add("test1", 2);
         hashSortMap.add("test1", 3);
         hashSortMap.add("test1", 1);

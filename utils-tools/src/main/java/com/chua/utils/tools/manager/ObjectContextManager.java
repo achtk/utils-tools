@@ -10,13 +10,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 /**
  * 对象管理器
  *
  * @author CH
  * @version 1.0.0
- * @since 2020/10/27
+ * @since 2020/11/9
  */
 public interface ObjectContextManager {
     /**

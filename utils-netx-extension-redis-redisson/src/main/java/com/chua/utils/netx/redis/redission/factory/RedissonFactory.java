@@ -1,9 +1,9 @@
 package com.chua.utils.netx.redis.redission.factory;
 
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.collects.map.MapHelper;
 import com.google.common.base.Strings;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -87,7 +87,7 @@ public class RedissonFactory implements AutoCloseable, INetFactory<RedissonClien
             }
 
             if(BooleanHelper.isValid(netProperties, "scanInterval")) {
-                clusterServersConfig.setScanInterval(MapHelper.ints("scanInterval", netProperties));
+                clusterServersConfig.setScanInterval(MapOperableHelper.getIntValue(netProperties, "scanInterval"));
             }
 
             try {

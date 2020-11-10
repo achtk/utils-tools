@@ -6,9 +6,8 @@ import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.empty.Empty;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
-import com.chua.utils.tools.properties.NetProperties;
+import com.google.common.collect.Lists;
 import net.sf.cglib.beans.BeanMap;
-import org.checkerframework.checker.units.qual.K;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -18,6 +17,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_COMMA;
 
 /**
  * Map工具类
@@ -602,6 +602,31 @@ public class MapOperableHelper extends MultiMapOperableHelper {
 
     /**
      * 以null安全的方式从Map获取List。
+     * <p> 如果从指定映射返回的值不是Map，则返回<code> null </ code>。
+     *
+     * @param key    查找的关键
+     * @param tClass 类型
+     * @return Map中作为List的值，如果为null，则<code> null </ code>
+     */
+    public static <T> List<T> getList(final Map<?, ?> map, final Object key, final Class<T> tClass) {
+        Object answer = map.get(key);
+        if (answer instanceof List) {
+            List<?> items = (List<?>) answer;
+            List<T> result = new ArrayList<>(items.size());
+            for (Object item : items) {
+                if (tClass.isAssignableFrom(item.getClass())) {
+                    result.add((T) item);
+                }
+            }
+            return result;
+        } else if (tClass.isAssignableFrom(answer.getClass())) {
+            return (List<T>) Lists.newArrayList(answer);
+        }
+        return null;
+    }
+
+    /**
+     * 以null安全的方式从Map获取List。
      * <p> 如果从指定映射返回的值不是Map，则返回<code> [] </ code>。
      *
      * @param key 查找的关键
@@ -630,6 +655,19 @@ public class MapOperableHelper extends MultiMapOperableHelper {
     }
 
     /**
+     * 以null安全的方式从Map获取字符串数组。默认以, {@link  com.chua.utils.tools.constant.SymbolConstant#SYMBOL_COMMA}分隔
+     * <p>字符串是通过<code> toString </ code>获得的。
+     *
+     * @param map 集合
+     * @param key 查找的关键
+     * @see com.chua.utils.tools.constant.SymbolConstant#SYMBOL_COMMA
+     * @return Map中的值作为字符串，如果为null，则<code> [] </ code>
+     */
+    public static <K, V> String[] getStringArray(final Map<K, V> map, final K key) {
+        return getStringArray(map, key, SYMBOL_COMMA);
+    }
+
+    /**
      * 以null安全的方式从Map获取字符串数组。
      * <p>字符串是通过<code> toString </ code>获得的。
      *
@@ -641,6 +679,18 @@ public class MapOperableHelper extends MultiMapOperableHelper {
     public static <K, V> List<String> getStringList(final Map<K, V> map, final K key, final String delimiter) {
         String string = getString(map, key);
         return null == string ? Collections.emptyList() : Arrays.asList(string.split(delimiter));
+    }
+    /**
+     * 以null安全的方式从Map获取字符串数组。
+     * <p>字符串是通过<code> toString </ code>获得的。
+     *
+     * @param map       集合
+     * @param key       查找的关键
+     * @param delimiter 分隔符
+     * @return Map中的值作为字符串，如果为null，则<code> [] </ code>
+     */
+    public static <K, V> List<String> getStringList(final Map<K, V> map, final K key) {
+        return getStringList(map, key, SYMBOL_COMMA);
     }
 
     /**
@@ -1028,5 +1078,20 @@ public class MapOperableHelper extends MultiMapOperableHelper {
             return (T) o;
         }
         return null == o ? null : (valueClass.isAssignableFrom(o.getClass()) ? (T) o : null);
+    }
+
+    /**
+     * 获取第一个数据
+     *
+     * @param kvMap 集合
+     * @param <K>   key类型
+     * @param <V>   value类型
+     * @return 集合第一个数据, 集合为空或者无数据返回null
+     */
+    public static <K, V> Map.Entry<K, V> getFirst(final Map<K, V> kvMap) {
+        if (isEmpty(kvMap)) {
+            return null;
+        }
+        return kvMap.entrySet().iterator().next();
     }
 }

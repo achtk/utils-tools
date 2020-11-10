@@ -1,23 +1,19 @@
 package com.chua.utils.tools.cfg;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.prop.loader.PropertiesLoader;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import static com.chua.utils.tools.constant.StringConstant.SYSTEM_PRIORITY_PROP;
 
 /**
  * cfg配置
+ *
  * @author CH
  * @since 1.0
  */
@@ -49,15 +45,16 @@ public class CfgConfig {
 
     /**
      * 添加配置
-     * @param strings
-     * @return
+     *
+     * @param strings 配置文件
+     * @return CfgConfig
      */
     public CfgConfig addSlaver(String... strings) {
-        if(null == strings || strings.length == 0) {
+        if (null == strings || strings.length == 0) {
             return this;
         }
         for (String string : strings) {
-            if(Strings.isNullOrEmpty(string)) {
+            if (Strings.isNullOrEmpty(string)) {
                 continue;
             }
             slaver.add(string);
@@ -67,7 +64,8 @@ public class CfgConfig {
 
     /**
      * 获取排序字段
-     * @return
+     *
+     * @return 排序字段
      */
     public String getOrder() {
         return Strings.isNullOrEmpty(order) ? SYSTEM_PRIORITY_PROP : order;

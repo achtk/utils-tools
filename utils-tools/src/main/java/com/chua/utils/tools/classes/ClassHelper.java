@@ -1,8 +1,10 @@
 package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.classes.reflections.ReflectionsHelper;
-import com.chua.utils.tools.common.*;
-import com.chua.utils.tools.constant.SymbolConstant;
+import com.chua.utils.tools.common.ArraysHelper;
+import com.chua.utils.tools.common.Assert;
+import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.exceptions.NotSupportedException;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.proxy.CglibProxyAgent;
@@ -886,5 +888,15 @@ public class ClassHelper extends ReflectionsHelper {
             return enumConstant;
         }
         return null;
+    }
+
+    /**
+     * 类是否是Object.class
+     *
+     * @param clazz 类
+     * @return 类是 Object.class 或者null 返回true
+     */
+    public static boolean isObject(Class<?> clazz) {
+        return null == clazz || Object.class.isAssignableFrom(clazz);
     }
 }

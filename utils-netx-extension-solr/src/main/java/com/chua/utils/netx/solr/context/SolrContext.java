@@ -1,15 +1,15 @@
 package com.chua.utils.netx.solr.context;
 
-import com.chua.utils.tools.function.IFunction;
-import com.chua.utils.tools.properties.NetProperties;
-import com.chua.utils.tools.properties.QueryProperties;
 import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.netx.solr.factory.CloudSolrFactory;
 import com.chua.utils.netx.solr.factory.SingleSolrFactory;
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.ArraysHelper;
 import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.collects.map.MapHelper;
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.function.IFunction;
+import com.chua.utils.tools.properties.NetProperties;
+import com.chua.utils.tools.properties.QueryProperties;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import org.apache.solr.client.solrj.SolrClient;
@@ -145,24 +145,24 @@ public class SolrContext implements AutoCloseable {
         SolrQuery query = new SolrQuery();
         //查询所有数据
 //        params.setQuery("*:*");
-        query.setQuery(MapHelper.strings("query", queryProperties));
+        query.setQuery(MapOperableHelper.getString(queryProperties, "query"));
         //分页，默认是分页从0开始，每页显示10行
-        query.setStart(MapHelper.ints("start", 0, queryProperties));
-        query.setRows(MapHelper.ints("row", 30, queryProperties));
+        query.setStart(MapOperableHelper.getIntValue(queryProperties, "start", 0));
+        query.setRows(MapOperableHelper.getIntValue(queryProperties, "row", 30));
 
-        Map<Object, Object> sorts = MapHelper.maps("sorts", queryProperties);
+        Map<Object, Object> sorts = (Map<Object, Object>) MapOperableHelper.getMap(queryProperties, "sorts");
         if (null != sorts) {
             for (Map.Entry<Object, Object> entry : sorts.entrySet()) {
                 String value = entry.getValue().toString();
                 query.addSort(entry.getKey().toString(), "desc".equals(value) ? SolrQuery.ORDER.desc : SolrQuery.ORDER.asc);
             }
         }
-        List<String> fields = MapHelper.lists("fields", String.class, queryProperties);
+        List<String> fields = MapOperableHelper.getList(queryProperties, "fields", String.class);
         if (null != fields) {
             query.setFields(ArraysHelper.toArray(fields));
         }
 
-        List<String> hiList = MapHelper.lists("highlight", String.class, queryProperties);
+        List<String> hiList = MapOperableHelper.getList(queryProperties, "highlight", String.class);
         if (null != hiList) {
             query.setHighlightSimplePre("<em>");
             query.setHighlightSimplePost("</em>");
@@ -175,11 +175,11 @@ public class SolrContext implements AutoCloseable {
 
         }
 
-        String timeAllowed = MapHelper.strings("timeAllowed", queryProperties);
+        String timeAllowed = MapOperableHelper.getString(queryProperties, "timeAllowed");
         if (StringHelper.isNotBlank(timeAllowed)) {
             query.set("timeAllowed", timeAllowed);
         }
-        String wt = MapHelper.strings("wt", queryProperties);
+        String wt = MapOperableHelper.getString(queryProperties, "wt");
         if (StringHelper.isNotBlank(wt)) {
             query.set("wt", wt);
         }

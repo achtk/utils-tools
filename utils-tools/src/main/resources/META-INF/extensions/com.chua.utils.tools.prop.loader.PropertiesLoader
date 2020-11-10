@@ -1,5 +1,0 @@
-xml=com.chua.utils.tools.prop.loader.XmlPropertiesLoader
-yaml=com.chua.utils.tools.prop.loader.YamlPropertiesLoader
-yml=com.chua.utils.tools.prop.loader.YamlPropertiesLoader
-json=com.chua.utils.tools.prop.loader.JsonPropertiesLoader
-properties=com.chua.utils.tools.prop.loader.PropertiesPropertiesLoader

@@ -29,15 +29,5 @@ public class ExtensionFactoryExample {
         ExtensionLoader<Encoder> extensionLoader1 = ExtensionFactory.getExtensionLoader(Encoder.class, new ReflectionExtensionProcessor());
         System.out.println(extensionLoader1);
 
-        ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
-        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println(extensionLoader1);
-                System.out.println(extensionLoader.getAllSpiService().size());
-            }
-        }, 0, 3, TimeUnit.SECONDS);
-
-        for(;;){}
     }
 }

@@ -1,5 +1,7 @@
 package com.chua.utils.tools.strategy;
 
+import com.chua.utils.tools.cache.CacheProvider;
+import com.chua.utils.tools.cache.ConcurrentCacheProvider;
 import com.chua.utils.tools.function.intercept.MethodIntercept;
 import com.google.common.base.Joiner;
 import com.google.common.cache.Cache;
@@ -24,7 +26,7 @@ public class CacheStrategy<T> extends StandardProxyStrategy<T> implements Strate
     @Setter
     private int timeout = 0;
 
-    private Cache<String, Object> cache;
+    private CacheProvider<String, Object> cache = new ConcurrentCacheProvider<>();
 
     public CacheStrategy(int timeout) {
         this.timeout = timeout;
@@ -33,7 +35,7 @@ public class CacheStrategy<T> extends StandardProxyStrategy<T> implements Strate
     @Override
     public Object invoke(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
         String key = getKey(method, args);
-        Object present = cache.getIfPresent(key);
+        Object present = cache.get(key);
         if (null != present) {
             return present;
         }
@@ -59,7 +61,6 @@ public class CacheStrategy<T> extends StandardProxyStrategy<T> implements Strate
 
     @Override
     public T create(T source) {
-        cache = CacheBuilder.newBuilder().expireAfterWrite(timeout, TimeUnit.MILLISECONDS).build();
         super.setMethodIntercept(this);
         return super.proxy(source);
     }

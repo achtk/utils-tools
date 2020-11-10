@@ -1,8 +1,8 @@
 package com.chua.utils.netx.redis.jedis.factory;
 
-import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.factory.INetFactory;
-import com.chua.utils.tools.collects.map.MapHelper;
+import com.chua.utils.tools.collects.map.MapOperableHelper;
+import com.chua.utils.tools.properties.NetProperties;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static com.chua.utils.tools.constant.NumberConstant.TWE;
 
 /**
  * jedis
@@ -27,7 +29,7 @@ public class JedisFactory implements INetFactory<ShardedJedisPool> {
     @NonNull
     private NetProperties netProperties;
     private ShardedJedisPool shardedJedisPool;
-    private static ReentrantLock INSTANCE_INIT_LOCL = new ReentrantLock(false);
+    private static final ReentrantLock INSTANCE_INIT_LOCL = new ReentrantLock(false);
 
     @Override
     public void configure(NetProperties netProperties) {
@@ -46,7 +48,7 @@ public class JedisFactory implements INetFactory<ShardedJedisPool> {
             return;
         }
         try {
-            if (INSTANCE_INIT_LOCL.tryLock(2, TimeUnit.SECONDS)) {
+            if (INSTANCE_INIT_LOCL.tryLock(TWE, TimeUnit.SECONDS)) {
                 try {
                     initialJedis();
                 } finally {
@@ -72,7 +74,7 @@ public class JedisFactory implements INetFactory<ShardedJedisPool> {
         if (shardedJedisPool == null) {
             // JedisPoolConfig
             JedisPoolConfig config = new JedisPoolConfig();
-            config.setMaxTotal(MapHelper.ints(NetProperties.CONFIG_FIELD_MAX_CONNECTION, 200, netProperties));
+            config.setMaxTotal(MapOperableHelper.getIntValue(netProperties, NetProperties.CONFIG_FIELD_MAX_CONNECTION, 200));
             config.setMaxIdle(50);
             config.setMinIdle(8);
             // 获取连接时的最大等待毫秒数(如果设置为阻塞时BlockWhenExhausted),如果超时就抛异常, 小于零:阻塞不确定的时间,  默认-1
@@ -93,10 +95,10 @@ public class JedisFactory implements INetFactory<ShardedJedisPool> {
             String[] addressArr = netProperties.getHost();
 
             // JedisShardInfo List
-            List<JedisShardInfo> jedisShardInfos = new LinkedList<JedisShardInfo>();
+            List<JedisShardInfo> jedisShardInfos = new LinkedList<>();
 
-            for (int i = 0; i < addressArr.length; i++) {
-                JedisShardInfo jedisShardInfo = new JedisShardInfo(addressArr[i]);
+            for (String s : addressArr) {
+                JedisShardInfo jedisShardInfo = new JedisShardInfo(s);
                 jedisShardInfos.add(jedisShardInfo);
             }
             this.shardedJedisPool = new ShardedJedisPool(config, jedisShardInfos);
@@ -110,7 +112,7 @@ public class JedisFactory implements INetFactory<ShardedJedisPool> {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         if (shardedJedisPool != null) {
             shardedJedisPool.close();
         }

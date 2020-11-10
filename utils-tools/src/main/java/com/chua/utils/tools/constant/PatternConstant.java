@@ -48,5 +48,9 @@ public class PatternConstant {
      * 下划线
      */
     public final static Pattern LINE_PATTERN = Pattern.compile("_(\\w)");
+    /**
+     * 任意
+     */
+    public final static Pattern ALL_PATTERN = Pattern.compile("(.*?)");
 
 }

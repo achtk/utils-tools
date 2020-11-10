@@ -1,5 +1,7 @@
 package com.chua.utils.tools.tree;
 
+import lombok.Data;
+
 /**
  * B+树的定义：
  * 1.任意非叶子结点最多有M个子节点；且M>2；M为B+树的阶数
@@ -15,64 +17,44 @@ package com.chua.utils.tools.tree;
  */
 
 @SuppressWarnings("all")
+@Data
 public class BPlusTree<K extends Comparable<K>, V> {
 
-    // 根节点
+    /**
+     * 根节点
+     */
     protected BPlusNode<K, V> root;
 
-    // 阶数，M值
+    /**
+     * 阶数，M值
+     */
     protected int order;
 
-    // 叶子节点的链表头
+    /**
+     * 叶子节点的链表头
+     */
     protected BPlusNode<K, V> head;
 
-    // 树高
+    /**
+     * 树高
+     */
     protected int height = 0;
 
-    public BPlusNode<K, V> getHead() {
-        return head;
-    }
-
-    public void setHead(BPlusNode<K, V> head) {
-        this.head = head;
-    }
-
-    public BPlusNode<K, V> getRoot() {
-        return root;
-    }
-
-    public void setRoot(BPlusNode<K, V> root) {
-        this.root = root;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public V get(K key) {
-        return root.get(key);
-    }
-
-    public V remove(K key) {
-        return root.remove(key, this);
-    }
-
+    /**
+     * 插入数据
+     *
+     * @param key   索引
+     * @param value 值
+     */
     public void insertOrUpdate(K key, V value) {
         root.insertOrUpdate(key, value, this);
     }
 
+    /**
+     * 排序数据
+     *
+     * @param order
+     */
     public BPlusTree(int order) {
         if (order < 3) {
             throw new IllegalStateException("order must be greater than 2");
@@ -82,7 +64,30 @@ public class BPlusTree<K extends Comparable<K>, V> {
         head = root;
     }
 
-    public void printBPlusTree() {
-        this.root.printBPlusTree(0);
+    /**
+     * 获取数据
+     *
+     * @param key 索引
+     * @return 数据
+     */
+    public V get(K key) {
+        return root.get(key);
+    }
+
+    /**
+     * 删除数据
+     *
+     * @param key 索引
+     * @return 数据
+     */
+    public V remove(K key) {
+        return root.remove(key, this);
+    }
+
+    /**
+     * @return
+     */
+    public PrintTree createPrintTree() {
+        return this.root.print(this.root);
     }
 }

@@ -20,6 +20,7 @@ import java.util.concurrent.*;
  * @version 1.0.0
  * @since 2020/6/3 18:24
  */
+@SuppressWarnings("all")
 public class ExtensionFactory implements Runnable {
     /**
      * 时间周期
@@ -47,6 +48,17 @@ public class ExtensionFactory implements Runnable {
     /**
      * 获取扩展加载器
      *
+     * @param <T>       类型
+     * @param className 类称
+     * @return ExtensionLoader
+     */
+    public static synchronized <T> ExtensionLoader<T> getExtensionLoader(String className) {
+        return (ExtensionLoader<T>) getExtensionLoader(ClassHelper.forName(className), null);
+    }
+
+    /**
+     * 获取扩展加载器
+     *
      * @param <T>   类型
      * @param clazz 类
      * @return ExtensionLoader
@@ -55,12 +67,25 @@ public class ExtensionFactory implements Runnable {
         return getExtensionLoader(clazz, null);
     }
 
+    /**
+     * 获取扩展加载器
+     *
+     * @param <T>   类型
+     * @param clazz 类
+     * @return ExtensionLoader
+     */
+    public static synchronized <T> ExtensionLoader<T> getTempExtensionLoader(Class<T> clazz) {
+        return getTempExtensionLoader(clazz, null);
+    }
+
 
     /**
      * 获取扩展类
      *
-     * @param <T>       类型
-     * @param className 类名
+     * @param <T>           类型
+     * @param className     类名
+     * @param extensionName 扩展名称
+     * @param classLoaders  类加载器
      * @return 类
      */
     public static synchronized <T> T getExtensionLoader(final String className, final String extensionName, final ClassLoader... classLoaders) {
@@ -124,13 +149,62 @@ public class ExtensionFactory implements Runnable {
      * @see ServiceLoaderProcessor
      */
     public static synchronized <T> ExtensionLoader<T> getExtensionLoader(Class<T> clazz, final ExtensionProcessor extensionProcessor) {
-        ExtensionLoader loader = LOADER_MAP.get(clazz);
+        ExtensionLoader<T> loader = LOADER_MAP.get(clazz);
         if (null == loader) {
             loader = new ExtensionLoader<>(clazz, extensionProcessor);
             loader.search();
             LOADER_MAP.put(clazz, loader);
         }
         return loader;
+    }
+
+    /**
+     * 获取扩展加载器
+     *
+     * <table border=1 cellpadding=5 summary="implements,desc">
+     * <tr>
+     *      <th>index</th>
+     *      <th>implements</th>
+     *      <th>desc</th>
+     * </tr>
+     *
+     * <tr>
+     *   <td>1</td>
+     *   <td>com.chua.utils.tools.spi.processor.ScanProcessor</td>
+     *   <td>扫描所有的子类.@see com.chua.utils.tools.resource.FastResourceHelper</td>
+     * </tr>
+     *
+     * <tr>
+     *   <td>2</td>
+     *   <td>com.chua.utils.tools.spi.processor.ExtensionProcessor</td>
+     *   <td>根据META-INF/spi-config-default.json配置项位置，解析当前位置下接口或者抽象类所有实现/子类.</td>
+     * </tr>
+     *
+     * <tr>
+     *   <td>3</td>
+     *   <td>com.chua.utils.tools.spi.processor.ServiceLoaderProcessor</td>
+     *   <td>根据jdk自带ServiceLoader解析实现.</td>
+     * </tr>
+     * <tr>
+     *   <td>4</td>
+     *   <td>com.chua.utils.tools.spi.processor.MetaDataProcessor</td>
+     *   <td>根据META-INF/spi-config-default.json配置项位置，解析当前位置下spi-configuration-metadata.json(默认)中的子类或者实现</td>
+     * </tr>
+     * </table>
+     *
+     * @param <T>                类型
+     * @param clazz              类
+     * @param extensionProcessor 扩展器
+     * @return ExtensionLoader
+     * @see ReflectionExtensionProcessor
+     * @see CustomExtensionProcessor
+     * @see JsonExtensionProcessor
+     * @see FactoriesExtensionProcessor
+     * @see ServiceLoaderProcessor
+     */
+    public static synchronized <T> ExtensionLoader<T> getTempExtensionLoader(Class<T> clazz, final ExtensionProcessor extensionProcessor) {
+        ExtensionLoader<T> loader = new ExtensionLoader<>(clazz, extensionProcessor);
+        return loader.search();
     }
 
     /**
