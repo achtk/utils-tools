@@ -12,11 +12,13 @@ import com.chua.utils.tools.manager.builder.LimitStrategyBuilder;
 import com.chua.utils.tools.manager.builder.ProxyStrategyBuilder;
 import com.chua.utils.tools.manager.builder.RetryStrategyBuilder;
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
+import com.chua.utils.tools.manager.parser.ClassModifyDescriptionParser;
 import com.chua.utils.tools.manager.producer.StandardContextManager;
 import com.chua.utils.tools.manager.producer.StandardStrategyContextManager;
 import com.chua.utils.tools.predicate.TruePredicate;
 import com.chua.utils.tools.spi.Spi;
 import com.chua.utils.tools.spi.processor.ReflectionExtensionProcessor;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -34,7 +36,7 @@ public class ObjectContextManagerExample {
 
     private static StrategyContextManager strategyContextManager = contextManager.createStrategyContextManager();
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    public static void main(String[] args) throws Exception {
         //测试可被缓存对象
         testCacheable();
         //测试对象管理器
@@ -48,15 +50,28 @@ public class ObjectContextManagerExample {
 
     }
 
-    private static void testClassDescriptionParser() {
+    private static void testClassDescriptionParser() throws Exception {
         System.out.println("==================================测试类描述解析器=============================");
-        ClassDescriptionParser<TDemoInfo> parser = contextManager.createClassDescriptionParser(TDemoInfo.class);
-        System.out.println("类的接口: " + parser.interfaceDescription());
-        System.out.println("类的超类: " + parser.superDescription());
-        System.out.println("类的字段: " + parser.fieldDescription());
-        System.out.println("类的方法: " + parser.methodDescription());
 
-        parser.modify();
+        ClassDescriptionParser<TDemoInfo> parser = contextManager.createClassDescriptionParser(TDemoInfo.class);
+        System.out.println("类的接口: " + parser.interfaceDescription().size());
+        System.out.println("类的超类: " + parser.superDescription().size());
+        System.out.println("类的字段: " + parser.fieldDescription().size());
+        System.out.println("类的方法: " + parser.methodDescription().size());
+
+        ClassModifyDescriptionParser<TDemoInfo> modifyDescriptionParser = parser.modify();
+        modifyDescriptionParser.addField("text1", String.class);
+        modifyDescriptionParser.addMethod("getText1", String.class, null, "return text1;", null);
+        modifyDescriptionParser.addMethod("public String getText2() {return text1;}");
+
+        Class<TDemoInfo> aClass = modifyDescriptionParser.toClass().toClass();
+        ClassDescriptionParser<TDemoInfo> classDescriptionParser = contextManager.createClassDescriptionParser(aClass);
+        System.out.println("***************************修改后************************");
+        System.out.println("类的接口: " + classDescriptionParser.interfaceDescription().size());
+        System.out.println("类的超类: " + classDescriptionParser.superDescription().size());
+        System.out.println("类的字段: " + classDescriptionParser.fieldDescription().size());
+        System.out.println("类的方法: " + classDescriptionParser.methodDescription().size());
+
         System.out.println();
         System.out.println();
     }
