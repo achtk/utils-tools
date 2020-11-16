@@ -1,9 +1,17 @@
 package com.chua.utils.tools.manager.parser;
 
+import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.manager.parser.description.ModifyDescription;
+import javassist.CtMethod;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.chua.utils.tools.constant.StringConstant.PRIVATE;
+import static com.chua.utils.tools.constant.StringConstant.PUBLIC;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_EMPTY;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_SEMICOLON;
 
 /**
  * 类修改修饰器
@@ -30,6 +38,36 @@ public interface ClassModifyDescriptionParser<T> {
     void addMethod(String method, Annotation... annotations);
 
     /**
+     * 添加方法
+     *
+     * @param methodName  方法名称
+     * @param methodType  方法类型
+     * @param paramTypes  方法参数
+     * @param methodBody  方法体
+     * @param annotations 注解
+     */
+    default void addMethod(String methodName, Class<?> methodType, Class<?>[] paramTypes, String methodBody, Annotation... annotations) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(PUBLIC).append(" ");
+        stringBuilder.append(methodType.getName()).append(" ");
+        stringBuilder.append(methodName).append(" ");
+        stringBuilder.append("(");
+        if (null != paramTypes && paramTypes.length > 0) {
+            String params = "";
+            AtomicInteger atomicInteger = new AtomicInteger();
+            for (Class<?> paramType : paramTypes) {
+                params += "," + paramType.getName() + " " + paramType.getSimpleName() + atomicInteger.getAndIncrement();
+            }
+            stringBuilder.append(params.substring(1));
+        }
+        stringBuilder.append(") {");
+        stringBuilder.append(methodBody);
+        stringBuilder.append("}");
+
+        addMethod(stringBuilder.toString(), annotations);
+    }
+
+    /**
      * 添加父类
      *
      * @param aClass 父类
@@ -43,6 +81,37 @@ public interface ClassModifyDescriptionParser<T> {
      * @param annotations 注解
      */
     void addField(String field, Annotation... annotations);
+
+    /**
+     * 添加字段Get方法
+     *
+     * @param fieldName   字段名称
+     * @param annotations 注解
+     */
+    void addFieldGetter(String fieldName, Annotation... annotations);
+
+    /**
+     * 添加字段Get方法
+     *
+     * @param fieldName   字段名称
+     * @param annotations 注解
+     */
+    void addFieldSetter(String fieldName, Annotation... annotations);
+
+    /**
+     * 添加字段
+     *
+     * @param fieldName   字段名称
+     * @param fieldType   字段类型
+     * @param annotations 注解
+     */
+    default void addField(String fieldName, Class<?> fieldType, Annotation... annotations) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(PRIVATE).append(" ");
+        stringBuilder.append(fieldType.getName()).append(" ").append(fieldName).append(SYMBOL_SEMICOLON);
+
+        addField(stringBuilder.toString(), annotations);
+    }
 
     /**
      * 给字段添加注解
@@ -90,5 +159,5 @@ public interface ClassModifyDescriptionParser<T> {
      * @throws Exception Exception
      * @see ModifyDescription
      */
-    ModifyDescription toClass() throws Exception;
+    ModifyDescription<T> toClass() throws Exception;
 }

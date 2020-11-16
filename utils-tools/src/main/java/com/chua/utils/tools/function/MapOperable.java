@@ -4,6 +4,7 @@ import bsh.EvalError;
 import bsh.Interpreter;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.BeansHelper;
+import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.converter.TypeConverter;
 import com.google.common.base.Converter;
 
@@ -286,23 +287,24 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
      */
     default <T> List<T> splitToList(final K key, final String regex, final Class<T> tClass) {
         String[] strings = splitToArray(key, regex);
+
         if (null == strings) {
             return null;
         }
-        ConcurrentMap<Class, TypeConverter> concurrentMap = BeansHelper.CLASS_TYPE_CONVERTER_CONCURRENT_MAP;
-        if (!concurrentMap.containsKey(tClass)) {
-            return Collections.emptyList();
+        TypeConverter<T> typeConverter = EmptyOrBase.getTypeConverter(tClass);
 
+        if (null == typeConverter) {
+            return null;
         }
 
         List<T> result = new ArrayList<>(strings.length);
-        TypeConverter<T> typeConverter = concurrentMap.get(tClass);
 
         for (String string : strings) {
             T convert = typeConverter.convert(string);
             if (null == convert) {
                 continue;
             }
+
             result.add(convert);
         }
         return result;

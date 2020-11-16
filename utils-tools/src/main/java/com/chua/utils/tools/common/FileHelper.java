@@ -5,6 +5,7 @@ import com.chua.utils.tools.common.filecase.FileWildcard;
 import com.chua.utils.tools.common.filecase.IOCase;
 import com.chua.utils.tools.common.filefilter.*;
 import com.chua.utils.tools.constant.StringConstant;
+import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.resource.Resource;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -16,6 +17,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -2223,6 +2225,133 @@ public class FileHelper {
             return new BufferedInputStream(new FileInputStream(file));
         } catch (FileNotFoundException e) {
             return null;
+        }
+    }
+
+    /**
+     * 删除后缀名
+     *
+     * @param name      字符串
+     * @param extension 后缀名
+     * @return 删除后缀名的字符串
+     */
+    public static String deleteSuffix(String name, String extension) {
+        if (Strings.isNullOrEmpty(name) || Strings.isNullOrEmpty(extension) || !name.endsWith(extension)) {
+            return name;
+        }
+        return name.substring(0, name.length() - extension.length());
+    }
+
+    /**
+     * 尝试获取文件
+     *
+     * @param url 路径
+     * @return 文件
+     */
+    public static File tryFile(URL url) {
+        java.io.File file;
+        String path;
+
+        try {
+            path = url.toURI().getSchemeSpecificPart();
+            if ((file = new java.io.File(path)).exists()) {
+                return file;
+            }
+        } catch (URISyntaxException ignored) {
+        }
+
+        try {
+            path = URLDecoder.decode(url.getPath(), "UTF-8");
+            if (path.contains(".jar!")) {
+                path = path.substring(0, path.lastIndexOf(".jar!") + ".jar".length());
+            }
+            if ((file = new java.io.File(path)).exists()) {
+                return file;
+            }
+
+        } catch (UnsupportedEncodingException ignored) {
+        }
+
+        try {
+            path = url.toExternalForm();
+            if (path.startsWith("jar:")) {
+                path = path.substring("jar:".length());
+            }
+
+            if (path.startsWith("wsjar:")) {
+                path = path.substring("wsjar:".length());
+            }
+
+            if (path.startsWith("file:")) {
+                path = path.substring("file:".length());
+            }
+
+            if (path.contains(".jar!")) {
+                path = path.substring(0, path.indexOf(".jar!") + ".jar".length());
+            }
+
+            if (path.contains(".war!")) {
+                path = path.substring(0, path.indexOf(".war!") + ".war".length());
+            }
+
+            if ((file = new java.io.File(path)).exists()) {
+                return file;
+            }
+
+            path = path.replace("%20", " ");
+
+            if ((file = new java.io.File(path)).exists()) {
+                return file;
+            }
+        } catch (Exception ignored) {
+        }
+
+        return null;
+    }
+
+    /**
+     * 扫描目录
+     *
+     * @param path    目录
+     * @param matcher 匹配器
+     */
+    public static void doWith(String path, Matcher<Path> matcher) {
+        if (Strings.isNullOrEmpty(path) || null == matcher) {
+            return;
+        }
+        Path path1 = Paths.get(path);
+        try {
+            Files.walkFileTree(path1, new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    try {
+                        matcher.doWith(dir);
+                    } catch (Throwable throwable) {
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    try {
+                        matcher.doWith(file);
+                    } catch (Throwable throwable) {
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -1,12 +1,10 @@
 package com.chua.utils.tools.common;
 
-import com.chua.utils.tools.collects.collections.ListHelper;
-import com.chua.utils.tools.empty.Empty;
-
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
 
@@ -286,7 +284,7 @@ public class ArraysHelper {
      * 数组复制
      *
      * @param array 原数组
-     * @param <T> 类型
+     * @param <T>   类型
      * @return 新数组
      */
     public static <T> T[] clone(final T[] array) {
@@ -343,7 +341,11 @@ public class ArraysHelper {
      */
     public static <T> T[] add(final T[] array, final T element) {
         if (array == null) {
-            return null;
+            return null == element ? null : ((Supplier<T[]>) () -> {
+                T[] newArray = (T[]) Array.newInstance(element.getClass(), 1);
+                newArray[0] = element;
+                return newArray;
+            }).get();
         } else if (element == null) {
             return array;
         }

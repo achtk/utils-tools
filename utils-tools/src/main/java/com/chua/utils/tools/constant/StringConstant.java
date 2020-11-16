@@ -178,6 +178,34 @@ public class StringConstant {
      */
     public static final String ANY = "any";
     /**
+     * private
+     */
+    public static final String PRIVATE = "private";
+    /**
+     * protect
+     */
+    public static final String PROTECT = "protect";
+    /**
+     * public
+     */
+    public static final String PUBLIC = "public";
+    /**
+     * $javassist
+     */
+    public static final String JAVASSIST = "$javassist";
+    /**
+     * window
+     */
+    public static final String WINDOW = "window";
+    /**
+     * linux
+     */
+    public static final String LINUX = "linux";
+    /**
+     * class
+     */
+    public static final String CLASS = "class";
+    /**
      *
      */
     private static final String SYMBOL_FILE = "file";

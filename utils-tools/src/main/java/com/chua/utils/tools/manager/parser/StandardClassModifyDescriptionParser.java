@@ -1,23 +1,21 @@
 package com.chua.utils.tools.manager.parser;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.classes.JavassistHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.manager.parser.description.FieldDescription;
 import com.chua.utils.tools.manager.parser.description.MethodDescription;
 import com.chua.utils.tools.manager.parser.description.ModifyDescription;
+import com.chua.utils.tools.named.NamedHelper;
 import com.google.common.base.Strings;
 import javassist.*;
 import javassist.bytecode.*;
-import javassist.bytecode.annotation.*;
+import javassist.bytecode.annotation.MemberValue;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -31,20 +29,20 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     /**
      * Ct类
      */
-    private CtClass ctClass;
+    private final CtClass ctClass;
     /**
      * 父类
      */
-    private Class<? super T> superClass;
+    private final Class<? super T> superClass;
     /**
      * 类池
      */
-    private ClassPool classPool;
+    private final ClassPool classPool;
 
     /**
      * 待解析的类
      */
-    private Class<T> tClass;
+    private final Class<T> tClass;
     /**
      * 后缀
      */
@@ -56,23 +54,23 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     /**
      * 待添加的方法
      */
-    private final ConcurrentMap<String, Annotation[]> methodCache = new ConcurrentHashMap<>();
+    private final Map<String, Annotation[]> methodCache = new HashMap<>();
     /**
      * 待替换的方法
      */
-    private final ConcurrentMap<Method, String> methodReplaceCache = new ConcurrentHashMap<>();
+    private final Map<Method, String> methodReplaceCache = new HashMap<>();
     /**
      * 待添加注解的方法
      */
-    private final ConcurrentMap<Method, Annotation[]> methodAnnotationsCache = new ConcurrentHashMap<>();
+    private final Map<Method, Annotation[]> methodAnnotationsCache = new HashMap<>();
     /**
      * 待添加注解的字段
      */
-    private final ConcurrentMap<Field, Annotation[]> fieldAnnotationsCache = new ConcurrentHashMap<>();
+    private final Map<Field, Annotation[]> fieldAnnotationsCache = new HashMap<>();
     /**
      * 待添加的字段
      */
-    private final ConcurrentMap<String, Annotation[]> fieldCache = new ConcurrentHashMap<>();
+    private final Map<String, Annotation[]> fieldCache = new HashMap<>();
     /**
      * 待添加的父类
      */
@@ -88,7 +86,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
         this.tClass = tClass;
         this.classDescriptionParser = classDescriptionParser;
         this.superClass = tClass.getSuperclass();
-        this.classPool = ClassHelper.getClassPool();
+        this.classPool = JavassistHelper.getClassPool();
         this.ctClass = this.classPool.get(tClass.getName());
         this.ctClass.setName(tClass.getName() + JAVASSIST_SUFFIX);
     }
@@ -120,6 +118,26 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     }
 
     @Override
+    public void addFieldGetter(String fieldName, Annotation... annotations) {
+        FieldDescription fieldDescription = classDescriptionParser.findFieldDescription(fieldName);
+        if (null != fieldDescription) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("get").append(NamedHelper.firstUpperCase(fieldName));
+
+            addMethod(stringBuilder.toString(), fieldDescription.getType(), null, "return " + fieldName + ";", annotations);
+        }
+    }
+
+    @Override
+    public void addFieldSetter(String fieldName, Annotation... annotations) {
+        FieldDescription fieldDescription = classDescriptionParser.findFieldDescription(fieldName);
+        if (null != fieldDescription) {
+
+            addMethod("set" + NamedHelper.firstUpperCase(fieldName), fieldDescription.getType(), new Class[]{fieldDescription.getType()}, "this." + fieldName + "=" + fieldName + ";", annotations);
+        }
+    }
+
+    @Override
     public void addFieldsAnnotations(String fieldName, Annotation... annotations) {
         FieldDescription fieldDescription = classDescriptionParser.findFieldDescription(fieldName);
         if (null != fieldDescription) {
@@ -129,14 +147,12 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
 
     @Override
     public void addInterface(Class<?>... interfaces) {
-        for (Class<?> anInterface : interfaces) {
-            interfaceCache.add(anInterface);
-        }
+        interfaceCache.addAll(Arrays.asList(interfaces));
     }
 
     @Override
     public void addMethodAnnotations(String methodName, Annotation... annotations) {
-        MethodDescription methodDescription = classDescriptionParser.findMethodDescription(methodName);
+        MethodDescription<?> methodDescription = classDescriptionParser.findMethodDescription(methodName);
         if (null != methodDescription) {
             methodAnnotationsCache.put(methodDescription.getMethod(), annotations);
         }
@@ -144,7 +160,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
 
     @Override
     public void replaceMethod(String methodName, String method) {
-        MethodDescription methodDescription = classDescriptionParser.findMethodDescription(methodName);
+        MethodDescription<?> methodDescription = classDescriptionParser.findMethodDescription(methodName);
         if (null != methodDescription) {
             this.replaceMethod(methodDescription.getMethod(), method);
         }
@@ -158,9 +174,9 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     }
 
     @Override
-    public ModifyDescription toClass() throws Exception {
+    public ModifyDescription<T> toClass() throws Exception {
         //修改修饰类
-        ModifyDescription modifyDescription = new ModifyDescription();
+        ModifyDescription<T> modifyDescription = new ModifyDescription<>();
         //添加字段
         this.renderFields(modifyDescription);
         //添加字段
@@ -191,14 +207,14 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
             }
         });
         Class<?> aClass = classLoader.loadClass(ctClass.toClass().getName());
-        modifyDescription.setAClass(aClass);
+        modifyDescription.setAClass((Class<T>) aClass);
         return modifyDescription;
     }
 
     /**
      * 修改字段注解
      *
-     * @param modifyDescription
+     * @param modifyDescription<?>
      */
     private void modifyFieldsAnnotations(ModifyDescription modifyDescription) {
         for (Map.Entry<Field, Annotation[]> entry : fieldAnnotationsCache.entrySet()) {
@@ -224,9 +240,9 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     /**
      * 修改方法注解
      *
-     * @param modifyDescription
+     * @param modifyDescription<?>
      */
-    private void modifyMethodsAnnotations(ModifyDescription modifyDescription) {
+    private void modifyMethodsAnnotations(ModifyDescription<?> modifyDescription) {
         for (Map.Entry<Method, Annotation[]> entry : methodAnnotationsCache.entrySet()) {
             try {
                 modifyMethodAnnotations(entry.getKey(), entry.getValue());
@@ -262,7 +278,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
      *
      * @param modifyDescription 修改修饰
      */
-    private void renderType(ModifyDescription modifyDescription) {
+    private void renderType(ModifyDescription<?> modifyDescription) {
         this.makeTypeAnnotationInfo();
     }
 
@@ -271,7 +287,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
      *
      * @param modifyDescription 修改修饰
      */
-    private void modifyMethods(ModifyDescription modifyDescription) {
+    private void modifyMethods(ModifyDescription<?> modifyDescription) {
         for (Map.Entry<Method, String> entry : methodReplaceCache.entrySet()) {
             try {
                 modifyMethod(entry, modifyDescription);
@@ -449,7 +465,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     private void addAnnotationValue(javassist.bytecode.annotation.Annotation annotation1, Annotation annotation, ConstPool constPool) {
         Map<String, Object> annotationValue = ClassHelper.getAnnotationValue(annotation);
         for (Map.Entry<String, Object> entry : annotationValue.entrySet()) {
-            MemberValue memberValue = ClassHelper.getMemberValue(entry.getValue(), constPool);
+            MemberValue memberValue = JavassistHelper.getMemberValue(entry.getValue(), constPool);
             if (null == memberValue) {
                 continue;
             }

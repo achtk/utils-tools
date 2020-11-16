@@ -6,12 +6,17 @@ import com.chua.utils.tools.spi.entity.ExtensionClass;
 import com.chua.utils.tools.spi.extension.ExtensionLoader;
 import com.chua.utils.tools.spi.processor.*;
 import com.google.common.base.Strings;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 扩展工厂类
@@ -21,15 +26,23 @@ import java.util.concurrent.*;
  * @since 2020/6/3 18:24
  */
 @SuppressWarnings("all")
+@Slf4j
+@RequiredArgsConstructor
 public class ExtensionFactory implements Runnable {
     /**
-     * 时间周期
+     * 定时时间
      */
-    public static int TIME_PERIOD = 5;
+    @NonNull
+    private int timePeriod;
+
     /**
      * 时间类型
      */
     public static TimeUnit TIME_UNIT = TimeUnit.SECONDS;
+    /**
+     *
+     */
+    private static final Lock LOCK = new ReentrantLock();
     /**
      * loader缓存
      */
@@ -37,11 +50,40 @@ public class ExtensionFactory implements Runnable {
     /**
      * 单例监控线程
      */
-    private static final ExecutorService EXECUTOR_SERVICE = ThreadHelper.newSingleThreadExecutor("monitor-spi");
+    private static ExecutorService EXECUTOR_SERVICE = null;
 
-    static {
-        if (TIME_PERIOD > 0) {
-            EXECUTOR_SERVICE.execute(new ExtensionFactory());
+    /**
+     * 监听数据变化
+     */
+    public static synchronized void monitor(final int timePeriod) {
+        if (timePeriod > 0) {
+            LOCK.lock();
+            try {
+                if (EXECUTOR_SERVICE == null) {
+                    EXECUTOR_SERVICE = ThreadHelper.newSingleThreadExecutor("monitor-spi");
+                    EXECUTOR_SERVICE.execute(new ExtensionFactory(timePeriod));
+                    return;
+                }
+            } finally {
+                LOCK.unlock();
+            }
+            log.warn("监听已存在, 需要关闭后重新注册");
+        }
+    }
+
+    /**
+     * 监听数据变化
+     */
+    public static synchronized void unmonitor() {
+        LOCK.lock();
+        try {
+            if (EXECUTOR_SERVICE != null) {
+                EXECUTOR_SERVICE.shutdownNow();
+                EXECUTOR_SERVICE.shutdown();
+                EXECUTOR_SERVICE = null;
+            }
+        } finally {
+            LOCK.unlock();
         }
     }
 
@@ -319,7 +361,7 @@ public class ExtensionFactory implements Runnable {
                     checkTime(extensionLoader, loaderEntry.getKey());
                 }
             }
-        }, 0, TIME_PERIOD, TIME_UNIT);
+        }, 0, timePeriod, TIME_UNIT);
     }
 
     /**

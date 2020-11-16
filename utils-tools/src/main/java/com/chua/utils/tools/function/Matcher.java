@@ -15,5 +15,23 @@ public interface Matcher<T> {
      * @param item 元素
      * @throws Throwable 异常
      */
-    void doWith(T item) throws Throwable;
+    void doWith(T item) throws Exception;
+
+
+    /**
+     * Matcher不为空执行
+     *
+     * @param matcher Mathcer
+     * @param data    数据
+     * @see Matcher
+     */
+    static <T> void doWith(Matcher<T> matcher, T data) {
+        if (null == matcher) {
+            return;
+        }
+        try {
+            matcher.doWith(data);
+        } catch (Throwable throwable) {
+        }
+    }
 }

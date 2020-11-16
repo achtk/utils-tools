@@ -3,7 +3,7 @@ package com.chua.utils.tools.collects.map;
 import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.ArraysHelper;
 import com.chua.utils.tools.common.FinderHelper;
-import com.chua.utils.tools.empty.Empty;
+import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
 import com.google.common.collect.Lists;
@@ -78,6 +78,15 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * @return Map
      */
     public static Map<Object, Object> newMapObjectObject() {
+        return newMap();
+    }
+
+    /**
+     * 创建 Map<Object, Object>
+     *
+     * @return Map
+     */
+    public static Map<String, Map<String, Object>> newMapStringMap() {
         return newMap();
     }
 
@@ -660,8 +669,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      *
      * @param map 集合
      * @param key 查找的关键
-     * @see com.chua.utils.tools.constant.SymbolConstant#SYMBOL_COMMA
      * @return Map中的值作为字符串，如果为null，则<code> [] </ code>
+     * @see com.chua.utils.tools.constant.SymbolConstant#SYMBOL_COMMA
      */
     public static <K, V> String[] getStringArray(final Map<K, V> map, final K key) {
         return getStringArray(map, key, SYMBOL_COMMA);
@@ -680,6 +689,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
         String string = getString(map, key);
         return null == string ? Collections.emptyList() : Arrays.asList(string.split(delimiter));
     }
+
     /**
      * 以null安全的方式从Map获取字符串数组。
      * <p>字符串是通过<code> toString </ code>获得的。
@@ -956,7 +966,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      */
     public static Properties toProp(Map<?, ?> map) {
         if (map == null) {
-            return Empty.EMPTY_PROPERTIES;
+            return EmptyOrBase.EMPTY_PROPERTIES;
         }
         Properties properties = new Properties();
         for (Map.Entry<?, ?> entry : map.entrySet()) {

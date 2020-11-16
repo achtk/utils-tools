@@ -138,12 +138,24 @@ public class CtClassBuilder {
 
         // add fields
         for (String field : fields) {
-            ctClass.addField(CtField.make(field, ctClass));
+            try {
+                ctClass.addField(CtField.make(field, ctClass));
+            } catch (CannotCompileException e) {
+                int before = field.indexOf("<");
+                int after = field.indexOf(">");
+                field = field.substring(0, before) + field.substring(after + 1);
+                ctClass.addField(CtField.make(field, ctClass));
+            }
         }
 
         // add methods
         for (String method : methods) {
-            ctClass.addMethod(CtNewMethod.make(method, ctClass));
+            try {
+                ctClass.addMethod(CtNewMethod.make(method, ctClass));
+            } catch (CannotCompileException e) {
+                method = method.replace("...", "[]");
+                ctClass.addMethod(CtNewMethod.make(method, ctClass));
+            }
         }
 
         return ctClass;

@@ -1,5 +1,6 @@
 package com.chua.utils.tools.named;
 
+import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.pattern.PatternBuilder;
 import com.google.common.base.Strings;
 
@@ -102,5 +103,39 @@ public class NamedHelper {
      */
     public static String toLine(final String str) {
         return toSymbol(str, SYMBOL_UNDERLINE);
+    }
+
+    /**
+     * 首字母大写
+     * <pre>
+     *     firstUpperCase("test") = "Test"
+     *     firstUpperCase(null) = null
+     * </pre>
+     *
+     * @param str 源数据
+     * @return 首字母大写数据
+     */
+    public static String firstUpperCase(String str) {
+        if (Strings.isNullOrEmpty(str)) {
+            return str;
+        }
+        return StringHelper.first(str).toUpperCase() + str.substring(1);
+    }
+
+    /**
+     * 首字母小写
+     * <pre>
+     *     firstLowerCase("test") = "Test"
+     *     firstLowerCase(null) = null
+     * </pre>
+     *
+     * @param str 源数据
+     * @return 首字母小写
+     */
+    public static String firstLowerCase(String str) {
+        if (Strings.isNullOrEmpty(str)) {
+            return str;
+        }
+        return StringHelper.first(str).toLowerCase() + str.substring(1);
     }
 }

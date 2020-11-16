@@ -31,7 +31,7 @@ public class StandardContextManager implements ContextManager {
     private ProfileAdaptorManager profileAdaptorManager = new StandardProfileAdaptorManager(null);
 
     private static final CopyOnWriteArraySet<?> COPY_ON_WRITE_ARRAY_SET = new CopyOnWriteArraySet<>();
-    private static final HashMultimap<Class, Object> MULTIMAP = HashMultimap.create();
+    private static final HashMultimap<Class<?>, Object> MULTIMAP = HashMultimap.create();
 
     @Override
     public EventBusContextManager createEventBusContextManager() {
@@ -57,12 +57,9 @@ public class StandardContextManager implements ContextManager {
     public <Manager> List<Manager> createContextManager(Class<Manager> managerClass) {
         Set<Object> objects = MULTIMAP.get(managerClass);
         List<Manager> result = new ArrayList<>();
-        CollectionHelper.doWithMatcher(objects, new Matcher<Object>() {
-            @Override
-            public void doWith(Object item) throws Throwable {
-                if (item.getClass().isAssignableFrom(managerClass)) {
-                    result.add((Manager) item);
-                }
+        CollectionHelper.doWithMatcher(objects, item -> {
+            if (item.getClass().isAssignableFrom(managerClass)) {
+                result.add((Manager) item);
             }
         });
         return result;

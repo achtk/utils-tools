@@ -60,6 +60,14 @@ public class ClassConstant {
      */
     public static final String CLASS_CHAR = "char";
     /**
+     * character
+     */
+    public static final String CLASS_CHARACTER = "character";
+    /**
+     * character[]
+     */
+    public static final String CLASS_CHARACTERS = "character[]";
+    /**
      * char[]
      */
     public static final String CLASS_CHARS = "char[]";

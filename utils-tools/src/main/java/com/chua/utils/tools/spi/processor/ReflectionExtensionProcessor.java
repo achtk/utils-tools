@@ -1,7 +1,8 @@
 package com.chua.utils.tools.spi.processor;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.classes.reflections.ReflectionsFactory;
+import com.chua.utils.tools.classes.reflections.RewriteReflections;
+import com.chua.utils.tools.classes.reflections.configuration.RewriteConfiguration;
 import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.spi.entity.ExtensionClass;
 import com.chua.utils.tools.spi.entity.SpiConfig;
@@ -25,11 +26,11 @@ import java.util.Set;
 public class ReflectionExtensionProcessor<T> extends AbstractSimpleExtensionProcessor<T> {
 
     private static final Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
-    private ReflectionsFactory reflections;
+    private RewriteReflections reflections;
 
     @Override
     public void init(SpiConfig spiConfig) {
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+        RewriteConfiguration configurationBuilder = new RewriteConfiguration();
         configurationBuilder.addUrls(ClassHelper.getUrlsByClassLoader(getClassLoader()));
         configurationBuilder.addScanners(new SubTypesScanner());
         configurationBuilder.setExecutorService(ThreadHelper.newForkJoinPool());
@@ -37,7 +38,7 @@ public class ReflectionExtensionProcessor<T> extends AbstractSimpleExtensionProc
         configurationBuilder.filterInputsBy(s -> false);
         configurationBuilder.setInputsFilter(s -> s.endsWith(".class"));
 
-        this.reflections = new ReflectionsFactory(configurationBuilder);
+        this.reflections = new RewriteReflections(configurationBuilder);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class ReflectionExtensionProcessor<T> extends AbstractSimpleExtensionProc
         for (Class<? extends T> aClass : subTypesOf) {
             List<ExtensionClass<T>> extensionClasses = buildExtensionClassByClass(aClass);
             for (ExtensionClass<T> extensionClass : extensionClasses) {
-                extensionClass.setUrl(reflections.getClassFromUrl(extensionClass.getImplClass().getName()));
+               // extensionClass.setUrl(reflections.getClassFromUrl(extensionClass.getImplClass().getName()));
                 result.add(extensionClass);
             }
         }

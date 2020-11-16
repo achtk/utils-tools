@@ -30,14 +30,14 @@ public class Judgeable<T> {
     /**
      * 获取数据
      *
-     * @return
+     * @return 数据
      */
     public T getIfPresent() {
         return value;
     }
     /**
      * 尝试获取List
-     * @return
+     * @return List
      */
     public List<T> getListIfFeasible() {
         return null == value ? Collections.emptyList() : (CollectionHelper.getListIfFeasible(value));
@@ -47,7 +47,7 @@ public class Judgeable<T> {
      * 获取数据
      *
      * @param defaultValue 默认值
-     * @return
+     * @return 数据
      */
     public T getIfPresent(T defaultValue) {
         return null == value ? defaultValue : value;

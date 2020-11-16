@@ -1,5 +1,6 @@
 package com.chua.utils.tools.manager.parser.description;
 
+import com.chua.utils.tools.classes.ClassHelper;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +20,11 @@ public class MethodDescription<T> {
     /**
      * 类
      */
-    private Class<T> tClass;
+    private Class<T> belongingClass;
+    /**
+     * 解析对象
+     */
+    private T entity;
     /**
      * 方法
      */
@@ -36,6 +41,10 @@ public class MethodDescription<T> {
      * 请求参数类型
      */
     private Class<?>[] paramTypes;
+    /**
+     * 请求参数个数
+     */
+    private int paramSize;
     /**
      * 方法注解
      */
@@ -57,5 +66,49 @@ public class MethodDescription<T> {
         this.paramTypes = method.getParameterTypes();
         this.annotations = method.getDeclaredAnnotations();
         this.exceptionTypes = method.getExceptionTypes();
+        this.paramSize = paramTypes.length;
+    }
+
+    /**
+     * 执行方法
+     *
+     * @param params 参数
+     * @return Object
+     */
+    public Object invoke(Object[] params) {
+        return invoke(params, Object.class);
+    }
+
+    /**
+     * 执行方法
+     *
+     * @param params     参数
+     * @param returnType 返回类型
+     * @return R
+     */
+    public <R> R invoke(Object[] params, Class<R> returnType) {
+        T newEntity = null;
+        if (entity != null) {
+            newEntity = entity;
+        } else if (!belongingClass.isInterface()) {
+            newEntity = ClassHelper.safeForObject(belongingClass);
+        }
+        if (null == newEntity) {
+            return null;
+        }
+        if (paramSize != params.length) {
+            return null;
+        }
+
+        Object[] objects = ClassHelper.doTypeConsistent(paramTypes, params);
+        if (null == objects) {
+            return null;
+        }
+        try {
+            Object invoke = method.invoke(entity, objects);
+            return null != invoke && returnType.isAssignableFrom(invoke.getClass()) ? (R) invoke : null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

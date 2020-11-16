@@ -22,6 +22,10 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class StandardClassDescriptionParser<T> implements ClassDescriptionParser<T> {
     /**
+     * 实体对象
+     */
+    private T entity;
+    /**
      * 待解析的类
      */
     private Class<T> tClass;
@@ -29,6 +33,11 @@ public class StandardClassDescriptionParser<T> implements ClassDescriptionParser
      * 方法替换对象
      */
     private final ConcurrentMap<String, String> methodReplaceCache = new ConcurrentHashMap<>();
+
+    public StandardClassDescriptionParser(T obj) {
+        this.tClass = (Class<T>) ClassHelper.getClass(obj);
+        this.entity = obj;
+    }
 
     public StandardClassDescriptionParser(Class<T> tClass) {
         this.tClass = tClass;
@@ -42,8 +51,9 @@ public class StandardClassDescriptionParser<T> implements ClassDescriptionParser
         List<FieldDescription<T>> fieldDescriptions = new ArrayList<>();
         ClassHelper.doWithLocalFields(tClass, field -> {
             FieldDescription<T> fieldDescription = new FieldDescription<>();
-            fieldDescription.setTClass(tClass);
+            fieldDescription.setBelongingClass(tClass);
             fieldDescription.setField(field);
+            fieldDescription.setEntity(entity);
 
             fieldDescriptions.add(fieldDescription);
         });
@@ -58,8 +68,9 @@ public class StandardClassDescriptionParser<T> implements ClassDescriptionParser
         List<MethodDescription<T>> methodDescriptions = new ArrayList<>();
         ClassHelper.doWithLocalMethods(tClass, method -> {
             MethodDescription<T> tMethodDescription = new MethodDescription<>();
-            tMethodDescription.setTClass(tClass);
+            tMethodDescription.setBelongingClass(tClass);
             tMethodDescription.setMethod(method);
+            tMethodDescription.setEntity(entity);
 
             methodDescriptions.add(tMethodDescription);
         });

@@ -20,12 +20,14 @@ import static com.chua.utils.tools.constant.NumberConstant.EOF;
 
 /**
  * IO工具类
+ *
  * @author CH
  */
 public class IoHelper {
     /**
      * 读取流
-     * @param input 流
+     *
+     * @param input  流
      * @param buffer 字节
      * @return int
      * @throws IOException
@@ -33,9 +35,11 @@ public class IoHelper {
     public static int read(final InputStream input, final byte[] buffer) throws IOException {
         return read(input, buffer, 0, buffer.length);
     }
+
     /**
      * 读取流
-     * @param input 流
+     *
+     * @param input  流
      * @param buffer 字节
      * @param offset 位置
      * @param length 长度
@@ -58,9 +62,11 @@ public class IoHelper {
         }
         return length - remaining;
     }
+
     /**
      * 读取流
-     * @param input 流
+     *
+     * @param input  流
      * @param buffer 缓冲
      * @return
      * @throws IOException
@@ -75,9 +81,11 @@ public class IoHelper {
         }
         return length - buffer.remaining();
     }
+
     /**
      * 读取流
-     * @param input 流
+     *
+     * @param input  流
      * @param buffer 字节
      * @return
      * @throws IOException
@@ -85,9 +93,11 @@ public class IoHelper {
     public static int read(final Reader input, final char[] buffer) throws IOException {
         return read(input, buffer, 0, buffer.length);
     }
+
     /**
      * 读取流
-     * @param input 流
+     *
+     * @param input  流
      * @param buffer 字节
      * @param offset 位置
      * @param length 长度
@@ -110,9 +120,11 @@ public class IoHelper {
         }
         return length - remaining;
     }
+
     /**
      * 读取所有字节
-     * @param input 流
+     *
+     * @param input  流
      * @param buffer 字节
      * @param offset 位置
      * @param length 长度
@@ -128,16 +140,19 @@ public class IoHelper {
 
     /**
      * 读取所有字节
-     * @param input 流
+     *
+     * @param input  流
      * @param buffer 字节
      * @throws IOException
      */
     public static void readFully(final InputStream input, final byte[] buffer) throws IOException {
         readFully(input, buffer, 0, buffer.length);
     }
+
     /**
      * 读取所有字节
-     * @param input 流
+     *
+     * @param input  流
      * @param buffer 字节
      * @param offset 位置
      * @param length 长度
@@ -150,9 +165,11 @@ public class IoHelper {
             throw new EOFException("Length to read: " + length + " actual: " + actual);
         }
     }
+
     /**
      * 读取所有字节
-     * @param input 流
+     *
+     * @param input    流
      * @param encoding 编码
      * @throws IOException
      */
@@ -160,8 +177,10 @@ public class IoHelper {
         final InputStreamReader reader = new InputStreamReader(input, toCharset(encoding));
         return readLines(reader);
     }
+
     /**
      * 读取所有字节
+     *
      * @param input 流
      * @throws IOException
      */
@@ -178,12 +197,14 @@ public class IoHelper {
 
     /**
      * Reader 转 BufferedReader
+     *
      * @param reader Reader
      * @return
      */
     public static BufferedReader toBufferedReader(final Reader reader) {
         return reader instanceof BufferedReader ? (BufferedReader) reader : new BufferedReader(reader);
     }
+
     /**
      * 关闭URLConnection.
      *
@@ -198,6 +219,7 @@ public class IoHelper {
 
     /**
      * 关闭
+     *
      * @param closeable
      */
     public static void closeQuietly(final Closeable closeable) {
@@ -212,6 +234,7 @@ public class IoHelper {
 
     /**
      * 流转字节
+     *
      * @param input 输入流
      * @return
      * @throws IOException
@@ -222,10 +245,12 @@ public class IoHelper {
             return output.toByteArray();
         }
     }
+
     /**
      * 流转字节
+     *
      * @param input 输入流
-     * @param size 数组长度
+     * @param size  数组长度
      * @return
      * @throws IOException
      */
@@ -239,8 +264,9 @@ public class IoHelper {
 
     /**
      * 流转字节
+     *
      * @param input 输入流
-     * @param size 数组长度
+     * @param size  数组长度
      * @return
      * @throws IOException
      */
@@ -267,8 +293,10 @@ public class IoHelper {
 
         return data;
     }
+
     /**
      * 流转数组
+     *
      * @param input 输入流
      * @return
      * @throws IOException
@@ -279,6 +307,7 @@ public class IoHelper {
 
     /**
      * URL转字节
+     *
      * @param url
      * @return
      * @throws IOException
@@ -294,6 +323,7 @@ public class IoHelper {
 
     /**
      * URI转字节
+     *
      * @param uri
      * @return
      * @throws IOException
@@ -301,8 +331,10 @@ public class IoHelper {
     public static byte[] toByteArray(final URI uri) throws IOException {
         return toByteArray(uri.toURL());
     }
+
     /**
      * URLConnection转字节
+     *
      * @param urlConn
      * @return
      * @throws IOException
@@ -315,16 +347,19 @@ public class IoHelper {
 
     /**
      * 字符串转流
-     * @param input 输入
+     *
+     * @param input    输入
      * @param encoding 编码
      * @return
      */
     public static InputStream toInputStream(final String input, final Charset encoding) {
         return new ByteArrayInputStream(input.getBytes(toCharset(encoding)));
     }
+
     /**
      * 字符串转流
-     * @param input 输入
+     *
+     * @param input    输入
      * @param encoding 编码
      * @return
      */
@@ -332,8 +367,10 @@ public class IoHelper {
         final byte[] bytes = input.getBytes(toCharset(encoding));
         return new ByteArrayInputStream(bytes);
     }
+
     /**
      * 字节数组转字符串
+     *
      * @param input 字节数组
      * @return
      * @throws IOException
@@ -341,9 +378,11 @@ public class IoHelper {
     public static String toString(final byte[] input) throws IOException {
         return new String(input, Charset.defaultCharset());
     }
+
     /**
      * url转字符串
-     * @param url 字节数组
+     *
+     * @param url      字节数组
      * @param encoding 编码
      * @return
      * @throws IOException
@@ -354,7 +393,8 @@ public class IoHelper {
 
     /**
      * 字节数组转字符串
-     * @param input 字节数组
+     *
+     * @param input    字节数组
      * @param encoding 编码
      * @return
      * @throws IOException
@@ -362,9 +402,11 @@ public class IoHelper {
     public static String toString(final byte[] input, final String encoding) throws IOException {
         return new String(input, toCharset(encoding));
     }
+
     /**
      * 流转字符串
-     * @param input 流
+     *
+     * @param input    流
      * @param encoding 编码
      * @return
      * @throws IOException
@@ -375,9 +417,11 @@ public class IoHelper {
             return sw.toString();
         }
     }
+
     /**
      * 流转字符串
-     * @param input 流
+     *
+     * @param input    流
      * @param encoding 编码
      * @return
      * @throws IOException
@@ -385,8 +429,10 @@ public class IoHelper {
     public static String toString(final InputStream input, final String encoding) throws IOException {
         return toString(input, toCharset(encoding));
     }
+
     /**
      * 流转字符串
+     *
      * @param input 流
      * @return
      * @throws IOException
@@ -400,6 +446,7 @@ public class IoHelper {
 
     /**
      * URI 转字符串
+     *
      * @param uri URI
      * @return
      * @throws IOException
@@ -407,9 +454,11 @@ public class IoHelper {
     public static String toString(final URI uri) throws IOException {
         return toString(uri, Charset.defaultCharset());
     }
+
     /**
      * URI 转字符串
-     * @param uri URI
+     *
+     * @param uri      URI
      * @param encoding 编码
      * @return
      * @throws IOException
@@ -417,9 +466,11 @@ public class IoHelper {
     public static String toString(final URI uri, final Charset encoding) throws IOException {
         return toString(uri.toURL(), toCharset(encoding));
     }
+
     /**
      * URL 转字符串
-     * @param url URL
+     *
+     * @param url      URL
      * @param encoding 编码
      * @return
      * @throws IOException
@@ -429,9 +480,11 @@ public class IoHelper {
             return toString(inputStream, encoding);
         }
     }
+
     /**
      * 流转数组
-     * @param input 输入流
+     *
+     * @param input    输入流
      * @param encoding 编码
      * @return
      * @throws IOException
@@ -445,8 +498,9 @@ public class IoHelper {
 
     /**
      * 输入流拷贝到输出流
-     * @param input 输入流
-     * @param output 输出流
+     *
+     * @param input   输入流
+     * @param output  输出流
      * @param charset 编码
      * @throws IOException
      */
@@ -455,9 +509,11 @@ public class IoHelper {
         final InputStreamReader in = new InputStreamReader(input, toCharset(charset));
         copy(in, output);
     }
+
     /**
      * 输入流拷贝到输出流
-     * @param input 输入流
+     *
+     * @param input  输入流
      * @param output 输出流
      * @return
      * @throws IOException
@@ -472,8 +528,9 @@ public class IoHelper {
 
     /**
      * 拷贝文件
-     * @param input 输入流
-     * @param output 输出流
+     *
+     * @param input   输入流
+     * @param output  输出流
      * @param charset 编码
      * @return
      * @throws IOException
@@ -487,14 +544,17 @@ public class IoHelper {
 
     /**
      * 编码设置
+     *
      * @param charset 编码
      * @return
      */
     public static Charset toCharset(final Charset charset) {
         return charset == null ? Charset.defaultCharset() : charset;
     }
+
     /**
      * 编码设置
+     *
      * @param charset 编码
      * @return
      */
@@ -504,7 +564,8 @@ public class IoHelper {
 
     /**
      * 拷贝文件
-     * @param input 输入流
+     *
+     * @param input  输入流
      * @param output 输出流
      * @return
      * @throws IOException
@@ -516,9 +577,11 @@ public class IoHelper {
         }
         return (int) count;
     }
+
     /**
      * 拷贝文件
-     * @param input 输入流
+     *
+     * @param input  输入流
      * @param output 输出流
      * @return
      * @throws IOException
@@ -526,9 +589,11 @@ public class IoHelper {
     public static long copy(final InputStream input, final OutputStream output, final int bufferSize) throws IOException {
         return copyLarge(input, output, new byte[bufferSize]);
     }
+
     /**
      * 拷贝大文件
-     * @param input 输入流
+     *
+     * @param input  输入流
      * @param output 输出流
      * @return
      * @throws IOException
@@ -539,7 +604,8 @@ public class IoHelper {
 
     /**
      * 拷贝大文件
-     * @param input 输入流
+     *
+     * @param input  输入流
      * @param output 输出流
      * @param buffer 数组
      * @return
@@ -554,9 +620,11 @@ public class IoHelper {
         }
         return count;
     }
+
     /**
      * 拷贝大文件
-     * @param input 输入流
+     *
+     * @param input  输入流
      * @param output 输出流
      * @param buffer 数组
      * @return
@@ -571,9 +639,11 @@ public class IoHelper {
         }
         return count;
     }
+
     /**
      * 拷贝大文件
-     * @param input 输入流
+     *
+     * @param input  输入流
      * @param output 输出流
      * @return
      * @throws IOException
@@ -584,8 +654,9 @@ public class IoHelper {
 
     /**
      * 写数据
-     * @param data 数据
-     * @param output 流
+     *
+     * @param data     数据
+     * @param output   流
      * @param encoding 编码
      * @throws IOException
      */
@@ -594,9 +665,11 @@ public class IoHelper {
             output.write(data.getBytes(toCharset(encoding)));
         }
     }
+
     /**
      * 写数据
-     * @param data 数据
+     *
+     * @param data   数据
      * @param output 流
      * @throws IOException
      */
@@ -605,19 +678,23 @@ public class IoHelper {
             output.write(data);
         }
     }
+
     /**
      * 写数据
-     * @param data 数据
-     * @param output 流
+     *
+     * @param data     数据
+     * @param output   流
      * @param encoding 编码
      * @throws IOException
      */
     public static void write(final String data, final OutputStream output, final String encoding) throws IOException {
         write(data, output, toCharset(encoding));
     }
+
     /**
      * 写数据
-     * @param data 数据
+     *
+     * @param data   数据
      * @param output 流
      * @throws IOException
      */
@@ -626,19 +703,23 @@ public class IoHelper {
             output.write(data.toString());
         }
     }
+
     /**
      * 写数据
-     * @param data 数据
+     *
+     * @param data   数据
      * @param output 流
      * @throws IOException
      */
     public static void write(final StringBuffer data, final OutputStream output) throws IOException {
         write(data, output, (String) null);
     }
+
     /**
      * 写数据
-     * @param data 数据
-     * @param output 流
+     *
+     * @param data     数据
+     * @param output   流
      * @param encoding 编码
      * @throws IOException
      */
@@ -647,20 +728,24 @@ public class IoHelper {
             output.write(data.toString().getBytes(toCharset(encoding)));
         }
     }
+
     /**
      * 写数据
-     * @param lines 数据
-     * @param output 流
+     *
+     * @param lines      数据
+     * @param output     流
      * @param lineEnding 结尾
      * @throws IOException
      */
     public static void writeLines(final Collection<?> lines, final String lineEnding, final OutputStream output) throws IOException {
         writeLines(lines, lineEnding, output, Charset.defaultCharset());
     }
+
     /**
      * 写数据
-     * @param lines 数据
-     * @param output 流
+     *
+     * @param lines      数据
+     * @param output     流
      * @param lineEnding 结尾
      * @throws IOException
      */
@@ -683,7 +768,8 @@ public class IoHelper {
 
     /**
      * url 转 list
-     * @param url 类
+     *
+     * @param url     类
      * @param charset 编码
      * @return
      */
@@ -694,6 +780,7 @@ public class IoHelper {
 
     /**
      * is转 reader
+     *
      * @param inputStream 流
      * @return
      * @throws UnsupportedEncodingException
@@ -702,5 +789,37 @@ public class IoHelper {
         return new InputStreamReader(inputStream, "UTF-8");
     }
 
+    /**
+     * 流转字节
+     *
+     * @param openInputStream 输入流
+     * @return
+     * @throws IOException
+     */
+    public static ByteBuffer toByteBuffer(InputStream openInputStream) throws IOException {
+        return ByteBuffer.wrap(toByteArray(openInputStream));
+    }
 
+    /**
+     * 流拷贝
+     *
+     * @param inputStream 流
+     * @return 流
+     */
+    public static ByteBuffer copyInputStream(InputStream inputStream) throws IOException {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            // 定义一个缓存数组，临时存放读取的数组
+            //经过测试，4*1024是一个非常不错的数字，过大过小都会比较影响性能
+            byte[] buffer = new byte[4096];
+            int length;
+            while ((length = inputStream.read(buffer)) > -1) {
+                baos.write(buffer, 0, length);
+            }
+            baos.flush();
+            return ByteBuffer.wrap(baos.toByteArray());
+        } catch (IOException e) {
+            throw new IOException(e);
+        }
+    }
 }

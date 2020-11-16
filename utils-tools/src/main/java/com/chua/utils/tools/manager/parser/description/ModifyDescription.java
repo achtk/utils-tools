@@ -1,6 +1,5 @@
 package com.chua.utils.tools.manager.parser.description;
 
-import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.List;
  * @version 1.0.0
  * @since 2020/11/10
  */
-public class ModifyDescription {
+public class ModifyDescription<T> {
     /**
      * 异常说明
      */
@@ -22,8 +21,15 @@ public class ModifyDescription {
      * 类
      */
     @Setter
-    @Getter
-    private Class<?> aClass;
+    private Class<T> aClass;
+
+    /**
+     * 获取class
+     * @return class
+     */
+    public Class<T> toClass() {
+        return aClass;
+    }
 
     /**
      * 添加异常

@@ -2,9 +2,8 @@ package com.chua.utils.tools.common;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.callback.FieldCallback;
-import com.chua.utils.tools.function.Converter;
+import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.converter.TypeConverter;
-import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.google.common.base.Preconditions;
 import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
@@ -12,25 +11,19 @@ import net.sf.cglib.beans.BeanMap;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 /**
+ * bean转化
+ * <p>当前工具方法已过期建议使用{@link com.chua.utils.tools.bean.copy.BeanCopy}</p>
+ *
  * @author CH
+ * @see com.chua.utils.tools.bean.copy.BeanCopy
  */
+@Deprecated
 public class BeansHelper {
-
-    public static final ConcurrentMap<Class, TypeConverter> CLASS_TYPE_CONVERTER_CONCURRENT_MAP = new ConcurrentHashMap<Class, TypeConverter>() {
-        {
-            Set<TypeConverter> allSpiService = ExtensionFactory.getExtensionLoader(TypeConverter.class).getAllSpiService();
-            for (TypeConverter typeConverter : allSpiService) {
-                put(typeConverter.getType(), typeConverter);
-            }
-        }
-    };
 
     /**
      * 实体对象赋值
@@ -42,7 +35,7 @@ public class BeansHelper {
     public static void reflectionAssignment(final Object entity, final Map<String, Object> params) {
         ClassHelper.doWithLocalFields(entity.getClass(), new FieldCallback() {
             @Override
-            public void doWith(Field item) throws Throwable {
+            public void doWith(Field item) throws Exception {
                 String name = item.getName();
                 if (!params.containsKey(name)) {
                     return;
@@ -52,8 +45,8 @@ public class BeansHelper {
                     return;
                 }
                 Class<?> type = item.getType();
-                TypeConverter typeConverter = CLASS_TYPE_CONVERTER_CONCURRENT_MAP.get(type);
-                ClassHelper.makeAccessible(item);
+                item.setAccessible(true);
+                TypeConverter typeConverter = EmptyOrBase.getTypeConverter(type);
                 if (null == typeConverter) {
                     try {
                         item.set(entity, value);
@@ -122,7 +115,7 @@ public class BeansHelper {
         if (fail.get()) {
             ClassHelper.doWithFields(to.getClass(), new FieldCallback() {
                 @Override
-                public void doWith(Field item) throws Throwable {
+                public void doWith(Field item) throws Exception {
                     if (!fromBeanMap.containsKey(item.getName())) {
                         return;
                     }
@@ -131,7 +124,7 @@ public class BeansHelper {
                     if (!type.isAssignableFrom(o.getClass())) {
                         return;
                     }
-                    ClassHelper.makeAccessible(item);
+                    item.setAccessible(true);
                     item.set(to, o);
                 }
             });
@@ -348,9 +341,9 @@ public class BeansHelper {
             return null;
         }
         if (!BooleanHelper.hasLength(source)) {
-            return ClassHelper.forObject(tClass);
+            return ClassHelper.safeForObject(tClass);
         }
-        BeanMap beanMap = BeanMap.create(ClassHelper.forObject(tClass));
+        BeanMap beanMap = BeanMap.create(ClassHelper.safeForObject(tClass));
         Field[] fields = tClass.getDeclaredFields();
 
         int max = Math.min(fields.length, source.size());
@@ -389,8 +382,9 @@ public class BeansHelper {
      *
      * @param type 类型
      * @return 类型转化器
+     * @see EmptyOrBase#getTypeConverter(Class)
      */
     public static TypeConverter getTypeConverter(Class<?> type) {
-        return null == type ? null : CLASS_TYPE_CONVERTER_CONCURRENT_MAP.get(type);
+        return null == type ? null : EmptyOrBase.getTypeConverter(type);
     }
 }

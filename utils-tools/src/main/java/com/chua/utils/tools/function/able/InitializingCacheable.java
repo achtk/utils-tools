@@ -1,12 +1,10 @@
 package com.chua.utils.tools.function.able;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.collects.HashTripleMap;
 import com.chua.utils.tools.collects.TripleMap;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.manager.ObjectContextManager;
-import com.chua.utils.tools.manager.producer.StandardContextManager;
 import com.chua.utils.tools.manager.producer.StandardScannerObjectContextManager;
 import lombok.Data;
 
@@ -14,7 +12,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * 初始化可被缓存接口
@@ -41,15 +38,12 @@ public class InitializingCacheable implements Cacheable {
             return;
         }
 
-        ClassHelper.doWithFields(object.getClass(), new FieldCallback() {
-            @Override
-            public void doWith(Field item) throws Throwable {
-                if (Modifier.isStatic(item.getModifiers()) && !item.getType().equals(TripleMap.class)) {
-                    ClassDescription classDescription = new ClassDescription();
-                    classDescription.setEntity(object);
-                    classDescription.setField(item);
-                    TRIPLE_MAP.put(item.getDeclaringClass().getName(), item.getName(), classDescription);
-                }
+        ClassHelper.doWithFields(object.getClass(), item -> {
+            if (Modifier.isStatic(item.getModifiers()) && !item.getType().equals(TripleMap.class)) {
+                ClassDescription classDescription = new ClassDescription();
+                classDescription.setEntity(object);
+                classDescription.setField(item);
+                TRIPLE_MAP.put(item.getDeclaringClass().getName(), item.getName(), classDescription);
             }
         });
     }
@@ -61,7 +55,7 @@ public class InitializingCacheable implements Cacheable {
         ObjectContextManager objectContextManager = new StandardScannerObjectContextManager();
         Set<Class<? extends InitializingCacheable>> classes = objectContextManager.getSubTypesOf(InitializingCacheable.class);
         for (Class<? extends InitializingCacheable> aClass : classes) {
-            doAnalyseClassCache(ClassHelper.forObject(aClass));
+            doAnalyseClassCache(ClassHelper.safeForObject(aClass));
         }
     }
 
@@ -86,7 +80,8 @@ public class InitializingCacheable implements Cacheable {
             return null;
         }
         Field field = classDescription.getField();
-        ClassHelper.makeAccessible(field);
+        field.setAccessible(true);
+
         try {
             return (T) field.get(classDescription.getEntity());
         } catch (Exception e) {

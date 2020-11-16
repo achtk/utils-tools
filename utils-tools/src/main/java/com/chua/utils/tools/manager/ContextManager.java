@@ -1,18 +1,9 @@
 package com.chua.utils.tools.manager;
 
-import com.chua.utils.tools.classes.reflections.ReflectionsFactory;
-import com.chua.utils.tools.function.Filter;
-import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
 
 /**
  * 对象管理器
@@ -90,7 +81,9 @@ public interface ContextManager {
 
     /**
      * 创建类描述解析器
+     *
+     * @param tClass 类
      * @return 类描述解析器
      */
-    <T>ClassDescriptionParser<T> createClassDescriptionParser(Class<T> tClass);
+    <T> ClassDescriptionParser<T> createClassDescriptionParser(Class<T> tClass);
 }

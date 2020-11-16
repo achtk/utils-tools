@@ -2,13 +2,11 @@ package com.chua.utils.tools.collects;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.common.BeansHelper;
 import com.chua.utils.tools.function.BiAppendable;
 import com.chua.utils.tools.function.MapOperable;
-import com.chua.utils.tools.function.Operable;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +19,7 @@ import java.util.Map;
  */
 public class HashOperateMap extends HashMap<String, Object> implements MapOperable<String>, BiAppendable<String, Object> {
 
-    private Interpreter interpreter = new Interpreter();
+    private final Interpreter interpreter = new Interpreter();
 
     @Override
     public Object put(String key, Object value) {
@@ -38,7 +36,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
     }
 
     @Override
-    public BiAppendable append(String v1, Object v2) {
+    public BiAppendable<String, Object> append(String v1, Object v2) {
         this.put(v1, v2);
         this.setKeyValue(v1, v2);
         return this;
@@ -58,7 +56,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
     private void setKeyValue(String key, Object value) {
         try {
             interpreter.set(key, value);
-        } catch (EvalError evalError) {
+        } catch (EvalError ignored) {
         }
     }
 
@@ -84,7 +82,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      * @return Object
      */
     public Object getBean(final String className) {
-        return getBean(ClassHelper.forObject(className, Object.class));
+        return getBean(ClassHelper.forName(className));
     }
 
     /**
@@ -107,7 +105,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      * @return T
      */
     public <T> T getBean(final Class<T> tClass) {
-        return getBean(ClassHelper.forObject(tClass));
+        return getBean(ClassHelper.safeForObject(tClass));
     }
 
     /**
@@ -121,7 +119,8 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
         if (null == t1) {
             return null;
         }
-        BeansHelper.reflectionAssignment(t1, this);
-        return t1;
+        BeanCopy<T> beanCopy = BeanCopy.of(t1);
+        beanCopy.with(this);
+        return beanCopy.create();
     }
 }

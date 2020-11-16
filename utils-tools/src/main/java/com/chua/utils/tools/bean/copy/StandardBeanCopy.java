@@ -3,16 +3,15 @@ package com.chua.utils.tools.bean.copy;
 import com.chua.utils.tools.bean.config.BeanConfig;
 import com.chua.utils.tools.bean.interpreter.NameInterpreter;
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
-import com.chua.utils.tools.common.BeansHelper;
-import com.chua.utils.tools.function.converter.TypeConverter;
+import com.chua.utils.tools.function.Converter;
+import com.chua.utils.tools.manager.parser.description.FieldDescription;
 import net.sf.cglib.beans.BeanMap;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * 标准的bean拷贝
@@ -47,13 +46,14 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     }
 
     private StandardBeanCopy(Class<T> tClass) {
-        this(ClassHelper.forObject(tClass), new BeanConfig());
+        this(ClassHelper.safeForObject(tClass), new BeanConfig());
     }
 
     private StandardBeanCopy(T entity) {
         this(entity, new BeanConfig());
     }
 
+    @SuppressWarnings("all")
     private StandardBeanCopy(T entity, BeanConfig beanConfig) {
         this.tClass = (Class<T>) entity.getClass();
         this.entity = entity;
@@ -86,9 +86,6 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     @Override
     public BeanCopy with(String name, Object value) {
         name = transTo(name);
-//        if (!this.beanMap.containsKey(name)) {
-//            return this;
-//        }
         beanMap.put(name, value);
         withParams.put(name, value);
         return this;
@@ -111,6 +108,15 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
             return this;
         }
         return with(BeanMap.create(entity));
+    }
+
+    @Override
+    public BeanCopy<T> with(Converter<String, Object> converter) {
+        ClassHelper.doWithFields(tClass, field -> {
+            Object convert = converter.convert(field.getName(), field.getType());
+            with(field.getName(), convert);
+        });
+        return this;
     }
 
     @Override
@@ -198,29 +204,18 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
 
         @Override
         public T create() {
-            ClassHelper.doWithFields(tClass, new FieldCallback() {
-                @Override
-                public void doWith(Field item) throws Throwable {
-                    String name = item.getName();
-                    if (!withParams.containsKey(name)) {
-                        return;
-                    }
-                    Object value = withParams.get(name);
-                    if (null == value) {
-                        return;
-                    }
-                    ClassHelper.makeAccessible(item);
+            ClassHelper.doWithFields(tClass, item -> {
+                FieldDescription fieldDescription = new FieldDescription();
+                fieldDescription.setEntity(entity);
+                fieldDescription.setField(item);
 
-                    TypeConverter typeConverter = BeansHelper.getTypeConverter(item.getType());
-                    try {
-                        if (null == typeConverter) {
-                            item.set(entity, value);
-                        }
-                        item.set(entity, typeConverter.convert(value));
-                    } catch (Exception e) {
-                    }
+                String name = fieldDescription.getName();
 
+                if (!withParams.containsKey(name)) {
+                    return;
                 }
+
+                fieldDescription.set(withParams.get(name));
             });
             return (T) entity;
         }

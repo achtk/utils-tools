@@ -18,7 +18,7 @@ public class SkipPatterns {
 
     static {
         // Same as Tomcat
-        Set<String> patterns = new LinkedHashSet<String>();
+        Set<String> patterns = new LinkedHashSet<>();
         patterns.add("ant-*.jar");
         patterns.add("aspectj*.jar");
         patterns.add("commons-beanutils*.jar");
@@ -67,7 +67,7 @@ public class SkipPatterns {
 
     static {
         // Additional typical for Spring Boot applications
-        Set<String> patterns = new LinkedHashSet<String>();
+        Set<String> patterns = new LinkedHashSet<>();
         patterns.add("antlr-*.jar");
         patterns.add("aopalliance-*.jar");
         patterns.add("aspectjrt-*.jar");
@@ -119,7 +119,7 @@ public class SkipPatterns {
     private static final Set<String> CGY;
 
     static {
-        Set<String> patterns = new LinkedHashSet<String>();
+        Set<String> patterns = new LinkedHashSet<>();
         patterns.add("utils-*.jar");
         CGY = Collections.unmodifiableSet(patterns);
     }
@@ -128,12 +128,12 @@ public class SkipPatterns {
     public static final Set<String> DEFAULT_INCLUDE_WORK_SPACES;
 
     static {
-        Set<String> patterns = new LinkedHashSet<String>();
+        Set<String> patterns = new LinkedHashSet<>();
         patterns.addAll(SKIP_PATTERNS);
         patterns.addAll(ADDITIONAL);
         patterns.addAll(CGY);
         DEFAULT = Collections.unmodifiableSet(patterns);
-        Set<String> patternsSpace = new LinkedHashSet<String>();
+        Set<String> patternsSpace = new LinkedHashSet<>();
         patternsSpace.addAll(SKIP_PATTERNS);
         patternsSpace.addAll(ADDITIONAL);
         DEFAULT_INCLUDE_WORK_SPACES = Collections.unmodifiableSet(patternsSpace);
@@ -142,12 +142,8 @@ public class SkipPatterns {
     static {
         JDK_LIB = new HashSet<>();
         Collection<File> files = FileHelper.listFiles(new File(System.getProperty("java.home")), new String[]{"jar"}, true);
-        if(null != files) {
-            Iterator<File> iterator = files.iterator();
-            while (iterator.hasNext()) {
-                File file = iterator.next();
-                JDK_LIB.add(file.getName());
-            }
+        for (File file : files) {
+            JDK_LIB.add(file.getName());
         }
         JDK_LIB.add("hotswap*.jar");
         JDK_LIB.add("idea_rt.jar");

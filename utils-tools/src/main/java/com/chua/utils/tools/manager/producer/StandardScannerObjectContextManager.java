@@ -3,7 +3,8 @@ package com.chua.utils.tools.manager.producer;
 import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.classes.reflections.ReflectionsFactory;
+import com.chua.utils.tools.classes.reflections.RewriteReflections;
+import com.chua.utils.tools.classes.reflections.configuration.RewriteConfiguration;
 import com.chua.utils.tools.common.FileHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.common.ThreadHelper;
@@ -12,22 +13,21 @@ import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.manager.ObjectContextManager;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
-import com.chua.utils.tools.strategy.helper.StrategyHelper;
-import org.reflections.scanners.*;
+import com.chua.utils.tools.storage.CacheStorage;
+import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
-import org.reflections.vfs.Vfs;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -42,7 +42,7 @@ import java.util.function.Supplier;
 public class StandardScannerObjectContextManager implements Runnable, ObjectContextManager {
 
     private ExecutorService executorService = ThreadHelper.newSingleThreadExecutor("object-context-manager");
-    private ReflectionsFactory reflectionsFactory;
+    private RewriteReflections reflectionsFactory;
     private final static CacheProvider SUB_CACHE = new ConcurrentCacheProvider<>();
     private final static CacheProvider<Class<? extends Annotation>, Set<Class<?>>> ANNOTATION_TYPE_CACHE = new ConcurrentCacheProvider<>();
     private final static CacheProvider<Class<? extends Annotation>, Set<Method>> ANNOTATION_METHOD_CACHE = new ConcurrentCacheProvider<>();
@@ -52,6 +52,8 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
             "netty-*", "vertx-*", "jackson-*", "lucene-*", "*-guava-*", "kotlin-*",
             "mockio-*", "woodstox-*", "*-guava"
     };
+
+    private static final List<URL> EXCLUDE_URL = new ArrayList<>();
 
     private Future<?> future;
 
@@ -68,9 +70,9 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
 
     @Override
     public <T> Set<Class<? extends T>> getSubTypesOf(Class<T> tClass) {
-        return StrategyHelper.doWithCache(((Class) tClass), (Supplier<Set>) () -> {
+        return CacheStorage.doWith((Supplier<Set>) () -> {
             return reflectionsFactory.getSubTypesOf(tClass);
-        }, SUB_CACHE);
+        }, tClass, SUB_CACHE);
     }
 
     @Override
@@ -80,28 +82,28 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
 
     @Override
     public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation) {
-        return StrategyHelper.doWithCache(annotation, () -> {
+        return CacheStorage.doWith(() -> {
             return reflectionsFactory.getTypesAnnotatedWith(annotation);
-        }, ANNOTATION_TYPE_CACHE);
+        }, annotation, ANNOTATION_TYPE_CACHE);
     }
 
     @Override
-    public ReflectionsFactory getReflectionsFactory() {
+    public RewriteReflections getReflectionsFactory() {
         return reflectionsFactory;
     }
 
     @Override
     public Set<Method> getMethodsAnnotatedWith(final Class<? extends Annotation> annotation) {
-        return StrategyHelper.doWithCache(annotation, () -> {
+        return CacheStorage.doWith(() -> {
             return reflectionsFactory.getMethodsAnnotatedWith(annotation);
-        }, ANNOTATION_METHOD_CACHE);
+        }, annotation, ANNOTATION_METHOD_CACHE);
     }
 
     @Override
     public Set<Field> getFieldsAnnotatedWith(final Class<? extends Annotation> annotation) {
-        return StrategyHelper.doWithCache(annotation, () -> {
+        return CacheStorage.doWith(() -> {
             return reflectionsFactory.getFieldsAnnotatedWith(annotation);
-        }, ANNOTATION_FIELD_CACHE);
+        }, annotation, ANNOTATION_FIELD_CACHE);
     }
 
     @Override
@@ -120,8 +122,11 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
 
     @Override
     public void loadingFinished() throws ExecutionException, InterruptedException {
-        future.get();
-        executorService.shutdownNow();
+        try {
+            future.get();
+        } finally {
+            executorService.shutdownNow();
+        }
     }
 
     @Override
@@ -131,7 +136,7 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
 
     @Override
     public void run() {
-        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+        RewriteConfiguration configurationBuilder = new RewriteConfiguration();
 
         configurationBuilder.addScanners(new SubTypesScanner(),
                 new MethodAnnotationsScanner(),
@@ -139,7 +144,8 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
         configurationBuilder.setExecutorService(ThreadHelper.newProcessorThreadExecutor());
         configurationBuilder.addUrls(lessUrl(ClassHelper.getUrlsByClassLoaderExcludeJdk(ClassHelper.getDefaultClassLoader())));
         configurationBuilder.setClassLoaders(new ClassLoader[]{ClassHelper.getDefaultClassLoader()});
-        this.reflectionsFactory = new ReflectionsFactory(configurationBuilder);
+        this.reflectionsFactory = new RewriteReflections(configurationBuilder);
+        this.reflectionsFactory.asyncScanUrl(EXCLUDE_URL.toArray(new URL[0]));
     }
 
     /**
@@ -153,7 +159,9 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
         for (URL url : urlsByClassLoaderExcludeJdk) {
             if (!isSkip(url)) {
                 result.add(url);
+                continue;
             }
+            EXCLUDE_URL.add(url);
         }
         return result;
     }

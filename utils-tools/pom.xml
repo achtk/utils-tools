@@ -85,6 +85,12 @@
             <version>${reflections.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.taobao.arthas</groupId>
+            <artifactId>arthas-memorycompiler</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>

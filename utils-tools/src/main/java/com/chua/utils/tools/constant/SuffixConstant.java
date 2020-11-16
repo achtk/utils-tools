@@ -13,6 +13,26 @@ public class SuffixConstant {
      */
     public static final String SUFFIX_CLASS = ".class";
     /**
+     * .doc
+     */
+    public static final String SUFFIX_DOC = ".doc";
+    /**
+     * .docx
+     */
+    public static final String SUFFIX_DOCX = ".docx";
+    /**
+     * .xls
+     */
+    public static final String SUFFIX_XLS = ".xls";
+    /**
+     * .xlsx
+     */
+    public static final String SUFFIX_XLSX = ".xlsx";
+    /**
+     * .csv
+     */
+    public static final String SUFFIX_CSV = ".csv";
+    /**
      * .java
      */
     public static final String SUFFIX_JAVA = ".java";
