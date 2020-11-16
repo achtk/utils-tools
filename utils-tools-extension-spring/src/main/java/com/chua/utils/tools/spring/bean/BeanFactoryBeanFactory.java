@@ -138,7 +138,7 @@ public class BeanFactoryBeanFactory implements IBeanFactory, SingletonBeanRegist
         //获取所有属性名称
         Map<String, Class> fields = doAnalysisBeanFields(beanClass);
         //Getter and Setter分析
-        beanClass = doAnalysisGetterSetter(beanClass);
+       // beanClass = doAnalysisGetterSetter(beanClass);
         //创建 BeanDefinitionBuilder
         BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanClass);
         //从上下文解析属性
@@ -166,15 +166,15 @@ public class BeanFactoryBeanFactory implements IBeanFactory, SingletonBeanRegist
      * @param beanClass 类
      */
     private Class<?> doAnalysisGetterSetter(Class<?> beanClass) {
-        try {
-            GetterSetterProperties getterAndSetter = ClassHelper.doAnalyzeGetterAndSetter(beanClass, true, new AnnotationInfoProperties(Autowired.class.getName(), 1, "*"));
-            if (getterAndSetter.isEmpty()) {
-                return beanClass;
-            }
-            return getterAndSetter.getRecordClass();
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
+//        try {
+//            GetterSetterProperties getterAndSetter = ClassHelper.doAnalyzeGetterAndSetter(beanClass, true, new AnnotationInfoProperties(Autowired.class.getName(), 1, "*"));
+//            if (getterAndSetter.isEmpty()) {
+//                return beanClass;
+//            }
+//            return getterAndSetter.getRecordClass();
+//        } catch (Throwable throwable) {
+//            throwable.printStackTrace();
+//        }
         return beanClass;
     }
 

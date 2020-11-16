@@ -9,8 +9,6 @@ import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.function.producer.NetxPropertiesProducer;
 import com.chua.utils.tools.properties.NetProperties;
-import com.chua.utils.tools.strategy.handler.IStrategyPolicy;
-import com.chua.utils.tools.strategy.helper.StrategyHelper;
 import com.google.common.base.Strings;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,18 +63,8 @@ public class ZookeeperConfigurationCenter implements EventPublishingConfigServic
             byte[] bytes = zookeeperContext.queryForString(cacheKey);
             return ByteHelper.toString(bytes);
         }
-        return StrategyHelper.doWithTimeout(new IStrategyPolicy<String>() {
-            @Override
-            public String policy() {
-                byte[] bytes = zookeeperContext.queryForString(cacheKey);
-                return ByteHelper.toString(bytes);
-            }
-
-            @Override
-            public String failure(Throwable throwable) {
-                return null;
-            }
-        }, timeoutMs);
+        byte[] bytes = zookeeperContext.queryForString(cacheKey);
+        return ByteHelper.toString(bytes);
     }
 
     @Override

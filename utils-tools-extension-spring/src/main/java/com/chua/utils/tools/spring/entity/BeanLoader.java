@@ -141,7 +141,7 @@ public class BeanLoader<T> {
         }
 
         if (!aClass.isInterface()) {
-            return (T) ClassHelper.forObject(aClass);
+            return (T) ClassHelper.safeForObject(aClass);
         }
         return (T) Proxy.newProxyInstance(ClassHelper.getDefaultClassLoader(), new Class[]{aClass}, new BeanLoaderInvocationHandler<T>(beans, cacheProxyResult));
     }

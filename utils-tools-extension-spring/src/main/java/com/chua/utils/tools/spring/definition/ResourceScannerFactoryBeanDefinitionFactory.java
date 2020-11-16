@@ -300,7 +300,7 @@ public class ResourceScannerFactoryBeanDefinitionFactory implements BeanDefiniti
     public static class InnerClassPathScanningCandidateComponentProvider extends ClassPathScanningCandidateComponentProvider {
 
         public List<TypeFilter> getTypeFilters() {
-            return MapOperableHelper.getIfOnly(ClassHelper.getFieldValue(this, "includeFilters"), List.class);
+            return MapOperableHelper.getIfOnly((Map<String, Object>) ClassHelper.getOnlyFieldValue(this, "includeFilters"), List.class);
         }
 
         @Override

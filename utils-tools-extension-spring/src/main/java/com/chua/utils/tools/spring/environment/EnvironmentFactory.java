@@ -3,7 +3,6 @@ package com.chua.utils.tools.spring.environment;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.common.StringHelper;
-import com.chua.utils.tools.constant.BeanConstant;
 import com.chua.utils.tools.prop.placeholder.PropertyPlaceholder;
 import com.chua.utils.tools.spring.placeholder.SpringPropertyPlaceholder;
 import com.google.common.base.Strings;
@@ -20,7 +19,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import static com.chua.utils.tools.constant.BeanConstant.BEAN_CONFIGURATION_BEAN_BINDING_POST_PROCESSOR;
 import static com.chua.utils.tools.constant.BeanConstant.BEAN_CONFIGURATION_PROPERTIES;
 
 /**
@@ -97,7 +95,7 @@ public class EnvironmentFactory {
         if (null == tClass) {
             return null;
         }
-        return autoConfiguration(ClassHelper.forObject(tClass));
+        return autoConfiguration(ClassHelper.safeForObject(tClass));
     }
 
     /**
@@ -110,12 +108,12 @@ public class EnvironmentFactory {
      */
     private <T> T autoConfigurationAnnotation(Object obj, Map<String, Object> annotation) {
         Class<?> aClass = ClassHelper.getClass(obj);
-        T newObject = (T) ClassHelper.forObject(aClass);
+        T newObject = (T) ClassHelper.safeForObject(aClass);
         String prefix = getPrefix(annotation);
 
         ClassHelper.doWithFields(aClass, new FieldCallback() {
             @Override
-            public void doWith(Field item) throws Throwable {
+            public void doWith(Field item) throws Exception {
                 setField(item);
             }
 
@@ -130,8 +128,8 @@ public class EnvironmentFactory {
                 if (Strings.isNullOrEmpty(property)) {
                     return;
                 }
-                ClassHelper.makeAccessible(item);
                 try {
+                    item.setAccessible(true);
                     item.set(newObject, converter(property, item.getType()));
                 } catch (Throwable e) {
                 }
@@ -169,24 +167,22 @@ public class EnvironmentFactory {
      */
     private <T> T autoConfigurationByAttribute(final T object) {
         Class<?> tClass = ClassHelper.getClass(object);
-        T newObject = (T) ClassHelper.forObject(tClass);
-        ClassHelper.doWithFields(tClass, new FieldCallback() {
-            @Override
-            public void doWith(Field item) throws Throwable {
-                String name = item.getName();
-                String property = environment.getProperty(name);
-                if (Strings.isNullOrEmpty(property)) {
-                    property = environment.getProperty(StringHelper.humpToLine2(name, "-"));
-                }
+        T newObject = (T) ClassHelper.safeForObject(tClass);
+        ClassHelper.doWithFields(tClass, item -> {
+            String name = item.getName();
+            String property = environment.getProperty(name);
+            if (Strings.isNullOrEmpty(property)) {
+                property = environment.getProperty(StringHelper.humpToLine2(name, "-"));
+            }
 
-                if (Strings.isNullOrEmpty(property)) {
-                    return;
-                }
-                ClassHelper.makeAccessible(item);
-                try {
-                    item.set(newObject, converter(property, item.getType()));
-                } catch (Throwable e) {
-                }
+            if (Strings.isNullOrEmpty(property)) {
+                return;
+            }
+
+            try {
+                item.setAccessible(true);
+                item.set(newObject, converter(property, item.getType()));
+            } catch (Throwable e) {
             }
         });
         return newObject;
