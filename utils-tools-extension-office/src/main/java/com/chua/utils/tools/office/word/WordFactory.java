@@ -1,28 +1,5 @@
 package com.chua.utils.tools.office.word;
 
-import com.chua.utils.tools.function.Matcher;
-import org.apache.commons.io.FileUtils;
-import org.docx4j.Docx4J;
-import org.docx4j.Docx4jProperties;
-import org.docx4j.XmlUtils;
-import org.docx4j.convert.in.xhtml.XHTMLImporter;
-import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
-import org.docx4j.convert.out.ConversionFeatures;
-import org.docx4j.convert.out.html.AbstractHtmlExporter;
-import org.docx4j.convert.out.html.HtmlExporterNG2;
-import org.docx4j.convert.out.html.SdtToListSdtTagHandler;
-import org.docx4j.convert.out.html.SdtWriter;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
-import org.docx4j.openpackaging.parts.WordprocessingML.NumberingDefinitionsPart;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
 /**
  * word工具
  *
@@ -37,12 +14,12 @@ public class WordFactory {
      * @param matcher 匹配器
      * @param url     url
      */
-    public void reader(Matcher<Map<String, String>> matcher, URL url) throws Exception {
-        WordprocessingMLPackage wordprocessingMLPackage = WordprocessingMLPackage.load(url.openStream());
-        MainDocumentPart mainDocumentPart = wordprocessingMLPackage.getMainDocumentPart();
-        List<Object> content = mainDocumentPart.getContent();
-        System.out.println();
-    }
+//    public void reader(Matcher<Map<String, String>> matcher, URL url) throws Exception {
+//        WordprocessingMLPackage wordprocessingMLPackage = WordprocessingMLPackage.load(url.openStream());
+//        MainDocumentPart mainDocumentPart = wordprocessingMLPackage.getMainDocumentPart();
+//        List<Object> content = mainDocumentPart.getContent();
+//        System.out.println();
+//    }
 //
 //    /**
 //     * html转 doc
