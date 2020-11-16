@@ -29,18 +29,6 @@
             <version>1.7</version>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>org.docx4j</groupId>-->
-        <!--            <artifactId>docx4j-ImportXHTML</artifactId>-->
-        <!--            <version>8.0.0</version>-->
-        <!--        </dependency>-->
-
-        <!--        <dependency>-->
-        <!--            <groupId>org.docx4j</groupId>-->
-        <!--            <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>-->
-        <!--            <version>8.2.4</version>-->
-        <!--        </dependency>-->
-
         <dependency>
             <groupId>com.youbenzi</groupId>
             <artifactId>MD2File</artifactId>

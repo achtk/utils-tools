@@ -77,7 +77,7 @@ public class WordFileParserFile implements ParserFile, ParserProcess<Map<String,
 
         WordFactory wordFactory = new WordFactory();
         try {
-            wordFactory.reader(matcher, file.toURI().toURL());
+            //wordFactory.reader(matcher, file.toURI().toURL());
         } catch (Exception e) {
             e.printStackTrace();
         }
