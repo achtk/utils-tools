@@ -17,6 +17,9 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.LongAdder;
+import java.util.function.Function;
 
 import static org.reflections.util.Utils.index;
 
@@ -40,7 +43,11 @@ public class RewriteStore extends Store {
      *  </code>
      *  </pre>
      */
-    private static final ConcurrentMap<String, Map<String, HashMultimap<String, String>>> REFLECT_CACHE = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>>> REFLECT_CACHE = new ConcurrentHashMap<>();
+    /**
+     * 计数器
+     */
+    private static final LongAdder COUNT = new LongAdder();
 
     /**
      * 是否已检索
@@ -60,8 +67,8 @@ public class RewriteStore extends Store {
      * @return 包含返回true
      */
     public boolean container(Class<? extends AbstractRewriteScanner> scanner) {
-        Collection<Map<String, HashMultimap<String, String>>> values = REFLECT_CACHE.values();
-        for (Map<String, HashMultimap<String, String>> value : values) {
+        Collection<ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>>> values = REFLECT_CACHE.values();
+        for (ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>> value : values) {
             if (value.containsKey(scanner.getSimpleName())) {
                 return true;
             }
@@ -96,8 +103,11 @@ public class RewriteStore extends Store {
 
     public boolean put(String index, String key, String value, URL url) {
         synchronized (REFLECT_CACHE) {
-            return REFLECT_CACHE.computeIfAbsent(url.toExternalForm(), item -> new HashMap<>())
-                    .computeIfAbsent(index, item -> HashMultimap.create()).put(key, value);
+            COUNT.increment();
+            return REFLECT_CACHE.computeIfAbsent(url.toExternalForm(), item -> new ConcurrentHashMap<>())
+                    .computeIfAbsent(index, item -> new ConcurrentHashMap<>())
+                    .computeIfAbsent(key, item -> new CopyOnWriteArrayList<>())
+                    .add(value);
         }
     }
 
@@ -115,7 +125,7 @@ public class RewriteStore extends Store {
      */
     @Override
     public Set<String> getAllIncluding(Class<?> scannerClass, Collection<String> keys) {
-        Multimap<String, String> multimap = get(index(scannerClass));
+        Map<String, List<String>> multimap = get(index(scannerClass));
         List<String> workKeys = new ArrayList<>(keys);
 
         Set<String> result = new HashSet<>();
@@ -130,7 +140,8 @@ public class RewriteStore extends Store {
                 }
             } catch (Exception ignore) {
             }
-        };
+        }
+        ;
         return result;
     }
 
@@ -142,7 +153,7 @@ public class RewriteStore extends Store {
      * @return
      */
     private Set<String> get(String index, Collection<String> keys) {
-        Multimap<String, String> mmap = get(index);
+        Map<String, List<String>> mmap = get(index);
         Set<String> result = new LinkedHashSet<>();
         for (String key : keys) {
             Collection<String> values = mmap.get(key);
@@ -159,17 +170,22 @@ public class RewriteStore extends Store {
      * @param index
      * @return
      */
-    private Multimap<String, String> get(String index) {
-        Multimap<String, String> result = HashMultimap.create();
+    private Map<String, List<String>> get(String index) {
+        Map<String, List<String>> result = new HashMap<>();
 
-        Collection<Map<String, HashMultimap<String, String>>> mapCollection = REFLECT_CACHE.values();
-        for (Map<String, HashMultimap<String, String>> stringHashMultimapMap : mapCollection) {
-            Multimap<String, String> multimap = stringHashMultimapMap.get(index);
-            if (null == multimap) {
-                continue;
+        Collection<ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>>> mapCollection = REFLECT_CACHE.values();
+        for (ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>> map : mapCollection) {
+            synchronized (result) {
+                ConcurrentMap<String, CopyOnWriteArrayList<String>> multimap = map.get(index);
+                if (null == multimap) {
+                    continue;
+                }
+                for (Map.Entry<String, CopyOnWriteArrayList<String>> entry : multimap.entrySet()) {
+                    result.computeIfAbsent(entry.getKey(), item -> new ArrayList<>()).addAll(entry.getValue());
+                }
             }
-            result.putAll(multimap);
         }
+
         return result;
     }
 
@@ -177,9 +193,9 @@ public class RewriteStore extends Store {
     public Set<String> keys(String index) {
         Set<String> result = new HashSet<>();
 
-        Collection<Map<String, HashMultimap<String, String>>> mapCollection = REFLECT_CACHE.values();
-        for (Map<String, HashMultimap<String, String>> stringHashMultimapMap : mapCollection) {
-            Multimap<String, String> multimap = stringHashMultimapMap.get(index);
+        Collection<ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>>> mapCollection = REFLECT_CACHE.values();
+        for (ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>> stringHashMultimapMap : mapCollection) {
+            ConcurrentMap<String, CopyOnWriteArrayList<String>> multimap = stringHashMultimapMap.get(index);
             if (null == multimap) {
                 continue;
             }
@@ -198,8 +214,8 @@ public class RewriteStore extends Store {
         HashMultimap<String, String> result = HashMultimap.create();
 
         for (String url : REFLECT_CACHE.keySet()) {
-            Map<String, HashMultimap<String, String>> mapCollection = REFLECT_CACHE.get(url);
-            Multimap<String, String> multimap = mapCollection.get(index(scannerClass));
+            ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>> mapCollection = REFLECT_CACHE.get(url);
+            ConcurrentMap<String, CopyOnWriteArrayList<String>> multimap = mapCollection.get(index(scannerClass));
             if (null == multimap) {
                 continue;
             }
@@ -215,7 +231,7 @@ public class RewriteStore extends Store {
     }
 
     private Set<String> getRewrite(String index, Collection<String> keys) {
-        Multimap<String, String> mmap = get(index);
+        Map<String, List<String>> mmap = get(index);
         Set<String> result = new LinkedHashSet<>();
         for (String key : keys) {
             Collection<String> values = mmap.get(key);
@@ -230,8 +246,8 @@ public class RewriteStore extends Store {
         Map<String, String> result = new HashMap<>();
 
         for (String url : REFLECT_CACHE.keySet()) {
-            Map<String, HashMultimap<String, String>> mapCollection = REFLECT_CACHE.get(url);
-            Multimap<String, String> multimap = mapCollection.get(index);
+            ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>> mapCollection = REFLECT_CACHE.get(url);
+            ConcurrentMap<String, CopyOnWriteArrayList<String>> multimap = mapCollection.get(index);
             if (null == multimap) {
                 continue;
             }

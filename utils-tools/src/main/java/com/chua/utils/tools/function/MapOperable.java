@@ -232,14 +232,25 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
     }
 
     /**
-     * 以null安全的方式从Map中获取Long。
-     * <p> Long是从{@link #getNumber（Object）}的结果中获得的。
+     * 以null安全的方式从Map中获取Date。
+     * <p> Long是从{@link #getDate（Object）}的结果中获得的。
      *
      * @param key 查找的关键
-     * @return 如果输入的Map为空，则将Map中的值返回为Long，<code> null </ code>
+     * @return 如果输入的Map为空，则将Map中的值返回为Date，<code> null </ code>
      */
     default Date getDate(final K key) {
         return MapOperableHelper.getDate(getMap(), key);
+    }
+
+    /**
+     * 以null安全的方式从Map中获取Date。
+     * <p> Long是从{@link #getDate（Object）}的结果中获得的。
+     *
+     * @param key 查找的关键
+     * @return 如果输入的Map为空，则将Map中的值返回为Date，<code> null </ code>
+     */
+    default String getDate(final K key, final String format) {
+        return dateFormatter(key, format);
     }
 
     /**

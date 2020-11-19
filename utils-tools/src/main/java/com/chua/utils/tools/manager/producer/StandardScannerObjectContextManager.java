@@ -70,9 +70,7 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
 
     @Override
     public <T> Set<Class<? extends T>> getSubTypesOf(Class<T> tClass) {
-        return CacheStorage.doWith((Supplier<Set>) () -> {
-            return reflectionsFactory.getSubTypesOf(tClass);
-        }, tClass, SUB_CACHE);
+        return CacheStorage.doWith((Supplier<Set>) () -> reflectionsFactory.getSubTypesOf(tClass), tClass, SUB_CACHE);
     }
 
     @Override

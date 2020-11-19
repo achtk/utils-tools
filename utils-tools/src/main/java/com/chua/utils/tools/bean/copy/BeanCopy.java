@@ -6,8 +6,11 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * bean拷贝
- *
+ * <p>bean拷贝</p>
+ * Example:
+ * <pre>
+ * 参见代码: BeanCopy<T> beanCopy = StandardBeanCopy.of(T.class);
+ * </pre>
  * @author CH
  * @version 1.0.0
  * @since 2020/11/10

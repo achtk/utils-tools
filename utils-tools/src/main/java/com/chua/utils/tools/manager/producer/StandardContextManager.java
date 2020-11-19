@@ -6,6 +6,8 @@ import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.manager.*;
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
 import com.chua.utils.tools.manager.parser.StandardClassDescriptionParser;
+import com.chua.utils.tools.resource.factory.ResourceFactory;
+import com.chua.utils.tools.resource.template.ResourceTemplate;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
 import com.google.common.collect.HashMultimap;
 import lombok.Data;
@@ -77,5 +79,10 @@ public class StandardContextManager implements ContextManager {
     @Override
     public <T> ClassDescriptionParser<T> createClassDescriptionParser(Class<T> tClass) {
         return new StandardClassDescriptionParser<>(tClass);
+    }
+
+    @Override
+    public ResourceTemplate createResourceTemplate(ResourceFactory resourceFactory) {
+        return new ResourceTemplate(resourceFactory);
     }
 }

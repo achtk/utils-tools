@@ -121,7 +121,11 @@ public class DefaultIndexOperatorTemplate implements IndexOperatorTemplate {
                         indexReaders = directoryFactory.getIndexReader(dir);
                     } catch (IOException e) {
                     }
-                    indexReaderList.addAll(indexReaders);
+                    try {
+                        indexReaderList.addAll(indexReaders);
+                    } catch (Exception e) {
+                        throw new IOException("Index data does not exist!!");
+                    }
                     return super.preVisitDirectory(dir, attrs);
                 }
             });

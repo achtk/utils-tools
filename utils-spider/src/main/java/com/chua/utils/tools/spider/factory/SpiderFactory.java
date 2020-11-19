@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 

@@ -1,6 +1,9 @@
 package com.chua.utils.tools.manager;
 
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
+import com.chua.utils.tools.resource.factory.FastResourceFactory;
+import com.chua.utils.tools.resource.factory.ResourceFactory;
+import com.chua.utils.tools.resource.template.ResourceTemplate;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
 
 import java.util.List;
@@ -86,4 +89,21 @@ public interface ContextManager {
      * @return 类描述解析器
      */
     <T> ClassDescriptionParser<T> createClassDescriptionParser(Class<T> tClass);
+
+    /**
+     * 获取资源查找器
+     *
+     * @param resourceFactory 资源查找工厂
+     * @return 资源查找器
+     */
+    ResourceTemplate createResourceTemplate(ResourceFactory resourceFactory);
+
+    /**
+     * 获取资源查找器
+     *
+     * @return 资源查找器
+     */
+    default ResourceTemplate createResourceTemplate() {
+        return createResourceTemplate(new FastResourceFactory());
+    }
 }
