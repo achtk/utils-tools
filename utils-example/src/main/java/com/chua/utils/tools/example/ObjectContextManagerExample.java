@@ -16,6 +16,8 @@ import com.chua.utils.tools.manager.parser.ClassModifyDescriptionParser;
 import com.chua.utils.tools.manager.producer.StandardContextManager;
 import com.chua.utils.tools.manager.producer.StandardStrategyContextManager;
 import com.chua.utils.tools.predicate.TruePredicate;
+import com.chua.utils.tools.resource.entity.Resource;
+import com.chua.utils.tools.resource.template.ResourceTemplate;
 import com.chua.utils.tools.spi.Spi;
 import com.chua.utils.tools.spi.processor.ReflectionExtensionProcessor;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -47,7 +49,15 @@ public class ObjectContextManagerExample {
         testProfileAdaptorManager();
         //测试类描述解析器
         testClassDescriptionParser();
+        //测试资源查找器
+        testResourceFinderManager();
+    }
 
+    private static void testResourceFinderManager() {
+        System.out.println("==================================测试资源查找器=============================");
+        ResourceTemplate resourceTemplate = contextManager.createResourceTemplate();
+        Set<Resource> mfs = resourceTemplate.getResources("classpath:**/*.MF");
+        System.out.println("检索到资源文件：" + mfs);
     }
 
     private static void testClassDescriptionParser() throws Exception {
@@ -91,8 +101,24 @@ public class ObjectContextManagerExample {
      * 测试可被缓存对象
      */
     private static void testCacheable() {
+        System.out.println("==================================测试获取可被缓存对象=============================");
         ConcurrentMap cache = InitializingCacheable.getValue(StandardStrategyContextManager.class, "CACHE", ConcurrentMap.class);
         System.out.println(cache);
+        System.out.println();
+        System.out.println();
+    }
+
+    private static void testObjectManager() {
+        ObjectContextManager objectContextManager = contextManager.createObjectContextManager();
+        System.out.println("==================================测试对象管理器=============================");
+        //获取所有Encrypt.class实现
+        System.out.println("******************************获取所有Encrypt.class实现******************************");
+        Set<Class<? extends Encrypt>> types = objectContextManager.getSubTypesOf(Encrypt.class);
+        System.out.println(types);
+        //获取所有带有Spi注解的类
+        System.out.println("******************************获取所有带有Spi注解的类******************************");
+        Set<Class<?>> annotatedWith = objectContextManager.getTypesAnnotatedWith(Spi.class);
+        System.out.println(annotatedWith);
         System.out.println();
         System.out.println();
     }
@@ -125,21 +151,6 @@ public class ObjectContextManagerExample {
         LimitStrategyBuilder limitStrategy = strategyContextManager.createLimitStrategy();
         TDemoInfo tDemoInfo = (TDemoInfo) limitStrategy.limit(1).create(tDemoInfo1);
         System.out.println(tDemoInfo.getUuid());
-        System.out.println();
-        System.out.println();
-    }
-
-    private static void testObjectManager() {
-        ObjectContextManager objectContextManager = contextManager.createObjectContextManager();
-        System.out.println("==================================测试对象管理器=============================");
-        //获取所有Encrypt.class实现
-        System.out.println("******************************获取所有Encrypt.class实现******************************");
-        Set<Class<? extends Encrypt>> types = objectContextManager.getSubTypesOf(Encrypt.class);
-        System.out.println(types);
-        //获取所有带有Spi注解的类
-        System.out.println("******************************获取所有带有Spi注解的类******************************");
-        Set<Class<?>> annotatedWith = objectContextManager.getTypesAnnotatedWith(Spi.class);
-        System.out.println(annotatedWith);
         System.out.println();
         System.out.println();
     }

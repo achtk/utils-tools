@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * @author CH
  */
-public class SpiderTest {
+public class SpiderExample {
 
     @Test
     public void spider() throws IOException {

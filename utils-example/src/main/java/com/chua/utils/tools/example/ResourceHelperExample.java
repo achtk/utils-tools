@@ -29,15 +29,15 @@ public class ResourceHelperExample {
         // PathMatcher pathMatcher = new AntPathMatcher();
         // System.out.println(pathMatcher.match("**/*.class", "org/springframework/Demo.class"));
         //资源查找
-       // Set<Resource> resources = testFastGetResources();
+        Set<Resource> resources = testFastGetResources();
         //资源查找
-       // Set<Resource> resources1 = testReflectGetResources();
+        Set<Resource> resources1 = testReflectGetResources();
         //子类查找
-       // testSubGetResources();
+        testSubGetResources();
         //资源查找
         testFastSubGetResources();
         //资源查找
-      //  testReflectSubGetResources();
+        testReflectSubGetResources();
 
         System.out.println();
     }

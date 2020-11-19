@@ -32,17 +32,17 @@ public class BPlusTreeExample {
 //
 //        testOrderRemove(size, order);
 
-        BPlusTree<Integer, String> bPlusTree = new BPlusTree<>(3);
-        bPlusTree.insertOrUpdate(1, "2");
-        bPlusTree.insertOrUpdate(1, "3");
-        bPlusTree.insertOrUpdate(2, "4");
-        bPlusTree.insertOrUpdate(3, "6");
-        bPlusTree.insertOrUpdate(4, "8");
-        bPlusTree.insertOrUpdate(5, "10");
+        BPlusTree<String, String> bPlusTree = new BPlusTree<>(3);
+        bPlusTree.insertOrUpdate("1", "2");
+        bPlusTree.insertOrUpdate("1", "3");
+        bPlusTree.insertOrUpdate("2", "1");
+        bPlusTree.insertOrUpdate("3", "6");
+        bPlusTree.insertOrUpdate("4", "8");
+        bPlusTree.insertOrUpdate("5", "10");
         PrintTree printTree = bPlusTree.createPrintTree();
-        printTree.print();
+        //printTree.print();
 
-        System.out.println(bPlusTree.get(3));
+        System.out.println(bPlusTree.get("1"));
     }
 
     private static void testOrderRemove(int size, int order) {

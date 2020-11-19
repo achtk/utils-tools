@@ -22,5 +22,6 @@ public class ClassHelperExample {
         System.out.println("判断类是否存在: " + ClassHelper.isPresent(ClassHelper.class.getName()));
         System.out.println("判断类是否是另一个类的子类: " + ClassHelper.isAssignableFrom(ClassHelper.class, Object.class));
         System.out.println("获取默认的类加载器: " + ClassHelper.getDefaultClassLoader());
+        System.out.println("获取类加载器加载的URL: " + ClassHelper.getUrlsByClassLoader(ClassHelper.getDefaultClassLoader()));
     }
 }

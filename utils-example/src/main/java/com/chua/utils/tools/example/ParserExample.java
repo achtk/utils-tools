@@ -22,29 +22,11 @@ public class ParserExample {
 
     public static void main(String[] args) throws Exception {
         //测试ParserVfs
-        // testParserVfs();
-        //测试 WordFactory
-        //FileFactory.produce(new File("D:\\other\\device-consumer.md"), "D:\\other\\test.pdf");
-        testWordFactory();
-    }
-
-    private static void testWordFactory() throws Exception {
-        WordFactory wordFactory = new WordFactory();
-        File file = new File("D:/demo.html");
-        File docFile = new File("D:\\other\\device-consumer.doc");
-
-        wordFactory.reader(item -> {
-            System.out.println(item);
-        }, docFile.toURI().toURL());
-
-       // wordFactory.doc2Html(docFile, file);
-
-       // wordFactory.html2Doc(file, new File("D:/demo.doc"));
-
+         testParserVfs();
     }
 
     private static void testParserVfs() throws Exception {
-        ParserDir parserDir = ParserVfs.fromUrl(new File("D:\\other\\周报陈华-20201113.xlsx").toURI().toURL());
+        ParserDir parserDir = ParserVfs.fromUrl(new File("D:\\other\\20201113.class").toURI().toURL());
 
         Iterable<ParserFile> parserDirFiles = parserDir.getFiles();
         for (ParserFile parserDirFile : parserDirFiles) {

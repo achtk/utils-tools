@@ -13,7 +13,9 @@ import java.util.function.Consumer;
  * @author CH
  * @version 1.0.0
  * @since 2020/11/5
+ * @see com.chua.utils.tools.example.ObjectContextManagerExample
  */
+@Deprecated
 public class StrategyExample {
 
     public static void main(String[] args) {

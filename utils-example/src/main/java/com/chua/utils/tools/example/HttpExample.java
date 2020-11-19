@@ -11,10 +11,9 @@ import org.testng.annotations.Test;
 /**
  * @author CH
  */
-public class HttpTest {
+public class HttpExample {
 
-    @Test
-    public void testNewGet() {
+    public static void main(String[] args) {
         ExtensionLoader<IHttpClientFactory> extensionLoader = ExtensionFactory.getExtensionLoader(IHttpClientFactory.class);
         IHttpClientFactory httpClientFactory = extensionLoader.getExtension("httpclient");
         AbstractHttpClientStream httpClientStream = httpClientFactory.newGet();

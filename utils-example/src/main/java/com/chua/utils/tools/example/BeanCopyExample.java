@@ -4,12 +4,14 @@ import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.bean.copy.StandardBeanCopy;
 import com.chua.utils.tools.example.entity.TDemoInfo;
 import com.chua.utils.tools.text.IdHelper;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author CH
  * @version 1.0.0
  * @since 2020/11/10
  */
+@Slf4j
 public class BeanCopyExample {
 
     public static void main(String[] args) {

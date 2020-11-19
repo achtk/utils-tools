@@ -23,29 +23,30 @@ public class HashOperateMapExample {
         hashSortMap.add("test2", 1);
         hashSortMap.add("test3", 1);
 
-        System.out.println(hashSortMap.get("test1"));
-        System.out.println(hashSortMap.get("test2"));
-        System.out.println(hashSortMap.get("test3"));
+        System.out.println("test1:" + hashSortMap.get("test1"));
+        System.out.println("test2:" + hashSortMap.get("test2"));
+        System.out.println("test3:" + hashSortMap.get("test3"));
 
         HashOperateMap hashOperateMap = new HashOperateMap();
-        System.out.println(hashOperateMap instanceof Map);
-        hashOperateMap.append("date", new Date())
-                .append("time", System.currentTimeMillis())
-                .append("name", System.currentTimeMillis())
-                .append("text", "1,2,3,4,test");
+        System.out.println("是否是Map: " + (hashOperateMap instanceof Map));
+        hashOperateMap.append("date", new Date());
+        hashOperateMap.append("time", System.currentTimeMillis());
+        hashOperateMap.append("name", System.currentTimeMillis());
+        hashOperateMap.append("text", "1,2,3,4,test");
 
-        System.out.println(hashOperateMap.get("time"));
-        System.out.println(hashOperateMap.getLong("time"));
+        System.out.println("keySet:" + hashOperateMap.keySet());
+        System.out.println("time:" + hashOperateMap.get("time"));
+        System.out.println("time:" + hashOperateMap.getLong("time"));
 
-        System.out.println(hashOperateMap.get("date"));
-        System.out.println(hashOperateMap.getDate("date"));
-        System.out.println(hashOperateMap.getDate("time"));
-        System.out.println(hashOperateMap.dateFormatter("date", "yyyy-MM-dd HH:mm:ss"));
+        System.out.println("date:" + hashOperateMap.get("date"));
+        System.out.println("date:" + hashOperateMap.getDate("date"));
+        System.out.println("time:" + hashOperateMap.getDate("time"));
+        System.out.println("date:" + hashOperateMap.getDate("date", "yyyy-MM-dd HH:mm:ss"));
 
 
-        //System.out.println(hashOperateMap.splitToList("text", ","));
-        // System.out.println(hashOperateMap.splitToList("text", ",", Integer.class));
-        System.out.println(hashOperateMap.expression("time + text"));
-        System.out.println(hashOperateMap.getBean(TDemoInfo.class));
+        System.out.println("text To List: " + hashOperateMap.splitToList("text", ","));
+        System.out.println("text To IntList: " + hashOperateMap.splitToList("text", ",", Integer.class));
+        System.out.println("time + text = " + hashOperateMap.expression("time + text"));
+        System.out.println("TDemoInfo: " + hashOperateMap.getBean(TDemoInfo.class));
     }
 }

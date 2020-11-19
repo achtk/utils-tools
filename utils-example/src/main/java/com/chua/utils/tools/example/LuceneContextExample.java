@@ -3,6 +3,7 @@ package com.chua.utils.tools.example;
 import com.chua.utils.netx.entity.Search;
 import com.chua.utils.netx.lucene.entity.DataDocument;
 import com.chua.utils.netx.lucene.entity.HitData;
+import com.chua.utils.netx.lucene.operator.DocumentOperatorTemplate;
 import com.chua.utils.netx.lucene.operator.IndexOperatorTemplate;
 import com.chua.utils.netx.lucene.operator.SearchOperatorTemplate;
 import com.chua.utils.netx.lucene.resolver.LuceneTemplateResolver;

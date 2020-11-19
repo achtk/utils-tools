@@ -9,9 +9,12 @@ import org.testng.annotations.Test;
  */
 public class NetxFactoryTest {
 
-    @Test
-    public void testNetxFactory() {
-        INetFactory netxFactory = ExtensionFactory.getExtensionLoader(INetFactory.class).getFirst();
-        System.out.println(netxFactory);
+    public static void main(String[] args) {
+        //获取所有netxFactory实现
+        testNetxFactory();
+    }
+
+    public static void testNetxFactory() {
+        System.out.println("获取所有netxFactory实现:" + ExtensionFactory.getExtensionLoader(INetFactory.class).asMap());
     }
 }

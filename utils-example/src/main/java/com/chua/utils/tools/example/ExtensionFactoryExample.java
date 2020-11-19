@@ -28,6 +28,5 @@ public class ExtensionFactoryExample {
         System.out.println(extensionLoader);
         ExtensionLoader<Encoder> extensionLoader1 = ExtensionFactory.getExtensionLoader(Encoder.class, new ReflectionExtensionProcessor());
         System.out.println(extensionLoader1);
-
     }
 }
