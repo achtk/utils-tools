@@ -2,8 +2,8 @@ package com.chua.utils.tools.resource.adaptor;
 
 import com.chua.utils.tools.common.FileHelper;
 import com.chua.utils.tools.common.ThreadHelper;
-import com.chua.utils.tools.resource.Resource;
 import com.chua.utils.tools.resource.context.ResourceContext;
+import com.chua.utils.tools.resource.entity.Resource;
 import com.google.common.base.Strings;
 
 import java.io.File;
@@ -42,7 +42,7 @@ public class LocationFinder implements IResourceAdaptor {
         }
 
         if(index == -1) {
-            return new ResourceContext().addResource(Resource.getResource(new File(path).toURI().toURL()));
+            return new ResourceContext().addResource(Resource.create(new File(path).toURI().toURL()));
         }
 
         String parentPath = substring.substring(0, index).trim();
@@ -67,26 +67,20 @@ public class LocationFinder implements IResourceAdaptor {
 
 
             for (Path directory : directories) {
-                executorService.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //深度检索
-                        try {
-                            doFindFileAndPathByDepth(directory.toFile(), patternRegex, resourceSet);
-                        } finally {
-                            countDownLatch.countDown();
-                        }
+                executorService.execute(() -> {
+                    //深度检索
+                    try {
+                        doFindFileAndPathByDepth(directory.toFile(), patternRegex, resourceSet);
+                    } finally {
+                        countDownLatch.countDown();
                     }
                 });
             }
 
             ExecutorService service = ThreadHelper.newSingleThreadExecutor();
-            Future<Object> submit = service.submit(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    countDownLatch.await();
-                    return 0;
-                }
+            Future<Object> submit = service.submit(() -> {
+                countDownLatch.await();
+                return 0;
             });
 
             try {

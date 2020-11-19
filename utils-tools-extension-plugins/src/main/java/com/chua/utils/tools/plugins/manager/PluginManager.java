@@ -25,7 +25,7 @@ public interface PluginManager {
      * @param objectClass 插件类
      * @return 返回值
      */
-    default Collection<Object> getPlugin(Class<Object> objectClass) {
+    default Collection<Class<?>> getPlugin(Class<Object> objectClass) {
         return getPlugin(null == objectClass ? null : objectClass.getName());
     }
     /**
@@ -34,5 +34,5 @@ public interface PluginManager {
      * @param objectclass 插件
      * @return 返回值
      */
-    Collection<Object> getPlugin(String objectclass);
+    Collection<Class<?>> getPlugin(String objectclass);
 }

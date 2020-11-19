@@ -1,9 +1,9 @@
 package com.chua.utils.tools.resource.adaptor;
 
 
-import com.chua.utils.tools.resource.Lazy;
-import com.chua.utils.tools.resource.Resource;
+import com.chua.utils.tools.resource.entity.Lazy;
 import com.chua.utils.tools.resource.context.ResourceContext;
+import com.chua.utils.tools.resource.entity.Resource;
 
 import java.io.IOException;
 import java.util.Map;
@@ -47,13 +47,7 @@ public class WarResourceAdaptor implements IResourceAdaptor {
                 public void accept(JarEntry entry) {
                     String entryName = entry.getName();
                     Resource resource = new Resource();
-                    resource.setPrefix(JAR_URL_PREFIX);
-                    resource.setType("war");
-                    resource.setPath("/" + entryName);
-                    resource.setDirectory(entry.isDirectory());
-                    resource.setLocal(FILE_URL_PREFIX + newPath);
                     resource.setUrl(Lazy.LAZY);
-                    resource.setName(entryName);
 
                     resources.addResource(resource);
                 }

@@ -1,0 +1,4 @@
+com.chua.utils.tools.example.interfaces.ITestInterface=\
+    com.chua.utils.tools.example.interfaces.TestImpl
+org.jdesktop.swingx.treetable.DefaultMutableTreeTableNode=\
+    cn.vearn.checktreetable.FiledTreeTableModel

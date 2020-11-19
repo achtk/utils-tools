@@ -3,9 +3,10 @@ package com.chua.utils.tools.resource.matcher;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.*;
 import com.chua.utils.tools.constant.StringConstant;
-import com.chua.utils.tools.matcher.ApachePathMatcher;
-import com.chua.utils.tools.matcher.PathMatcher;
-import com.chua.utils.tools.resource.Resource;
+import com.chua.utils.tools.function.Matcher;
+import com.chua.utils.tools.matcher.AntPathMatcher;
+import com.chua.utils.tools.resource.entity.Resource;
+import com.chua.utils.tools.resource.parser.compress.dir.ZipParserDir;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,11 +19,11 @@ import java.net.URLConnection;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipFile;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
 import static com.chua.utils.tools.constant.SymbolConstant.*;
@@ -34,19 +35,21 @@ import static com.chua.utils.tools.constant.SymbolConstant.*;
  * @since 1.0
  */
 @Slf4j
-public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
+public class ClassPathMatcher extends UrlHelper implements PathMatcher {
 
-    private static final PathMatcher ANT_PATH_MATCHER = new ApachePathMatcher();
-    private String name;
-    private String[] excludes;
+    private static final com.chua.utils.tools.matcher.PathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
+    private final Matcher<Resource> matcher;
+    private final String name;
+    private final String[] excludes;
     private ClassLoader classLoader;
-    private AtomicInteger atomicInteger;
+    private final AtomicInteger atomicInteger;
 
-    public ClassPathMatcher(String name, String[] excludes, ClassLoader classLoader, AtomicInteger atomicInteger) {
+    public ClassPathMatcher(String name, String[] excludes, ClassLoader classLoader, AtomicInteger atomicInteger, Matcher<Resource> matcher) {
         this.name = name;
         this.excludes = excludes;
         this.classLoader = classLoader;
         this.atomicInteger = atomicInteger;
+        this.matcher = matcher;
     }
 
     /**
@@ -113,58 +116,51 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
     private Set<Resource> analysisResources(Set<Resource> resources, String name, String rootPath, String subPath) {
         Set<Resource> result = new HashSet<>();
 
-        long startTime = 0L;
-        if (log.isDebugEnabled()) {
-            startTime = System.currentTimeMillis();
-        }
+        long startTime = System.currentTimeMillis();
 
         int size = resources.size();
         ExecutorService executorService = ThreadHelper.newProcessorThreadExecutor();
-        CountDownLatch countDownLatch = new CountDownLatch(size);
+        List<Future> futures = new ArrayList<>();
 
-        for (Resource resource : resources) {
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    URL url = resource.getUrl();
-                    //如果是jar, war, zip, wsjar, vfszip文件
-                    long startTime1 = 0L;
-                    if (log.isTraceEnabled()) {
-                        startTime1 = System.currentTimeMillis();
+        resources.forEach(resource -> {
+            futures.add(executorService.submit((Callable<Object>) () -> {
+                URL url = resource.getUrl();
+                //如果是jar, war, zip, wsjar, vfszip文件
+                long startTime1 = 0L;
+                if (log.isDebugEnabled()) {
+                    startTime1 = System.currentTimeMillis();
+                }
+                try {
+                    if (isAllJar(url)) {
+                        try {
+                            doFindPathMatchingJarResources(url, subPath, atomicInteger, result);
+                        } catch (IOException e) {
+                            return null;
+                        }
+                    } else {
+                        doFindPathMatchingFileResources(url, subPath, rootPath, atomicInteger, result);
                     }
-                    try {
-                        if (isAllJar(url)) {
-                            try {
-                                result.addAll(doFindPathMatchingJarResources(url, subPath, atomicInteger));
-                            } catch (IOException e) {
-                                return;
-                            }
-                        } else {
-                            result.addAll(doFindPathMatchingFileResources(url, subPath, rootPath, atomicInteger));
-                        }
-                    } finally {
-                        if (log.isTraceEnabled()) {
-                            log.trace("处理目录: {}, 耗时: {}ms", url, System.currentTimeMillis() - startTime1);
-                        }
-                        countDownLatch.countDown();
+                } finally {
+                    if (log.isDebugEnabled()) {
+                        log.debug("处理目录: {}, 耗时: {}ms", url, System.currentTimeMillis() - startTime1);
                     }
                 }
-            });
-        }
-
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+                return "";
+            }));
+        });
+        for (Future future : futures) {
+            try {
+                future.get();
+            } catch (Exception e) {
+                continue;
+            }
         }
         executorService.shutdown();
 
-        if (log.isDebugEnabled()) {
-            if (null == atomicInteger) {
-                log.debug("表达式: {}, 共检索到[{}], 耗时: {}ms", name, null == result ? 0 : result.size(), System.currentTimeMillis() - startTime);
-            } else {
-                log.debug("表达式: {}, 共检索到[{}/{}], 耗时: {}ms", name, null == result ? 0 : result.size(), atomicInteger.get(), System.currentTimeMillis() - startTime);
-            }
+        if (null == atomicInteger || atomicInteger.get() == 0) {
+            log.info("Expression: {}, [{}] was retrieved, time-consuming: {}ms, to scan {} urls", name, null == result ? 0 : result.size(), System.currentTimeMillis() - startTime, size);
+        } else {
+            log.info("Expression: {}, [{}/{}] was retrieved in total, time-consuming: {}ms, to scan {} urls", name, null == result ? 0 : result.size(), atomicInteger.get(), System.currentTimeMillis() - startTime, size);
         }
         return result;
     }
@@ -176,12 +172,11 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
      * @param subPath 文件
      * @param path
      * @param count
+     * @param result
      * @return
      */
-    private Collection<? extends Resource> doFindPathMatchingFileResources(URL url, String subPath, String path, AtomicInteger count) {
-        List<Resource> result = new ArrayList<>();
-        result.addAll(doFindPathMatchingLocalFileResources(url.getFile(), new File(url.getFile()).getAbsolutePath(), path, subPath, count));
-        return result;
+    private void doFindPathMatchingFileResources(URL url, String subPath, String path, AtomicInteger count, Set<Resource> result) {
+        doFindPathMatchingLocalFileResources(url.getFile(), new File(url.getFile()).getAbsolutePath(), path, subPath, count, result);
     }
 
     /**
@@ -190,14 +185,13 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
      * @param path
      * @param matcherPath
      * @param count
+     * @param result
      * @return
      */
-    private Collection<? extends Resource> doFindPathMatchingLocalFileResources(String path, String root, String rootPath, String matcherPath, AtomicInteger count) {
-        List<Resource> result = new ArrayList<>();
-
+    private void doFindPathMatchingLocalFileResources(String path, String root, String rootPath, String matcherPath, AtomicInteger count, Set<Resource> result) {
         File file = new File(path);
         if (null == file && file.isFile()) {
-            return Collections.emptyList();
+            return;
         }
 
         Path path1 = Paths.get(file.getAbsolutePath());
@@ -227,7 +221,13 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
                     embeddedSubPath = embeddedSubPath.replace(SYMBOL_RIGHT_SLASH, SYMBOL_LEFT_SLASH);
 
                     if ((SYMBOL_ASTERISK.equals(matcherPath) || ANT_PATH_MATCHER.match(matcherPath, embeddedSubPath))) {
-                        result.add(Resource.getResource(file.toFile(), rootPath + embeddedSubPath));
+                        Resource resource = new Resource();
+                        try {
+                            resource.setUrl(file.toUri().toURL());
+                            matcher.doWith(resource);
+                        } catch (Exception e) {
+                        }
+                        result.add(resource);
                     }
                     return FileVisitResult.CONTINUE;
                 }
@@ -235,8 +235,6 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return result;
     }
 
 
@@ -246,80 +244,56 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
      * @param url     jarURL
      * @param subPath 文件
      * @param count
+     * @param result
      * @return
      */
-    private Collection<? extends Resource> doFindPathMatchingJarResources(URL url, String subPath, AtomicInteger count) throws IOException {
-        List<Resource> result = new ArrayList<>();
+    private void doFindPathMatchingJarResources(URL url, String subPath, AtomicInteger count, Set<Resource> result) throws IOException {
         final Class<?> aClass = ClassHelper.forName(subPath);
         if (null == aClass) {
             //return result;
         }
         //jar文件
-        URLConnection urlConnection = url.openConnection();
-        JarFile jarFile = null;
-        //jar 的URL
-        String jarUrl = "";
+        ZipFile jarFile = null;
+        try {
+            URLConnection urlConnection = url.openConnection();
+            if (urlConnection instanceof JarURLConnection) {
+                urlConnection.setUseCaches(false);
+                jarFile = ((JarURLConnection) urlConnection).getJarFile();
+            }
+        } catch (Throwable ignore) {
+        }
+
+        if(null == jarFile) {
+            return;
+        }
         //url根目录
-        String rootEntryPath = null;
-
-        if (urlConnection instanceof JarURLConnection) {
-            JarURLConnection urlConnection1 = (JarURLConnection) urlConnection;
-            urlConnection1.setUseCaches(urlConnection1.getClass().getSimpleName().startsWith("JNLP"));
-            jarFile = urlConnection1.getJarFile();
-            JarEntry jarEntry = urlConnection1.getJarEntry();
-
-            jarUrl = urlConnection1.getJarFileURL().toExternalForm();
-            rootEntryPath = (jarEntry != null ? jarEntry.getName() : "");
-        } else {
-            String file = url.getFile();
-            int index = file.indexOf(WAR_URL_SEPARATOR);
-            if (index == -1) {
-                index = file.indexOf(JAR_URL_SEPARATOR);
-            }
-
-            if (index != -1) {
-                jarUrl = file.substring(0, index);
-                rootEntryPath = file.substring(jarUrl.length() + 2);
-                jarFile = getJarFile(jarUrl);
-            } else {
-                jarFile = new JarFile(file);
-                jarUrl = "";
-            }
-
-        }
-
-        if (null == jarFile) {
-            return null;
-        }
-
-        if (!"".equals(rootEntryPath) && !rootEntryPath.endsWith(SYMBOL_LEFT_SLASH)) {
-            rootEntryPath = rootEntryPath + SYMBOL_LEFT_SLASH;
-        }
+        final String rootEntryPath = "";
 
         try {
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
+            jarFile.stream().parallel().forEach(jarEntry -> {
                 if (log.isDebugEnabled() && null != count) {
                     count.incrementAndGet();
                 }
-                JarEntry jarEntry = entries.nextElement();
+
                 String jarEntryName = jarEntry.getName();
                 if (jarEntryName.startsWith(rootEntryPath)) {
                     String relativePath = jarEntryName.substring(rootEntryPath.length());
                     if ("*".equals(relativePath) || ANT_PATH_MATCHER.match(subPath, relativePath)) {
-                        result.add(Resource.getResource(jarEntry, url));
+                        try {
+                            Resource resource = Resource.create(new URL(url.toExternalForm() + jarEntryName));
+                            matcher.doWith(resource);
+                            result.add(resource);
+                        } catch (Exception e) {
+                        }
                     }
                 }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            });
         } finally {
             if (null != jarFile) {
                 jarFile.close();
             }
         }
 
-        return result;
     }
 
     /**
@@ -416,7 +390,7 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
                 continue;
             }
             additionalCollections.add(url.toExternalForm());
-            result.add(new Resource().setUrl(url));
+            result.add(new Resource(url));
         }
 
         if ("".equals(path)) {
@@ -451,29 +425,30 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
      */
     private void addAllClassLoaderJarRoots(ClassLoader classLoader, Set<Resource> result, Set<String> additionalCollections, String[] excludes) {
         if (classLoader instanceof URLClassLoader) {
+            URL[] urls = ((URLClassLoader) classLoader).getURLs();
             try {
-                for (URL url : ((URLClassLoader) classLoader).getURLs()) {
+                Arrays.stream(urls).parallel().forEach(url -> {
                     if (log.isDebugEnabled() && null != atomicInteger) {
                         atomicInteger.incrementAndGet();
                     }
 
                     if (ignoreJar(excludes, FileHelper.getName(url.toExternalForm()))) {
-                        continue;
+                        return;
                     }
 
                     Resource resource = null;
                     if (StringConstant.JAR.equals(url.getProtocol())) {
-                        resource = Resource.getResource(url);
+                        resource = Resource.create(url);
                     } else {
-                        resource = Resource.getResource(toUrl(JAR_URL_PREFIX + url + JAR_URL_SEPARATOR));
+                        resource = Resource.create(toUrl(JAR_URL_PREFIX + url + JAR_URL_SEPARATOR));
                     }
 
                     if (additionalCollections.contains(resource.getUrl().toExternalForm())) {
-                        continue;
+                        return;
                     }
                     additionalCollections.add(resource.getUrl().toExternalForm());
                     result.add(resource);
-                }
+                });
             } catch (Exception ex) {
                 if (log.isDebugEnabled()) {
                     log.debug("Cannot introspect jar files since ClassLoader [" + classLoader + "] does not support 'getURLs()': " + ex);
@@ -523,7 +498,7 @@ public class ClassPathMatcher extends UrlHelper implements IPathMatcher {
                     continue;
                 }
 
-                Resource resource = Resource.getResource(toUrl(JAR_URL_PREFIX + FILE_URL_PREFIX + SYMBOL_LEFT_SLASH + filePath.replace("\\", SYMBOL_LEFT_SLASH) + JAR_URL_SEPARATOR));
+                Resource resource = Resource.create(toUrl(JAR_URL_PREFIX + FILE_URL_PREFIX + SYMBOL_LEFT_SLASH + filePath.replace("\\", SYMBOL_LEFT_SLASH) + JAR_URL_SEPARATOR));
 
                 if (additionalCollections.contains(resource.getUrl().toExternalForm())) {
                     continue;

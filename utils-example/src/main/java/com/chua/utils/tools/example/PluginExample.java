@@ -19,12 +19,9 @@ public class PluginExample {
 
     public static void main(String[] args) throws IOException {
         PluginManager pluginManager = new StandardPluginManager("D:\\extension");
-        //ClassManager classManager = pluginManager.getClassManager();
-        AtomicInteger atomicInteger = new AtomicInteger(0);
         while (true) {
             ThreadHelper.sleepQuietly(1, TimeUnit.SECONDS);
             System.out.println(pluginManager.getPlugin(Object.class).size());
-            // System.out.println(managerFactory.getCurrent(Object.class).size());
         }
     }
 }

@@ -4,6 +4,7 @@ import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.reflections.RewriteStore;
 import com.chua.utils.tools.classes.reflections.configuration.RewriteConfiguration;
 import com.chua.utils.tools.classes.reflections.scanner.*;
+import com.google.common.collect.HashMultimap;
 import lombok.Getter;
 import org.reflections.*;
 import org.reflections.scanners.SubTypesScanner;
@@ -114,7 +115,7 @@ public class RewriteScan extends Reflections {
 
     @Override
     public void expandSuperTypes() {
-        String index = index(SubTypesScanner.class);
+        String index = index(RewriteSubTypesScanner.class);
         Set<String> keys = STORE.keys(index);
         keys.removeAll(STORE.values(index));
         keys.parallelStream().forEach(key -> {
@@ -168,6 +169,9 @@ public class RewriteScan extends Reflections {
         }
     }
 
+    public HashMultimap<String, String> getAllMaps() {
+        return STORE.getMap(RewriteSubTypesScanner.class, Object.class.getName());
+    }
 
     @Override
     public Set<String> getAllTypes() {
@@ -280,7 +284,18 @@ public class RewriteScan extends Reflections {
     @Override
     public Set<String> getResources(Predicate<String> namePredicate) {
         Set<String> resources = filter(store.keys(index(RewriteResourcesScanner.class)), namePredicate);
-        return store.get(RewriteResourcesScanner.class, resources);
+        if (STORE.container(RewriteResourcesScanner.class)) {
+            return STORE.get(RewriteResourcesScanner.class, resources);
+        }
+        return Collections.emptySet();
+    }
+
+    public Map<String, String> getResourceMaps(Predicate<String> namePredicate) {
+        Set<String> resources = filter(store.keys(index(RewriteResourcesScanner.class)), namePredicate);
+        if (STORE.container(RewriteResourcesScanner.class)) {
+            return STORE.getMap(RewriteResourcesScanner.class, resources);
+        }
+        return Collections.emptyMap();
     }
 
     @Override
@@ -332,4 +347,6 @@ public class RewriteScan extends Reflections {
             return store.getAllIncluding(RewriteSubTypesScanner.class, subTypes);
         }
     }
+
+
 }

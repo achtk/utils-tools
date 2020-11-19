@@ -36,7 +36,6 @@ import static org.reflections.util.Utils.*;
  * @since 2020/10/22
  */
 public class RewriteReflections extends RewriteScan {
-
     /**
      * 构造
      *

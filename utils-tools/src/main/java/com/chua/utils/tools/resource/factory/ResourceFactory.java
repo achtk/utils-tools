@@ -1,6 +1,7 @@
 package com.chua.utils.tools.resource.factory;
 
-import com.chua.utils.tools.resource.Resource;
+import com.chua.utils.tools.function.Matcher;
+import com.chua.utils.tools.resource.entity.Resource;
 
 import java.util.Set;
 
@@ -10,7 +11,7 @@ import java.util.Set;
  * @author CH
  * @since 1.0
  */
-public interface IResourceFactory {
+public interface ResourceFactory {
 
     /**
      * 设置类加载器
@@ -18,7 +19,15 @@ public interface IResourceFactory {
      * @param classLoader 类加载器
      * @return
      */
-    public IResourceFactory classLoader(ClassLoader classLoader);
+    public ResourceFactory classLoader(ClassLoader classLoader);
+
+    /**
+     * 设置类加载器
+     *
+     * @param matcher 匹配器
+     * @return IResourceFactory
+     */
+    public ResourceFactory matcher(Matcher<Resource> matcher);
 
     /**
      * 是否缓存数据
@@ -26,14 +35,14 @@ public interface IResourceFactory {
      * @param cache 是否缓存
      * @return IResourceFactory
      */
-    public IResourceFactory cache(boolean cache);
+    public ResourceFactory cache(boolean cache);
 
     /**
      * 是否计数
      *
      * @return
      */
-    public IResourceFactory count();
+    public ResourceFactory count();
 
     /**
      * 获取资源

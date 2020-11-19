@@ -1,9 +1,9 @@
 package com.chua.utils.tools.resource.adaptor;
 
 
-import com.chua.utils.tools.resource.Lazy;
-import com.chua.utils.tools.resource.Resource;
+import com.chua.utils.tools.resource.entity.Lazy;
 import com.chua.utils.tools.resource.context.ResourceContext;
+import com.chua.utils.tools.resource.entity.Resource;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -24,18 +24,12 @@ public class ZipResourceAdaptor implements IResourceAdaptor {
         resources.addAttribute("size", zipFile.size());
         resources.addAttribute("name", zipFile.getName());
 
-        zipFile.stream().parallel().forEach(new Consumer<ZipEntry>() {
-            @Override
-            public void accept(ZipEntry zipEntry) {
-                String entryName = zipEntry.getName();
-                Resource resource = new Resource();
-                resource.setType("zip");
-                resource.setPath("/" + entryName);
-                resource.setUrl(Lazy.LAZY);
-                resource.setName(entryName);
+        zipFile.stream().parallel().forEach((Consumer<ZipEntry>) zipEntry -> {
+            String entryName = zipEntry.getName();
+            Resource resource = new Resource();
+            resource.setUrl(Lazy.LAZY);
 
-                resources.addResource(resource);
-            }
+            resources.addResource(resource);
         });
         return resources;
     }

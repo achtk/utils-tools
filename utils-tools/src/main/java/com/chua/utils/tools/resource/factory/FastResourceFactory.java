@@ -2,10 +2,10 @@ package com.chua.utils.tools.resource.factory;
 
 import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.common.UrlHelper;
-import com.chua.utils.tools.resource.Resource;
+import com.chua.utils.tools.function.Matcher;
+import com.chua.utils.tools.resource.entity.Resource;
 import com.chua.utils.tools.resource.matcher.ClassPathMatcher;
-import com.chua.utils.tools.resource.matcher.IPathMatcher;
-import com.chua.utils.tools.resource.matcher.SubClassMatcher;
+import com.chua.utils.tools.resource.matcher.PathMatcher;
 import com.google.common.base.Strings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -17,15 +17,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.chua.utils.tools.constant.StringConstant.CLASSPATH_URL_PREFIX;
-import static com.chua.utils.tools.constant.StringConstant.SUBCLASS_URL_PREFIX;
 
 /**
  * 资源工厂
+ *
  * @author CH
  * @since 1.0
  */
 @Slf4j
-public class FastResourceFactory extends UrlHelper implements IResourceFactory {
+public class FastResourceFactory extends UrlHelper implements ResourceFactory {
 
     private static final Cache<String, Set<Resource>> CACHE_LOCAL_RESOURCE = CacheBuilder.newBuilder()
             .softValues()
@@ -38,21 +38,28 @@ public class FastResourceFactory extends UrlHelper implements IResourceFactory {
     private AtomicInteger atomicInteger = new AtomicInteger(0);
     private boolean cache = true;
     private ClassLoader classLoader = this.getClass().getClassLoader();
+    private Matcher<Resource> matcher = resource -> {};
 
     @Override
-    public IResourceFactory classLoader(ClassLoader classLoader) {
+    public ResourceFactory classLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
         return this;
     }
 
     @Override
-    public IResourceFactory cache(boolean cache) {
+    public ResourceFactory matcher(Matcher<Resource> matcher) {
+        this.matcher = matcher;
+        return this;
+    }
+
+    @Override
+    public ResourceFactory cache(boolean cache) {
         this.cache = cache;
         return this;
     }
 
     @Override
-    public IResourceFactory count() {
+    public ResourceFactory count() {
         atomicInteger = new AtomicInteger(0);
         return this;
     }
@@ -62,29 +69,26 @@ public class FastResourceFactory extends UrlHelper implements IResourceFactory {
         if (Strings.isNullOrEmpty(name)) {
             return null;
         }
-        if(this.cache) {
+        if (this.cache) {
             Set<Resource> present = CACHE_LOCAL_RESOURCE.getIfPresent(name);
-            if(null != present) {
+            if (null != present) {
                 return present;
             }
         }
 
-        IPathMatcher pathMatcher = null;
+        PathMatcher pathMatcher;
         Set<Resource> result = null;
         //判断是否是classpath:
         try {
             if (name.startsWith(CLASSPATH_URL_PREFIX)) {
-                pathMatcher = new ClassPathMatcher(name, excludes, classLoader, atomicInteger);
-                result = pathMatcher.matcher();
-            } else if(name.startsWith(SUBCLASS_URL_PREFIX)) {
-                pathMatcher = new SubClassMatcher(name, excludes, classLoader, atomicInteger);
+                pathMatcher = new ClassPathMatcher(name, excludes, classLoader, atomicInteger, matcher);
                 result = pathMatcher.matcher();
             }
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        if(this.cache) {
-            if(null == result) {
+        if (this.cache) {
+            if (null == result) {
                 result = Collections.emptySet();
             }
             CACHE_LOCAL_RESOURCE.put(name, result);

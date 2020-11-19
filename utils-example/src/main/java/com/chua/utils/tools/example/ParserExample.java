@@ -6,6 +6,8 @@ import com.chua.utils.tools.resource.parser.ParserDir;
 import com.chua.utils.tools.resource.parser.ParserFile;
 import com.chua.utils.tools.resource.parser.ParserProcess;
 import com.chua.utils.tools.resource.parser.vfs.ParserVfs;
+import com.youbenzi.md2.export.FileFactory;
+import org.reflections.Reflections;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -22,14 +24,20 @@ public class ParserExample {
         //测试ParserVfs
         // testParserVfs();
         //测试 WordFactory
+        //FileFactory.produce(new File("D:\\other\\device-consumer.md"), "D:\\other\\test.pdf");
         testWordFactory();
     }
 
     private static void testWordFactory() throws Exception {
         WordFactory wordFactory = new WordFactory();
         File file = new File("D:/demo.html");
-        URL url = new File("D:\\other\\device-consumer.doc").toURI().toURL();
-     //   wordFactory.doc2Html(new File(url.getFile()), file);
+        File docFile = new File("D:\\other\\device-consumer.doc");
+
+        wordFactory.reader(item -> {
+            System.out.println(item);
+        }, docFile.toURI().toURL());
+
+       // wordFactory.doc2Html(docFile, file);
 
        // wordFactory.html2Doc(file, new File("D:/demo.doc"));
 

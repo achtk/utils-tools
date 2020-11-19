@@ -1,9 +1,9 @@
 package com.chua.utils.tools.resource.adaptor;
 
 
-import com.chua.utils.tools.resource.Lazy;
-import com.chua.utils.tools.resource.Resource;
+import com.chua.utils.tools.resource.entity.Lazy;
 import com.chua.utils.tools.resource.context.ResourceContext;
+import com.chua.utils.tools.resource.entity.Resource;
 
 import java.io.IOException;
 import java.util.Map;
@@ -41,20 +41,12 @@ public class JarResourceAdaptor implements IResourceAdaptor {
             resources.addAttribute("name", jarFile.getName());
 
 
-            jarFile.stream().parallel().forEach(new Consumer<JarEntry>() {
-                @Override
-                public void accept(JarEntry entry) {
-                    String entryName = entry.getName();
-                    Resource resource = new Resource();
-                    resource.setType("jar");
-                    resource.setPath("/" + entryName);
-                    resource.setDirectory(entry.isDirectory());
-                    resource.setLocal(FILE_URL_PREFIX + newPath);
-                    resource.setUrl(Lazy.LAZY);
-                    resource.setName(entryName);
+            jarFile.stream().parallel().forEach(entry -> {
+                String entryName = entry.getName();
+                Resource resource = new Resource();
+                resource.setUrl(Lazy.LAZY);
 
-                    resources.addResource(resource);
-                }
+                resources.addResource(resource);
             });
         }
         return resources;

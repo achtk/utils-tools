@@ -26,7 +26,7 @@ public class AntPathMatcher implements PathMatcher {
 
     private static final int CACHE_TURNOFF_THRESHOLD = 65536;
 
-    private static final char[] WILDCARD_CHARS = {SYMBOL_DOLLAR_CHAR, SYMBOL_QUESTION_CHAR, SYMBOL_LEFT_BIG_PARANTHESES_CHAR};
+    private static final char[] WILDCARD_CHARS = {SYMBOL_ASTERISK_CHAR, SYMBOL_QUESTION_CHAR, SYMBOL_LEFT_BIG_PARANTHESES_CHAR};
 
 
     private String pathSeparator;
@@ -129,17 +129,15 @@ public class AntPathMatcher implements PathMatcher {
             }
             return true;
         } else if (pattIdxStart > pattIdxEnd) {
-            // String not exhausted, but pattern is. Failure.
             return false;
         } else if (!fullMatch && SYMBOL_ASTERISKS.equals(patternDirs[pattIdxStart])) {
-            // Path start definitely matches due to "**" part in pattern.
             return true;
         }
 
         // up to last '**'
         while (pattIdxStart <= pattIdxEnd && pathIdxStart <= pathIdxEnd) {
             String partDir = patternDirs[pattIdxEnd];
-            if (SYMBOL_ASTERISK.equals(partDir)) {
+            if (SYMBOL_ASTERISKS.equals(partDir)) {
                 break;
             }
             if (!matchStrings(partDir, pathDirs[pathIdxEnd], uriTemplateVariables)) {

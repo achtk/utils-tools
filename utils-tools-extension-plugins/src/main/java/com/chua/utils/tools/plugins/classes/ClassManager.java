@@ -40,5 +40,5 @@ public interface ClassManager {
      * @param className 类名
      * @return 返回值
      */
-    Collection<Object> findSubType(String className);
+    Collection<Class<?>> findSubType(String className);
 }

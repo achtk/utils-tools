@@ -1,7 +1,8 @@
 package com.chua.utils.tools.resource.matcher;
 
 
-import com.chua.utils.tools.resource.Resource;
+
+import com.chua.utils.tools.resource.entity.Resource;
 
 import java.util.Set;
 
@@ -10,7 +11,7 @@ import java.util.Set;
  * @author CH
  * @since 1.0
  */
-public interface IPathMatcher {
+public interface PathMatcher {
     /**
      * 匹配资源
      * @return 资源

@@ -1,4 +1,4 @@
-package com.chua.utils.tools.resource;
+package com.chua.utils.tools.resource.entity;
 
 import java.net.URL;
 

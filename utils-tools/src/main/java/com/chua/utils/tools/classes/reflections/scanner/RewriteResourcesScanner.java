@@ -9,8 +9,9 @@ import org.reflections.vfs.Vfs;
  * @since 2020/11/12
  */
 public class RewriteResourcesScanner extends AbstractRewriteScanner {
+    @Override
     public boolean acceptsInput(String file) {
-        return !file.endsWith(".class"); //not a class
+        return !file.endsWith(".class");
     }
 
     @Override

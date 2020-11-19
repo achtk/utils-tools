@@ -1,5 +1,7 @@
 package com.chua.utils.tools.classes.reflections;
 
+import com.chua.utils.tools.classes.reflections.scan.RewriteScan;
+import com.chua.utils.tools.classes.reflections.scanner.AbstractRewriteScanner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -9,6 +11,7 @@ import org.reflections.scanners.Scanner;
 import org.reflections.util.Utils;
 import org.reflections.vfs.Vfs;
 
+import java.net.CookieHandler;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -37,7 +40,7 @@ public class RewriteStore extends Store {
      *  </code>
      *  </pre>
      */
-    private static final ConcurrentMap<URL, Map<String, HashMultimap<String, String>>> REFLECT_CACHE = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Map<String, HashMultimap<String, String>>> REFLECT_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 是否已检索
@@ -53,11 +56,27 @@ public class RewriteStore extends Store {
     /**
      * 是否已检索
      *
+     * @param scanner 扫描器
+     * @return 包含返回true
+     */
+    public boolean container(Class<? extends AbstractRewriteScanner> scanner) {
+        Collection<Map<String, HashMultimap<String, String>>> values = REFLECT_CACHE.values();
+        for (Map<String, HashMultimap<String, String>> value : values) {
+            if (value.containsKey(scanner.getSimpleName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 是否已检索
+     *
      * @param url url
      * @return 包含返回true
      */
     public boolean container(URL url) {
-        Set<String> strings = keySet();
+        Set<String> strings = REFLECT_CACHE.keySet();
         return strings.contains(url.getClass().getSimpleName());
     }
 
@@ -77,7 +96,7 @@ public class RewriteStore extends Store {
 
     public boolean put(String index, String key, String value, URL url) {
         synchronized (REFLECT_CACHE) {
-            return REFLECT_CACHE.computeIfAbsent(url, item -> new HashMap<>())
+            return REFLECT_CACHE.computeIfAbsent(url.toExternalForm(), item -> new HashMap<>())
                     .computeIfAbsent(index, item -> HashMultimap.create()).put(key, value);
         }
     }
@@ -100,7 +119,8 @@ public class RewriteStore extends Store {
         List<String> workKeys = new ArrayList<>(keys);
 
         Set<String> result = new HashSet<>();
-        keys.stream().parallel().forEach(key -> {
+        for (int i = 0; i < workKeys.size(); i++) {
+            String key = workKeys.get(i);
             try {
                 if (result.add(key)) {
                     Collection<String> values = multimap.get(key);
@@ -110,7 +130,7 @@ public class RewriteStore extends Store {
                 }
             } catch (Exception ignore) {
             }
-        });
+        };
         return result;
     }
 
@@ -145,10 +165,81 @@ public class RewriteStore extends Store {
         Collection<Map<String, HashMultimap<String, String>>> mapCollection = REFLECT_CACHE.values();
         for (Map<String, HashMultimap<String, String>> stringHashMultimapMap : mapCollection) {
             Multimap<String, String> multimap = stringHashMultimapMap.get(index);
-            if(null == multimap) {
+            if (null == multimap) {
                 continue;
             }
             result.putAll(multimap);
+        }
+        return result;
+    }
+
+    @Override
+    public Set<String> keys(String index) {
+        Set<String> result = new HashSet<>();
+
+        Collection<Map<String, HashMultimap<String, String>>> mapCollection = REFLECT_CACHE.values();
+        for (Map<String, HashMultimap<String, String>> stringHashMultimapMap : mapCollection) {
+            Multimap<String, String> multimap = stringHashMultimapMap.get(index);
+            if (null == multimap) {
+                continue;
+            }
+            result.addAll(multimap.keySet());
+        }
+        return result;
+
+    }
+
+    @Override
+    public Set<String> get(Class<?> scannerClass, Collection<String> keys) {
+        return this.getRewrite(index(scannerClass), keys);
+    }
+
+    public HashMultimap<String, String> getMap(Class<?> scannerClass, String key) {
+        HashMultimap<String, String> result = HashMultimap.create();
+
+        for (String url : REFLECT_CACHE.keySet()) {
+            Map<String, HashMultimap<String, String>> mapCollection = REFLECT_CACHE.get(url);
+            Multimap<String, String> multimap = mapCollection.get(index(scannerClass));
+            if (null == multimap) {
+                continue;
+            }
+            for (String value : multimap.get(key)) {
+                result.put(url, value);
+            }
+        }
+        return result;
+    }
+
+    public Map<String, String> getMap(Class<?> scannerClass, Collection<String> keys) {
+        return this.getRewriteMap(index(scannerClass), keys);
+    }
+
+    private Set<String> getRewrite(String index, Collection<String> keys) {
+        Multimap<String, String> mmap = get(index);
+        Set<String> result = new LinkedHashSet<>();
+        for (String key : keys) {
+            Collection<String> values = mmap.get(key);
+            if (values != null) {
+                result.addAll(values);
+            }
+        }
+        return result;
+    }
+
+    private Map<String, String> getRewriteMap(String index, Collection<String> keys) {
+        Map<String, String> result = new HashMap<>();
+
+        for (String url : REFLECT_CACHE.keySet()) {
+            Map<String, HashMultimap<String, String>> mapCollection = REFLECT_CACHE.get(url);
+            Multimap<String, String> multimap = mapCollection.get(index);
+            if (null == multimap) {
+                continue;
+            }
+            for (String key : keys) {
+                for (String value : multimap.get(key)) {
+                    result.put(url, value);
+                }
+            }
         }
         return result;
     }

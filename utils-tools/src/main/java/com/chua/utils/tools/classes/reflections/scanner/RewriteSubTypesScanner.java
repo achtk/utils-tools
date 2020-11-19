@@ -23,7 +23,7 @@ public class RewriteSubTypesScanner extends AbstractRewriteScanner {
 
     public RewriteSubTypesScanner(boolean excludeObjectClass) {
         if (excludeObjectClass) {
-            filterResultsBy(new FilterBuilder().exclude(Object.class.getName()));
+            super.setResultFilter(new FilterBuilder().exclude(Object.class.getName()));
         }
     }
 

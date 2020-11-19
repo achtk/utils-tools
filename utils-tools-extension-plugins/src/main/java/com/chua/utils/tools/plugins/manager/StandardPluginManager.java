@@ -41,7 +41,7 @@ public class StandardPluginManager implements PluginManager {
     }
 
     @Override
-    public Collection<Object> getPlugin(String className) {
+    public Collection<Class<?>> getPlugin(String className) {
         try {
             return classManager.findSubType(className);
         } catch (Exception e) {

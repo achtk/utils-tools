@@ -2,7 +2,7 @@ package com.chua.utils.tools.resource.context;
 
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.StringHelper;
-import com.chua.utils.tools.resource.Resource;
+import com.chua.utils.tools.resource.entity.Resource;
 import com.chua.utils.tools.resource.manifest.Attribute;
 import com.google.common.base.Strings;
 
@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static com.chua.utils.tools.constant.SymbolConstant.*;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_ASTERISK;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_QUESTION;
 
 /**
  * 资源上下文
@@ -43,7 +44,7 @@ public class ResourceContext {
         if(null == resource) {
             return this;
         }
-        resources.put(resource.getPath(), resource);
+        resources.put(resource.toString(), resource);
         return this;
     }
 
@@ -97,10 +98,10 @@ public class ResourceContext {
 
             private boolean isMatch(Resource resource) {
                 if(name.indexOf(SYMBOL_ASTERISK) == -1 && name.indexOf(SYMBOL_QUESTION) == -1) {
-                    return name.equals(resource.getName());
+                    return name.equals(resource.toString());
                 }
 
-                return StringHelper.wildcardMatch(resource.getName(), name);
+                return StringHelper.wildcardMatch(resource.toString(), name);
             }
         });
         return sets;

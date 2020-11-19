@@ -6,7 +6,7 @@ import com.chua.utils.tools.common.filecase.IOCase;
 import com.chua.utils.tools.common.filefilter.*;
 import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.function.Matcher;
-import com.chua.utils.tools.resource.Resource;
+import com.chua.utils.tools.resource.entity.Resource;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -563,7 +563,7 @@ public class FileHelper {
      */
     private static void innerListFiles(final Collection<File> files, final File directory,
                                        final FileFilter filter, final boolean includeSubDirectories) {
-        final File[] found = directory.listFiles((FileFilter) filter);
+        final File[] found = directory.listFiles(filter);
 
         if (found != null) {
             for (final File file : found) {
@@ -584,7 +584,7 @@ public class FileHelper {
      * @return
      */
     private static FileFilter setUpEffectiveFileFilter(final FileFilter fileFilter) {
-        return FileFilterHelper.and(fileFilter, FileFilterHelper.notFileFilter(DirectoryFileFilter.INSTANCE));
+        return FileFilterHelper.and(fileFilter, FileFilterHelper.fileFileFilter());
     }
 
     private static FileFilter setUpEffectiveDirFilter(final FileFilter dirFilter) {
@@ -1491,8 +1491,8 @@ public class FileHelper {
                                 FileHelper.write(new File("D:\\test.txt"), dir.toString() + "\r\n", UTF_8, true);
                                 dirName = dirName.substring(parentLength);
                                 if (StringHelper.wildcardMatch(dirName, patternRegex)) {
-                                    Resource resource = Resource.getResource(dir.toUri().toURL());
-                                    resourceSet.put(resource.getPath(), resource);
+                                    Resource resource = Resource.create(dir.toUri().toURL());
+                                    resourceSet.put(resource.toString(), resource);
                                 }
                                 return FileVisitResult.CONTINUE;
                             }
@@ -1503,8 +1503,8 @@ public class FileHelper {
                                 FileHelper.write(new File("D:\\test.txt"), file.toString() + "\r\n", UTF_8, true);
                                 dirName = dirName.substring(parentLength);
                                 if (StringHelper.wildcardMatch(dirName, patternRegex)) {
-                                    Resource resource = Resource.getResource(file.toUri().toURL());
-                                    resourceSet.put(resource.getPath(), resource);
+                                    Resource resource = Resource.create(file.toUri().toURL());
+                                    resourceSet.put(resource.toString(), resource);
                                 }
                                 return FileVisitResult.CONTINUE;
                             }
@@ -1547,8 +1547,8 @@ public class FileHelper {
         if (StringHelper.wildcardMatch(parents.toString(), patternRegex)) {
             Resource resource = null;
             try {
-                resource = Resource.getResource(parents.toURI().toURL());
-                resourceSet.put(resource.getPath(), resource);
+                resource = Resource.create(parents.toURI().toURL());
+                resourceSet.put(resource.toString(), resource);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

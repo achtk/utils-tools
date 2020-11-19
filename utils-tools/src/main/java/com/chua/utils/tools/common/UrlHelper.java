@@ -4,7 +4,7 @@ import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.charset.CharsetHelper;
 import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.constant.SuffixConstant;
-import com.chua.utils.tools.resource.Resource;
+import com.chua.utils.tools.resource.entity.Resource;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -154,7 +154,6 @@ public class UrlHelper {
                 }
                 resource = new Resource();
 
-                resource.setName(tempString);
                 try {
                     resource.setUrl(new URL(FILE_URL_PREFIX + string));
                     renderResource(packages, resource, fileUrl.getPath(), tempString);
@@ -203,7 +202,6 @@ public class UrlHelper {
                         }
                         resource = new Resource();
                         resource.setUrl(jarUrl);
-                        resource.setName(entryPath);
                         String path = jarUrl.getPath();
 
                         names.add(entryPath);
@@ -384,7 +382,7 @@ public class UrlHelper {
      * @param resource1
      */
     protected static void setFileResource(Resource resource1) {
-        ALL_FILES.put(resource1.getName(), resource1);
+        ALL_FILES.put(resource1.toString(), resource1);
     }
 
 
