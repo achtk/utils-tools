@@ -1,6 +1,8 @@
 package com.chua.utils.tools.example;
 
+import com.chua.utils.netx.datasource.dialect.SqlDialect;
 import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.spider.config.scheduler.DbCacheQueueScheduler;
 import com.chua.utils.tools.spider.factory.SpiderFactory;
 import com.chua.utils.tools.spider.interpreter.DocumentInterpreter;
 import com.chua.utils.tools.spider.interpreter.IPageInterpreter;
@@ -30,27 +32,23 @@ public class SpiderExample {
         file.createNewFile();
 
         DocumentInterpreter documentInterpreter = new DocumentInterpreter();
-        documentInterpreter.callback(new Consumer<Map<String, List<String>>> () {
-
-            @Override
-            public void accept(Map<String, List<String>> stringListMap) {
-                List<String> strings = FinderHelper.firstElement(stringListMap.values());
-                if(strings.size() <= 1) {
-                    return;
-                }
-               List<String> strings1 = strings.subList(1, strings.size());
-                if(strings1.size() % 2 != 0) {
-                    strings1 = strings1.subList(1, strings1.size());
-                }
-                for (int i = 0; i < strings1.size(); i += 2) {
-                    String name = strings1.get(i);
-                    String code = strings1.get(i + 1);
-                    try {
-                        FileUtils.writeStringToFile(file, name + "\t" + code + "\n", "UTF-8", true);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        continue;
-                    }
+        documentInterpreter.callback(stringListMap -> {
+            List<String> strings = FinderHelper.firstElement(stringListMap.values());
+            if(strings.size() <= 1) {
+                return;
+            }
+           List<String> strings1 = strings.subList(1, strings.size());
+            if(strings1.size() % 2 != 0) {
+                strings1 = strings1.subList(1, strings1.size());
+            }
+            for (int i = 0; i < strings1.size(); i += 2) {
+                String name = strings1.get(i);
+                String code = strings1.get(i + 1);
+                try {
+                    FileUtils.writeStringToFile(file, name + "\t" + code + "\n", "UTF-8", true);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    continue;
                 }
             }
         }).addModifier("//tbody/tr/td[@bgcolor='#FFFFFF']/a/text()");
@@ -58,6 +56,9 @@ public class SpiderExample {
         SpiderFactory factory = SpiderFactory.newBuilder()
                 .addUrl("https://xingzhengquhua.51240.com/")
                 .addInterpreter(documentInterpreter)
+                .setScheduler(new DbCacheQueueScheduler(
+                        "sa", "", SqlDialect.H2_DRIVER,
+                        "jdbc:h2:tcp://localhost:9092/~/test;AUTO_SERVER=TRUE"))
                 .newFactory();
         factory.runAsync();
     }

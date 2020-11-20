@@ -9,12 +9,14 @@ import com.chua.utils.tools.spider.process.WebMagicProcessor;
 import lombok.AllArgsConstructor;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.PageProcessor;
+import us.codecraft.webmagic.scheduler.Scheduler;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * 爬虫工厂
+ *
  * @author CH
  */
 @AllArgsConstructor
@@ -23,7 +25,8 @@ public class SpiderFactory {
     private SpiderConfig spiderConfig;
     private Set<IPageInterpreter> interpreters;
     private Set<String> urls;
-    private int threadNum = 3;
+    private int threadNum = Runtime.getRuntime().availableProcessors() * 2;
+    private Scheduler scheduler;
 
     public static SpiderFactory.Builder newBuilder() {
         return new SpiderFactory.Builder();
@@ -31,13 +34,16 @@ public class SpiderFactory {
 
     /**
      * 启动
+     *
      * @return
      */
     public void runAsync() {
         runAsync(null);
     }
+
     /**
      * 启动
+     *
      * @return
      */
     public void runAsync(IPageProcessor processor) {
@@ -51,7 +57,7 @@ public class SpiderFactory {
 
         Spider spider = Spider.create((PageProcessor) processor);
         spider.addUrl(urls.toArray(new String[0]));
-        spider.setScheduler(new SpikeFileCacheQueueScheduler(System.getProperty("user.home"), urls));
+        spider.setScheduler(scheduler);
         spider.thread(threadNum);
         spider.run();
     }
@@ -62,6 +68,7 @@ public class SpiderFactory {
         private SpiderConfig spiderConfig = new SpiderConfig();
         private Set<IPageInterpreter> interpreters = new HashSet<>();
         private int threadNum = 3;
+        private Scheduler scheduler = new SpikeFileCacheQueueScheduler(System.getProperty("user.home"), urls);
 
         public Builder addInterpreter(IPageInterpreter interpreter) {
             interpreters.add(interpreter);
@@ -86,8 +93,13 @@ public class SpiderFactory {
             return this;
         }
 
+        public Builder setScheduler(Scheduler scheduler) {
+            this.scheduler = scheduler;
+            return this;
+        }
+
         public SpiderFactory newFactory() {
-            return new SpiderFactory(spiderConfig, interpreters, this.urls, threadNum);
+            return new SpiderFactory(spiderConfig, interpreters, this.urls, threadNum, scheduler);
         }
     }
 }

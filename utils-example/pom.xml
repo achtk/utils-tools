@@ -180,7 +180,7 @@
 
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-tools-pcap</artifactId>
+            <artifactId>utils-tools-extension-pcap</artifactId>
             <version>1.0</version>
         </dependency>
 

@@ -55,13 +55,16 @@ public class SpikeFileCacheQueueScheduler extends DuplicateRemovedScheduler impl
     private void cacheUrl(String filePath, Set<String> urls) {
         ArrayList<String> strings = Lists.newArrayList(urls);
         Collections.sort(strings);
-        this.file = new File(filePath, DigestUtils.md5(strings.toString()) + fileUrlAllName);
-        if(file.exists()) {
-            file.deleteOnExit();
+        this.file = new File(filePath, DigestUtils.md5Hex(strings.toString()) + fileUrlAllName);
+        if(!file.exists()) {
+            //file.deleteOnExit();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+            }
         }
 
         try {
-            file.createNewFile();
             cacheUrl.addAll(IOUtils.readLines(file.toURI().toURL().openStream(), Charsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
@@ -91,7 +94,7 @@ public class SpikeFileCacheQueueScheduler extends DuplicateRemovedScheduler impl
                      */
                     private void record(String url) {
                         try {
-                            FileUtils.writeStringToFile(file, url, Charsets.UTF_8, true);
+                            FileUtils.writeStringToFile(file, url + "\r\n", Charsets.UTF_8, true);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
