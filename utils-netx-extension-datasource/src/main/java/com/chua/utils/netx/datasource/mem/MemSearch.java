@@ -13,6 +13,21 @@ import java.util.Map;
  */
 public interface MemSearch<T> {
     /**
+     * 创建内存表
+     *
+     * @param tClass 类型
+     * @throws Exception
+     */
+    void create(Class<T> tClass) throws Exception;
+
+    /**
+     * 删除内存表
+     *
+     * @throws Exception
+     */
+    void remove() throws Exception;
+
+    /**
      * 添加数据
      *
      * @param data 数据

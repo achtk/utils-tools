@@ -1,8 +1,10 @@
 package com.chua.utils.netx.datasource.mem;
 
+import com.chua.utils.netx.datasource.dialect.SQLDialectEnum;
+import com.chua.utils.netx.datasource.dialect.SqlDialect;
 import com.chua.utils.netx.datasource.info.TableInfo;
 import com.chua.utils.netx.datasource.properties.DataSourceProperties;
-import com.chua.utils.netx.datasource.template.SimpleJdbcOperatorTemplate;
+import com.chua.utils.netx.datasource.template.StandardJdbcOperatorTemplate;
 import com.chua.utils.netx.datasource.transform.JdbcOperatorTransform;
 import com.chua.utils.tools.properties.OperatorProperties;
 import com.chua.utils.tools.template.template.JdbcOperatorTemplate;
@@ -12,6 +14,7 @@ import net.sf.cglib.beans.BeanMap;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -27,8 +30,14 @@ import java.util.function.BiConsumer;
 @Slf4j
 public abstract class AbstractMemSearch<T> implements MemSearch<T> {
 
-    private final JdbcOperatorTemplate jdbcOperatorTemplate;
+    private JdbcOperatorTemplate jdbcOperatorTemplate;
     private TableInfo tableInfo;
+    private static final String DRIVER_NAME = "driverClassName";
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+    private static final String JDBC_URL = "jdbcUrl";
+    private static final String URL = "url";
+    private static final String DRIVER = "driver";
 
     /**
      * 获取 DataSourceProperties
@@ -37,12 +46,71 @@ public abstract class AbstractMemSearch<T> implements MemSearch<T> {
      */
     protected abstract DataSourceProperties dataSourceProperties();
 
-    public AbstractMemSearch() {
+    public void initialDataBase() {
         OperatorProperties operatorProperties = new OperatorProperties();
         Properties properties = new Properties();
-        properties.putAll(BeanMap.create(dataSourceProperties()));
+        BeanMap beanMap = BeanMap.create(dataSourceProperties());
+        beanMap.forEach((key, value) -> {
+            if (null == key || null == value) {
+                return;
+            }
+            properties.put(key, value);
+        });
+
+        if (properties.containsKey(DRIVER_NAME) || properties.containsKey(DRIVER)) {
+            operatorProperties.driver(
+                    properties.getOrDefault(DRIVER_NAME,
+                            properties.getOrDefault(DRIVER, "")).toString());
+        }
+
+        if (properties.containsKey(JDBC_URL) || properties.containsKey(URL)) {
+            operatorProperties.url(
+                    properties.getOrDefault(JDBC_URL,
+                            properties.getOrDefault(URL, "")).toString());
+        }
+
+        if (properties.containsKey(USERNAME)) {
+            operatorProperties.username(properties.getProperty(USERNAME));
+        }
+
+        if (properties.containsKey(PASSWORD)) {
+            operatorProperties.password(properties.getProperty(PASSWORD));
+        }
+
         operatorProperties.properties(properties);
-        this.jdbcOperatorTemplate = new SimpleJdbcOperatorTemplate(new JdbcOperatorTransform().transform(operatorProperties));
+        this.jdbcOperatorTemplate = new StandardJdbcOperatorTemplate(new JdbcOperatorTransform().transform(operatorProperties));
+    }
+
+    @Override
+    public void create(Class<T> tClass) throws Exception {
+        if(null == jdbcOperatorTemplate) {
+            initialDataBase();
+        }
+        if (null == tableInfo && null != tClass) {
+            synchronized (tClass) {
+                //简单双锁
+                if (null == tableInfo) {
+                    synchronized (tClass) {
+                        if (null == tableInfo) {
+                            tableInfo = new TableInfo();
+                            tableInfo.objectToTable(tClass);
+                            try {
+                                this.jdbcOperatorTemplate.execute(tableInfo.initialConfig(SQLDialectEnum.findByDriver(jdbcOperatorTemplate.getDriver(), jdbcOperatorTemplate.getUrl())));
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void remove() throws Exception {
+        try {
+            this.jdbcOperatorTemplate.execute(tableInfo.prepare());
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -50,41 +118,25 @@ public abstract class AbstractMemSearch<T> implements MemSearch<T> {
         if (null == data || data.size() == 0) {
             return this;
         }
-        if (null == tableInfo) {
-            synchronized (data) {
-                if (null == tableInfo) {
-                    tableInfo = new TableInfo();
-                    tableInfo.objectToTable(data.get(0));
-                    this.jdbcOperatorTemplate.execute(tableInfo.initialConfig());
-                }
-            }
-        }
-        //获取连接对象
-        Connection connection = jdbcOperatorTemplate.getConnection();
-        //设置禁用自动提交
-        connection.setAutoCommit(false);
-        //创建执行对象
-        PreparedStatement preparedStatement = connection.prepareStatement(tableInfo.prepareInsertBatch());
-        //这里可以通过addBatch()方法增加多条任意SQL语句
         long startTime = 0L;
         if (log.isDebugEnabled()) {
             startTime = System.currentTimeMillis();
         }
+        List<List<Object>> params = new ArrayList<>();
         for (T datum : data) {
-            tableInfo.addBatch(datum, new BiConsumer<Integer, Object>() {
-                @Override
-                public void accept(Integer integer, Object o) {
-                    try {
-                        preparedStatement.setObject(integer, o);
-                    } catch (SQLException throwables) {
-                        return;
-                    }
-                }
+            List<Object> param = new ArrayList<>();
+            tableInfo.addBatch(datum, (BiConsumer<Integer, Object>) (integer, o) -> {
+                param.add(o);
             });
-            preparedStatement.addBatch();
+            params.add(param);
         }
 
-        int[] ints = preparedStatement.executeBatch();
+        int[] ints = new int[0];
+        try {
+            ints = jdbcOperatorTemplate.batch(tableInfo.prepareInsertBatch(), params);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         if (log.isDebugEnabled()) {
             log.debug("插入{}条数据，成功{}/{}, 耗时{}ms", data.size(), ints.length, data.size(), System.currentTimeMillis() - startTime);
         }

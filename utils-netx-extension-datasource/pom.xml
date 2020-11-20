@@ -12,11 +12,6 @@
     <artifactId>utils-netx-extension-datasource</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>commons-dbutils</groupId>
-            <artifactId>commons-dbutils</artifactId>
-            <version>${commons-dbutils.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -31,9 +26,9 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-tools</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <dependency>

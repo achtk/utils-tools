@@ -1,5 +1,7 @@
 package com.chua.utils.netx.datasource.h2.mem;
 
+import com.chua.utils.netx.datasource.dialect.SQLDialectEnum;
+import com.chua.utils.netx.datasource.dialect.SqlDialect;
 import com.chua.utils.netx.datasource.mem.AbstractMemSearch;
 import com.chua.utils.netx.datasource.properties.DataSourceProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ public class H2Search<T> extends AbstractMemSearch<T> {
         DataSourceProperties dataSourceProperties = new DataSourceProperties();
         dataSourceProperties.setDriverClassName(DRIVER_URL);
         dataSourceProperties.setJdbcUrl(URL);
+        dataSourceProperties.setUsername("sa");
         return dataSourceProperties;
     }
 

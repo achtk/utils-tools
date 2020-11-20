@@ -184,6 +184,24 @@
             <version>1.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-netx-extension-datasource-sqlite</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-netx-extension-datasource-hsqldb</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-netx-extension-datasource-h2</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
 
 

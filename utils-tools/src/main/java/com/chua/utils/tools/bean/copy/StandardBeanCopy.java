@@ -3,6 +3,7 @@ package com.chua.utils.tools.bean.copy;
 import com.chua.utils.tools.bean.config.BeanConfig;
 import com.chua.utils.tools.bean.interpreter.NameInterpreter;
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.collects.HashOperateMap;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.function.Converter;
 import com.chua.utils.tools.manager.parser.description.FieldDescription;
@@ -131,6 +132,21 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
             objectCreate = new ReflectionObjectCreate<>();
         }
         return objectCreate.create();
+    }
+
+    @Override
+    public HashOperateMap asMap() {
+        HashOperateMap hashOperateMap = new HashOperateMap();
+        BeanMap beanMap = null;
+        try {
+            beanMap = BeanMap.create(entity);
+            hashOperateMap.putAll(beanMap);
+        } catch (Exception e) {
+            ClassHelper.doWithFields(tClass, field -> {
+                hashOperateMap.put(field.getName(), ClassHelper.getFieldValue(entity, field));
+            });
+        }
+        return hashOperateMap;
     }
 
 

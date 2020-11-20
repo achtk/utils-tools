@@ -13,10 +13,10 @@ import java.lang.reflect.Field;
  * @since 2020/10/21
  */
 public class SqlDialect {
-    
-    public static final String DB_NAME = "<db_name>";
-    public static final String PORT = "<port>";
-    public static final String IP = "<ip>";
+
+    public static String DB_NAME = "<db_name>";
+    public static String PORT = "<port>";
+    public static String IP = "<ip>";
     /**
      * MySQL 驱动程序
      */
@@ -88,7 +88,7 @@ public class SqlDialect {
     /**
      * Informix URL
      */
-    public static final String INFORMIX_URL = "jdbc:Informix-sqli://" + IP + ":" + PORT + "/"+ DB_NAME +":INFORMIXSER=myserver";
+    public static final String INFORMIX_URL = "jdbc:Informix-sqli://" + IP + ":" + PORT + "/" + DB_NAME + ":INFORMIXSER=myserver";
 
     /**
      * JDBC-ODBC 驱动程序
@@ -127,7 +127,7 @@ public class SqlDialect {
     /**
      * SQLite(内存式) URL
      */
-    public static final String SQLITE_MEMORY_URL = "jdbc:sqlite::memory:";
+    public static final String SQLITE_MEMORY_URL = "jdbc:sqlite:memory:myDb";
 
     /**
      * HSQLDB 驱动程序
@@ -144,7 +144,7 @@ public class SqlDialect {
     /**
      * HSQLDB(内存式) URL
      */
-    public static final String HSQLDB_MEMORY_URL = "jdbc:hsqldb:mem:" + DB_NAME;
+    public static final String HSQLDB_MEMORY_URL = "jdbc:hsqldb:mem:myDb";
     /**
      * mariadb  URL
      */

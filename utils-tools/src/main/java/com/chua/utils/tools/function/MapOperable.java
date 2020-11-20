@@ -7,6 +7,7 @@ import com.chua.utils.tools.common.BeansHelper;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.converter.TypeConverter;
 import com.google.common.base.Converter;
+import com.google.common.collect.Lists;
 
 import java.text.NumberFormat;
 import java.util.*;
@@ -106,6 +107,37 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
     }
 
     /**
+     * 以null安全的方式从Map获取一个字节。
+     * <p> 字节是从{@link #getByte（Object）}的结果中获得的。
+     *
+     * @param keys         查找的关键
+     * @param defaultValue 默认值
+     * @return 将Map中的值作为字节返回，如果输入的Map为空，则为<code> null </ code>
+     */
+    default Byte getByte(final List<K> keys, final Byte defaultValue) {
+        for (K key : keys) {
+            Byte aByte = getByte(key);
+            if (null != aByte) {
+                return aByte;
+            }
+        }
+        return defaultValue;
+    }
+
+    /**
+     * 以null安全的方式从Map获取一个字节。
+     * <p> 字节是从{@link #getByte（Object）}的结果中获得的。
+     *
+     * @param key          查找的关键
+     * @param key2         查找的关键
+     * @param defaultValue 默认值
+     * @return 将Map中的值作为字节返回，如果输入的Map为空，则为<code> 默认值 </ code>
+     */
+    default Byte getByte(final K key, final K key2, final Byte defaultValue) {
+        return getByte(Lists.newArrayList(key, key2), defaultValue);
+    }
+
+    /**
      * 以null安全的方式从Map中获取一个Short。
      * <p> Short是从{@link #getNumber（Object）}的结果中获得的。
      *
@@ -152,8 +184,39 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
     }
 
     /**
+     * 以null安全的方式从Map中获取一个Short。
+     * <p> Short是从{@link #getNumber（Object）}的结果中获得的。
+     *
+     * @param keys         查找的关键
+     * @param defaultValue 默认值
+     * @return 如果输入的Map为空，则以Short<code> null </ code>返回Map中的值
+     */
+    default Short getShort(final List<K> keys, final Short defaultValue) {
+        for (K key : keys) {
+            Short aShort = getShort(key);
+            if (null != aShort) {
+                return aShort;
+            }
+        }
+        return defaultValue;
+    }
+
+    /**
+     * 以null安全的方式从Map中获取一个Short。
+     * <p> Short是从{@link #getNumber（Object）}的结果中获得的。
+     *
+     * @param key          查找的关键
+     * @param key2         查找的关键
+     * @param defaultValue 默认值
+     * @return 如果输入的Map为空，则以Short<code> 默认值 </ code>返回Map中的值
+     */
+    default Short getShort(final K key, final K key2, final Short defaultValue) {
+        return getShort(Lists.newArrayList(key, key2), defaultValue);
+    }
+
+    /**
      * 以null安全的方式从Map获取一个整数。
-     * <p> 整数是从{@link #getNumber（Object）}的结果中获得的。
+     * <p> 整数是从{@link #getInteger（Object）}的结果中获得的。
      *
      * @param key 查找的关键
      * @return 以整数形式返回Map中的值，如果输入的Map为空，则为<code> 0 </ code>
@@ -164,7 +227,7 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
 
     /**
      * 以null安全的方式从Map获取一个整数。
-     * <p> 整数是从{@link #getNumber（Object）}的结果中获得的。
+     * <p> 整数是从{@link #getInteger（Object）}的结果中获得的。
      *
      * @param key          查找的关键
      * @param defaultValue 默认值
@@ -176,7 +239,7 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
 
     /**
      * 以null安全的方式从Map获取一个整数。
-     * <p> 整数是从{@link #getNumber（Object）}的结果中获得的。
+     * <p> 整数是从{@link #getInteger（Object）}的结果中获得的。
      *
      * @param key 查找的关键
      * @return 以整数形式返回Map中的值，如果输入的Map为空，则为<code> null </ code>
@@ -187,7 +250,38 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
 
     /**
      * 以null安全的方式从Map获取一个整数。
-     * <p> 整数是从{@link #getNumber（Object）}的结果中获得的。
+     * <p> 整数是从{@link #getInteger（Object）}的结果中获得的。
+     *
+     * @param keys         查找的关键
+     * @param defaultValue 默认值
+     * @return 以整数形式返回Map中的值，如果输入的Map为空，则为<code> defaultValue </ code>
+     */
+    default Integer getInteger(final List<K> keys, final Integer defaultValue) {
+        for (K key : keys) {
+            Integer integer = getInteger(key);
+            if (null != integer) {
+                return integer;
+            }
+        }
+        return defaultValue;
+    }
+
+    /**
+     * 以null安全的方式从Map获取一个整数。
+     * <p> 整数是从{@link #getInteger（Object）}的结果中获得的。
+     *
+     * @param key          查找的关键
+     * @param key2         查找的关键
+     * @param defaultValue 默认值
+     * @return 以整数形式返回Map中的值，如果输入的Map为空，则为<code> defaultValue </ code>
+     */
+    default Integer getInteger(final K key, final K key2, final Integer defaultValue) {
+        return getInteger(Lists.newArrayList(key, key2), defaultValue);
+    }
+
+    /**
+     * 以null安全的方式从Map获取一个整数。
+     * <p> 整数是从{@link #getInteger（Object）}的结果中获得的。
      *
      * @param key          查找的关键
      * @param defaultValue 默认值
@@ -199,7 +293,7 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
 
     /**
      * 以null安全的方式从Map中获取Long。
-     * <p> Long是从{@link #getNumber（Object）}的结果中获得的。
+     * <p> Long是从{@link #getLong（Object）}的结果中获得的。
      *
      * @param key 查找的关键
      * @return 如果输入的Map为空，则将Map中的值返回为Long，<code> 0 </ code>
@@ -210,7 +304,7 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
 
     /**
      * 以null安全的方式从Map中获取Long。
-     * <p> Long是从{@link #getNumber（Object）}的结果中获得的。
+     * <p> Long是从{@link #getLong（Object）}的结果中获得的。
      *
      * @param key          查找的关键
      * @param defaultValue 默认值
@@ -222,13 +316,43 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
 
     /**
      * 以null安全的方式从Map中获取Long。
-     * <p> Long是从{@link #getNumber（Object）}的结果中获得的。
+     * <p> Long是从{@link #getLong（Object）}的结果中获得的。
      *
      * @param key 查找的关键
      * @return 如果输入的Map为空，则将Map中的值返回为Long，<code> null </ code>
      */
     default Long getLong(final K key) {
         return MapOperableHelper.getLong(getMap(), key);
+    }
+
+    /**
+     * 以null安全的方式从Map中获取Long。
+     * <p> Long是从{@link #getLong（Object）}的结果中获得的。
+     *
+     * @param keys         查找的关键
+     * @param defaultValue 默认值
+     * @return 如果输入的Map为空，则将Map中的值返回为Long，<code> 默认值 </ code>
+     */
+    default Long getLong(final List<K> keys, final Long defaultValue) {
+        for (K key : keys) {
+            Long aLong = getLong(key);
+            if (aLong != null) {
+                return aLong;
+            }
+        }
+        return defaultValue;
+    }
+
+    /**
+     * 以null安全的方式从Map中获取Long。
+     * <p> Long是从{@link #getLong（Object）}的结果中获得的。
+     *
+     * @param key          查找的关键
+     * @param defaultValue 默认值
+     * @return 如果输入的Map为空，则将Map中的值返回为Long，<code> 默认值 </ code>
+     */
+    default Long getLong(final K key, final K key2, final Long defaultValue) {
+        return getLong(Lists.newArrayList(key, key2), defaultValue);
     }
 
     /**
@@ -438,6 +562,37 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
      * 以null安全的方式从Map获取Double。
      * <p> 从{@link #getNumber（Object）}的结果中获得Double。
      *
+     * @param keys         查找的关键
+     * @param defaultValue 默认值
+     * @return 如果输入的Map为空，则Map中的值为Double，<code> 0 </ code>
+     */
+    default double getDoubleValue(final List<K> keys, final double defaultValue) {
+        for (K key : keys) {
+            Double aDouble = getDouble(key);
+            if (null != aDouble) {
+                return aDouble;
+            }
+        }
+        return defaultValue;
+    }
+
+    /**
+     * 以null安全的方式从Map获取Double。
+     * <p> 从{@link #getNumber（Object）}的结果中获得Double。
+     *
+     * @param key          查找的关键
+     * @param key2         查找的关键
+     * @param defaultValue 默认值
+     * @return 如果输入的Map为空，则Map中的值为Double，<code> 0 </ code>
+     */
+    default double getDoubleValue(final K key, final K key2, final double defaultValue) {
+        return getDoubleValue(Lists.newArrayList(key, key2), defaultValue);
+    }
+
+    /**
+     * 以null安全的方式从Map获取Double。
+     * <p> 从{@link #getNumber（Object）}的结果中获得Double。
+     *
      * @param key 查找的关键
      * @return 如果输入的Map为空，则Map中的值为Double，<code> null </ code>
      */
@@ -455,6 +610,37 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
      */
     default Double getDouble(final K key, final Double defaultValue) {
         return MapOperableHelper.getDouble(getMap(), key, defaultValue);
+    }
+
+    /**
+     * 以null安全的方式从Map获取Double。
+     * <p> 从{@link #getNumber（Object）}的结果中获得Double。
+     *
+     * @param keys         查找的关键
+     * @param defaultValue 默认值
+     * @return 如果输入的Map为空，则Map中的值为Double，<code> null </ code>
+     */
+    default Double getDouble(final List<K> keys, final Double defaultValue) {
+        for (K key : keys) {
+            Double aDouble = getDouble(key);
+            if (null != aDouble) {
+                return aDouble;
+            }
+        }
+        return defaultValue;
+    }
+
+    /**
+     * 以null安全的方式从Map获取Double。
+     * <p> 从{@link #getNumber（Object）}的结果中获得Double。
+     *
+     * @param key          查找的关键
+     * @param key2         查找的关键
+     * @param defaultValue 默认值
+     * @return 如果输入的Map为空，则Map中的值为Double，<code> null </ code>
+     */
+    default Double getDouble(final K key, final K key2, final Double defaultValue) {
+        return getDouble(Lists.newArrayList(key, key2), defaultValue);
     }
 
     /**
@@ -486,6 +672,27 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
     }
 
     /**
+     * 以null安全的方式从Map获取数字。
+     * <p> 如果该值为<code> Number </ code>，则直接返回。
+     * 如果值是<code> String </ code>，则使用系统默认格式程序上的
+     * {@link NumberFormat＃parse（String）}进行转换
+     * 如果转换失败，则返回<code> null </ code>。
+     * 否则，返回<code> null </ code>。
+     *
+     * @param keys 查找的关键
+     * @return Map中的值作为Number，如果Map输入为空，则为<code> null </ code>
+     */
+    default Number getNumber(final List<K> keys) {
+        for (K key : keys) {
+            Number number = getNumber(key);
+            if (null != number) {
+                return number;
+            }
+        }
+        return null;
+    }
+
+    /**
      * 以null安全的方式从Map获取Map。
      * <p> *如果从指定映射返回的值不是Map，则返回
      * <code> null </ code>。
@@ -506,6 +713,36 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
      */
     default String getString(final K key) {
         return MapOperableHelper.getString(getMap(), key);
+    }
+
+    /**
+     * 以null安全的方式从Map获取字符串。
+     * <p>字符串是通过<code> toString </ code>获得的。
+     *
+     * @param keys         查找的关键
+     * @param defaultValue 默认值
+     * @return Map中的值作为字符串，如果为null，则<code> null </ code>
+     */
+    default String getString(final List<K> keys, final String defaultValue) {
+        for (K key : keys) {
+            String string = getString(key);
+            if (null != string) {
+                return string;
+            }
+        }
+        return defaultValue;
+    }
+
+    /**
+     * 以null安全的方式从Map获取字符串。
+     * <p>字符串是通过<code> toString </ code>获得的。
+     *
+     * @param key 查找的关键
+     * @return Map中的值作为字符串，如果为null，则<code> null </ code>
+     */
+    default String getString(final K key, K key2, final String defaultValue) {
+        List<K> list = Lists.newArrayList(key, key2);
+        return getString(list, defaultValue);
     }
 
     /**

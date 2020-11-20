@@ -1,5 +1,6 @@
 package com.chua.utils.netx.datasource.info;
 
+import com.chua.utils.netx.datasource.dialect.SQLDialectEnum;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -46,7 +47,7 @@ public class TableInfo<T> {
     private static final String INSERT_INFO = "INSERT INTO ";
 
     private static final Pattern PATTERN = Pattern.compile("(and|or){1}");
-    private Class<? extends T> aClass;
+    private Class<?> aClass;
     private T obj;
 
     public static ConcurrentMap<String, String> javaProperty2SqlColumnMap = new ConcurrentHashMap<>();
@@ -66,20 +67,16 @@ public class TableInfo<T> {
     /**
      * 解析表
      *
-     * @param object
-     * @return
+     * @param aClass 类
+     * @return 表信息
      */
-    public TableInfo objectToTable(final T object) {
-        if (null == object) {
+    public TableInfo<?> objectToTable(final Class<?> aClass) {
+        if (null == aClass) {
             throw new NullPointerException();
         }
-        this.obj = object;
-        this.aClass = (Class<? extends T>) object;
-        if (!(object instanceof Class)) {
-            aClass = (Class<? extends T>) object.getClass();
-        }
-        String name = aClass.getName();
-        this.tableName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name);
+        this.aClass = aClass;
+        String name = aClass.getSimpleName();
+        this.tableName = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name).toUpperCase();
         this.toColumns(aClass);
         this.createTable();
         return this;
@@ -131,9 +128,9 @@ public class TableInfo<T> {
             try {
                 Field field = entry.getValue();
                 field.setAccessible(true);
-                biConsumer.accept(atomicInteger.getAndIncrement(), field.get(datum));
+                biConsumer.accept(atomicInteger.incrementAndGet(), field.get(datum));
             } catch (IllegalAccessException e) {
-                biConsumer.accept(atomicInteger.getAndIncrement(), null);
+                biConsumer.accept(atomicInteger.incrementAndGet(), null);
             }
         }
     }
@@ -145,9 +142,9 @@ public class TableInfo<T> {
      * @return
      */
     public String parser(String ddl) {
-        if (null == ddl) {
-            return "select * from " + tableName;
-        }
+        StringBuilder stringBuilder = new StringBuilder("SELECT * FROM ");
+        stringBuilder.append(tableName);
+        stringBuilder.append(" WHERE 1 = 1 ");
         String newWhereSql = ddl;
         List<String> strings = Splitter.on(PATTERN).trimResults().omitEmptyStrings().splitToList(ddl);
         for (String string : strings) {
@@ -158,7 +155,11 @@ public class TableInfo<T> {
             }
             newWhereSql = newWhereSql.replace(string, whereSql);
         }
-        return newWhereSql;
+
+        if (!Strings.isNullOrEmpty(newWhereSql)) {
+            stringBuilder.append(" AND ").append(newWhereSql);
+        }
+        return stringBuilder.toString();
     }
 
     /**
@@ -178,11 +179,11 @@ public class TableInfo<T> {
         if (ANY.equals(value.trim())) {
             return null;
         }
-        column = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, column);
+        column = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, column).toUpperCase();
         if (value.indexOf(ANY) == -1 && value.indexOf(ONE) == -1) {
             return column + "=" + value;
         }
-        return column + " LIKE \"" + (value.replace(ANY, "%").replace(ONE, "_")) + "\"";
+        return column + " LIKE '" + (value.replace(ANY, "%").replace(ONE, "_")) + "'";
 
     }
 
@@ -191,27 +192,33 @@ public class TableInfo<T> {
      *
      * @return
      */
-    public Class<? extends T> getObjClass() {
+    public Class<?> getObjClass() {
         return aClass;
     }
 
     /**
      * 创建表
      *
+     * @param sqlDialectEnum
      * @return
      */
-    public String initialConfig() {
+    public String initialConfig(SQLDialectEnum sqlDialectEnum) {
         StringBuilder sb = new StringBuilder();
-        sb.append("create table ").append(tableName).append(" ( \r\n");
+        sb.append("CREATE ");
+        if (sqlDialectEnum == SQLDialectEnum.H2_MEMORY || sqlDialectEnum == SQLDialectEnum.H2_EMBEDDED) {
+            sb.append(" MEMORY ");
+        }
+        sb.append(" TABLE ");
+        sb.append(tableName).append(" ( \r\n");
 
         for (Map.Entry<String, Field> entry : attributes.entrySet()) {
             if ("serialVersionUID".equals(entry.getKey())) {
                 continue;
             }
             //一般第一个是主键
-            sb.append(entry.getKey());
+            sb.append(CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, entry.getKey()).toUpperCase());
             sb.append(" ").append(javaProperty2SqlColumnMap.get(entry.getValue().getType().getSimpleName())).append(" ");
-            sb.append(",\n ");
+            sb.append(",");
         }
         String sql = null;
         sql = sb.toString();
@@ -219,10 +226,19 @@ public class TableInfo<T> {
         int lastIndex = sql.lastIndexOf(",");
         sql = sql.substring(0, lastIndex) + sql.substring(lastIndex + 1);
 
-        sql = sql.substring(0, sql.length() - 1) + " )ENGINE =INNODB DEFAULT  CHARSET= utf8;\r\n";
+        sql = sql.substring(0, sql.length() - 1) + " )";
         if (log.isDebugEnabled()) {
             log.debug("{} -> {}", aClass.getName(), sql);
         }
-        return sb.toString();
+        return sql.replace("\r\n", "");
+    }
+
+    /**
+     * 预处理
+     *
+     * @return
+     */
+    public String prepare() {
+        return "DROP TABLE " + tableName;
     }
 }

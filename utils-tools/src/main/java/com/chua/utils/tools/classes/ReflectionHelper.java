@@ -205,6 +205,25 @@ public class ReflectionHelper {
     }
 
     /**
+     * 获取字段值
+     *
+     * @param obj   对象
+     * @param field 字段
+     * @return 值
+     */
+    public static Object getFieldValue(final Object obj, final Field field) {
+        if (null == obj || null == field) {
+            return null;
+        }
+        field.setAccessible(true);
+        try {
+            return field.get(obj);
+        } catch (IllegalAccessException e) {
+            return null;
+        }
+    }
+
+    /**
      * 获取所有字段
      *
      * @param obj 对象

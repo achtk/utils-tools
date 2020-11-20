@@ -1,5 +1,6 @@
 package com.chua.utils.tools.bean.copy;
 
+import com.chua.utils.tools.collects.HashOperateMap;
 import com.chua.utils.tools.function.Converter;
 
 import java.util.Map;
@@ -11,8 +12,10 @@ import java.util.function.Supplier;
  * <pre>
  * 参见代码: BeanCopy<T> beanCopy = StandardBeanCopy.of(T.class);
  * </pre>
+ *
  * @author CH
  * @version 1.0.0
+ * @see StandardBeanCopy
  * @since 2020/11/10
  */
 public interface BeanCopy<T> {
@@ -67,4 +70,11 @@ public interface BeanCopy<T> {
      * @return 实体
      */
     T create();
+
+    /**
+     * 获取所有字段
+     *
+     * @return 字段
+     */
+    HashOperateMap asMap();
 }

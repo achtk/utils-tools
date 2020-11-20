@@ -79,6 +79,9 @@ public abstract class AbstractSimpleExtensionProcessor<T> implements ExtensionPr
         } catch (Exception e) {
             return Collections.emptyList();
         }
+        if(null == t) {
+            return Collections.emptyList();
+        }
         return buildExtensionClassByObject(t);
     }
 

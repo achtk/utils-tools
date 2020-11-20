@@ -1,8 +1,8 @@
 package com.chua.utils.netx.datasource.dialect;
 
+import com.chua.utils.tools.common.StringHelper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.commons.io.FilenameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +121,7 @@ public enum SQLDialectEnum {
         }
         for (SQLDialectEnum sqlDialectEnum : temp) {
             String replace = sqlDialectEnum.getUrl().replace(SqlDialect.DB_NAME, "*").replace(SqlDialect.IP, "*").replace(SqlDialect.PORT, "*");
-            if(FilenameUtils.wildcardMatch(url, replace)) {
+            if(StringHelper.wildcardMatch(url, replace)) {
                 return sqlDialectEnum;
             }
         }
