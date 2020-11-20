@@ -245,6 +245,7 @@
         <module>utils-netx-extension-datasource-h2</module>
         <module>utils-netx-extension-datasource-mysql</module>
         <module>utils-tools-extension-plugins</module>
+        <module>utils-tools-pcap</module>
     </modules>
 
     <build>

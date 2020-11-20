@@ -493,6 +493,27 @@ public class CollectionHelper {
     }
 
     /**
+     * 集合转数组
+     *
+     * @param source 集合
+     * @param <T>    类型
+     * @return 数组
+     */
+    @SuppressWarnings("all")
+    public static String toString(final Collection<?> source) {
+        if (null == source) {
+            return null;
+        }
+        StringBuilder stringBuilder = new StringBuilder("[\r\n");
+        for (Object o : source) {
+            stringBuilder.append("\t\t").append(o.toString()).append("\r\n");
+        }
+
+        stringBuilder.append("\r\n]");
+        return stringBuilder.toString();
+    }
+
+    /**
      * 获取唯一元素
      *
      * @param tList 集合
