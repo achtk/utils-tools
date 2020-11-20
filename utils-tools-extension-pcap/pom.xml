@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>utils-tools-pcap</artifactId>
+    <artifactId>utils-tools-extension-pcap</artifactId>
 
     <dependencies>
         <dependency>
