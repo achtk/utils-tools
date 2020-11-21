@@ -1,9 +1,12 @@
 package com.chua.utils.tools.bean.copy;
 
+import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.function.Converter;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.function.Supplier;
 
 /**
@@ -39,6 +42,55 @@ public interface BeanCopy<T> {
      * @return this
      */
     BeanCopy<T> with(String name, Object value);
+
+    /**
+     * 赋值
+     *
+     * @param param 参数
+     * @param keys  索引
+     * @return this
+     */
+    BeanCopy<T> with(Map<String, Object> param, String... keys);
+
+    /**
+     * 赋值
+     *
+     * @param properties 参数
+     * @param keys       索引
+     * @return this
+     */
+    default BeanCopy<T> with(Properties properties, String... keys) {
+        return with(MapOperableHelper.toMap(properties), keys);
+    }
+
+    /**
+     * 以类的字段作为索引赋值
+     *
+     * @param properties 参数
+     * @param aClass     类
+     * @return this
+     */
+    default BeanCopy<T> with(Properties properties, Class<?> aClass) {
+        if (null != aClass && null != properties) {
+            ClassHelper.doWithLocalFields(aClass, field -> {
+                String name = field.getName();
+                if (properties.containsKey(name)) {
+                    with(properties, name);
+                }
+            });
+        }
+        return this;
+    }
+
+    /**
+     * 赋值
+     *
+     * @param properties 参数
+     * @return this
+     */
+    default BeanCopy<T> with(Properties properties) {
+        return with(MapOperableHelper.toMap(properties));
+    }
 
     /**
      * 赋值

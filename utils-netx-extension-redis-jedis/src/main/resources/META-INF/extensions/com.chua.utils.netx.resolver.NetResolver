@@ -1,0 +1,1 @@
+jedis=com.chua.utils.netx.redis.jedis.resolver.JedisResolver

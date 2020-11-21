@@ -125,11 +125,23 @@
 
 
         <dependency>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-crawler</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-tools-spider</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-spider</artifactId>
             <version>1.0</version>
-            <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-netx-extension-vertx</artifactId>
@@ -176,6 +188,18 @@
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
             <version>1.0.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-netx-extension-kafka</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-netx-extension-rabbitmq</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <dependency>

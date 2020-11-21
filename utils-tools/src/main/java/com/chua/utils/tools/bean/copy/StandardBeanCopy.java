@@ -93,6 +93,21 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     }
 
     @Override
+    public BeanCopy<T> with(Map<String, Object> param, String[] keys) {
+        if (!MapOperableHelper.isEmpty(param)) {
+            return this;
+        }
+
+        for (String key : keys) {
+            if (!param.containsKey(key)) {
+                continue;
+            }
+            with(key, param.get(key));
+        }
+        return this;
+    }
+
+    @Override
     public BeanCopy with(Map<String, Object> param) {
         if (!MapOperableHelper.isEmpty(param)) {
             return this;

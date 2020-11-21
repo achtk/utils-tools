@@ -1,0 +1,2 @@
+nacos-naming=com.chua.utils.netx.nacos.resolver.NacosNamingResolver
+nacos-config=com.chua.utils.netx.nacos.resolver.NacosConfigResolver

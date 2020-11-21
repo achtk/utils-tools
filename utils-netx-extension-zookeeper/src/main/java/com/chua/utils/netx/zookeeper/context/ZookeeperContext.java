@@ -8,6 +8,7 @@ import com.chua.utils.tools.properties.NetProperties;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.ACLBackgroundPathAndBytesable;
@@ -27,6 +28,7 @@ import java.util.List;
 @Slf4j
 public class ZookeeperContext implements AutoCloseable {
 
+    @Getter
     private final CuratorFramework curatorFramework;
     private final INetFactory<CuratorFramework> netxFactory;
 

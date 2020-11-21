@@ -1,0 +1,1 @@
+zookeeper=com.chua.utils.netx.zookeeper.resolver.ZookeeperResolver

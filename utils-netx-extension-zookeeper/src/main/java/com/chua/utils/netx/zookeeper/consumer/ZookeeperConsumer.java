@@ -23,6 +23,10 @@ public class ZookeeperConsumer implements INetxConsumer {
     @Override
     public void initialConfiguration(NetProperties netProperties) {
         netFactory = new ZookeeperFactory();
-        netFactory.configure(netProperties);
+        try {
+            netFactory.configure(netProperties);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

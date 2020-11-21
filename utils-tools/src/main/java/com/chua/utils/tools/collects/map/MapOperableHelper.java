@@ -1104,4 +1104,22 @@ public class MapOperableHelper extends MultiMapOperableHelper {
         }
         return kvMap.entrySet().iterator().next();
     }
+
+    /**
+     * properties转 Map
+     *
+     * @param properties 属性
+     * @return Map
+     */
+    public static Map<String, Object> toMap(Properties properties) {
+        if (null == properties || properties.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Map<String, Object> result = new HashMap<>();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            result.put(entry.getKey().toString(), entry.getValue());
+        }
+
+        return result;
+    }
 }
