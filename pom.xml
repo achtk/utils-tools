@@ -155,6 +155,11 @@
         <tensorflow.version>1.15.0</tensorflow.version>
         <jedis.version>3.3.0</jedis.version>
 
+        <jsonup.version>1.10.3</jsonup.version>
+        <htmlunit.version>2.24</htmlunit.version>
+        <selenium-java.version>2.53.1</selenium-java.version>
+        <phantomjs.version>1.3.0</phantomjs.version>
+
         <utils-base.version>1.0</utils-base.version>
         <utils-http.version>1.0</utils-http.version>
         <utils-tools.version>1.0</utils-tools.version>
@@ -246,6 +251,7 @@
         <module>utils-netx-extension-datasource-mysql</module>
         <module>utils-tools-extension-plugins</module>
         <module>utils-tools-extension-pcap</module>
+        <module>utils-tools-spider</module>
     </modules>
 
     <build>
