@@ -5,8 +5,13 @@ import com.chua.utils.netx.resolver.entity.DoubleService;
 import com.chua.utils.netx.resolver.entity.NetPubSubConf;
 import com.chua.utils.netx.resolver.entity.Service;
 import com.chua.utils.netx.resolver.mq.NetPubSub;
+import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.note.Note;
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -14,6 +19,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
@@ -25,8 +32,9 @@ import java.util.function.Consumer;
  * @version 1.0.0
  * @since 2020/11/21
  */
+@Slf4j
 @NoArgsConstructor
-public class KafkaResolver extends NetResolver implements NetPubSub<Object> {
+public class KafkaResolver extends NetResolver implements NetPubSub<Object>, Note {
 
     private KafkaProducer kafkaProducer;
     private KafkaConsumer kafkaConsumer;
@@ -95,5 +103,14 @@ public class KafkaResolver extends NetResolver implements NetPubSub<Object> {
                 });
             }
         });
+    }
+
+    @Override
+    public String note() {
+        List<String> desc = new ArrayList<>();
+        ClassHelper.doWithLocalFields(ConsumerConfig.class, field -> {
+            desc.add(field.getName());
+        });
+        return Joiner.on("\r\n").join(desc);
     }
 }

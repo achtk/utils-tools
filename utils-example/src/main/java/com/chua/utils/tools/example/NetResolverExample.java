@@ -14,6 +14,7 @@ public class NetResolverExample {
 
     public static void main(String[] args) {
         ExtensionLoader<NetResolver> extensionLoader = ExtensionFactory.getExtensionLoader(NetResolver.class);
+        NetResolver randomSpiService = extensionLoader.getRandomSpiService();
         System.out.println();
     }
 }

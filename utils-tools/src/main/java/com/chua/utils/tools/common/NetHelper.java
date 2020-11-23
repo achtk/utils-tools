@@ -384,16 +384,11 @@ public class NetHelper {
             if (ifc.isUp()) {
                 if (ifc.getIndex() < lowest || result == null) {
                     lowest = ifc.getIndex();
-                } else if (result != null) {
-                    continue;
                 }
 
-                for (Enumeration<InetAddress> addrs = ifc
-                        .getInetAddresses(); addrs.hasMoreElements(); ) {
+                for (Enumeration<InetAddress> addrs = ifc.getInetAddresses(); addrs.hasMoreElements(); ) {
                     InetAddress address = addrs.nextElement();
-                    if (address instanceof Inet4Address
-                            && !address.isLoopbackAddress()
-                            && address.isSiteLocalAddress()) {
+                    if (address instanceof Inet4Address && !address.isLoopbackAddress() && address.isSiteLocalAddress()) {
                         result.add(address);
                     }
                 }
