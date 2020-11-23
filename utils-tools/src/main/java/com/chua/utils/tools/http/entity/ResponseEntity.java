@@ -28,7 +28,7 @@ public class ResponseEntity<T> implements Serializable {
      */
     private Object content;
 
-    private ByteBuffer buffer;
+    private volatile ByteBuffer buffer;
 
 
     private String error;

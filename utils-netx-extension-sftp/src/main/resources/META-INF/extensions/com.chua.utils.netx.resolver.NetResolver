@@ -1,0 +1,3 @@
+ftp=com.chua.utils.netx.ftp.resolver.FtpResolver
+sftp=com.chua.utils.netx.ftp.resolver.SftpResolver
+ssh=com.chua.utils.netx.ftp.resolver.SshResolver

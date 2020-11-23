@@ -1183,6 +1183,21 @@ public class MapOperableHelper extends MultiMapOperableHelper {
         }
         return false;
     }
+    /**
+     * 是否存索引并且有效
+     *
+     * @param key  索引
+     * @param maps 集合
+     * @return boolean
+     */
+    public static boolean isSafeValid(String key, Map<?, ?>... maps) {
+        for (Map<?, ?> map : maps) {
+            if (map.containsKey(key) && null != map.get(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * 获取唯一值或者字段值

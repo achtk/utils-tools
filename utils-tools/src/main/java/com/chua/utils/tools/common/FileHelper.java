@@ -2084,6 +2084,24 @@ public class FileHelper {
         write(file, data, encoding, false);
     }
 
+
+    /**
+     * 写文件
+     *
+     * @param file        文件
+     * @param inputStream 数据
+     * @throws IOException
+     */
+    public static void write(final File file, final InputStream inputStream) throws IOException {
+        byte[] bytes = new byte[2048];
+        int line = 0;
+        try (InputStream is = inputStream; FileOutputStream fos = new FileOutputStream(file)) {
+            while ((line = is.read(bytes)) != 0) {
+                fos.write(bytes, 0, line);
+            }
+        }
+    }
+
     /**
      * 写文件
      *
