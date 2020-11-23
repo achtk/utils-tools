@@ -1,14 +1,14 @@
 package com.chua.utils.http.httpclient.stream;
 
 
-import com.chua.utils.http.builder.IHttpClientBuilder;
 import com.chua.utils.http.httpclient.build.HttpClientBuilder;
 
 /**
  * http builder
+ *
  * @author CHTK
  */
-public class HttpClientStream extends com.chua.utils.http.stream.AbstractHttpClientStream {
+public class HttpClientStream extends com.chua.utils.tools.http.stream.HttpClientStream {
 
     public HttpClientStream() {
     }
@@ -19,16 +19,16 @@ public class HttpClientStream extends com.chua.utils.http.stream.AbstractHttpCli
 
     /**
      * 构建
+     *
      * @return
      */
     @Override
-    public IHttpClientBuilder build() {
-        if(isNotBlank(requestConfig.getUrl())) {
+    public HttpClientBuilder build() {
+        if (isNotBlank(requestConfig.getUrl())) {
             return new HttpClientBuilder(requestConfig);
         }
         return null;
     }
-
 
 
 }

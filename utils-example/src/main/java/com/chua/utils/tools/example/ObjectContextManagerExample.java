@@ -1,8 +1,10 @@
 package com.chua.utils.tools.example;
 
+import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.codec.encrypt.Encrypt;
 import com.chua.utils.tools.example.entity.TDemoInfo;
 import com.chua.utils.tools.function.able.InitializingCacheable;
+import com.chua.utils.tools.http.entity.ResponseEntity;
 import com.chua.utils.tools.manager.ContextManager;
 import com.chua.utils.tools.manager.ObjectContextManager;
 import com.chua.utils.tools.manager.ProfileAdaptorManager;
@@ -15,6 +17,8 @@ import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
 import com.chua.utils.tools.manager.parser.ClassModifyDescriptionParser;
 import com.chua.utils.tools.manager.producer.StandardContextManager;
 import com.chua.utils.tools.manager.producer.StandardStrategyContextManager;
+import com.chua.utils.tools.manager.template.HttpTemplate;
+import com.chua.utils.tools.manager.template.MBeanTemplate;
 import com.chua.utils.tools.predicate.TruePredicate;
 import com.chua.utils.tools.resource.entity.Resource;
 import com.chua.utils.tools.resource.template.ResourceTemplate;
@@ -22,6 +26,8 @@ import com.chua.utils.tools.spi.Spi;
 import com.chua.utils.tools.spi.processor.ReflectionExtensionProcessor;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
@@ -51,6 +57,24 @@ public class ObjectContextManagerExample {
         testClassDescriptionParser();
         //测试资源查找器
         testResourceFinderManager();
+        //测试MBean
+        //testMBeanTemplate();
+        //测试Http
+        testHttpTemplate();
+    }
+
+    private static void testHttpTemplate() throws IOException {
+        System.out.println("==================================测试Http=============================");
+        HttpTemplate httpTemplate = contextManager.createHttpTemplate();
+        ResponseEntity<Map> entity = httpTemplate.getForEntity("https://gitee.com/xuxueli0323/xxl-crawler/events.json", Map.class);
+        System.out.println("获取到请求地址数据：" + JsonHelper.toFormatJson(entity));
+    }
+
+    private static void testMBeanTemplate() throws Exception {
+        System.out.println("==================================测试MBean=============================");
+        MBeanTemplate mBeanTemplate = contextManager.createMBeanTemplate();
+        mBeanTemplate.register(new TDemoInfo());
+        System.out.println("注册MBean" );
     }
 
     private static void testResourceFinderManager() {

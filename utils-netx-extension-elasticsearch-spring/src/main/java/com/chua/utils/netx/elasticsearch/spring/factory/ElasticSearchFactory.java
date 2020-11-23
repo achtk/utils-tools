@@ -96,16 +96,13 @@ public class ElasticSearchFactory implements INetFactory<AbstractElasticsearchTe
      * @return
      */
     private RestClientBuilder.HttpClientConfigCallback getHttpClientConfigCallback() {
-        return new RestClientBuilder.HttpClientConfigCallback() {
-            @Override
-            public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
-                //最大连接数
-                if (BooleanHelper.isValid(netProperties, CONFIG_FIELD_MAX_CONNECTION)) {
-                    httpClientBuilder.setMaxConnTotal(PropertiesHelper.ints(netProperties, CONFIG_FIELD_MAX_CONNECTION));
-                }
-
-                return httpClientBuilder;
+        return httpClientBuilder -> {
+            //最大连接数
+            if (BooleanHelper.isValid(netProperties, CONFIG_FIELD_MAX_CONNECTION)) {
+                httpClientBuilder.setMaxConnTotal(PropertiesHelper.ints(netProperties, CONFIG_FIELD_MAX_CONNECTION));
             }
+
+            return httpClientBuilder;
         };
     }
 
@@ -115,20 +112,17 @@ public class ElasticSearchFactory implements INetFactory<AbstractElasticsearchTe
      * @return
      */
     private RestClientBuilder.RequestConfigCallback getRequestConfigCallback() {
-        return new RestClientBuilder.RequestConfigCallback() {
-            @Override
-            public RequestConfig.Builder customizeRequestConfig(RequestConfig.Builder requestConfigBuilder) {
+        return requestConfigBuilder -> {
 
-                //最大连接数
-                if (BooleanHelper.isValid(netProperties, CONFIG_FIELD_CONNECTION_TIMEOUT)) {
-                    requestConfigBuilder.setConnectTimeout(PropertiesHelper.ints(netProperties, CONFIG_FIELD_CONNECTION_TIMEOUT));
-                }
-                //设置读取超时
-                if (BooleanHelper.isValid(netProperties, CONFIG_FIELD_READ_TIMEOUT)) {
-                    requestConfigBuilder.setSocketTimeout(PropertiesHelper.ints(netProperties, CONFIG_FIELD_READ_TIMEOUT));
-                }
-                return requestConfigBuilder;
+            //最大连接数
+            if (BooleanHelper.isValid(netProperties, CONFIG_FIELD_CONNECTION_TIMEOUT)) {
+                requestConfigBuilder.setConnectTimeout(PropertiesHelper.ints(netProperties, CONFIG_FIELD_CONNECTION_TIMEOUT));
             }
+            //设置读取超时
+            if (BooleanHelper.isValid(netProperties, CONFIG_FIELD_READ_TIMEOUT)) {
+                requestConfigBuilder.setSocketTimeout(PropertiesHelper.ints(netProperties, CONFIG_FIELD_READ_TIMEOUT));
+            }
+            return requestConfigBuilder;
         };
     }
 

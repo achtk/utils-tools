@@ -1,11 +1,10 @@
 package com.chua.utils.http.httpclient.sync;
 
-import com.chua.utils.http.callback.Callback;
-import com.chua.utils.http.config.RequestConfig;
-import com.chua.utils.http.entity.HttpClientResponse;
 import com.chua.utils.http.httpclient.action.HttpAsyncAction;
 import com.chua.utils.http.httpclient.handler.HttpClientHandler;
-import com.chua.utils.tools.constant.NumberConstant;
+import com.chua.utils.tools.http.config.RequestConfig;
+import com.chua.utils.tools.http.entity.ResponseEntity;
+import com.chua.utils.tools.http.callback.ResponseCallback;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -26,7 +25,6 @@ import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPAC
 @Slf4j
 public class Async extends HttpClientHandler {
 
-
     public Async(RequestConfig requestConfig) {
         super(requestConfig);
     }
@@ -37,7 +35,7 @@ public class Async extends HttpClientHandler {
      * @param callback
      * @return
      */
-    public HttpClientResponse executeDelete(Callback callback) {
+    public ResponseEntity executeDelete(ResponseCallback callback) {
         Map<String, Object> bodyers = requestConfig.getBodyers();
         if (bodyers == null) {
             bodyers = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
@@ -53,7 +51,7 @@ public class Async extends HttpClientHandler {
      * @param callback
      * @return
      */
-    public HttpClientResponse executePut(final Callback callback) {
+    public ResponseEntity executePut(final ResponseCallback callback) {
         CloseableHttpAsyncClient httpClient = getAsyncClient();
         //
         String url = requestConfig.getUrl();
@@ -74,7 +72,7 @@ public class Async extends HttpClientHandler {
                 getHttpAsyncClientResult(httpClient, httpPut, new HttpAsyncAction() {
                     @Override
                     public void completed(Object result) {
-                        callback.onResponse(new HttpClientResponse(200, result));
+                        callback.onResponse(new ResponseEntity(200, result));
                     }
 
                     @Override
@@ -103,7 +101,7 @@ public class Async extends HttpClientHandler {
      * @param callback
      * @return
      */
-    public HttpClientResponse executePost(final Callback callback) {
+    public ResponseEntity executePost(final ResponseCallback callback) {
         // 创建httpClient对象
         CloseableHttpAsyncClient httpClient = getAsyncClient();
         //
@@ -125,7 +123,7 @@ public class Async extends HttpClientHandler {
 
                 @Override
                 public void completed(Object result) {
-                    callback.onResponse(new HttpClientResponse(200, result));
+                    callback.onResponse(new ResponseEntity(200, result));
                 }
 
                 @Override
@@ -154,7 +152,7 @@ public class Async extends HttpClientHandler {
      * @param callback
      * @return
      */
-    public HttpClientResponse executeGet(final Callback callback) {
+    public ResponseEntity executeGet(final ResponseCallback callback) {
         // 创建httpClient对象
         CloseableHttpAsyncClient httpClient = getAsyncClient();
         // 创建访问的地址
@@ -190,7 +188,7 @@ public class Async extends HttpClientHandler {
 
                 @Override
                 public void completed(Object result) {
-                    callback.onResponse(new HttpClientResponse(200, result));
+                    callback.onResponse(new ResponseEntity(200, result));
                 }
 
                 @Override

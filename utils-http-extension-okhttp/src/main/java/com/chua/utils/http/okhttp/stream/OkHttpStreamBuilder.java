@@ -1,12 +1,13 @@
 package com.chua.utils.http.okhttp.stream;
 
-import com.chua.utils.http.builder.IHttpClientBuilder;
-import com.chua.utils.http.config.RequestConfig;
-import com.chua.utils.http.entity.HttpClientResponse;
+import com.chua.utils.tools.http.callback.ResponseCallback;
+import com.chua.utils.tools.http.config.RequestConfig;
+import com.chua.utils.tools.http.entity.ResponseEntity;
 import com.chua.utils.http.okhttp.downloader.IHttpDownloader;
 import com.chua.utils.http.okhttp.enums.HttpMethod;
 import com.chua.utils.http.okhttp.http.OkHttpHelper;
 import com.chua.utils.tools.common.HttpClientHelper;
+import com.chua.utils.tools.http.builder.HttpClientBuilder;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
  * @author CHTK
  */
 @Slf4j
-public class OkHttpStreamBuilder implements IHttpClientBuilder {
+public class OkHttpStreamBuilder implements HttpClientBuilder {
 
     private final OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
     private final FormBody.Builder formBody;
@@ -39,11 +40,11 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
     private RequestConfig requestConfig;
 
 
-    public OkHttpStreamBuilder(HttpMethod method, 
-                               RequestConfig requestConfig, 
-                               FormBody.Builder formBody, 
-                               RequestBody requestBody, 
-                               Interceptor interceptor, 
+    public OkHttpStreamBuilder(HttpMethod method,
+                               RequestConfig requestConfig,
+                               FormBody.Builder formBody,
+                               RequestBody requestBody,
+                               Interceptor interceptor,
                                Request.Builder builder) {
         this.builder = builder;
         this.requestConfig = requestConfig;
@@ -57,14 +58,14 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
      * @return
      */
     @Override
-    public HttpClientResponse execute() {
+    public ResponseEntity execute() {
 
         OkHttpClient okHttp = getRequest();
 
         if (httpMethod == HttpMethod.GET) {
             try {
                 Response execute = okHttp.newCall(this.builder.build()).execute();
-                return new HttpClientResponse(execute.code(), execute.body().string(), execute.message());
+                return new ResponseEntity(execute.code(), execute.body().string(), execute.message());
             } catch (IOException e) {
                 if (null != requestConfig.getHandler()) {
                     return requestConfig.getHandler().throwable(e);
@@ -80,7 +81,7 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
             }
             try {
                 Response execute = okHttp.newCall(post.build()).execute();
-                return new HttpClientResponse(execute.code(), execute.body().string());
+                return new ResponseEntity(execute.code(), execute.body().string());
             } catch (IOException e) {
                 if (null != requestConfig.getHandler()) {
                     return requestConfig.getHandler().throwable(e);
@@ -96,7 +97,7 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
             }
             try {
                 Response execute = okHttp.newCall(post.build()).execute();
-                return new HttpClientResponse(execute.code(), execute.body().string());
+                return new ResponseEntity(execute.code(), execute.body().string());
             } catch (IOException e) {
                 if (null != requestConfig.getHandler()) {
                     return requestConfig.getHandler().throwable(e);
@@ -112,7 +113,7 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
             }
             try {
                 Response execute = okHttp.newCall(post.build()).execute();
-                return new HttpClientResponse(execute.code(), execute.body().string());
+                return new ResponseEntity(execute.code(), execute.body().string());
             } catch (IOException e) {
                 if (null != requestConfig.getHandler()) {
                     return requestConfig.getHandler().throwable(e);
@@ -126,7 +127,7 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
      * @return
      */
     @Override
-    public void execute(final com.chua.utils.http.callback.Callback callback) {
+    public void execute(final ResponseCallback callback) {
         OkHttpClient okHttp = getRequest();
         Request.Builder post = null;
 
@@ -138,7 +139,7 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                callback.onResponse(new HttpClientResponse(response.code(), response.body().string()));
+                callback.onResponse(new ResponseEntity(response.code(), response.body().string()));
             }
         };
         if (httpMethod == HttpMethod.GET) {
@@ -185,10 +186,10 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
         }
         if (requestConfig.isHttps()) {
             Object sslSocketFactory = requestConfig.getSslSocketFactory();
-            if(null == sslSocketFactory) {
+            if (null == sslSocketFactory) {
                 sslSocketFactory = HttpClientHelper.createSslSocketFactory();
             }
-            if(sslSocketFactory instanceof SSLSocketFactory) {
+            if (sslSocketFactory instanceof SSLSocketFactory) {
                 try {
                     okHttpClient.sslSocketFactory((SSLSocketFactory) sslSocketFactory, new HttpClientHelper.TrustAllCerts());
                 } catch (Throwable e) {
@@ -242,7 +243,7 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
                         try {
                             response = chain.proceed(request);
                         } catch (Throwable e) {
-                            if(retryNum.get() < maxRetry) {
+                            if (retryNum.get() < maxRetry) {
                                 response.close();
                             }
                         }
@@ -259,7 +260,6 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
 
     /**
      * 下载器下载文件
-     *
      */
     public void download(IHttpDownloader httpDownloader, String... retryUrls) {
         OkHttpClient okHttp = getRequest();
@@ -268,7 +268,7 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
         try {
             execute = okHttp.newCall(this.builder.build()).execute();
             try {
-                if(execute.code() != 200) {
+                if (execute.code() != 200) {
                     retry(httpDownloader, retryUrls);
                 } else {
                     httpDownloader.download(execute);
@@ -278,7 +278,7 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
             }
         } catch (IOException e) {
             httpDownloader.throwable(e);
-            if(null != execute) {
+            if (null != execute) {
                 execute.close();
             }
             retry(httpDownloader, retryUrls);
@@ -288,14 +288,15 @@ public class OkHttpStreamBuilder implements IHttpClientBuilder {
 
     /**
      * 尝试
+     *
      * @param httpDownloader http下载器
-     * @param retryUrls 尝试地址
+     * @param retryUrls      尝试地址
      */
     private void retry(IHttpDownloader httpDownloader, String... retryUrls) {
-        if(null != retryUrls && retryUrls.length > 0) {
+        if (null != retryUrls && retryUrls.length > 0) {
             String[] newRetry = new String[retryUrls.length - 1];
             System.arraycopy(retryUrls, 1, newRetry, 0, retryUrls.length - 1);
-            OkAbstractHttpStream okHttpStream = OkHttpHelper.newGet();
+            OkHttpStream okHttpStream = OkHttpHelper.newGet();
             OkHttpStreamBuilder build = (OkHttpStreamBuilder) okHttpStream.url(retryUrls[0]).build();
             build.download(httpDownloader, newRetry);
         }

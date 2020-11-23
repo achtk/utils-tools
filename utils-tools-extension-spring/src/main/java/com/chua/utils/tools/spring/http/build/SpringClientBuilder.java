@@ -1,10 +1,9 @@
 package com.chua.utils.tools.spring.http.build;
 
 
-import com.chua.utils.http.builder.IHttpClientBuilder;
-import com.chua.utils.http.callback.Callback;
-import com.chua.utils.http.config.RequestConfig;
-import com.chua.utils.http.entity.HttpClientResponse;
+import com.chua.utils.tools.http.builder.HttpClientBuilder;
+import com.chua.utils.tools.http.callback.ResponseCallback;
+import com.chua.utils.tools.http.config.RequestConfig;
 import com.chua.utils.tools.constant.HttpConstant;
 import com.chua.utils.tools.spring.helper.SpringClientAsyncHelper;
 import com.chua.utils.tools.spring.helper.SpringClientSyncHelper;
@@ -16,7 +15,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
  * spring http构建
  * @author CH
  */
-public class SpringClientBuilder implements IHttpClientBuilder {
+public class SpringClientBuilder implements HttpClientBuilder {
 
     private RequestConfig requestConfig;
 
@@ -31,7 +30,7 @@ public class SpringClientBuilder implements IHttpClientBuilder {
     }
 
     @Override
-    public HttpClientResponse execute() {
+    public com.chua.utils.tools.http.entity.ResponseEntity execute() {
         if(HttpConstant.HTTP_METHOD_GET.equals(requestConfig.getMethod())) {
             return springClientSyncHelper.executeGet();
         } else if(HttpConstant.HTTP_METHOD_POST.equals(requestConfig.getMethod())) {
@@ -45,7 +44,7 @@ public class SpringClientBuilder implements IHttpClientBuilder {
     }
 
     @Override
-    public void execute(Callback callback) {
+    public void execute(ResponseCallback callback) {
         ListenableFuture<ResponseEntity<Object>> future = null;
         if(HttpConstant.HTTP_METHOD_GET.equals(requestConfig.getMethod())) {
             future = springClientAsyncHelper.executeGet();
@@ -67,7 +66,7 @@ public class SpringClientBuilder implements IHttpClientBuilder {
 
             @Override
             public void onSuccess(ResponseEntity<Object> result) {
-                callback.onResponse(new HttpClientResponse(result.getStatusCodeValue(), result.getBody()));
+                callback.onResponse(new com.chua.utils.tools.http.entity.ResponseEntity(result.getStatusCodeValue(), result.getBody()));
             }
         });
     }

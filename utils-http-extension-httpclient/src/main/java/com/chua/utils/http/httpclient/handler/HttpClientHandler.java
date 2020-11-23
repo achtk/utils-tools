@@ -1,12 +1,11 @@
 package com.chua.utils.http.httpclient.handler;
 
-import com.chua.utils.http.config.RequestConfig;
-import com.chua.utils.http.entity.HttpClientResponse;
 import com.chua.utils.http.httpclient.action.HttpAsyncAction;
-import com.chua.utils.http.meta.MetaType;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.charset.CharsetHelper;
-import com.chua.utils.tools.constant.HttpConstant;
+import com.chua.utils.tools.http.config.RequestConfig;
+import com.chua.utils.tools.http.entity.ResponseEntity;
+import com.chua.utils.tools.http.meta.MetaType;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
@@ -295,7 +294,7 @@ public class HttpClientHandler {
      * @return
      * @throws Exception
      */
-    public HttpClientResponse getHttpClientResult(CloseableHttpResponse httpResponse, CloseableHttpClient httpClient, HttpRequestBase httpMethod) throws Exception {
+    public ResponseEntity getHttpClientResult(CloseableHttpResponse httpResponse, CloseableHttpClient httpClient, HttpRequestBase httpMethod) throws Exception {
         if(log.isDebugEnabled()) {
             log.debug("请求信息: {}", httpMethod);
         }
@@ -319,12 +318,12 @@ public class HttpClientHandler {
             if(log.isTraceEnabled()) {
                 log.trace("响应数据: {}", content);
             }
-            return new HttpClientResponse(httpResponse.getStatusLine().getStatusCode(), content);
+            return new ResponseEntity(httpResponse.getStatusLine().getStatusCode(), content);
         }
         if(log.isDebugEnabled()) {
             log.debug("响应数据异常");
         }
-        return new HttpClientResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        return new ResponseEntity(HttpStatus.SC_INTERNAL_SERVER_ERROR);
     }
 
     /**

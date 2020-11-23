@@ -1,33 +1,33 @@
 package com.chua.utils.tools.spring.http.factory;
 
 
-import com.chua.utils.http.http.IHttpClientFactory;
-import com.chua.utils.http.stream.AbstractHttpClientStream;
 import com.chua.utils.tools.constant.HttpConstant;
+import com.chua.utils.tools.http.http.HttpClientFactory;
+import com.chua.utils.tools.http.stream.HttpClientStream;
 import com.chua.utils.tools.spring.http.stream.SpringClientStream;
 
 /**
  * spring客户端
  * @author CH
  */
-public class SpringClientFactory implements IHttpClientFactory {
+public class SpringClientFactory implements HttpClientFactory {
     @Override
-    public AbstractHttpClientStream newGet() {
+    public HttpClientStream newGet() {
         return new SpringClientStream(HttpConstant.HTTP_METHOD_GET);
     }
 
     @Override
-    public AbstractHttpClientStream newPost() {
+    public HttpClientStream newPost() {
         return new SpringClientStream(HttpConstant.HTTP_METHOD_POST);
     }
 
     @Override
-    public AbstractHttpClientStream newPut() {
+    public HttpClientStream newPut() {
         return new SpringClientStream(HttpConstant.HTTP_METHOD_PUT);
     }
 
     @Override
-    public AbstractHttpClientStream newDelete() {
+    public HttpClientStream newDelete() {
         return new SpringClientStream(HttpConstant.HTTP_METHOD_DELETE);
     }
 }

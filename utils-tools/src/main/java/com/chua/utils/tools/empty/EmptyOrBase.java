@@ -169,6 +169,10 @@ public class EmptyOrBase extends InitializingCacheable {
      * 解析csv
      */
     public static final String CSV_PARSER = "com.chua.utils.tools.office.csv.parser.CsvParser";
+    /**
+     * 空 byte[]
+     */
+    public static final byte[] EMPTY_BYTES =  new byte[0];
 
     /**
      * 常用基础类型

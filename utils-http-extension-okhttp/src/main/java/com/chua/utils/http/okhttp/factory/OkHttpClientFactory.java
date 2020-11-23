@@ -1,9 +1,9 @@
 package com.chua.utils.http.okhttp.factory;
 
 
-import com.chua.utils.http.http.IHttpClientFactory;
+import com.chua.utils.tools.http.http.HttpClientFactory;
 import com.chua.utils.http.okhttp.http.OkHttpHelper;
-import com.chua.utils.http.stream.AbstractHttpClientStream;
+import com.chua.utils.tools.http.stream.HttpClientStream;
 
 /**
  * HttpClient实现
@@ -11,25 +11,25 @@ import com.chua.utils.http.stream.AbstractHttpClientStream;
  * @version 1.0.0
  * @since 2020/3/21 14:10
  */
-public class OkHttpClientFactory implements IHttpClientFactory {
+public class OkHttpClientFactory implements HttpClientFactory {
 
     @Override
-    public AbstractHttpClientStream newGet() {
+    public HttpClientStream newGet() {
         return OkHttpHelper.newGet();
     }
 
     @Override
-    public AbstractHttpClientStream newPost() {
+    public HttpClientStream newPost() {
         return OkHttpHelper.newPost();
     }
 
     @Override
-    public AbstractHttpClientStream newPut() {
+    public HttpClientStream newPut() {
         return OkHttpHelper.newPut();
     }
 
     @Override
-    public AbstractHttpClientStream newDelete() {
+    public HttpClientStream newDelete() {
         return OkHttpHelper.newDelete();
     }
 }

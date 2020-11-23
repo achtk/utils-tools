@@ -81,6 +81,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     private Set<Annotation> addingAnnotations = new HashSet<>();
 
     private ClassDescriptionParser classDescriptionParser;
+    private String name;
 
     public StandardClassModifyDescriptionParser(Class<T> tClass, ClassDescriptionParser classDescriptionParser) throws NotFoundException {
         this.tClass = tClass;
@@ -96,6 +97,11 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
         for (Annotation annotation : annotations) {
             this.addingAnnotations.add(annotation);
         }
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -175,6 +181,10 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
 
     @Override
     public ModifyDescription<T> toClass() throws Exception {
+
+        if (!Strings.isNullOrEmpty(name)) {
+            this.ctClass.setName(name);
+        }
         //修改修饰类
         ModifyDescription<T> modifyDescription = new ModifyDescription<>();
         //添加字段

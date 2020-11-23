@@ -1,6 +1,8 @@
 package com.chua.utils.tools.manager;
 
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
+import com.chua.utils.tools.manager.template.HttpTemplate;
+import com.chua.utils.tools.manager.template.MBeanTemplate;
 import com.chua.utils.tools.resource.factory.FastResourceFactory;
 import com.chua.utils.tools.resource.factory.ResourceFactory;
 import com.chua.utils.tools.resource.template.ResourceTemplate;
@@ -106,4 +108,26 @@ public interface ContextManager {
     default ResourceTemplate createResourceTemplate() {
         return createResourceTemplate(new FastResourceFactory());
     }
+
+    /**
+     * 创建Mbean模板
+     *
+     * @return MBeanTemplate
+     * @see MBeanTemplate
+     */
+    default MBeanTemplate createMBeanTemplate() {
+        return new MBeanTemplate();
+    }
+
+    /**
+     * 创建Http模板
+     *
+     * @return HttpTemplate
+     * @see HttpTemplate
+     */
+    default HttpTemplate createHttpTemplate() {
+        return new HttpTemplate();
+    }
+
+
 }

@@ -6,6 +6,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 索引模板
@@ -118,4 +119,10 @@ public interface IndexOperatorTemplate {
      * @return Analyzer
      */
     Analyzer getAnalyzer();
+
+    /**
+     * 获取索引
+     * @return
+     */
+    Set<String> getCollections();
 }

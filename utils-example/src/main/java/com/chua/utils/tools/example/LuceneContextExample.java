@@ -48,8 +48,8 @@ public class LuceneContextExample {
         if(!indexOperatorTemplate.exist(index)) {
             indexOperatorTemplate.create(index, 5);
         }
-       // DocumentOperatorTemplate documentOperatorTemplate = luceneTemplateResolver.getDocumentOperatorTemplate(index);
-       // documentOperatorTemplate.addDocuments(documentMapList);
+       DocumentOperatorTemplate documentOperatorTemplate = luceneTemplateResolver.getDocumentOperatorTemplate(index);
+        documentOperatorTemplate.addDocuments(documentMapList);
 
         SearchOperatorTemplate searchOperatorTemplate = luceneTemplateResolver.getSearchOperatorTemplate(index);
         HitData search1 = searchOperatorTemplate.search("*:*", null, null, 1, 10000);

@@ -1,10 +1,9 @@
 package com.chua.utils.http.httpclient.stream;
 
 
-import com.chua.utils.http.builder.IHttpClientBuilder;
-import com.chua.utils.http.exception.IThrowableHandler;
 import com.chua.utils.http.httpclient.build.HttpClientBuilder;
-import com.chua.utils.http.meta.MetaType;
+import com.chua.utils.tools.http.exception.ThrowableHandler;
+import com.chua.utils.tools.http.meta.MetaType;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -17,9 +16,10 @@ import java.util.Map;
 
 /**
  * http builder
+ *
  * @author CHTK
  */
-public class AbstractHttpClientStream extends com.chua.utils.http.stream.AbstractHttpClientStream {
+public class AbstractHttpClientStream extends HttpClientStream {
 
     public AbstractHttpClientStream() {
     }
@@ -30,6 +30,7 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
 
     /**
      * 设置 url
+     *
      * @param url
      * @return
      */
@@ -41,13 +42,14 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
 
     /**
      * 添加消息头部
+     *
      * @param headerName
      * @param headerValue
      * @return
      */
     @Override
     public AbstractHttpClientStream addHeader(final String headerName, final String headerValue) {
-        if(isNotBlank(headerName)) {
+        if (isNotBlank(headerName)) {
             headers.put(headerName, headerValue);
         }
         return this;
@@ -55,12 +57,13 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
 
     /**
      * 添加消息内容
+     *
      * @param params
      * @return
      */
     @Override
     public AbstractHttpClientStream setHeader(final Map<String, String> params) {
-        if(isNotBlank(params)) {
+        if (isNotBlank(params)) {
             headers.putAll(params);
         }
         return this;
@@ -68,13 +71,14 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
 
     /**
      * 添加消息内容
+     *
      * @param bodyName
      * @param bodyValue
      * @return
      */
     @Override
     public AbstractHttpClientStream addBody(final String bodyName, final Object bodyValue) {
-        if(isNotBlank(bodyName)) {
+        if (isNotBlank(bodyName)) {
             bodyers.put(bodyName, bodyValue);
         }
         return this;
@@ -82,12 +86,13 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
 
     /**
      * 添加消息内容
+     *
      * @param params
      * @return
      */
     @Override
     public AbstractHttpClientStream setBody(final Map<String, Object> params) {
-        if(isNotBlank(params)) {
+        if (isNotBlank(params)) {
             bodyers.putAll(params);
         }
         return this;
@@ -95,24 +100,27 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
 
     /**
      * 添加消息内容
+     *
      * @param json
      * @return
      */
     @Override
     public AbstractHttpClientStream addJson(final String json) {
-        if(isNotBlank(json)) {
+        if (isNotBlank(json)) {
             requestConfig.setText(json, MetaType.APPLICATION_JSON);
         }
         return this;
     }
+
     /**
      * 添加消息内容
+     *
      * @param json
      * @return
      */
     @Override
     public AbstractHttpClientStream addText(final String json, final MetaType metaType) {
-        if(isNotBlank(json)) {
+        if (isNotBlank(json)) {
             requestConfig.setText(json, metaType);
         }
         return this;
@@ -120,21 +128,23 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
 
     @Override
     public AbstractHttpClientStream addScript(String script) {
-        if(isNotBlank(script)) {
+        if (isNotBlank(script)) {
             requestConfig.setText(script, MetaType.APPLICATION_JAVASCRIPT);
         }
         return this;
     }
+
     @Override
     public AbstractHttpClientStream addHtml(String script) {
-        if(isNotBlank(script)) {
+        if (isNotBlank(script)) {
             requestConfig.setText(script, MetaType.TEXT_HTML);
         }
         return this;
     }
+
     @Override
     public AbstractHttpClientStream addXml(String script) {
-        if(isNotBlank(script)) {
+        if (isNotBlank(script)) {
             requestConfig.setText(script, MetaType.TEXT_XML);
         }
         return this;
@@ -142,6 +152,7 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
 
     /**
      * 连接时间
+     *
      * @param connectTimeout
      * @return
      */
@@ -154,6 +165,7 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
 
     /**
      * 重试
+     *
      * @param retry
      * @return
      */
@@ -162,8 +174,10 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
         requestConfig.setRetry(retry);
         return this;
     }
+
     /**
      * 读取时间
+     *
      * @param readTimeout
      * @return
      */
@@ -172,8 +186,10 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
         requestConfig.setReadTimeout(readTimeout);
         return this;
     }
+
     /**
      * 读取时间
+     *
      * @param socketTimeout
      * @return
      */
@@ -184,18 +200,19 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
     }
 
     @Override
-    public AbstractHttpClientStream throwable(IThrowableHandler iThrowableHandler) {
+    public AbstractHttpClientStream throwable(ThrowableHandler iThrowableHandler) {
         requestConfig.setHandler(iThrowableHandler);
         return this;
     }
 
     /**
      * 构建
+     *
      * @return
      */
     @Override
-    public IHttpClientBuilder build() {
-        if(isNotBlank(requestConfig.getUrl())) {
+    public com.chua.utils.http.httpclient.build.HttpClientBuilder build() {
+        if (isNotBlank(requestConfig.getUrl())) {
             requestConfig.setHeaders(headers);
             requestConfig.setBodyers(bodyers);
             return new HttpClientBuilder(requestConfig);
@@ -205,6 +222,7 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
 
     /**
      * 生成安全套接字工厂，用于https请求的证书跳过
+     *
      * @return
      */
     public SSLSocketFactory createSslSocketFactory() {
@@ -219,7 +237,6 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
     }
 
 
-
     /**
      * 用于信任所有证书
      */
@@ -227,10 +244,12 @@ public class AbstractHttpClientStream extends com.chua.utils.http.stream.Abstrac
         @Override
         public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
         }
+
         @Override
         public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
 
         }
+
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             return new X509Certificate[0];

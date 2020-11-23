@@ -1,12 +1,15 @@
 package com.chua.utils.netx.elasticsearch.spring.context;
 
-import com.chua.utils.tools.function.Template;
-import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.elasticsearch.spring.factory.ElasticSearchFactory;
 import com.chua.utils.netx.factory.INetFactory;
+import com.chua.utils.tools.function.Template;
+import com.chua.utils.tools.properties.NetProperties;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.suggest.SuggestBuilder;
-import org.springframework.data.elasticsearch.core.*;
+import org.springframework.data.elasticsearch.core.AbstractElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.IndexOperations;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.SearchHitsIterator;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.*;

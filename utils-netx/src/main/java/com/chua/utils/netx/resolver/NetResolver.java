@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Properties;
-import java.util.function.Supplier;
 
 /**
  * net解释器
@@ -15,7 +14,7 @@ import java.util.function.Supplier;
  * @since 2020/11/21
  */
 @NoArgsConstructor
-public abstract class NetResolver implements Supplier<Service> {
+public abstract class NetResolver<T> {
 
     @Setter
     private Properties properties;
@@ -24,4 +23,11 @@ public abstract class NetResolver implements Supplier<Service> {
         this.properties = properties;
         setProperties(properties);
     }
+
+    /**
+     * 获取服务
+     *
+     * @return 服务
+     */
+    abstract public Service<T> get();
 }

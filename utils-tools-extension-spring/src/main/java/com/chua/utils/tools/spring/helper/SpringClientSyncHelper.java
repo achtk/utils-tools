@@ -1,8 +1,7 @@
 package com.chua.utils.tools.spring.helper;
 
-import com.chua.utils.http.config.RequestConfig;
-import com.chua.utils.http.entity.HttpClientResponse;
-import com.chua.utils.http.http.HttpStatus;
+import com.chua.utils.tools.http.config.RequestConfig;
+import com.chua.utils.tools.http.http.HttpStatus;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -49,17 +48,17 @@ public class SpringClientSyncHelper {
     /**
      * @return
      */
-    public HttpClientResponse executeGet() {
+    public com.chua.utils.tools.http.entity.ResponseEntity executeGet() {
         if (log.isDebugEnabled()) {
             log.debug("请求信息: {}", requestConfig.getUrl());
         }
         HttpEntity httpEntity = new HttpEntity(null, packageHeader(requestConfig.getHeaders()));
         try {
             ResponseEntity<Object> exchange = restTemplate.exchange(packageGetUrl(requestConfig), HttpMethod.GET, httpEntity, Object.class);
-            return new HttpClientResponse(exchange.getStatusCode().value(), exchange.getBody());
+            return new com.chua.utils.tools.http.entity.ResponseEntity(exchange.getStatusCode().value(), exchange.getBody());
         } catch (RestClientException e) {
             e.printStackTrace();
-            return new HttpClientResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return new com.chua.utils.tools.http.entity.ResponseEntity(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -84,51 +83,51 @@ public class SpringClientSyncHelper {
     /**
      * @return
      */
-    public HttpClientResponse executePost() {
+    public com.chua.utils.tools.http.entity.ResponseEntity executePost() {
         if (log.isDebugEnabled()) {
             log.debug("请求信息: {}", requestConfig.getUrl());
         }
         HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBodyers()), packageHeader(requestConfig.getHeaders()));
         try {
             ResponseEntity<String> exchange = restTemplate.exchange(requestConfig.getUrl(), HttpMethod.POST, httpEntity, String.class);
-            return new HttpClientResponse(exchange.getStatusCode().value(), exchange.getBody());
+            return new com.chua.utils.tools.http.entity.ResponseEntity(exchange.getStatusCode().value(), exchange.getBody());
         } catch (RestClientException e) {
             e.printStackTrace();
-            return new HttpClientResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return new com.chua.utils.tools.http.entity.ResponseEntity(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
      * @return
      */
-    public HttpClientResponse executePut() {
+    public com.chua.utils.tools.http.entity.ResponseEntity executePut() {
         if (log.isDebugEnabled()) {
             log.debug("请求信息: {}", requestConfig.getUrl());
         }
         HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBodyers()), packageHeader(requestConfig.getHeaders()));
         try {
             ResponseEntity<String> exchange = restTemplate.exchange(requestConfig.getUrl(), HttpMethod.PUT, httpEntity, String.class);
-            return new HttpClientResponse(exchange.getStatusCode().value(), exchange.getBody());
+            return new com.chua.utils.tools.http.entity.ResponseEntity(exchange.getStatusCode().value(), exchange.getBody());
         } catch (RestClientException e) {
             e.printStackTrace();
-            return new HttpClientResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return new com.chua.utils.tools.http.entity.ResponseEntity(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
      * @return
      */
-    public HttpClientResponse executeDelete() {
+    public com.chua.utils.tools.http.entity.ResponseEntity executeDelete() {
         if (log.isDebugEnabled()) {
             log.debug("请求信息: {}", requestConfig.getUrl());
         }
         HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBodyers()), packageHeader(requestConfig.getHeaders()));
         try {
             ResponseEntity<String> exchange = restTemplate.exchange(requestConfig.getUrl(), HttpMethod.DELETE, httpEntity, String.class);
-            return new HttpClientResponse(exchange.getStatusCode().value(), exchange.getBody());
+            return new com.chua.utils.tools.http.entity.ResponseEntity(exchange.getStatusCode().value(), exchange.getBody());
         } catch (RestClientException e) {
             e.printStackTrace();
-            return new HttpClientResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return new com.chua.utils.tools.http.entity.ResponseEntity(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

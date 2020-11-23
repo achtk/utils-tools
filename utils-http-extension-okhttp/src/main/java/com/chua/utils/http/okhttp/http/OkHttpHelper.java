@@ -2,7 +2,7 @@ package com.chua.utils.http.okhttp.http;
 
 
 import com.chua.utils.http.okhttp.enums.HttpMethod;
-import com.chua.utils.http.okhttp.stream.OkAbstractHttpStream;
+import com.chua.utils.http.okhttp.stream.OkHttpStream;
 
 /**
  * okhttp 工具类
@@ -15,39 +15,39 @@ public class OkHttpHelper {
      * get
      * @return
      */
-    public static OkAbstractHttpStream newGet() {
-        return new OkAbstractHttpStream(HttpMethod.GET);
+    public static OkHttpStream newGet() {
+        return new OkHttpStream(HttpMethod.GET);
     }
     /**
      * get
      * @return
      */
-    public static OkAbstractHttpStream newPost() {
-        return new OkAbstractHttpStream(HttpMethod.POST);
+    public static OkHttpStream newPost() {
+        return new OkHttpStream(HttpMethod.POST);
     }
 
     /**
      * put
      * @return
      */
-    public static OkAbstractHttpStream newPut() {
-        return new OkAbstractHttpStream(HttpMethod.PUT);
+    public static OkHttpStream newPut() {
+        return new OkHttpStream(HttpMethod.PUT);
     }
     
     /**
      * delete
      * @return
      */
-    public static OkAbstractHttpStream newDelete() {
-        return new OkAbstractHttpStream(HttpMethod.DELETE);
+    public static OkHttpStream newDelete() {
+        return new OkHttpStream(HttpMethod.DELETE);
     }
 
     /**
      * 下载器
      * @return
      */
-    public static OkAbstractHttpStream newDownloader() {
-        return new OkAbstractHttpStream(HttpMethod.DOWNLOADER);
+    public static OkHttpStream newDownloader() {
+        return new OkHttpStream(HttpMethod.DOWNLOADER);
     }
 
 }

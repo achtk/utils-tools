@@ -30,6 +30,13 @@ public interface ClassModifyDescriptionParser<T> {
     void addAnnotation(Annotation... annotations);
 
     /**
+     * 设置名称
+     *
+     * @param name 名称
+     */
+    void setName(String name);
+
+    /**
      * 添加方法
      *
      * @param method      完整方法(不包含泛型)

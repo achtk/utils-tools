@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class DocumentUtil {
 
     private static final Pattern PATTERN = Pattern.compile("(and|or){1}");
-    public static final String CREATE_TIME = "#createTime_";
+    public static final String CREATE_TIME = "#createTime";
     public static final String ID = "id";
     public static ConcurrentMap<String, String> javaProperty2SqlColumnMap = new ConcurrentHashMap<>();
 
@@ -94,6 +94,8 @@ public class DocumentUtil {
         }
         TextField createTimeField = new TextField(CREATE_TIME, System.currentTimeMillis() + "", Store.YES);
         document.add(createTimeField);
+        TextField idField = new TextField("#" + ID, dataDocument.getDataId(), Store.YES);
+        document.add(idField);
 
         return document;
     }

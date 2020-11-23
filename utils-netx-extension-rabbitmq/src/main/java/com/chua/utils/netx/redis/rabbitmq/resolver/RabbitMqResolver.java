@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  * @since 2020/11/21
  */
 @NoArgsConstructor
-public class RabbitMqResolver extends NetResolver implements NetPubSub<Channel> {
+public class RabbitMqResolver extends NetResolver<Connection> implements NetPubSub<Channel> {
 
     private ConnectionFactory connectionFactory;
     private Connection connection;
@@ -45,7 +45,7 @@ public class RabbitMqResolver extends NetResolver implements NetPubSub<Channel> 
     }
 
     @Override
-    public Service get() {
+    public Service<Connection> get() {
         return new Service(this.connection);
     }
 

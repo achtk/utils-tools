@@ -2,7 +2,6 @@ package com.chua.utils.netx.resolver.node;
 
 import com.chua.utils.netx.resolver.entity.NetNodeConf;
 
-import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
@@ -19,34 +18,43 @@ public interface NetNode<T> extends AutoCloseable {
      * @param netNodeConf 节点
      * @param data        数据
      * @return 数据
-     * @throws IOException
+     * @throws Exception
      */
-    byte[] addNode(NetNodeConf netNodeConf, byte[] data) throws IOException;
+    boolean addNode(NetNodeConf netNodeConf, String data) throws Exception;
+
+    /**
+     * 获取数据
+     *
+     * @param netNodeConf 节点
+     * @return 数据
+     * @throws Exception
+     */
+    String getValue(NetNodeConf netNodeConf) throws Exception;
 
     /**
      * 删除节点
      *
      * @param netNodeConf 节点
      * @return 数据
-     * @throws IOException
+     * @throws Exception
      */
-    byte[] deleteNode(NetNodeConf netNodeConf) throws IOException;
+    boolean deleteNode(NetNodeConf netNodeConf) throws Exception;
 
     /**
      * 节点状态
      *
      * @param netNodeConf 节点
      * @return 数据
-     * @throws IOException
+     * @throws Exception
      */
-    boolean existNode(NetNodeConf netNodeConf) throws IOException;
+    boolean existNode(NetNodeConf netNodeConf) throws Exception;
 
     /**
      * 监听
      *
      * @param netNodeConf 节点
      * @param consumer    回调
-     * @throws IOException
+     * @throws Exception
      */
-    void monitor(NetNodeConf netNodeConf, Consumer<T> consumer) throws IOException;
+    void monitor(NetNodeConf netNodeConf, Consumer<T> consumer) throws Exception;
 }

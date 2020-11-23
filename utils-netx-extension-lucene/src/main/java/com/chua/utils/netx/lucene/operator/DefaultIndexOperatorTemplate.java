@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 默认索引操作模板
@@ -86,7 +88,7 @@ public class DefaultIndexOperatorTemplate implements IndexOperatorTemplate {
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    if(path == dir) {
+                    if (path == dir) {
                         return FileVisitResult.CONTINUE;
                     }
                     List<IndexWriter> indexWriter = null;
@@ -113,7 +115,7 @@ public class DefaultIndexOperatorTemplate implements IndexOperatorTemplate {
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    if(path == dir) {
+                    if (path == dir) {
                         return FileVisitResult.CONTINUE;
                     }
                     List<IndexReader> indexReaders = null;
@@ -138,5 +140,34 @@ public class DefaultIndexOperatorTemplate implements IndexOperatorTemplate {
     @Override
     public Analyzer getAnalyzer() {
         return directoryFactory.getAnalyzer();
+    }
+
+    @Override
+    public Set<String> getCollections() {
+        Set<String> result = new HashSet<>();
+        Path path = Paths.get(this.path.toAbsolutePath().toString());
+        try {
+            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    if (path == dir) {
+                        return FileVisitResult.CONTINUE;
+                    }
+                    String name = dir.getFileName().toString();
+                    if (null != encrypt) {
+                        try {
+                            name = encrypt.decode(name);
+                        } catch (Exception e) {
+                        }
+                    }
+                    result.add(name);
+                    return super.preVisitDirectory(dir, attrs);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }

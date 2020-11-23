@@ -373,11 +373,30 @@ public class MapOperableHelper extends MultiMapOperableHelper {
     }
 
     /**
+     * 以null安全的方式从Map中获取Long。
+     * <p> Long是从{@link #getNumber（Object）}的结果中获得的。
+     *
+     * @param map          集合
+     * @param key          查找的关键
+     * @param key2         查找的关键
+     * @param <K>          索引类型
+     * @param <V>          数据类型
+     * @param defaultValue 默认值
+     * @return 如果输入的Map为空，则将Map中的值返回为Long，<code> null </ code>
+     */
+    public static <K, V> Long getLong(final Map<K, V> map, final K key, final K key2, final Long defaultValue) {
+        Long aLong = getLong(map, key);
+        return null == aLong ? (aLong = getLong(map, key2)) == null ? defaultValue : aLong : aLong;
+    }
+
+    /**
      * 以null安全的方式从Map获取Float。
      * <p> 浮点数是根据{@link #getNumber（Object）}的结果获得的。
      *
      * @param map 集合
      * @param key 查找的关键
+     * @param <K> 索引类型
+     * @param <V> 数据类型
      * @return 以浮点数形式返回Map中的值，如果输入的Map为空，则为<code> 0 </ code>
      */
     public static <K, V> float getFloatValue(final Map<K, V> map, final K key) {
@@ -392,6 +411,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * @param map          集合
      * @param key          查找的关键
      * @param defaultValue 默认值
+     * @param <K>          索引类型
+     * @param <V>          数据类型
      * @return 以浮点数形式返回Map中的值，如果输入的Map为空，则为<code> 0 </ code>
      */
     public static <K, V> float getFloatValue(final Map<K, V> map, final K key, final float defaultValue) {
@@ -403,6 +424,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取Float。
      * <p> 浮点数是根据{@link #getNumber（Object）}的结果获得的。
      *
+     * @param <K> 索引类型
+     * @param <V> 数据类型
      * @param map 集合
      * @param key 查找的关键
      * @return 以浮点数形式返回Map中的值，如果输入的Map为空，则为<code> null </ code>
@@ -421,10 +444,12 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取Float。
      * <p> 浮点数是根据{@link #getNumber（Object）}的结果获得的。
      *
+     * @param <K>          索引类型
+     * @param <V>          数据类型
      * @param map          集合
      * @param key          查找的关键
      * @param defaultValue 默认值
-     * @return 以浮点数形式返回Map中的值，如果输入的Map为空，则为<code> null </ code>
+     * @return 以浮点数形式返回Map中的值，如果输入的Map为空，则为<code> defaultValue </ code>
      */
     public static <K, V> Float getFloat(final Map<K, V> map, final K key, final Float defaultValue) {
         Float aFloat = getFloat(map, key);
@@ -432,9 +457,28 @@ public class MapOperableHelper extends MultiMapOperableHelper {
     }
 
     /**
+     * 以null安全的方式从Map获取Float。
+     * <p> 浮点数是根据{@link #getNumber（Object）}的结果获得的。
+     *
+     * @param <K>          索引类型
+     * @param <V>          数据类型
+     * @param map          集合
+     * @param key          查找的关键
+     * @param key2         查找的关键
+     * @param defaultValue 默认值
+     * @return 以浮点数形式返回Map中的值，如果输入的Map为空，则为<code> defaultValue </ code>
+     */
+    public static <K, V> Float getFloat(final Map<K, V> map, final K key, final K key2, final Float defaultValue) {
+        Float aFloat = getFloat(map, key);
+        return null == aFloat ? (aFloat = getFloat(map, key2)) == null ? defaultValue : aFloat : aFloat;
+    }
+
+    /**
      * 以null安全的方式从Map获取Double。
      * <p> 从{@link #getNumber（Object）}的结果中获得Double。
      *
+     * @param <K> 索引类型
+     * @param <V> 数据类型
      * @param map 集合
      * @param key 查找的关键
      * @return 如果输入的Map为空，则Map中的值为Double，<code> 0 </ code>
@@ -448,6 +492,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取Double。
      * <p> 从{@link #getNumber（Object）}的结果中获得Double。
      *
+     * @param <K>          索引类型
+     * @param <V>          数据类型
      * @param map          集合
      * @param key          查找的关键
      * @param defaultValue 默认值
@@ -462,6 +508,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取Double。
      * <p> 从{@link #getNumber（Object）}的结果中获得Double。
      *
+     * @param <K> 索引类型
+     * @param <V> 数据类型
      * @param map 集合
      * @param key 查找的关键
      * @return 如果输入的Map为空，则Map中的值为Double，<code> null </ code>
@@ -480,6 +528,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取Double。
      * <p> 从{@link #getNumber（Object）}的结果中获得Double。
      *
+     * @param <K>          索引类型
+     * @param <V>          数据类型
      * @param map          集合
      * @param key          查找的关键
      * @param defaultValue 默认值
@@ -491,8 +541,29 @@ public class MapOperableHelper extends MultiMapOperableHelper {
     }
 
     /**
+     * 以null安全的方式从Map获取Double。
+     * <p> 从{@link #getDouble(Map, Object)}的结果中获得Double。
+     *
+     * @param <K>          索引类型
+     * @param <V>          数据类型
+     * @param map          集合
+     * @param key          查找的关键
+     * @param defaultValue 默认值
+     * @return 如果输入的Map为空，则Map中的值为Double，<code> defaultValue </ code>
+     */
+    public static <K, V> Double getDouble(final Map<K, V> map, final K key, final K key2, final Double defaultValue) {
+        if (null == map) {
+            return defaultValue;
+        }
+        Double aDouble = getDouble(map, key);
+        return null == aDouble ? (aDouble = getDouble(map, key2)) == null ? defaultValue : aDouble : aDouble;
+    }
+
+    /**
      * 在给定映射中查找给定键，如果转换失败，则使用默认值将结果转换为。
      *
+     * @param <K>          索引类型
+     * @param <V>          数据类型
      * @param map          集合
      * @param key          在Map中查找的值的关键
      * @param defaultValue 如果值为null或转换失败，将返回defaultValue
@@ -513,6 +584,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 如果转换失败，则返回<code> null </ code>。
      * 否则，返回<code> null </ code>。
      *
+     * @param <K> 索引类型
+     * @param <V> 数据类型
      * @param map 集合
      * @param key 查找的关键
      * @return Map中的值作为Number，如果Map输入为空，则为<code> null </ code>
@@ -538,6 +611,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取Map。
      * <p> *如果从指定映射返回的值不是Map，则返回<code> null </ code>。
      *
+     * @param <K> 索引类型
+     * @param <V> 数据类型
      * @param key 查找的关键
      * @return Map中作为Map的值，如果为null，则<code> null </ code>
      */
@@ -553,6 +628,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取Map。
      * <p> *如果从指定映射返回的值不是Map，则返回<code> {} </ code>。
      *
+     * @param <K> 索引类型
+     * @param <V> 数据类型
      * @param key 查找的关键
      * @return Map中作为Map的值，如果为null，则<code> {} </ code>
      */
@@ -568,6 +645,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取Set。
      * <p> 如果从指定映射返回的值不是Map，则返回<code> null </ code>。
      *
+     * @param <K> 索引类型
+     * @param <V> 数据类型
      * @param key 查找的关键
      * @return Map中作为Set的值，如果为null，则<code> null </ code>
      */
@@ -583,6 +662,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取Set。
      * <p> 如果从指定映射返回的值不是Map，则返回<code> [] </ code>。
      *
+     * @param <K> 索引类型
+     * @param <V> 数据类型
      * @param key 查找的关键
      * @return Map中作为Set的值，如果为null，则<code> [] </ code>
      */
@@ -598,6 +679,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取List。
      * <p> 如果从指定映射返回的值不是Map，则返回<code> null </ code>。
      *
+     * @param <K> 索引类型
+     * @param <V> 数据类型
      * @param key 查找的关键
      * @return Map中作为List的值，如果为null，则<code> null </ code>
      */
@@ -613,10 +696,12 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取List。
      * <p> 如果从指定映射返回的值不是Map，则返回<code> null </ code>。
      *
+     * @param <T>    数据类型
      * @param key    查找的关键
      * @param tClass 类型
      * @return Map中作为List的值，如果为null，则<code> null </ code>
      */
+    @SuppressWarnings("all")
     public static <T> List<T> getList(final Map<?, ?> map, final Object key, final Class<T> tClass) {
         Object answer = map.get(key);
         if (answer instanceof List) {
@@ -694,9 +779,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 以null安全的方式从Map获取字符串数组。
      * <p>字符串是通过<code> toString </ code>获得的。
      *
-     * @param map       集合
-     * @param key       查找的关键
-     * @param delimiter 分隔符
+     * @param map 集合
+     * @param key 查找的关键
      * @return Map中的值作为字符串，如果为null，则<code> [] </ code>
      */
     public static <K, V> List<String> getStringList(final Map<K, V> map, final K key) {
@@ -717,6 +801,47 @@ public class MapOperableHelper extends MultiMapOperableHelper {
             return null;
         }
         return object.toString();
+    }
+
+    /**
+     * 以null安全的方式从Map获取字符串。
+     * <p>字符串是通过<code> toString </ code>获得的。
+     *
+     * @param map          集合
+     * @param key          查找的关键
+     * @param defaultValue 默认值
+     * @param <K>          索引类型
+     * @param <V>          数据类型
+     * @return Map中的值作为字符串，如果为null，则<code> defaultValue </ code>
+     */
+    public static <K, V> String getString(final Map<K, V> map, final List<K> key, final String defaultValue) {
+        for (K k : key) {
+            Object object = getObject(map, k);
+            if (null != object) {
+                return object.toString();
+            }
+        }
+        return defaultValue;
+    }
+
+    /**
+     * 以null安全的方式从Map获取字符串。
+     * <p>字符串是通过<code> toString </ code>获得的。
+     *
+     * @param map          集合
+     * @param key          查找的关键
+     * @param defaultValue 默认值
+     * @param <K>          索引类型
+     * @param <V>          数据类型
+     * @return Map中的值作为字符串，如果为null，则<code> defaultValue </ code>
+     */
+    public static <K, V> String getString(final Map<K, V> map, final K key, final K key2, final String defaultValue) {
+        if (null == map) {
+            return defaultValue;
+        }
+
+        Object v = getObject(map, key);
+        return null == v ? (v = getObject(map, key2)) == null ? defaultValue : v.toString() : v.toString();
     }
 
     /**
@@ -843,11 +968,13 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * @param key    key
      * @param value  value
      */
+    @SuppressWarnings("all")
     public static void computeIfAbsent(Map target, Object key, Object value) {
         Objects.requireNonNull(key, "key");
         if (target == null) {
             target = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         }
+
         if (value != null && !target.containsKey(key)) {
             target.put(key, value);
         }
@@ -951,7 +1078,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
         if (object instanceof String) {
             try {
                 return simpleDateFormat.format(simpleDateFormat.parse((String) object));
-            } catch (Exception e) {
+            } catch (Exception ignore) {
             }
         }
 
@@ -982,7 +1109,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * 配置文件化
      *
      * @param object 对象
-     * @return
+     * @return Properties
      */
     public static Properties toProfile(Object object) {
         Properties properties1 = new Properties();
@@ -1072,8 +1199,8 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      *
      * @param source     元数据
      * @param valueClass 数据类型
-     * @param <T>
-     * @return
+     * @param <T>        类型
+     * @return T
      */
     public static <T> T getIfOnly(final Map<String, Object> source, final Class<T> valueClass) {
         if (isEmpty(source)) {

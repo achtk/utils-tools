@@ -6,6 +6,7 @@ import com.chua.utils.netx.resolver.entity.Service;
 import com.chua.utils.netx.resolver.node.NetNode;
 import com.chua.utils.netx.zookeeper.context.ZookeeperContext;
 import com.chua.utils.tools.common.ByteHelper;
+import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.IConsumer;
 import com.chua.utils.tools.properties.NetProperties;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ import java.util.function.Consumer;
  * @since 2020/11/21
  */
 @NoArgsConstructor
-public class ZookeeperResolver extends NetResolver implements NetNode<TreeCacheEvent> {
+public class ZookeeperResolver extends NetResolver<CuratorFramework> implements NetNode<TreeCacheEvent> {
 
     private CuratorFramework curatorFramework;
     private ZookeeperContext zookeeperContext;
@@ -40,29 +41,35 @@ public class ZookeeperResolver extends NetResolver implements NetNode<TreeCacheE
     }
 
     @Override
-    public Service get() {
+    public Service<CuratorFramework> get() {
         return new Service(curatorFramework);
     }
 
     @Override
-    public byte[] addNode(NetNodeConf netNodeConf, byte[] data) throws IOException {
+    public boolean addNode(NetNodeConf netNodeConf, String data) throws IOException {
         try {
-            zookeeperContext.createNode(netNodeConf.getNode(), ByteHelper.toString(data), netNodeConf.getNodeType());
+            zookeeperContext.createNode(netNodeConf.getNode(), data, netNodeConf.getNodeType());
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
-        return data;
+        return true;
     }
 
     @Override
-    public byte[] deleteNode(NetNodeConf netNodeConf) throws IOException {
+    public String getValue(NetNodeConf netNodeConf) throws Exception {
+        return ByteHelper.toString(zookeeperContext.query(netNodeConf.getNode(), EmptyOrBase.EMPTY_BYTES));
+    }
+
+    @Override
+    public boolean deleteNode(NetNodeConf netNodeConf) throws IOException {
         try {
             zookeeperContext.delete(netNodeConf.getNode());
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
-        return null;
+        return true;
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.chua.utils.http.okhttp.stream;
 
-import com.chua.utils.http.meta.MetaType;
 import com.chua.utils.http.okhttp.enums.HttpMethod;
-import com.chua.utils.http.stream.AbstractHttpClientStream;
+import com.chua.utils.tools.http.meta.MetaType;
+import com.chua.utils.tools.http.stream.HttpClientStream;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author CHTK
  */
-public class OkAbstractHttpStream extends AbstractHttpClientStream {
+public class OkHttpStream extends HttpClientStream {
 
     private FormBody.Builder formBody = new FormBody.Builder();
 
@@ -25,7 +25,7 @@ public class OkAbstractHttpStream extends AbstractHttpClientStream {
 
     private Interceptor interceptor;
 
-    public OkAbstractHttpStream(HttpMethod method) {
+    public OkHttpStream(HttpMethod method) {
         this.method = method;
         requestConfig.setMethod(method.name());
     }
@@ -39,7 +39,7 @@ public class OkAbstractHttpStream extends AbstractHttpClientStream {
      * @return
      */
     @Override
-    public OkAbstractHttpStream addBody(final String bodyName, final Object bodyValue) {
+    public OkHttpStream addBody(final String bodyName, final Object bodyValue) {
         if (isNotBlank(bodyName)) {
             formBody.add(bodyName, (String) bodyValue);
         }
@@ -53,7 +53,7 @@ public class OkAbstractHttpStream extends AbstractHttpClientStream {
      * @return
      */
     @Override
-    public OkAbstractHttpStream setBody(Map<String, Object> params) {
+    public OkHttpStream setBody(Map<String, Object> params) {
         if (isNotBlank(params)) {
             for (Map.Entry<String, Object> entry : params.entrySet()) {
                 if (!isNotBlank(entry.getKey())) {
@@ -72,7 +72,7 @@ public class OkAbstractHttpStream extends AbstractHttpClientStream {
      * @return
      */
     @Override
-    public OkAbstractHttpStream addJson(final String json) {
+    public OkHttpStream addJson(final String json) {
         if (isNotBlank(json)) {
             requestBody = RequestBody.create(MediaType.parse(MetaType.APPLICATION_JSON.getValue()), json);
         }
@@ -80,7 +80,7 @@ public class OkAbstractHttpStream extends AbstractHttpClientStream {
     }
 
     @Override
-    public AbstractHttpClientStream addText(String json, MetaType metaType) {
+    public HttpClientStream addText(String json, MetaType metaType) {
         if (isNotBlank(json)) {
             requestBody = RequestBody.create(MediaType.parse(metaType.getValue()), json);
         }
@@ -94,7 +94,7 @@ public class OkAbstractHttpStream extends AbstractHttpClientStream {
      * @return
      */
     @Override
-    public OkAbstractHttpStream addXml(String xml) {
+    public OkHttpStream addXml(String xml) {
         if (isNotBlank(xml)) {
             requestBody = RequestBody.create(MediaType.parse(MetaType.TEXT_XML.getValue()), xml);
         }
@@ -108,7 +108,7 @@ public class OkAbstractHttpStream extends AbstractHttpClientStream {
      * @return
      */
     @Override
-    public OkAbstractHttpStream addHtml(String html) {
+    public OkHttpStream addHtml(String html) {
         if (isNotBlank(html)) {
             requestBody = RequestBody.create(MediaType.parse(MetaType.TEXT_HTML.getValue()), html);
         }
@@ -122,7 +122,7 @@ public class OkAbstractHttpStream extends AbstractHttpClientStream {
      * @return
      */
     @Override
-    public OkAbstractHttpStream addScript(String script) {
+    public OkHttpStream addScript(String script) {
         if (isNotBlank(script)) {
             requestBody = RequestBody.create(MediaType.parse(MetaType.APPLICATION_JAVASCRIPT.getValue()), script);
         }
@@ -135,7 +135,7 @@ public class OkAbstractHttpStream extends AbstractHttpClientStream {
      * @param interceptor
      * @return
      */
-    public OkAbstractHttpStream log(final Interceptor interceptor) {
+    public OkHttpStream log(final Interceptor interceptor) {
         this.interceptor = interceptor;
         return this;
     }

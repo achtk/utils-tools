@@ -1,35 +1,35 @@
 package com.chua.utils.http.httpclient.factory;
 
 
-import com.chua.utils.http.http.IHttpClientFactory;
 import com.chua.utils.http.httpclient.stream.HttpClientStream;
-import com.chua.utils.http.stream.AbstractHttpClientStream;
+import com.chua.utils.tools.http.http.HttpClientFactory;
 
 /**
  * HttpClient实现
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/3/21 14:10
  */
-public class HttpClientClientFactory implements IHttpClientFactory {
+public class HttpClientClientFactory implements HttpClientFactory {
 
     @Override
-    public AbstractHttpClientStream newGet() {
+    public HttpClientStream newGet() {
         return new HttpClientStream("GET");
     }
 
     @Override
-    public AbstractHttpClientStream newPost() {
+    public HttpClientStream newPost() {
         return new HttpClientStream("POST");
     }
 
     @Override
-    public AbstractHttpClientStream newPut() {
+    public HttpClientStream newPut() {
         return new HttpClientStream("PUT");
     }
 
     @Override
-    public AbstractHttpClientStream newDelete() {
+    public HttpClientStream newDelete() {
         return new HttpClientStream("DELETE");
     }
 }

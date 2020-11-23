@@ -214,7 +214,6 @@
         <module>utils-tools-extension-cache-caffeine</module>
         <module>utils-tools-extension-cache-ehcache</module>
 
-        <module>utils-http</module>
         <module>utils-http-extension-okhttp</module>
         <module>utils-http-extension-httpclient</module>
 

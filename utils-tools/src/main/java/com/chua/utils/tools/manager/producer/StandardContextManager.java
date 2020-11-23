@@ -6,6 +6,7 @@ import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.manager.*;
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
 import com.chua.utils.tools.manager.parser.StandardClassDescriptionParser;
+import com.chua.utils.tools.manager.template.MBeanTemplate;
 import com.chua.utils.tools.resource.factory.ResourceFactory;
 import com.chua.utils.tools.resource.template.ResourceTemplate;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
@@ -85,4 +86,5 @@ public class StandardContextManager implements ContextManager {
     public ResourceTemplate createResourceTemplate(ResourceFactory resourceFactory) {
         return new ResourceTemplate(resourceFactory);
     }
+
 }

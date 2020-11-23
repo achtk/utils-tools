@@ -1,7 +1,7 @@
 package com.chua.utils.tools.spring.helper;
 
-import com.chua.utils.http.config.RequestConfig;
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.http.config.RequestConfig;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;

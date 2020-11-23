@@ -1,7 +1,7 @@
 package com.chua.utils.http.httpclient.sync;
 
-import com.chua.utils.http.config.RequestConfig;
-import com.chua.utils.http.entity.HttpClientResponse;
+import com.chua.utils.tools.http.config.RequestConfig;
+import com.chua.utils.tools.http.entity.ResponseEntity;
 import com.chua.utils.http.httpclient.handler.HttpClientHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -34,7 +34,7 @@ public class Sync extends HttpClientHandler {
      *
      * @return
      */
-    public HttpClientResponse executeDelete() {
+    public ResponseEntity executeDelete() {
         Map<String, Object> bodes = requestConfig.getBodyers();
         if (bodes == null) {
             bodes = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
@@ -49,7 +49,7 @@ public class Sync extends HttpClientHandler {
      *
      * @return
      */
-    public HttpClientResponse executePut() {
+    public ResponseEntity executePut() {
         CloseableHttpClient httpClient = getClient();
         //
         String url = requestConfig.getUrl();
@@ -85,7 +85,7 @@ public class Sync extends HttpClientHandler {
      *
      * @return
      */
-    public HttpClientResponse executePost() {
+    public ResponseEntity executePost() {
         // 创建httpClient对象
         CloseableHttpClient httpClient = getClient();
 
@@ -122,7 +122,7 @@ public class Sync extends HttpClientHandler {
      *
      * @return
      */
-    public HttpClientResponse executeGet() {
+    public ResponseEntity executeGet() {
         // 创建httpClient对象
         CloseableHttpClient httpClient = getClient();
         // 创建访问的地址

@@ -1,10 +1,13 @@
 package com.chua.utils.tools.common;
 
 import com.google.common.base.Strings;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.chua.utils.tools.constant.SymbolConstant.*;
@@ -336,7 +339,7 @@ public class NetHelper {
         }
         int index = uri.indexOf(SYMBOL_COLON);
         if (index != -1) {
-            uri = uri.substring(index +1);
+            uri = uri.substring(index + 1);
         }
         uri = uri.replace("\\", SYMBOL_LEFT_SLASH).replaceAll("//", SYMBOL_LEFT_SLASH);
         if (uri.startsWith(SYMBOL_LEFT_SLASH)) {
@@ -364,5 +367,38 @@ public class NetHelper {
         }
         int index = address.indexOf("://");
         return index == -1 ? "" : address.substring(0, index);
+    }
+
+    /**
+     * 获取所有网卡
+     *
+     * @return 网卡
+     */
+    @SneakyThrows
+    public static List<InetAddress> getNetworkInterfaces() {
+        List<InetAddress> result = new ArrayList<>();
+
+        int lowest = Integer.MAX_VALUE;
+        for (Enumeration<NetworkInterface> nics = NetworkInterface.getNetworkInterfaces(); nics.hasMoreElements(); ) {
+            NetworkInterface ifc = nics.nextElement();
+            if (ifc.isUp()) {
+                if (ifc.getIndex() < lowest || result == null) {
+                    lowest = ifc.getIndex();
+                } else if (result != null) {
+                    continue;
+                }
+
+                for (Enumeration<InetAddress> addrs = ifc
+                        .getInetAddresses(); addrs.hasMoreElements(); ) {
+                    InetAddress address = addrs.nextElement();
+                    if (address instanceof Inet4Address
+                            && !address.isLoopbackAddress()
+                            && address.isSiteLocalAddress()) {
+                        result.add(address);
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

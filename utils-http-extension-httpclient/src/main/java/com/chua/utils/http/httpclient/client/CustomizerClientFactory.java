@@ -1,6 +1,6 @@
 package com.chua.utils.http.httpclient.client;
 
-import com.chua.utils.http.config.ClientConfig;
+import com.chua.utils.tools.http.config.ClientConfig;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;

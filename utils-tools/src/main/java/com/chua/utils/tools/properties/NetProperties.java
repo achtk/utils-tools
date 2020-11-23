@@ -89,6 +89,12 @@ public class NetProperties extends Properties implements StatelessProperties {
      */
     private String version;
 
+    public static NetProperties newProperty(Properties properties) {
+        NetProperties netProperties = new NetProperties();
+        netProperties.putAll(properties);
+        return netProperties;
+    }
+
     public void setVersion(String version) {
         this.version = version;
         this.put("version", version);
@@ -108,6 +114,7 @@ public class NetProperties extends Properties implements StatelessProperties {
 
     /**
      * 设置host
+     *
      * @param host host
      */
     public void setHost(String host) {
@@ -118,8 +125,10 @@ public class NetProperties extends Properties implements StatelessProperties {
         }
         this.put(CONFIG_FIELD_HOST, this.host);
     }
+
     /**
      * 设置host
+     *
      * @param host host
      */
     public void setHost(String[] host) {
@@ -141,6 +150,7 @@ public class NetProperties extends Properties implements StatelessProperties {
 
     /**
      * 添加host
+     *
      * @param host host
      */
     @SuppressWarnings("unchecked")
@@ -232,10 +242,11 @@ public class NetProperties extends Properties implements StatelessProperties {
 
     /**
      * 获取值不存在获取默认值
+     *
      * @param defaultValue 默认值
      * @return
      */
     public int getPort(int defaultValue) {
-        return port <= 0 ? defaultValue: port;
+        return port <= 0 ? defaultValue : port;
     }
 }
