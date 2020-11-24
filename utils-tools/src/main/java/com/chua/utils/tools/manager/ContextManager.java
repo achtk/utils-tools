@@ -1,5 +1,6 @@
 package com.chua.utils.tools.manager;
 
+import com.chua.utils.tools.manager.eventbus.EventBus;
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
 import com.chua.utils.tools.manager.template.HttpTemplate;
 import com.chua.utils.tools.manager.template.MBeanTemplate;

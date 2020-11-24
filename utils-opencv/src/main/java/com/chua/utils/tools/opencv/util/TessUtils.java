@@ -21,7 +21,7 @@ public class TessUtils {
      * @param language 语言
      * @param dataPath 数据路径
      * @param imageUrl 图片路径
-     * @return
+     * @return String
      */
     public static String ocr(String language, String dataPath, String imageUrl) {
         BytePointer outText;

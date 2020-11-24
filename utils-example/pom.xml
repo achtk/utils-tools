@@ -232,6 +232,18 @@
             <version>1.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-netx-extension-event</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!--        <dependency>-->
+<!--            <groupId>com.chua</groupId>-->
+<!--            <artifactId>utils-opencv</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
+
     </dependencies>
 
 

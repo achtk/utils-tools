@@ -27,7 +27,7 @@ public class TDemoInfo {
     @Column
     private String test;
 
-    private String uuid;
+    private String uuid = IdHelper.createUuid();
 
     public String getUuid() {
         return IdHelper.createUuid();

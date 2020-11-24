@@ -525,8 +525,7 @@ public class JsonHelper {
         try {
             OBJECT_MAPPER.readTree(json);
             return true;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Throwable e) {
         }
         return false;
     }

@@ -1,5 +1,7 @@
 package com.chua.utils.tools.manager;
 
+import com.chua.utils.tools.manager.eventbus.EventBus;
+
 import java.util.List;
 
 /**
@@ -15,9 +17,10 @@ public interface EventBusContextManager {
      * 获取所有消息总线
      *
      * @param name     总线名称
-     * @param eventBus 消息
+     * @param eventBus 消息总线
+     * @param object   注册的对象
      */
-    void registerEventBus(String name, List<Object> eventBus);
+    void registerEventBus(String name, EventBus eventBus, Object object);
 
     /**
      * 发送消息到总线

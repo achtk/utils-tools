@@ -1,7 +1,9 @@
 package com.chua.utils.tools.manager.producer;
 
+import com.chua.utils.tools.collects.MultiValueMap;
 import com.chua.utils.tools.manager.EventBusContextManager;
-import com.google.common.eventbus.EventBus;
+import com.chua.utils.tools.manager.eventbus.EventBus;
+import com.chua.utils.tools.manager.eventbus.ServerEventBus;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,22 +15,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 1.0.0
  * @since 2020/11/9
  */
-class StandardEventBusContextManager implements EventBusContextManager {
+public class StandardEventBusContextManager implements EventBusContextManager {
 
-    private static final ConcurrentHashMap<String, EventBus> CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
+    private static final MultiValueMap<String, EventBus> CONCURRENT_HASH_MAP = new MultiValueMap<>();
 
     @Override
-    public void registerEventBus(String name, List<Object> eventBus) {
-        EventBus eventBus1 = null;
-        if (CONCURRENT_HASH_MAP.containsKey(name)) {
-            eventBus1 = CONCURRENT_HASH_MAP.get(name);
-        } else {
-            eventBus1 = new EventBus(name);
-            CONCURRENT_HASH_MAP.put(name, eventBus1);
-        }
-
-        for (Object bus : eventBus) {
-            eventBus1.register(bus);
+    public void registerEventBus(String name, EventBus eventBus, Object object) {
+        CONCURRENT_HASH_MAP.add(name, eventBus);
+        eventBus.register(object);
+        if (eventBus instanceof ServerEventBus) {
+            ((ServerEventBus) eventBus).setName(name);
+            ((ServerEventBus) eventBus).setObject(object);
         }
     }
 
@@ -37,7 +34,9 @@ class StandardEventBusContextManager implements EventBusContextManager {
         if (!CONCURRENT_HASH_MAP.containsKey(name)) {
             return;
         }
-        EventBus eventBus = CONCURRENT_HASH_MAP.get(name);
-        eventBus.post(message);
+        List<EventBus> eventBuses = CONCURRENT_HASH_MAP.get(name);
+        for (EventBus eventBus : eventBuses) {
+            eventBus.post(message);
+        }
     }
 }

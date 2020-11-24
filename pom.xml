@@ -253,6 +253,8 @@
         <module>utils-tools-extension-pcap</module>
         <module>utils-tools-spider</module>
         <module>utils-netx-extension-rabbitmq</module>
+        <module>utils-opencv</module>
+        <module>utils-netx-extension-event</module>
     </modules>
 
     <build>
