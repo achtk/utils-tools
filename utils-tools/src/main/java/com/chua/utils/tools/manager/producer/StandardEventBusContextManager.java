@@ -36,7 +36,11 @@ public class StandardEventBusContextManager implements EventBusContextManager {
         }
         List<EventBus> eventBuses = CONCURRENT_HASH_MAP.get(name);
         for (EventBus eventBus : eventBuses) {
-            eventBus.post(message);
+            if (eventBus instanceof ServerEventBus) {
+                ((ServerEventBus) eventBus).post(name, message);
+            } else {
+                eventBus.post(message);
+            }
         }
     }
 }

@@ -1,0 +1,2 @@
+vertx-eventbus=com.chua.utils.event.eventbus.VertxEventBus
+vertx-server-eventbus=com.chua.utils.event.eventbus.VertxEventBus

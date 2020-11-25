@@ -1,15 +1,7 @@
 package com.chua.utils.tools.example;
 
-import com.chua.utils.event.eventbus.VertxEventBus;
-import com.chua.utils.event.eventbus.server.ServerEventBusMonitor;
+import com.chua.utils.event.eventbus.server.VertxServerEventBus;
 import com.chua.utils.tools.example.entity.TDemoInfo;
-import com.chua.utils.tools.manager.EventBusContextManager;
-import com.chua.utils.tools.manager.producer.StandardEventBusContextManager;
-import com.chua.utils.tools.text.IdHelper;
-import com.google.common.eventbus.Subscribe;
-
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 
 /**
  * @author CH
@@ -19,10 +11,10 @@ import java.util.stream.IntStream;
 public class ServerEventBusExample {
 
     public static void main(String[] args) {
-        ServerEventBusMonitor serverEventBusMonitor = new ServerEventBusMonitor();
+        VertxServerEventBus vertxServerEventBus = new VertxServerEventBus();
 
         while (true) {
-            serverEventBusMonitor.sendEventBus("demo", new TDemoInfo());
+            vertxServerEventBus.sendEventBus("demo", new TDemoInfo());
         }
     }
 }

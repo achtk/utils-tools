@@ -7,7 +7,7 @@ package com.chua.utils.tools.manager.eventbus;
  * @version 1.0.0
  * @since 2020/11/24
  */
-public interface ServerEventBus extends EventBus {
+public interface ServerEventBus extends EventBus, AutoCloseable {
     /**
      * 名称
      *
@@ -21,4 +21,17 @@ public interface ServerEventBus extends EventBus {
      * @param object 对象
      */
     void setObject(Object object);
+
+    @Override
+    default void post(Object event) {
+
+    }
+
+    /**
+     * 发送
+     *
+     * @param channel 通道
+     * @param event   事件
+     */
+    void post(String channel, Object event);
 }

@@ -1,0 +1,2 @@
+eventbus=com.chua.utils.tools.manager.eventbus.GuavaEventBus
+async-eventbus=com.chua.utils.tools.manager.eventbus.GuavaAsyncEventBus

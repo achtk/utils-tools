@@ -18,14 +18,15 @@ public class EventBusExample {
 
     public static void main(String[] args) {
         EventBusContextManager eventBusContextManager = new StandardEventBusContextManager();
-       // eventBusContextManager.registerEventBus("demo", new GuavaEventBus(), new EventBusDemo());
-       // eventBusContextManager.registerEventBus("demo", new GuavaAsyncEventBus(), new EventBusDemo());
-        eventBusContextManager.registerEventBus("demo", new VertxEventBus("127.0.0.1", 12345), new EventBusDemo());
+        // eventBusContextManager.registerEventBus("demo", new GuavaEventBus(), new EventBusDemo());
+        // eventBusContextManager.registerEventBus("demo", new GuavaAsyncEventBus(), new EventBusDemo());
+        //eventBusContextManager.registerEventBus("demo", new VertxServerEventBus(12345), null);
+        eventBusContextManager.registerEventBus("demo", new VertxEventBus( 12345), new EventBusDemo());
 
-//        IntStream.range(0, 10).forEach(action -> {
-//            eventBusContextManager.sendEventBus("demo", IdHelper.createSimpleUuid());
-//        //    eventBusContextManager.sendEventBus("demo1", IdHelper.createSimpleUuid());
-//        });
+        IntStream.range(0, 10).forEach(action -> {
+            eventBusContextManager.sendEventBus("demo", IdHelper.createSimpleUuid());
+        //    eventBusContextManager.sendEventBus("demo1", IdHelper.createSimpleUuid());
+        });
     }
 
     static class EventBusDemo {
