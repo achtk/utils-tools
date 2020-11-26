@@ -31,7 +31,7 @@ public class ResourceHelperExample {
         //资源查找
         Set<Resource> resources = testFastGetResources();
         //资源查找
-        Set<Resource> resources1 = testReflectGetResources();
+        //Set<Resource> resources1 = testReflectGetResources();
         //子类查找
         testSubGetResources();
         //资源查找
@@ -39,7 +39,6 @@ public class ResourceHelperExample {
         //资源查找
         testReflectSubGetResources();
 
-        System.out.println();
     }
 
     private static void testSubGetResources() {

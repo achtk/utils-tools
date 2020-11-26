@@ -23,6 +23,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.FileHandler;
 import java.util.zip.ZipFile;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
@@ -83,8 +84,47 @@ public class ClassPathMatcher extends UrlHelper implements PathMatcher {
         //待匹配的文件
         String subPath = name.substring(classPathRoot.length());
         //获取目录文件
+        //getResources(classPathRoot, excludes);
+        //getResourcesByClassLoader(excludes);
         Set<Resource> resources = getResources(classPathRoot, excludes);
         return analysisResources(resources, name, rootPath, subPath);
+    }
+
+    /**
+     * 根据类加载器获取URL
+     *
+     * @param excludes 除外的url
+     * @return
+     */
+    private Set<Resource> getResourcesByClassLoader(String[] excludes) {
+        Set<Resource> resources = new HashSet<>();
+        URL[] urls = ClassHelper.getUrlsByClassLoaderExcludeJdk(classLoader);
+        for (URL url : urls) {
+            Resource resource = createResource(url, excludes);
+            if (null != resource) {
+                resources.add(resource);
+            }
+        }
+
+        return resources;
+    }
+
+    /**
+     * 创建资源
+     *
+     * @param url      url
+     * @param excludes 除外包
+     * @return
+     */
+    private Resource createResource(URL url, String[] excludes) {
+        String name = FileHelper.getName(url.toExternalForm());
+        for (String exclude : excludes) {
+            if(StringHelper.wildcardMatch(name, exclude)) {
+                continue;
+            }
+            return Resource.create(url);
+        }
+        return null;
     }
 
     /**
@@ -263,7 +303,7 @@ public class ClassPathMatcher extends UrlHelper implements PathMatcher {
         } catch (Throwable ignore) {
         }
 
-        if(null == jarFile) {
+        if (null == jarFile) {
             return;
         }
         //url根目录

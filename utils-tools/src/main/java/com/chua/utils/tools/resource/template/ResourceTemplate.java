@@ -100,9 +100,8 @@ public class ResourceTemplate {
             long startTime = System.currentTimeMillis();
             Set<Resource> resources = getResources(ANY);
             List<Class<?>> subType = new ArrayList<>();
-            long start = System.currentTimeMillis();
             if (SUB_CACHE.size() == 0) {
-                resources.parallelStream().forEach(resource -> {
+                resources.forEach(resource -> {
                     ClassDescription classDescription = resource.getClassDescription();
                     if (null == classDescription) {
                         return;
@@ -120,10 +119,6 @@ public class ResourceTemplate {
                         }
                     }
                 });
-            }
-            long end = (System.currentTimeMillis() - start);
-            if (end > 10 ) {
-                System.out.println(": " + end);
             }
             List<String> subs = new ArrayList<>();
             subs.add(encryptClass.getName());

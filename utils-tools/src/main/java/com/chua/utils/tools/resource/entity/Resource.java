@@ -82,8 +82,7 @@ public class Resource implements Serializable {
     private ClassDescription createDescription() {
         try (InputStream inputStream = url.openStream()) {
             MetadataAdapter metadataAdapter = new JavassistAdaptor(inputStream);
-            ClassDescription description = metadataAdapter.description();
-            return description;
+            return metadataAdapter.description();
         } catch (IOException e) {
             return null;
         }

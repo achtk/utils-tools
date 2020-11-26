@@ -219,6 +219,10 @@ public class RewriteStore extends Store {
             if (null == multimap) {
                 continue;
             }
+            CopyOnWriteArrayList<String> strings = multimap.get(key);
+            if(null == strings) {
+                continue;
+            }
             for (String value : multimap.get(key)) {
                 result.put(url, value);
             }

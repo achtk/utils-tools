@@ -29,6 +29,6 @@ public class BooleanTypeConverter implements TypeConverter<Boolean> {
 
     @Override
     public Class<Boolean> getType() {
-        return null;
+        return Boolean.class;
     }
 }

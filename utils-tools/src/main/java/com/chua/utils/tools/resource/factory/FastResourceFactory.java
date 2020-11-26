@@ -1,5 +1,6 @@
 package com.chua.utils.tools.resource.factory;
 
+import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.common.UrlHelper;
 import com.chua.utils.tools.function.Matcher;
@@ -37,7 +38,7 @@ public class FastResourceFactory extends UrlHelper implements ResourceFactory {
 
     private AtomicInteger atomicInteger = new AtomicInteger(0);
     private boolean cache = true;
-    private ClassLoader classLoader = this.getClass().getClassLoader();
+    private ClassLoader classLoader = ClassHelper.getDefaultClassLoader();
     private Matcher<Resource> matcher = resource -> {};
 
     @Override
