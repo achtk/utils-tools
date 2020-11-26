@@ -66,8 +66,6 @@ public class ResourceTemplate {
     @Setter
     private List<String> excludes = Lists.newArrayList(SkipPatterns.JDK_LIB);
 
-    public ResourceTemplate() {
-    }
 
     public ResourceTemplate(ResourceFactory resourceFactory) {
         this.resourceFactory = resourceFactory;
