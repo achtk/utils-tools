@@ -46,7 +46,7 @@ public class LongTypeConverter implements TypeConverter<Long> {
     }
 
     @Override
-    public Class<? extends Long> getType() {
+    public Class<Long> getType() {
         return Long.class;
     }
 }

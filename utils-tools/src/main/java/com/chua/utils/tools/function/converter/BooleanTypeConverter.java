@@ -18,7 +18,7 @@ public class BooleanTypeConverter implements TypeConverter<Boolean> {
             return (Boolean) value;
         }
 
-        if (value instanceof String) {
+        if(value instanceof String) {
             try {
                 return Boolean.valueOf(value.toString());
             } catch (Exception e) {
@@ -28,7 +28,7 @@ public class BooleanTypeConverter implements TypeConverter<Boolean> {
     }
 
     @Override
-    public Class<? extends Boolean> getType() {
+    public Class<Boolean> getType() {
         return null;
     }
 }

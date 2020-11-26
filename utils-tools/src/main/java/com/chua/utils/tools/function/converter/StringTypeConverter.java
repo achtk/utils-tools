@@ -14,7 +14,7 @@ public class StringTypeConverter implements TypeConverter<String> {
     }
 
     @Override
-    public Class<? extends String> getType() {
+    public Class<String> getType() {
         return String.class;
     }
 }

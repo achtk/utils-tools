@@ -41,7 +41,7 @@ public class FloatTypeConverter implements TypeConverter<Float> {
     }
 
     @Override
-    public Class<? extends Float> getType() {
+    public Class<Float> getType() {
         return Float.class;
     }
 }

@@ -41,7 +41,7 @@ public class DoubleTypeConverter implements TypeConverter<Double> {
     }
 
     @Override
-    public Class<? extends Double> getType() {
+    public Class<Double> getType() {
         return Double.class;
     }
 }

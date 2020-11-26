@@ -42,7 +42,7 @@ public class ShortTypeConverter implements TypeConverter<Short> {
     }
 
     @Override
-    public Class<? extends Short> getType() {
+    public Class<Short> getType() {
         return Short.class;
     }
 }

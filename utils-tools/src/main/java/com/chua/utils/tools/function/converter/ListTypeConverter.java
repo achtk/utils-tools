@@ -30,7 +30,7 @@ public class ListTypeConverter implements TypeConverter<List> {
     }
 
     @Override
-    public Class<? extends List> getType() {
+    public Class<List> getType() {
         return List.class;
     }
 }

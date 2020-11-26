@@ -39,7 +39,7 @@ public class BigIntegerTypeConverter implements TypeConverter<BigInteger> {
     }
 
     @Override
-    public Class<? extends BigInteger> getType() {
+    public Class<BigInteger> getType() {
         return BigInteger.class;
     }
 }

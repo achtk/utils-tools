@@ -9,7 +9,7 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2020/11/5
  */
-public class MapTypeConverter implements TypeConverter<Map<?, ?>> {
+public class MapTypeConverter implements TypeConverter<Map> {
     @Override
     public Map convert(Object value) {
         if (null == value) {
@@ -24,7 +24,7 @@ public class MapTypeConverter implements TypeConverter<Map<?, ?>> {
     }
 
     @Override
-    public Class<? extends Map> getType() {
+    public Class<Map> getType() {
         return Map.class;
     }
 }

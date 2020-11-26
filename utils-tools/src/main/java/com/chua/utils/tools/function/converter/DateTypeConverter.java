@@ -28,7 +28,7 @@ public class DateTypeConverter implements TypeConverter<Date> {
     }
 
     @Override
-    public Class<? extends Date> getType() {
+    public Class<Date> getType() {
         return Date.class;
     }
 }

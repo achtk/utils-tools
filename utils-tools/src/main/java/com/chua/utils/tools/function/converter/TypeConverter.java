@@ -24,7 +24,7 @@ public interface TypeConverter<O> extends Converter<Object, O> {
      *
      * @return O
      */
-    Class<? extends O> getType();
+    Class<O> getType();
 
     /**
      * 转化

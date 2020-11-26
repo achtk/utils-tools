@@ -53,7 +53,7 @@ public class BigDecimalTypeConverter implements TypeConverter<BigDecimal> {
     }
 
     @Override
-    public Class<? extends BigDecimal> getType() {
+    public Class<BigDecimal> getType() {
         return BigDecimal.class;
     }
 }

@@ -9,9 +9,9 @@ import com.chua.utils.tools.classes.ClassHelper;
  * @version 1.0.0
  * @since 2020/11/26
  */
-public class ClassTypeConverter implements TypeConverter<Class<?>> {
+public class ClassTypeConverter implements TypeConverter<Class> {
     @Override
-    public Class<?> convert(Object value) {
+    public Class convert(Object value) {
         if (null == value) {
             return null;
         }
@@ -28,7 +28,7 @@ public class ClassTypeConverter implements TypeConverter<Class<?>> {
     }
 
     @Override
-    public Class<? extends Class<?>> getType() {
-        return (Class<? extends Class<?>>) Class.class;
+    public Class<Class> getType() {
+        return Class.class;
     }
 }
