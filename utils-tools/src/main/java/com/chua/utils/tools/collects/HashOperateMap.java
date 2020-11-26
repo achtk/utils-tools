@@ -29,6 +29,20 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
     }
 
     /**
+     * 添加实体类属性到集合
+     *
+     * @param object 实体类
+     */
+    public void putComputeIfEntity(Object object) {
+        if (null == object || object instanceof Class) {
+            return;
+        }
+        BeanCopy<Object> beanCopy = BeanCopy.of(object);
+        HashOperateMap operateMap = beanCopy.asMap();
+        this.putAll(operateMap);
+    }
+
+    /**
      * 保存时计算结果是否满足
      * <p>满足表示已有数据满足条件不进行插入</p>
      * <p>e.g. putComputeIfAbsent(null, "demo", item -> item != null) = null </p>

@@ -12,5 +12,5 @@ public interface ThrowableHandler {
      * @param throwable 异常
      * @return
      */
-    public ResponseEntity throwable(Throwable throwable);
+    ResponseEntity throwable(Throwable throwable);
 }

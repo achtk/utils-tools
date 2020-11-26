@@ -3,7 +3,6 @@ package com.chua.utils.tools.spring.bean;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.StringHelper;
-import com.chua.utils.tools.constant.NumberConstant;
 import com.chua.utils.tools.spring.entity.BeanLoader;
 import com.chua.utils.tools.spring.entity.MappingEntity;
 import com.chua.utils.tools.spring.environment.EnvironmentFactory;

@@ -276,8 +276,8 @@
                     <execution>
                         <id>default-compile</id>
                         <configuration>
-                            <source>8</source>
-                            <target>8</target>
+                            <source>1.8</source>
+                            <target>1.8</target>
                             <encoding>UTF-8</encoding>
                         </configuration>
                     </execution>

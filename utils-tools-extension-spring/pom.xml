@@ -19,12 +19,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-http</artifactId>
-            <version>${utils-http.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>8.0</version>
@@ -40,7 +34,6 @@
             <artifactId>spring-context-support</artifactId>
             <version>${spring-context-support.version}</version>
         </dependency>
-
     </dependencies>
 
 </project>
