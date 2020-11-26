@@ -9,6 +9,7 @@ import com.chua.utils.tools.function.MapOperable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * 扩展性Map
@@ -25,6 +26,37 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
     public Object put(String key, Object value) {
         this.setKeyValue(key, value);
         return super.put(key, value);
+    }
+
+    /**
+     * 保存时计算结果是否满足
+     * <p>满足表示已有数据满足条件不进行插入</p>
+     * <p>e.g. putComputeIfAbsent(null, "demo", item -> item != null) = null </p>
+     * <p>e.g. putComputeIfAbsent("demo", "demo", item -> item != null) = 原始值 || demo </p>
+     * <p>e.g. putComputeIfAbsent("demo", null, item -> item != null) = 原始值 </p>
+     * <p>条件函数{@link Predicate}</p>
+     *
+     * @param key      索引
+     * @param newValue 值
+     * @param filter   条件
+     * @return <ul>
+     * <li>当前{key}为空返回null</li>
+     * <li>当前{key}不在集合中直接存储当前数据返回{newValue}</li>
+     * <li>当前{key}在集合中并且存储的数据满足条件{filter}直接存储进行覆盖当前数据返回{newValue}</li>
+     * </ul>
+     */
+    public Object putComputeIfAbsent(String key, Object newValue, Predicate<Object> filter) {
+        if (null == key) {
+            return null;
+        }
+        if (!containsKey(key)) {
+            return put(key, newValue);
+        }
+        Object oldValue = get(key);
+        if (filter.test(oldValue)) {
+            return put(key, newValue);
+        }
+        return oldValue;
     }
 
     @Override

@@ -1,10 +1,10 @@
 package com.chua.utils.tools.common;
 
-import com.chua.utils.tools.common.charset.CharsetHelper;
+import com.chua.utils.tools.common.codec.binary.Hex;
 import com.chua.utils.tools.common.filecase.FileWildcard;
 import com.chua.utils.tools.common.filecase.IOCase;
 import com.chua.utils.tools.common.filefilter.*;
-import com.chua.utils.tools.constant.StringConstant;
+import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.resource.entity.Resource;
 import com.google.common.base.Preconditions;
@@ -18,17 +18,14 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 import static com.chua.utils.tools.common.IoHelper.toCharset;
 import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
@@ -77,137 +74,62 @@ public class FileHelper {
 
     public static final BigInteger ONE_YB = ONE_KB_BI.multiply(ONE_ZB);
 
-    public static final File[] EMPTY_FILE_ARRAY = new File[0];
-
-    public static final Map<String, String> FILE_TYPE_MAP = new HashMap<>();
-
     private static final List<Object> IGNORE = new ArrayList<>();
 
     public static boolean isSystemWindows() {
-        return SYMBOL_LEFT_SLASH_CHAR == SYMBOL_RIGHT_SLASH_CHAR;
-    }
-
-    /**
-     * 删除文件
-     *
-     * @param root 目录
-     * @return
-     */
-    public static boolean deleteRecursively(File root) {
-        if (root != null && root.exists()) {
-            if (root.isDirectory()) {
-                File[] children = root.listFiles();
-                if (children != null) {
-                    for (File child : children) {
-                        deleteRecursively(child);
-                    }
-                }
-            }
-            return root.delete();
-        }
-        return false;
+        return File.separatorChar == SYMBOL_RIGHT_SLASH_CHAR;
     }
 
     /**
      * 获取文件类型
      *
-     * @param file 文件  文件
+     * @param file 文件
      * @return fileType
      */
-    public final static String getFileType(File file) {
-        try {
-            return getFileType(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            return null;
-        }
+    public static String getFileType(File file) {
+        return getExtension(file.getName());
     }
 
     /**
-     * 获取url类型
+     * 获取文件类型
+     * <p>不关闭流获取流中的文件类型</p>
      *
-     * @param url
+     * @param inputStream 流
      * @return fileType
      */
-    public final static String getFileType(URL url) {
-        try {
-            return getFileType(url.openStream());
-        } catch (IOException e) {
+    public static String getFileType(InputStream inputStream) {
+        if (null == inputStream) {
             return null;
         }
-    }
-
-    /**
-     * 获取is类型
-     *
-     * @param is
-     * @return fileType
-     */
-    public final static String getFileType(InputStream is) {
-        if (null == is) {
-            return null;
-        }
-        byte[] b = new byte[20];
         try {
-            is.read(b);
-            return getFileType(b);
+            byte[] bytes = IoHelper.toByteArray(inputStream);
+            String hex = Hex.toHex(bytes);
+            if (null == hex) {
+                return null;
+            }
+            hex = hex.toUpperCase();
+            for (Map.Entry<String, String> entry : EmptyOrBase.FILE_TYPES.entrySet()) {
+                if (hex.startsWith(entry.getValue())) {
+                    return entry.getKey();
+                }
+            }
         } catch (IOException e) {
-            return null;
+            e.printStackTrace();
         } finally {
-            if (null != is) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    /**
-     * 获取文件类型
-     *
-     * @param bytes
-     * @return fileType
-     */
-    public final static String getFileType(byte[] bytes) {
-        String filetypeHex = String.valueOf(getFileHexString(bytes));
-        Iterator<Map.Entry<String, String>> entryiterator = FILE_TYPE_MAP.entrySet().iterator();
-        while (entryiterator.hasNext()) {
-            Map.Entry<String, String> entry = entryiterator.next();
-            String fileTypeHexValue = entry.getValue();
-            if (filetypeHex.toUpperCase().startsWith(fileTypeHexValue)) {
-                return entry.getKey();
+            try {
+                inputStream.reset();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         return null;
     }
 
-    /**
-     * 获取 hex
-     *
-     * @param b
-     * @return fileTypeHex
-     */
-    public final static String getFileHexString(byte[] b) {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (b == null || b.length <= 0) {
-            return null;
-        }
-        for (int i = 0; i < b.length; i++) {
-            int v = b[i] & 0xFF;
-            String hv = Integer.toHexString(v);
-            if (hv.length() < 2) {
-                stringBuilder.append(0);
-            }
-            stringBuilder.append(hv);
-        }
-        return stringBuilder.toString();
-    }
 
     /**
      * 获取temp目录
      *
-     * @return
+     * @return temp目录
      */
     public static String getTempDirectoryPath() {
         return System.getProperty("java.io.tmpdir");
@@ -216,108 +138,39 @@ public class FileHelper {
     /**
      * 获取temp目录
      *
-     * @return
+     * @return temp目录
      */
     public static File getTempDirectory() {
         return new File(getTempDirectoryPath());
     }
 
     /**
-     * 用户目录
-     *
-     * @return
-     */
-    public static String getUserDirectoryPath() {
-        return System.getProperty("user.home");
-    }
-
-    /**
-     * 用户目录
-     *
-     * @return
-     */
-    public static File getUserDirectory() {
-        return new File(getUserDirectoryPath());
-    }
-
-
-    /**
-     * 文件是否存在
-     *
-     * @param file 文件  文件 文件
-     * @return
-     */
-    public static boolean isExist(File file) {
-        return null != file && file.exists();
-    }
-
-    /**
-     * 文件是否存在
-     *
-     * @param file 文件  文件 文件
-     * @return
-     */
-    public static boolean isNotExist(File file) {
-        return !isExist(file);
-    }
-
-    /**
-     * 获取文件流
-     *
-     * @param file 文件  文件 文件
-     * @return
-     * @throws IOException
-     */
-    public static FileInputStream openInputStream(final File file) throws IOException {
-        if (file.exists()) {
-            if (file.isDirectory()) {
-                throw new IOException("File '" + file + "' exists but is a directory");
-            }
-            if (file.canRead() == false) {
-                throw new IOException("File '" + file + "' cannot be read");
-            }
-        } else {
-            throw new FileNotFoundException("File '" + file + "' does not exist");
-        }
-        return new FileInputStream(file);
-    }
-
-    /**
      * 计算文件大小
      *
      * @param size 大小
-     * @return
+     * @return 文件大小
      */
     public static String byteCountToDisplaySize(final BigInteger size) {
         String displaySize;
 
         if (size.divide(ONE_EB_BI).compareTo(BigInteger.ZERO) > 0) {
-            displaySize = String.valueOf(size.divide(ONE_EB_BI)) + " EB";
+            displaySize = size.divide(ONE_EB_BI) + " EB";
         } else if (size.divide(ONE_PB_BI).compareTo(BigInteger.ZERO) > 0) {
-            displaySize = String.valueOf(size.divide(ONE_PB_BI)) + " PB";
+            displaySize = size.divide(ONE_PB_BI) + " PB";
         } else if (size.divide(ONE_TB_BI).compareTo(BigInteger.ZERO) > 0) {
-            displaySize = String.valueOf(size.divide(ONE_TB_BI)) + " TB";
+            displaySize = size.divide(ONE_TB_BI) + " TB";
         } else if (size.divide(ONE_GB_BI).compareTo(BigInteger.ZERO) > 0) {
-            displaySize = String.valueOf(size.divide(ONE_GB_BI)) + " GB";
+            displaySize = size.divide(ONE_GB_BI) + " GB";
         } else if (size.divide(ONE_MB_BI).compareTo(BigInteger.ZERO) > 0) {
-            displaySize = String.valueOf(size.divide(ONE_MB_BI)) + " MB";
+            displaySize = size.divide(ONE_MB_BI) + " MB";
         } else if (size.divide(ONE_KB_BI).compareTo(BigInteger.ZERO) > 0) {
-            displaySize = String.valueOf(size.divide(ONE_KB_BI)) + " KB";
+            displaySize = size.divide(ONE_KB_BI) + " KB";
         } else {
-            displaySize = String.valueOf(size) + " bytes";
+            displaySize = size + " bytes";
         }
         return displaySize;
     }
 
-    /**
-     * 计算文件大小
-     *
-     * @param size 大小
-     * @return
-     */
-    public static String byteCountToDisplaySize(final long size) {
-        return byteCountToDisplaySize(BigInteger.valueOf(size));
-    }
 
     /**
      * 获取文件后缀
@@ -334,29 +187,13 @@ public class FileHelper {
     }
 
     /**
-     * 获取文件
+     * 是文件并且存在返回文件
      *
-     * @param url
-     * @return
+     * @param file 文件
+     * @return 是文件并且存在返回文件
      */
-    public static File toFile(final URL url) {
-        if (url == null || !StringConstant.FILE.equalsIgnoreCase(url.getProtocol())) {
-            return null;
-        } else {
-            String filename = url.getFile().replace('/', File.separatorChar);
-            filename = decodeUrl(filename);
-            return new File(filename);
-        }
-    }
-
-    /**
-     * 获取文件
-     *
-     * @param name
-     * @return
-     */
-    public static File toFile(final String name) {
-        File temp = new File(name);
+    public static File toFile(final String file) {
+        File temp = new File(file);
         return temp.exists() && temp.isFile() ? temp : null;
     }
 
@@ -365,7 +202,6 @@ public class FileHelper {
      *
      * @param file      文件  文件      文件
      * @param directory 文件夹 文件夹
-     * @return
      */
     public static void copyFile2Directory(final File file, File directory) throws IOException {
         if (!isFileAndExist(file)) {
@@ -380,10 +216,10 @@ public class FileHelper {
 
             final long size = inputStreamChannel.size();
             long pos = 0;
-            long cnt = 0;
+            long cnt;
             while (pos < size) {
                 final long remain = size - pos;
-                cnt = remain > FILE_COPY_BUFFER_SIZE ? FILE_COPY_BUFFER_SIZE : remain;
+                cnt = Math.min(remain, FILE_COPY_BUFFER_SIZE);
                 final long from = outputStreamChannel.transferFrom(inputStreamChannel, pos, cnt);
                 if (from == 0) {
                     break;
@@ -397,7 +233,7 @@ public class FileHelper {
      * 是文件夹并且存在
      *
      * @param sourceDirectory 文件夹
-     * @return
+     * @return 是文件夹并且存在
      */
     public static boolean isDirectoryAndExist(File sourceDirectory) {
         return null != sourceDirectory && sourceDirectory.isDirectory() && sourceDirectory.exists();
@@ -406,7 +242,8 @@ public class FileHelper {
     /**
      * 是文件夹不存在时创建
      *
-     * @param directory 文件夹 文件夹
+     * @param directory 文件夹
+     * @return 是文件夹并且存在, 成功返回true
      */
     public static boolean isDirectoryAndCreate(File directory) throws NullPointerException, IllegalArgumentException {
         if (null == directory) {
@@ -417,102 +254,34 @@ public class FileHelper {
             throw new IllegalArgumentException("参数类型不正确, 必须为文件夹");
         }
 
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        return true;
+        return !directory.exists() && directory.mkdirs();
 
     }
 
     /**
      * 文件存在并且是文件类型
      *
-     * @param file 文件  文件 文件
-     * @return
+     * @param file 文件
+     * @return 文件存在并且是文件类型返回true
      */
     public static boolean isFileAndExist(File file) {
         return null != file && file.isFile() && file.exists();
     }
 
     /**
-     * 文件存在并且是文件类型
+     * 文件存在并且是{suffix}类型
      *
-     * @param file 文件  文件 文件
-     * @return
+     * @param file 文件
+     * @return 文件存在并且是{suffix}类型返回true
      */
     public static boolean isFileAndSuffix(File file, String suffix) {
         if (isFileAndExist(file)) {
             String extension = getExtension(file.getName());
-            if (suffix.endsWith(extension)) {
-                return true;
-            }
+            return suffix.endsWith(extension);
         }
         return false;
     }
 
-    /**
-     * 解析URL名称
-     *
-     * @param url url
-     * @return
-     */
-    public static String decodeUrl(final String url) {
-        String decoded = url;
-        if (url != null && url.indexOf(SYMBOL_PER_CHAR) >= 0) {
-            final int n = url.length();
-            final StringBuilder buffer = new StringBuilder();
-            final ByteBuffer bytes = ByteBuffer.allocate(n);
-            for (int i = 0; i < n; ) {
-                if (url.charAt(i) == SYMBOL_PER_CHAR) {
-                    try {
-                        do {
-                            final byte octet = (byte) Integer.parseInt(url.substring(i + 1, i + 3), 16);
-                            bytes.put(octet);
-                            i += 3;
-                        } while (i < n && url.charAt(i) == SYMBOL_PER_CHAR);
-                        continue;
-                    } catch (final RuntimeException e) {
-                    } finally {
-                        if (bytes.position() > 0) {
-                            bytes.flip();
-                            buffer.append(StandardCharsets.UTF_8.decode(bytes).toString());
-                            bytes.clear();
-                        }
-                    }
-                }
-                buffer.append(url.charAt(i++));
-            }
-            decoded = buffer.toString();
-        }
-        return decoded;
-    }
-
-    /**
-     * 获取指定目录下的文件
-     *
-     * @param path 目录
-     * @param deep 是否获取子目录下的文件
-     * @return
-     */
-    public static List<String> listFiles(final String path, final boolean deep, final FileFilter fileFilter) {
-        List<String> result = new ArrayList<>();
-        File temps = new File(path);
-        File[] files = temps.listFiles(fileFilter);
-        if (null != files) {
-            for (File file : files) {
-                if (file.isHidden()) {
-
-                } else if (file.isDirectory()) {
-                    if (deep) {
-                        listFiles(result, path, fileFilter);
-                    }
-                } else if (file.isFile()) {
-                    result.add(file.getPath());
-                }
-            }
-        }
-        return result;
-    }
 
     /**
      * 获取列表
@@ -520,10 +289,9 @@ public class FileHelper {
      * @param directory  目录
      * @param extensions 后缀
      * @param recursive  永真
-     * @return
+     * @return 文件列表
      */
-    public static Collection<File> listFiles(
-            final File directory, final String[] extensions, final boolean recursive) {
+    public static Collection<File> listFiles(final File directory, final String[] extensions, final boolean recursive) {
         FileFilter filter;
         if (extensions == null) {
             filter = TrueFileFilter.INSTANCE;
@@ -538,9 +306,9 @@ public class FileHelper {
      * 获取列表
      *
      * @param directory  目录
-     * @param fileFilter
-     * @param dirFilter
-     * @return
+     * @param fileFilter 文件过滤
+     * @param dirFilter  目录过滤
+     * @return 文件列表
      */
     public static Collection<File> listFiles(
             final File directory, final FileFilter fileFilter, final FileFilter dirFilter) {
@@ -556,15 +324,15 @@ public class FileHelper {
     }
 
     /**
-     * @param files
-     * @param directory
-     * @param filter
-     * @param includeSubDirectories
+     * 插入文件列表
+     *
+     * @param files                 文件列表
+     * @param directory             目录
+     * @param filter                文件过滤
+     * @param includeSubDirectories 是否包含子目录
      */
-    private static void innerListFiles(final Collection<File> files, final File directory,
-                                       final FileFilter filter, final boolean includeSubDirectories) {
+    private static void innerListFiles(final Collection<File> files, final File directory, final FileFilter filter, final boolean includeSubDirectories) {
         final File[] found = directory.listFiles(filter);
-
         if (found != null) {
             for (final File file : found) {
                 if (file.isDirectory()) {
@@ -580,23 +348,30 @@ public class FileHelper {
     }
 
     /**
-     * @param fileFilter
-     * @return
+     * 设置有效文件过滤器
+     *
+     * @param fileFilter 文件过滤
+     * @return 文件过滤
      */
     private static FileFilter setUpEffectiveFileFilter(final FileFilter fileFilter) {
         return FileFilterHelper.and(fileFilter, FileFilterHelper.fileFileFilter());
     }
 
+    /**
+     * 设置有效目录过滤器
+     *
+     * @param dirFilter 目录过滤器
+     * @return 目录过滤器
+     */
     private static FileFilter setUpEffectiveDirFilter(final FileFilter dirFilter) {
-        return dirFilter == null ? FalseFileFilter.INSTANCE : FileFilterHelper.and(dirFilter,
-                DirectoryFileFilter.INSTANCE);
+        return dirFilter == null ? FalseFileFilter.INSTANCE : FileFilterHelper.and(dirFilter, DirectoryFileFilter.INSTANCE);
     }
 
     /**
      * 参数是否有效
      *
-     * @param directory
-     * @param fileFilter
+     * @param directory  目录
+     * @param fileFilter 文件过滤器
      */
     private static void validateListFilesParameters(final File directory, final FileFilter fileFilter) {
         if (!directory.isDirectory()) {
@@ -608,31 +383,70 @@ public class FileHelper {
     }
 
     /**
+     * 文件检索
+     *
+     * @param path     目录
+     * @param matcher  条件
+     * @param onlySelf 是否是当前本身文件夹
+     */
+    public static void doWith(final Path path, final Matcher<Path> matcher, final boolean onlySelf) {
+        if (null == path) {
+            return;
+        }
+        if (onlySelf) {
+            File[] listFiles = path.toFile().listFiles();
+            if (null != listFiles) {
+                for (File listFile : listFiles) {
+                    matcher.doWith(listFile.toPath());
+                }
+            }
+            return;
+        }
+        try {
+            Files.walkFileTree(path, new FileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    matcher.doWith(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    matcher.doWith(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 获取指定目录下的文件
      *
      * @param path     目录
      * @param fileList 文件列表
      * @return
      */
-    public static void listFiles(final List<String> fileList, final String path, final FileFilter fileFilter) {
-        File temps = new File(path);
-        File[] files = null;
-        if (null != fileFilter) {
-            files = temps.listFiles(fileFilter);
-        } else {
-            files = temps.listFiles();
+    public static void listFiles(final List<String> fileList, final String path) {
+        if (null == path) {
+            return;
         }
-        if (null != files) {
-            for (File file : files) {
-                if (file.isHidden()) {
-
-                } else if (file.isDirectory()) {
-                    listFiles(fileList, file.getPath(), fileFilter);
-                } else if (file.isFile()) {
-                    fileList.add(file.getAbsolutePath());
-                }
+        doWith(Paths.get(path), paths -> {
+            if (paths.toFile().isFile()) {
+                fileList.add(paths.toString());
             }
-        }
+        }, false);
     }
 
     /**
@@ -643,7 +457,7 @@ public class FileHelper {
      */
     public static List<String> listFiles(final String local) {
         List<String> fileList = new ArrayList<>();
-        listFiles(fileList, local, null);
+        listFiles(fileList, local);
         return fileList;
     }
 
@@ -664,59 +478,6 @@ public class FileHelper {
     }
 
     /**
-     * 获取文件虚拟目录
-     *
-     * @param file 文件  文件 文件
-     * @return
-     */
-    public static String getParent(File file) {
-        if (null != file && file.exists()) {
-            return getParent(file.getPath());
-        }
-        return SYMBOL_EMPTY;
-    }
-
-    /**
-     * 获取父文件夹文件路径
-     *
-     * @param file 文件  文件 文件路径
-     * @return
-     */
-    public static String getParentPath(File file) {
-        if (null != file && file.exists()) {
-            return getParentPath(file.getPath());
-        }
-        return SYMBOL_EMPTY;
-    }
-
-    /**
-     * 获取父文件夹文件路径
-     *
-     * @param path 文件路径
-     * @return
-     */
-    public static String getParentPath(String path) {
-        String parent = getPath(path);
-        if (!Strings.isNullOrEmpty(parent)) {
-            return getPath(parent);
-        }
-        return SYMBOL_EMPTY;
-    }
-
-    /**
-     * 获取父文件夹文件路径
-     *
-     * @param file 文件  文件 文件路径
-     * @return
-     */
-    public static String getParentParent(File file) {
-        if (null != file && file.exists()) {
-            return getParentParent(file.getPath());
-        }
-        return SYMBOL_EMPTY;
-    }
-
-    /**
      * 获取父文件夹文件路径
      *
      * @param path 文件路径
@@ -731,95 +492,9 @@ public class FileHelper {
     }
 
     /**
-     * 获取文件虚拟目录
-     *
-     * @param file 文件  文件 文件
-     * @return
-     */
-    public static String getPath(File file) {
-        if (null != file && file.exists()) {
-            return getPath(file.getPath());
-        }
-        return SYMBOL_EMPTY;
-    }
-
-    /**
-     * 获取文件虚拟目录
-     *
-     * @param file 文件  文件 文件
-     * @return
-     */
-    public static String getName(File file) {
-        if (null != file && file.exists()) {
-            return getName(file.getPath());
-        }
-        return SYMBOL_EMPTY;
-    }
-
-    /**
-     * 获取真实路径
-     *
-     * @param path 文件路径
-     * @return
-     */
-    public static String realyPath(String path) {
-        return !Strings.isNullOrEmpty(path) ? new File(path).getPath() : SYMBOL_EMPTY;
-    }
-
-    /**
-     * 文件路径模式匹配
-     *
-     * @param filePath 文件路径
-     * @param model    匹配模式
-     * @return
-     */
-    public static List<String> matcherPath(final URL filePath, final String model) {
-        List<String> matches = new ArrayList<>();
-        if (!Strings.isNullOrEmpty(model)) {
-            PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + model);
-            try {
-                Path path = Paths.get(filePath.toURI());
-                final boolean matches1 = pathMatcher.matches(path);
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-        }
-        return matches;
-    }
-
-    /**
-     * 强制删除文件夹
-     *
-     * @param folder 文件夹
-     */
-    public static void deleteForce(String folder) {
-        try {
-            deleteDirectory(new File(folder));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * 强制删除文件
      *
-     * @param url 文件
-     */
-    public static void deleteQuietly(final URL url) {
-        if (null == url) {
-            return;
-        }
-        File file = new File(url.getFile());
-        try {
-            file.delete();
-        } catch (Exception e) {
-        }
-    }
-
-    /**
-     * 强制删除文件
-     *
-     * @param file 文件  文件
+     * @param file 文件
      * @return
      */
     public static boolean deleteQuietly(final File file) {
@@ -843,7 +518,7 @@ public class FileHelper {
     /**
      * 强制删除
      *
-     * @param file 文件  文件
+     * @param file 文件
      * @throws IOException
      */
     public static void forceDelete(final File file) throws IOException {
@@ -866,7 +541,7 @@ public class FileHelper {
      * 删除文件夹
      *
      * @param directory 文件夹
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static void deleteDirectory(final File directory) throws IOException {
         if (!directory.exists()) {
@@ -878,18 +553,17 @@ public class FileHelper {
         }
 
         if (!directory.delete()) {
-            final String message =
-                    "Unable to delete directory " + directory + ".";
-            throw new IOException(message);
+            throw new IOException("Unable to delete directory " + directory + ".");
         }
     }
 
     /**
-     * @param file 文件  文件
-     * @return
-     * @throws IOException
+     * 是否是Symlink
+     *
+     * @param file 文件
+     * @return 是Symlink 返回true
      */
-    public static boolean isSymlink(final File file) throws IOException {
+    public static boolean isSymlink(final File file) {
         if (file == null) {
             throw new NullPointerException("File must not be null");
         }
@@ -900,9 +574,9 @@ public class FileHelper {
      * 清空文件夹
      *
      * @param directory 文件夹
-     * @throws IOException
+     * @throws IOException IOException
      */
-    public static void cleanDirectory(final File directory) throws IOException {
+    private static void cleanDirectory(final File directory) throws IOException {
         final File[] files = verifiedListFiles(directory);
 
         IOException exception = null;
@@ -920,8 +594,10 @@ public class FileHelper {
     }
 
     /**
+     * 验证清单文件
+     *
      * @param directory 文件夹
-     * @return
+     * @return 清单文件
      * @throws IOException
      */
     private static File[] verifiedListFiles(final File directory) throws IOException {
@@ -942,33 +618,31 @@ public class FileHelper {
     }
 
     /**
-     * 列举所有文件夹
+     * 列举当前目录下的所有文件夹
      *
      * @param local 目录
-     * @return
+     * @return 当前目录下的所有文件夹
      */
     public static Collection<File> listSelfFolders(String local) {
-        Collection<File> list = listFolders(local);
-        list.add(file(local));
-        return list;
+        File file = file(local);
+        if (file.exists()) {
+            File[] files = file.listFiles(pathname -> pathname.isDirectory());
+            return null == files ? Collections.emptyList() : Arrays.asList(files.clone());
+        }
+        return Collections.emptyList();
     }
 
     /**
      * 列举所有文件夹
      *
      * @param local 目录
-     * @return
+     * @return 所有文件夹
      */
     public static Collection<File> listFolders(String local) {
         File file = file(local);
         List<File> fileList = new ArrayList<>();
         if (file.exists()) {
-            File[] files = file.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File pathname) {
-                    return pathname.isDirectory();
-                }
-            });
+            File[] files = file.listFiles(pathname -> pathname.isDirectory());
             if (null != files) {
                 fileList.addAll(Arrays.asList(files));
                 for (File file1 : files) {
@@ -985,7 +659,7 @@ public class FileHelper {
      * 是否是文件夹
      *
      * @param local 路径
-     * @return
+     * @return 是文件夹返回true
      */
     public static boolean isFolder(String local) {
         return file(local).isDirectory();
@@ -995,283 +669,31 @@ public class FileHelper {
      * 是否是文件
      *
      * @param local 路径
-     * @return
+     * @return 是文件返回true
      */
     public static boolean isFile(String local) {
         return file(local).isFile();
-    }
-
-
-    /**
-     * 是否是存在
-     *
-     * @param local 路径
-     * @return
-     */
-    public static boolean isExist(String local) {
-        return file(local).exists();
-    }
-
-    /**
-     * 是否是存在
-     *
-     * @param local 路径
-     * @return
-     */
-    public static boolean isExist(String local, final String file) {
-        return new File(local, file).exists();
     }
 
     /**
      * 获取文件
      *
      * @param local 路径
-     * @return
+     * @return File
      */
     public static File file(String local) {
         return new File(local);
     }
 
-    /**
-     * 修改jar文件
-     *
-     * @param jarPath
-     * @param fileName
-     * @param content
-     */
-    public static void writeJar(final String jarPath, final String fileName, final String content) {
-        /*File file = new File(jarPath + "/" + fileName);
-        try (FileOutputStream fis = new FileOutputStream(file); JarFile jarFile = new JarFile(file)){
-            JarOutputStream jarOutputStream = new JarOutputStream(fis);
-            JarEntry jarEntry = jarFile.getJarEntry(fileName);
-            if(null != jarEntry) {
-                CRC32 crc32 = new CRC32();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-    }
-
-    /**
-     * 读取jar文件
-     *
-     * @param jarPath
-     * @param fileName
-     * @return
-     */
-    public static String readJar(final String jarPath, final String fileName) {
-        try (JarFile jarFile = new JarFile(jarPath);) {
-            if (null != jarFile) {
-                JarEntry jarEntry = jarFile.getJarEntry(fileName);
-                if (null != jarEntry) {
-                    try (InputStream inputStream = jarFile.getInputStream(jarEntry)) {
-                        return IoHelper.toString(inputStream, CharsetHelper.UTF_8);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        try {
-                            jarFile.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    /**
-     * 获取后缀
-     *
-     * @param filePath
-     * @return
-     */
-    public static String getSuffix(String filePath) {
-        int lastIndexOf = filePath.lastIndexOf(".");
-        return lastIndexOf > -1 ? filePath.substring(lastIndexOf + 1) : SYMBOL_EMPTY;
-    }
-
-    /**
-     * 空url
-     *
-     * @return
-     */
-    public static URL emptyUrl() {
-        try {
-            return new URL("file:.");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * 获取系统类型的文件路径
-     *
-     * @param name 文件路径
-     * @return
-     */
-    public static String getFileName(String name) {
-        return new File(name).getPath();
-    }
-
-    /**
-     * 拷贝文件
-     *
-     * @param inputStream 流
-     * @param file        文件  文件        拷贝目的文件
-     * @return <p>-1 拷贝失败</p>
-     */
-    public static int copyFile(InputStream inputStream, File file) {
-        try {
-            return IoHelper.copy(inputStream, new FileOutputStream(file));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            IoHelper.closeQuietly(inputStream);
-        }
-        return -1;
-    }
-
-    /**
-     * 获取简单的文件类型
-     * <p>
-     * FileHelper.getSimpleFileType("") = ""
-     * FileHelper.getSimpleFileType(null) = ""
-     * FileHelper.getSimpleFileType("1") = "1"
-     * FileHelper.getSimpleFileType("1/test.") = ""
-     * FileHelper.getSimpleFileType("1/test./") = ""
-     * FileHelper.getSimpleFileType("1/test.txt") = "txt"
-     * </p>
-     *
-     * @param name 文件名
-     * @return 文件类型
-     */
-    public static String getSimpleFileType(String name) {
-        if (StringHelper.isEmpty(name)) {
-            return "";
-        }
-        int index = name.lastIndexOf("/");
-        if (index != -1) {
-            name = name.substring(index + 1);
-        }
-        int dotIndex = name.lastIndexOf(".");
-        return dotIndex == -1 ? name : name.substring(dotIndex + 1);
-    }
-
-    /**
-     * 是否为本地文件
-     *
-     * @param name
-     * @return
-     */
-    public static boolean isLocalFile(String name) {
-        File temp = new File(name);
-        return temp.exists() && temp.isFile();
-    }
-
-    /**
-     * 创建目录
-     *
-     * @param temp
-     */
-    public static void create(String temp) {
-        if (null == temp) {
-            return;
-        }
-        File tempPath = new File(temp);
-        if (tempPath.isFile()) {
-            File parentFile = tempPath.getParentFile();
-            if (!parentFile.exists()) {
-                parentFile.mkdirs();
-            }
-        } else {
-            tempPath.mkdirs();
-        }
-
-    }
-
-    /**
-     * 创建文件夹
-     *
-     * @param path 文件
-     */
-    public static void mkFolders(final String path) {
-        if (null == path) {
-            return;
-        }
-        mkFolders(new File(path));
-    }
-
-    /**
-     * 创建文件夹
-     *
-     * @param file 文件  文件 文件
-     */
-    public static void mkFolders(final File file) {
-        if (null != file && !file.exists()) {
-            file.mkdirs();
-        }
-    }
-
-    /**
-     * 创建文件父文件夹
-     *
-     * @param file 文件  文件 文件
-     */
-    public static void mkFile(final String file) {
-        if (null == file) {
-            return;
-        }
-        mkFile(new File(file));
-    }
-
-    /**
-     * 创建文件父文件夹
-     *
-     * @param file 文件  文件 文件
-     */
-    public static void mkFile(final File file) {
-        if (null != file) {
-            File parentFile = file.getParentFile();
-            if (!parentFile.exists()) {
-                parentFile.mkdirs();
-            }
-        }
-    }
 
     /**
      * 创建文件
      *
      * @param path 文件
-     * @return
+     * @return 路径不存在返回null, 否则返回file {@link File}
      */
     public static File newFile(final String path) {
         return null == path ? null : new File(path);
-    }
-
-    /**
-     * 创建url
-     *
-     * @param path 路径
-     * @param name 文件名
-     * @return
-     */
-    public static URL newUrl(String path, String name) {
-        File file = newFile(path);
-        if (null == file) {
-            return null;
-        }
-        try {
-            return new File(path, name).toURI().toURL();
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     /**
@@ -1279,7 +701,7 @@ public class FileHelper {
      *
      * @param path      目录
      * @param extension 后缀
-     * @return
+     * @return 目录下文件
      */
     public static Collection<String> files(String path, final String extension) {
         if (null == path) {
@@ -1304,16 +726,18 @@ public class FileHelper {
     /**
      * 创建父目录
      *
-     * @return
+     * @param folder 目录
+     * @return 创建父目录成功返回true
      */
-    public static boolean createParentFolder(final File file) {
-        return null == file ? false : createParentFolder(file.getAbsolutePath());
+    public static boolean createParentFolder(final File folder) {
+        return null == folder ? false : createParentFolder(folder.getAbsolutePath());
     }
 
     /**
      * 创建父目录
      *
-     * @return
+     * @param path 目录
+     * @return 创建父目录成功返回true
      */
     public static boolean createParentFolder(final String path) {
         if (Strings.isNullOrEmpty(path)) {
@@ -1330,16 +754,18 @@ public class FileHelper {
     /**
      * 创建当前目录
      *
-     * @return
+     * @param folder 目录
+     * @return 创建当前目录成功返回true
      */
-    public static boolean createFolder(final File file) {
-        return null == file ? false : createFolder(file.getAbsolutePath());
+    public static boolean createFolder(final File folder) {
+        return null != folder && createFolder(folder.getAbsolutePath());
     }
 
     /**
      * 创建当前目录
      *
-     * @return
+     * @param path 目录
+     * @return 创建当前目录成功返回true
      */
     public static boolean createFolder(final String path) {
         if (Strings.isNullOrEmpty(path)) {
@@ -2065,11 +1491,29 @@ public class FileHelper {
      * @return
      */
     public static InputStream toInputStream(File file) throws IOException {
-        if (null == file) {
-            return null;
-        }
-        URL url = file.toURI().toURL();
-        return url.openStream();
+        return IoHelper.openStream(file);
+    }
+
+    /**
+     * 写文件
+     *
+     * @param file 文件
+     * @param data 数据
+     * @throws IOException IOException
+     */
+    public static void write(final byte[] data, final File file) throws IOException {
+        Files.write(file.toPath(), data);
+    }
+
+    /**
+     * 写文件
+     *
+     * @param file        文件
+     * @param inputStream 流
+     * @throws IOException IOException
+     */
+    public static void write(final InputStream inputStream, final File file) throws IOException {
+        Files.write(file.toPath(), IoHelper.toByteArray(inputStream));
     }
 
     /**
@@ -2126,16 +1570,6 @@ public class FileHelper {
     public static void write(final File file, final CharSequence data, final String encoding, final boolean append)
             throws IOException {
         write(file, data, toCharset(encoding), append);
-    }
-
-    /**
-     * 写文件
-     *
-     * @param file 文件
-     * @throws IOException
-     */
-    public static FileOutputStream openOutputStream(final File file) throws IOException {
-        return openOutputStream(file, false);
     }
 
     /**
@@ -2236,13 +1670,48 @@ public class FileHelper {
      * 获取流
      *
      * @param file 文件
-     * @return
+     * @return BufferedInputStream
      */
     public static BufferedInputStream getInputStream(File file) {
         try {
             return new BufferedInputStream(new FileInputStream(file));
         } catch (FileNotFoundException e) {
             return null;
+        }
+    }
+
+    /**
+     * 文件流操作
+     *
+     * @param sourceFile 源文件
+     * @return Stream<String>,当前文件不存在或者无法解析返回null
+     */
+    public static Stream<String> stream(final File sourceFile) {
+        if (null == sourceFile) {
+            return null;
+        }
+        try {
+            return Files.lines(sourceFile.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 拷贝文件
+     *
+     * @param sourceFile 源文件
+     * @param destFile   目标文件
+     */
+    public static void copyFile(final File sourceFile, final File destFile) {
+        if (null == sourceFile || null == destFile) {
+            return;
+        }
+        try {
+            Files.copy(sourceFile.toPath(), destFile.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -2341,30 +1810,24 @@ public class FileHelper {
         try {
             Files.walkFileTree(path1, new FileVisitor<Path>() {
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    try {
-                        matcher.doWith(dir);
-                    } catch (Throwable throwable) {
-                    }
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    matcher.doWith(dir);
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    try {
-                        matcher.doWith(file);
-                    } catch (Throwable throwable) {
-                    }
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    matcher.doWith(file);
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
                     return FileVisitResult.CONTINUE;
                 }
             });

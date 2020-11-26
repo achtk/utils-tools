@@ -35,7 +35,7 @@ public class BeansHelper {
     public static void reflectionAssignment(final Object entity, final Map<String, Object> params) {
         ClassHelper.doWithLocalFields(entity.getClass(), new FieldCallback() {
             @Override
-            public void doWith(Field item) throws Exception {
+            public void doWith(Field item) {
                 String name = item.getName();
                 if (!params.containsKey(name)) {
                     return;
@@ -113,19 +113,19 @@ public class BeansHelper {
             }
         });
         if (fail.get()) {
-            ClassHelper.doWithFields(to.getClass(), new FieldCallback() {
-                @Override
-                public void doWith(Field item) throws Exception {
-                    if (!fromBeanMap.containsKey(item.getName())) {
-                        return;
-                    }
-                    Class<?> type = item.getType();
-                    Object o = fromBeanMap.get(item.getName());
-                    if (!type.isAssignableFrom(o.getClass())) {
-                        return;
-                    }
-                    item.setAccessible(true);
+            ClassHelper.doWithFields(to.getClass(), item -> {
+                if (!fromBeanMap.containsKey(item.getName())) {
+                    return;
+                }
+                Class<?> type = item.getType();
+                Object o = fromBeanMap.get(item.getName());
+                if (!type.isAssignableFrom(o.getClass())) {
+                    return;
+                }
+                item.setAccessible(true);
+                try {
                     item.set(to, o);
+                } catch (IllegalAccessException e) {
                 }
             });
         }

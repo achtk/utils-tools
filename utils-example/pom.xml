@@ -238,6 +238,12 @@
             <version>1.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-tools-schedule</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!--        <dependency>-->
 <!--            <groupId>com.chua</groupId>-->
 <!--            <artifactId>utils-opencv</artifactId>-->

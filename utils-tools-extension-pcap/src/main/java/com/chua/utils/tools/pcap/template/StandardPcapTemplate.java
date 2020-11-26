@@ -1,5 +1,7 @@
 package com.chua.utils.tools.pcap.template;
 
+import com.chua.utils.tools.common.ByteHelper;
+import com.chua.utils.tools.common.codec.binary.Hex;
 import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.pcap.operator.PcapOperator;
 import com.chua.utils.tools.pcap.operator.StandardPcapOperator;
@@ -170,6 +172,13 @@ public class StandardPcapTemplate implements PcapTemplate {
             Packet.Payload payload1 = new Packet.Payload();
             payload1.setRawData(packet1.getRawData());
             payload1.setLength(packet1.length());
+            byte[] rawData1 = payload1.getRawData();
+            String[] hexData = new String[rawData1.length];
+            for (int i = 0; i < rawData1.length; i++) {
+                byte b = rawData1[i];
+                hexData[i] = ByteHelper.toHexString(b);
+            }
+            payload1.setHexData(hexData);
 
             payloadList.add(payload1);
         }
@@ -207,7 +216,7 @@ public class StandardPcapTemplate implements PcapTemplate {
 
         // 设置过滤器
         if (filter.length() != 0) {
-            handle.setFilter(filter, BpfProgram.BpfCompileMode.OPTIMIZE);
+            handle.setFilter(filter.replace(".", " ").replace("==", " "), BpfProgram.BpfCompileMode.OPTIMIZE);
         }
         System.out.println("majorVersion: " + handle.getMajorVersion());
         System.out.println("minorVersion: " + handle.getMinorVersion());

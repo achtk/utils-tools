@@ -13,9 +13,8 @@ public interface Matcher<T> {
      * 回调
      *
      * @param item 元素
-     * @throws Throwable 异常
      */
-    void doWith(T item) throws Exception;
+    void doWith(T item);
 
 
     /**
@@ -29,9 +28,6 @@ public interface Matcher<T> {
         if (null == matcher) {
             return;
         }
-        try {
-            matcher.doWith(data);
-        } catch (Throwable throwable) {
-        }
+        matcher.doWith(data);
     }
 }

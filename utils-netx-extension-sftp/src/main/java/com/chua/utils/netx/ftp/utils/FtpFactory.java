@@ -194,9 +194,8 @@ public class FtpFactory implements INetFactory<FTPClient> {
     /**
      * 文件是否存在
      *
-     *
      * @param ftpClient
-     * @param remote 远程
+     * @param remote    远程
      * @return
      */
     public FTPFile exist(FTPClient ftpClient, final String remote) {
@@ -248,7 +247,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
 
         long startTime = System.currentTimeMillis();
 
-       // ObjectPoolFactory<FTPClient> objectPoolFactory = ObjectPoolFactory.newPool(ftpClient, 30);
+        // ObjectPoolFactory<FTPClient> objectPoolFactory = ObjectPoolFactory.newPool(ftpClient, 30);
         ExecutorService executorService = Executors.newCachedThreadPool();
 
         final AtomicInteger atomicInteger = new AtomicInteger(0);
@@ -268,7 +267,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
                 downloader.setCnt(atomicInteger.incrementAndGet());
                 downloader.setRemote(path);
                 downloader.setLocal(local + "/" + path);
-               // downloader.setTotal(size);
+                // downloader.setTotal(size);
 
                 executorService.execute(new Runnable() {
                     @Override
@@ -279,9 +278,9 @@ public class FtpFactory implements INetFactory<FTPClient> {
                         } catch (IOException e) {
                             e.printStackTrace();
                         } finally {
-                          //  objectPoolFactory.returnObject(object);
-                            if(log.isDebugEnabled()) {
-                                log.debug("文件{}下载成功。当前进度({}/{})", name,  finish.incrementAndGet(), atomicInteger.get());
+                            //  objectPoolFactory.returnObject(object);
+                            if (log.isDebugEnabled()) {
+                                log.debug("文件{}下载成功。当前进度({}/{})", name, finish.incrementAndGet(), atomicInteger.get());
                             }
                         }
                     }
@@ -290,15 +289,16 @@ public class FtpFactory implements INetFactory<FTPClient> {
         });
         return DownloadStatus.DOWNLOAD_FROM_BREAK_SUCCESS;
     }
-        /**
-         * 从FTP服务器上下载文件,支持断点续传，上传百分比汇报
-         *
-         * @param remote 远程文件夹路径
-         * @param local  本地文件夹路径
-         * @param muilti 多线程
-         * @return 上传的状态
-         * @throws IOException
-         */
+
+    /**
+     * 从FTP服务器上下载文件,支持断点续传，上传百分比汇报
+     *
+     * @param remote 远程文件夹路径
+     * @param local  本地文件夹路径
+     * @param muilti 多线程
+     * @return 上传的状态
+     * @throws IOException
+     */
     public DownloadStatus downloadFolder(final String remote, final String local, final boolean muilti) throws IOException {
         //设置被动模式
         ftpClient.enterLocalPassiveMode();
@@ -322,7 +322,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
             countDownLatch = new CountDownLatch(files.size());
             executorService = Executors.newFixedThreadPool(CON_LIMIT);
             int ext = size1 / 50;
-            if(ext > 40) {
+            if (ext > 40) {
                 ext = 40;
             }
             initalFtpClient(CON_LIMIT + ext);
@@ -344,7 +344,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
             try {
                 if (null != executorService) {
                     FTPClient multiConnection = getMultiConnection();
-                    if(null != multiConnection) {
+                    if (null != multiConnection) {
                         downloader.setFtpClient(multiConnection);
                         CountDownLatch finalCountDownLatch = countDownLatch;
                         executorService.execute(new Runnable() {
@@ -357,9 +357,9 @@ public class FtpFactory implements INetFactory<FTPClient> {
                                 } finally {
                                     finalCountDownLatch.countDown();
                                     close(multiConnection);
-                                    if(log.isDebugEnabled()) {
+                                    if (log.isDebugEnabled()) {
                                         long count = size - finalCountDownLatch.getCount();
-                                        log.debug("文件{}下载成功。当前进度({}/{})", name,  count, size);
+                                        log.debug("文件{}下载成功。当前进度({}/{})", name, count, size);
                                     }
                                 }
                             }
@@ -369,7 +369,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
                             downloadFile(this.ftpClient, downloader);
                         } finally {
                             countDownLatch.countDown();
-                            if(log.isDebugEnabled()) {
+                            if (log.isDebugEnabled()) {
                                 long count = size - countDownLatch.getCount();
                                 log.debug("文件{}下载成功。当前进度({}/{})", name, count, size);
                             }
@@ -379,7 +379,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
                     try {
                         downloadFile(this.ftpClient, downloader);
                     } finally {
-                        if(log.isDebugEnabled()) {
+                        if (log.isDebugEnabled()) {
                             int i = atomicInteger.get();
                             log.debug("文件{}下载成功。当前进度({}/{})", name, i, size);
                         }
@@ -409,10 +409,10 @@ public class FtpFactory implements INetFactory<FTPClient> {
                 }
             }
         }
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             long time = (System.currentTimeMillis() - startTime) / 1000;
             String fs = "0";
-            if(size1 != 0) {
+            if (size1 != 0) {
                 fs = StringHelper.calcString(size1, time);
             }
             log.debug("下载文件夹整体耗时: {}s, 每秒{}文件数", time, fs);
@@ -446,6 +446,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
         log.debug("[{}]文件下载耗时:{}s", remote, (System.currentTimeMillis() - start) / 1000);
         return downloadStatus;
     }
+
     /**
      * 从FTP服务器下载文件,支持断点续传，上传百分比汇报
      *
@@ -454,8 +455,10 @@ public class FtpFactory implements INetFactory<FTPClient> {
     public InputStream downloadInputStream(final String remote) throws IOException {
         return ftpClient.retrieveFileStream(remote);
     }
+
     /**
      * 从FTP服务器下载大文件
+     *
      * @param remote 远程文件路径
      * @param local  本地文件路径
      */
@@ -474,7 +477,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
         }
         final long remoteSize = ftpFile.getSize();
         final long oneFences = SizeHelper.L_M * 300;
-        if(remoteSize < oneFences) {
+        if (remoteSize < oneFences) {
             return downloadFile(remote, local);
         }
 
@@ -483,15 +486,15 @@ public class FtpFactory implements INetFactory<FTPClient> {
         String name = ftpFile.getName();
 
         File localFile = new File(local, name);
-        if(localFile.exists()) {
+        if (localFile.exists()) {
             localSize = localFile.length();
         }
         File parentFile = localFile.getParentFile();
-        if(!parentFile.exists()) {
+        if (!parentFile.exists()) {
             parentFile.mkdirs();
         }
 
-        if(localSize >= remoteSize) {
+        if (localSize >= remoteSize) {
             log.debug("本地文件大于远程文件不进行下载");
             return DownloadStatus.DOWNLOAD_FROM_BREAK_SUCCESS;
         }
@@ -516,15 +519,15 @@ public class FtpFactory implements INetFactory<FTPClient> {
                         connect.setRestartOffset(start);
 
                         int sum = 0;
-                        try (InputStream is = connect.retrieveFileStream(fileName)){
+                        try (InputStream is = connect.retrieveFileStream(fileName)) {
                             byte[] bytes = new byte[1024 * 1024];
                             int line = 0;
                             while ((line = is.read(bytes)) != -1) {
                                 sum += line;
-                                if(log.isDebugEnabled()) {
+                                if (log.isDebugEnabled()) {
                                     log.debug("文件[{}]#{}下载进度。当前进度{}%", name, finalI, StringHelper.calcFloat(sum, oneFences) * 100);
                                 }
-                                if(sum > endi) {
+                                if (sum > endi) {
                                     line = sum - endi;
                                     randomAccess.write(bytes, 0, line);
                                     break;
@@ -588,7 +591,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
         //创建远程文件夹
         createdirectory(local, remote);
         //根目录
-        String parentPath = FileHelper.getParentPath(local);
+        String parentPath = new File(local).getParent();
         //上传文件
         long remoteSize = 0;
         if (FileHelper.isFile(local)) {
@@ -640,9 +643,9 @@ public class FtpFactory implements INetFactory<FTPClient> {
     public UploadStatus createdirectory(String local, String remote) throws IOException {
         UploadStatus status = UploadStatus.CREATE_DIRECTORY_SUCCESS;
 
-        String parentPath = FileHelper.getParentPath(local);
+        String parentPath = new File(local).getParent();
         Collection<File> files = FileHelper.listSelfFolders(local);
-      //  ListHelper.sortByLength((List<File>) files);
+        //  ListHelper.sortByLength((List<File>) files);
         for (File file : files) {
             String replace = file.getPath().replace(parentPath, "").replace("\\", "/");
             replace = StringHelper.noRepeatSlash(remote + replace);
@@ -756,18 +759,19 @@ public class FtpFactory implements INetFactory<FTPClient> {
 
         String local = downloader.getLocal();
         File temp = new File(local);
-        if(temp.isDirectory()) {
+        if (temp.isDirectory()) {
             downloader.setLocal(downloader.getLocal() + "/" + ftpFile.getName());
         }
 
         return downFtpFile(ftpClient, ftpFile, fileName, downloader);
     }
+
     /**
      * 下载文件
      *
-     * @param ftpFile         ftp文件
-     * @param file            远程文件
-     * @param downloader      下载配置
+     * @param ftpFile    ftp文件
+     * @param file       远程文件
+     * @param downloader 下载配置
      * @return
      * @throws IOException
      */
@@ -943,7 +947,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
                 //temp.put("size", SizeHelper.kb(ftpFile.getSize()));
                 if (type == 0) {
                     files.add(temp);
-                    if(null != ftpFileHandler) {
+                    if (null != ftpFileHandler) {
                         ftpFileHandler.executor(temp, files.size());
                     }
                 } else {
@@ -978,6 +982,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
 
     /**
      * 获取连接
+     *
      * @return
      */
     private synchronized FTPClient getMultiConnection() {
@@ -998,6 +1003,7 @@ public class FtpFactory implements INetFactory<FTPClient> {
 
     /**
      * 获取客户端
+     *
      * @return
      */
     public FTPClient get() {

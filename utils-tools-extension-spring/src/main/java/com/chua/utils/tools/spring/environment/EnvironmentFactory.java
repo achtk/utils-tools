@@ -113,7 +113,7 @@ public class EnvironmentFactory {
 
         ClassHelper.doWithFields(aClass, new FieldCallback() {
             @Override
-            public void doWith(Field item) throws Exception {
+            public void doWith(Field item) {
                 setField(item);
             }
 

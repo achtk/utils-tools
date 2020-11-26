@@ -79,6 +79,29 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
     }
 
     /**
+     * byte to hex string
+     *
+     * @param bytes byte array
+     * @return hex string
+     */
+    public static String toHex(byte[] bytes) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (bytes == null || bytes.length <= 0) {
+            return null;
+        }
+        for (int i = 0; i < bytes.length; i++) {
+            int v = bytes[i] & 0xFF;
+            String hv = Integer.toHexString(v);
+            if (hv.length() < 2) {
+                stringBuilder.append(0);
+            }
+            stringBuilder.append(hv);
+        }
+        return stringBuilder.toString();
+    }
+
+
+    /**
      * hex加密
      *
      * @param data 数据

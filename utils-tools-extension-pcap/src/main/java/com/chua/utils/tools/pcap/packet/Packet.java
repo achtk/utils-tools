@@ -48,6 +48,20 @@ public class Packet {
     public static class Payload {
         byte[] rawData;
         int length;
+        String[] hexData;
+
+        @Override
+        public String toString() {
+            if(null == hexData) {
+                return "Payload{}";
+            }
+
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String datum : hexData) {
+                stringBuilder.append(" ").append(datum);
+            }
+            return stringBuilder.substring(1);
+        }
     }
 
     @Override

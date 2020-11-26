@@ -124,7 +124,7 @@ public class FtpResolver extends NetResolver<FTPClient> implements FileServer, R
         //设置以二进制流的方式传输
         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
         //根目录
-        String parentPath = FileHelper.getParentPath(path);
+        String parentPath = new File(path).getParent();
         try {
             ftpClient.makeDirectory(parentPath);
         } catch (IOException e) {

@@ -255,6 +255,7 @@
         <module>utils-netx-extension-rabbitmq</module>
         <module>utils-opencv</module>
         <module>utils-netx-extension-event</module>
+        <module>utils-tools-schedule</module>
     </modules>
 
     <build>

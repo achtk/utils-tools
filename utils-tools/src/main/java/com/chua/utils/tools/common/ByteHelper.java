@@ -1,5 +1,6 @@
 package com.chua.utils.tools.common;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -11,6 +12,26 @@ import static com.chua.utils.tools.constant.NumberConstant.EIGHTH;
  * @author CH
  */
 public class ByteHelper {
+    /**
+     * byte array转char
+     *
+     * @param bytes 字节数组
+     * @return char char
+     */
+    public static char bytesToChar(byte[] bytes) {
+        return (char) (((bytes[0] & 0xFF) << 8) | (bytes[1] & 0xFF));
+    }
+
+    /**
+     * byte array转char array
+     *
+     * @param bytes 字节数组
+     * @return char char array
+     */
+    public static char[] bytesToChars(byte[] bytes) {
+        return ByteBuffer.wrap(bytes).asCharBuffer().array();
+    }
+
     /**
      * 字符串转为字节数组
      *
@@ -125,7 +146,7 @@ public class ByteHelper {
     public static String toHexString(byte b) {
         String s = Integer.toHexString(b & 0xFF);
         int len = s.length();
-        if (len < 2) {
+        if (len == 1) {
             s = "0" + s;
         }
         return s.toUpperCase();
@@ -138,8 +159,7 @@ public class ByteHelper {
      * @return the byte
      */
     public static byte parseBinaryString(String str) {
-        int i = Integer.parseInt(str, 2);
-        return (byte) i;
+        return (byte) Integer.parseInt(str, 2);
     }
 
     /**
@@ -149,8 +169,7 @@ public class ByteHelper {
      * @return the byte
      */
     public static byte parseHexString(String hex) {
-        int i = Integer.parseInt(hex, 16);
-        return (byte) i;
+        return (byte) Integer.parseInt(hex, 16);
     }
 
     /**
