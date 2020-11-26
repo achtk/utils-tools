@@ -1,5 +1,7 @@
 package com.chua.utils.tools.function.converter;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +21,10 @@ public class ListTypeConverter implements TypeConverter<List> {
 
         if (value instanceof List) {
             return (List) value;
+        }
+
+        if (value.getClass().isArray()) {
+            return Arrays.asList(value);
         }
         return Collections.singletonList(value);
     }

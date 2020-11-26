@@ -2,6 +2,7 @@ package com.chua.utils.tools.function.converter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 
 /**
  * long类型转化
@@ -35,6 +36,10 @@ public class LongTypeConverter implements TypeConverter<Long> {
             } catch (NumberFormatException e) {
                 return null;
             }
+        }
+
+        if (value instanceof Date) {
+            return ((Date) value).getTime();
         }
 
         return null;
