@@ -68,13 +68,6 @@
             <version>2.0b4</version>
         </dependency>
 
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-http</artifactId>
-            <version>1.0</version>
-        </dependency>
-
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-http-extension-httpclient</artifactId>
@@ -84,6 +77,12 @@
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-http-extension-okhttp</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-tools-extension-system</artifactId>
             <version>1.0</version>
         </dependency>
 

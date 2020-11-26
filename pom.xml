@@ -256,6 +256,7 @@
         <module>utils-opencv</module>
         <module>utils-netx-extension-event</module>
         <module>utils-tools-schedule</module>
+        <module>utils-tools-extension-system</module>
     </modules>
 
     <build>
