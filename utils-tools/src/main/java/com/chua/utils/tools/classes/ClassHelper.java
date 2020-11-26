@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,9 +27,6 @@ import static com.chua.utils.tools.empty.EmptyOrBase.*;
  */
 @Slf4j
 public class ClassHelper extends ClassLoaderHelper {
-
-    public static final Map<Class<?>, Object> DEFAULT_TYPE_VALUES = EmptyOrBase.BASE_TYPE_VALUE;
-
 
     /**
      * 字符串转类对象
@@ -660,7 +655,13 @@ public class ClassHelper extends ClassLoaderHelper {
     public static <T> Set<Class<? extends T>> forNames(Set<String> classes, ClassLoader... classLoaders) {
         return classes.parallelStream()
                 .filter(item -> item.indexOf("console") == -1 || !item.endsWith("Util"))
-                .map(className -> (Class<? extends T>) forName(className, classLoaders))
+                .map(className -> {
+                    try {
+                        return (Class<? extends T>) forName(className, classLoaders);
+                    } catch (Throwable e) {
+                        return null;
+                    }
+                })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }

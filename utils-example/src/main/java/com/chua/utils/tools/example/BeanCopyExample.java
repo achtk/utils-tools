@@ -17,16 +17,16 @@ public class BeanCopyExample {
     public static void main(String[] args) {
         System.out.println("==============================类赋值==============================");
         BeanCopy<TDemoInfo> beanCopy = StandardBeanCopy.of(TDemoInfo.class);
-        beanCopy.with("uuid", IdHelper.createUuid());
+        beanCopy.with("name", IdHelper.createUuid());
         TDemoInfo tDemoInfo = beanCopy.create();
         System.out.println(tDemoInfo.getUuid());
 
         System.out.println("==============================对象赋值==============================");
         TDemoInfo tDemoInfo1 = new TDemoInfo();
         BeanCopy<TDemoInfo> beanCopy1 = StandardBeanCopy.of(tDemoInfo1);
-        beanCopy1.with("uuid", IdHelper.createUuid());
+        beanCopy1.with("name", IdHelper.createUuid());
         TDemoInfo tDemoInfo2 = beanCopy.create();
         System.out.println(tDemoInfo2.getUuid());
-        System.out.println(tDemoInfo1.getUuid());
+        System.out.println(beanCopy.asMap());
     }
 }

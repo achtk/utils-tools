@@ -4,6 +4,7 @@ import com.chua.utils.tools.text.IdHelper;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @author CH
@@ -17,6 +18,8 @@ public class TDemoInfo {
     @Id
     @GeneratedValue
     private Integer id;
+
+    private Date time;
 
     @Column
     private String name;

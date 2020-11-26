@@ -27,7 +27,7 @@ public class BeanTypeConverter implements ApplicationContextAware, TypeConverter
     }
 
     @Override
-    public Class<?> getType() {
+    public Class<Object> getType() {
         return Object.class;
     }
 

@@ -118,12 +118,17 @@ public class RewriteScan extends Reflections {
         String index = index(RewriteSubTypesScanner.class);
         Set<String> keys = STORE.keys(index);
         keys.removeAll(STORE.values(index));
-        keys.parallelStream().forEach(key -> {
-            final Class<?> type = ClassHelper.forName(key, rewriteConfiguration.getClassLoaders());
-            if (type != null) {
+        for (String key : keys) {
+            final Class<?> type;
+            try {
+                type = ClassHelper.forName(key, rewriteConfiguration.getClassLoaders());
+            } catch (Throwable e) {
+                continue;
+            }
+            if (null != type) {
                 expandSupertypes(STORE, key, type);
             }
-        });
+        }
     }
 
     private void expandSupertypes(Store store, String key, Class<?> type) {

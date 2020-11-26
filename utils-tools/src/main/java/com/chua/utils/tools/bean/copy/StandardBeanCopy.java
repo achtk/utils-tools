@@ -109,7 +109,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
 
     @Override
     public BeanCopy with(Map<String, Object> param) {
-        if (!MapOperableHelper.isEmpty(param)) {
+        if (MapOperableHelper.isEmpty(param)) {
             return this;
         }
         for (Map.Entry<String, Object> entry : param.entrySet()) {
