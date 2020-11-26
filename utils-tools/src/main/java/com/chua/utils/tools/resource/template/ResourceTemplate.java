@@ -10,6 +10,7 @@ import com.chua.utils.tools.common.skip.SkipPatterns;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.resource.entity.Resource;
+import com.chua.utils.tools.resource.factory.FastResourceFactory;
 import com.chua.utils.tools.resource.factory.ReflectionFactory;
 import com.chua.utils.tools.resource.factory.ResourceFactory;
 import com.chua.utils.tools.storage.CacheStorage;
@@ -40,7 +41,7 @@ import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_DOLLAR;
 @NoArgsConstructor
 public class ResourceTemplate {
 
-    private ResourceFactory resourceFactory = new ReflectionFactory();
+    private ResourceFactory resourceFactory = new FastResourceFactory();
 
     private static final String ANY = "classpath:**/*.class";
     /**
@@ -64,6 +65,9 @@ public class ResourceTemplate {
 
     @Setter
     private List<String> excludes = Lists.newArrayList(SkipPatterns.JDK_LIB);
+
+    public ResourceTemplate() {
+    }
 
     public ResourceTemplate(ResourceFactory resourceFactory) {
         this.resourceFactory = resourceFactory;

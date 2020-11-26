@@ -1,0 +1,2 @@
+javassist=com.chua.utils.tools.compiler.JavassistCompiler
+jdk=com.chua.utils.tools.compiler.JdkCompiler
