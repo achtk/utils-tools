@@ -21,6 +21,10 @@ public class PatternConstant {
      */
     public static final Pattern NUMERIC_PATTERN = Pattern.compile("^[0-9\\-]+$");
     /**
+     * 只包含整数
+     */
+    public static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
+    /**
      * 整数
      */
     public static final Pattern NUMERIC_STRING_PATTERN = Pattern.compile("^[0-9\\-\\-]+$");

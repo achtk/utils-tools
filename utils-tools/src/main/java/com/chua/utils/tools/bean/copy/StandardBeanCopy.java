@@ -46,7 +46,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     private StandardBeanCopy() {
     }
 
-    private StandardBeanCopy(Class<T> tClass) {
+    protected StandardBeanCopy(Class<T> tClass) {
         this(ClassHelper.safeForObject(tClass), new BeanConfig());
     }
 
@@ -56,7 +56,11 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
 
     @SuppressWarnings("all")
     private StandardBeanCopy(T entity, BeanConfig beanConfig) {
-        this.tClass = (Class<T>) entity.getClass();
+        if(null == entity) {
+            this.tClass = (Class<T>) Object.class;
+        } else {
+            this.tClass = (Class<T>) entity.getClass();
+        }
         this.entity = entity;
         this.beanConfig = beanConfig;
         this.beanMap = BeanMap.create(tClass);
@@ -81,6 +85,9 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
      * @return this
      */
     public static <T> BeanCopy of(T entity) {
+        if(entity instanceof String) {
+            return new ClassBeanCopy(entity.toString());
+        }
         return new StandardBeanCopy<>(entity);
     }
 

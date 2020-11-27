@@ -5,9 +5,7 @@ import com.google.common.base.Strings;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -343,5 +341,23 @@ public class DateHelper {
             dateList.add(Date.from(localDate.minusDays(i).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         }
         return dateList;
+    }
+
+    /**
+     * localeDate转Date
+     *
+     * @param localDate localeDate
+     * @return Date
+     * @see java.time.LocalDate
+     * @see java.util.Date
+     */
+    public static Date toDate(LocalDate localDate) {
+        if (null == localDate) {
+            return null;
+        }
+
+        ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneId.systemDefault());
+        Instant instant = zonedDateTime.toInstant();
+        return Date.from(instant);
     }
 }

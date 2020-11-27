@@ -5,6 +5,7 @@ import com.chua.utils.tools.exceptions.NonUniqueException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_LEFT_BIG_PARENTHESES;
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_LEFT_SQUARE_BRACKET;
@@ -622,5 +623,20 @@ public class FinderHelper {
         Collection<K> ks = kvMap.keySet();
         K element = findElement(ks, index);
         return null == element ? null : kvMap.get(element);
+    }
+
+    /**
+     * 获取一个随机元素
+     *
+     * @param collector 集合
+     * @return 元素
+     */
+    public static synchronized  <T> T getRandomOne(Collection<T> collector) {
+        if (null == collector || collector.isEmpty()) {
+            return null;
+        }
+        Random random = new Random();
+        int nextInt = random.nextInt(collector.size());
+        return findElement(nextInt, collector);
     }
 }

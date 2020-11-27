@@ -34,6 +34,10 @@ public interface BeanCopy<T> {
         return StandardBeanCopy.<T>of(t);
     }
 
+    static <T> BeanCopy<T> of(Class<T> t) {
+        return StandardBeanCopy.<T>of(t);
+    }
+
     /**
      * 赋值
      *

@@ -5,6 +5,7 @@ import com.chua.utils.tools.function.able.InitializingCacheable;
 import javassist.*;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
+import javassist.bytecode.FieldInfo;
 import javassist.bytecode.annotation.*;
 
 import java.io.ByteArrayInputStream;
@@ -48,13 +49,15 @@ public class JavassistHelper extends InitializingCacheable {
     protected static <T> Class<? extends T> addNoParamConstructor(Class<? extends T> aClass) {
         String name = aClass.getName();
         String newName = name + JAVASSIST;
+        CtClass oldClass = null;
         try {
             ClassPool classPool = getClassPool();
-            CtClass oldClass = classPool.get(name);
+            oldClass = classPool.get(name);
             try {
                 CtClass ctClass = classPool.get(name);
                 ctClass.setName(newName);
                 oldClass = ctClass;
+                oldClass.setModifiers(Modifier.PUBLIC);
                 oldClass.setSuperclass(classPool.get(name));
                 setNewName(oldClass, classPool, newName);
             } catch (NotFoundException e) {
@@ -67,11 +70,60 @@ public class JavassistHelper extends InitializingCacheable {
                 oldClass.addConstructor(CtNewConstructor.defaultConstructor(oldClass));
             }
             return (Class<? extends T>) oldClass.toClass();
-        } catch (Exception e) {
-            try {
-                return (Class<? extends T>) new Loader().loadClass(newName);
-            } catch (ClassNotFoundException classNotFoundException) {
+        } catch (Exception e1) {
+            if (e1.getMessage().contains("Cannot inherit from final class")) {
+                return overrideTheFinalModifiedClass(aClass);
             }
+            try {
+                return (Class<? extends T>) oldClass.toClass(ClassHelper.getDefaultClassLoader(), aClass.getProtectionDomain());
+            } catch (CannotCompileException e) {
+                try {
+                    return (Class<? extends T>) new Loader().loadClass(newName);
+                } catch (ClassNotFoundException classNotFoundException) {
+                }
+            }
+        }
+        return aClass;
+    }
+
+    /**
+     * 重写final修饰的类
+     *
+     * @param aClass 类
+     * @param <T>    类型
+     * @return
+     */
+    private static <T> Class<? extends T> overrideTheFinalModifiedClass(Class<? extends T> aClass) {
+        String name = aClass.getName();
+        String newName = name + JAVASSIST;
+        try {
+            ClassPool classPool = getClassPool();
+            CtClass oldClass = classPool.get(name);
+
+            CtClass newClass = classPool.makeClass(newName);
+
+            newClass.setModifiers(Modifier.PUBLIC);
+
+            for (CtField field : oldClass.getDeclaredFields()) {
+                CtField ctField = new CtField(field, newClass);
+                ctField.setModifiers(field.getModifiers());
+                newClass.addField(ctField);
+            }
+
+            for (CtMethod declaredMethod : oldClass.getDeclaredMethods()) {
+                CtMethod ctMethod = new CtMethod(declaredMethod.getReturnType(), declaredMethod.getName(), declaredMethod.getParameterTypes(), newClass);
+                ctMethod.setModifiers(declaredMethod.getModifiers());
+                newClass.addMethod(ctMethod);
+            }
+
+            newClass.addConstructor(CtNewConstructor.defaultConstructor(newClass));
+
+            for (CtClass anInterface : oldClass.getInterfaces()) {
+                newClass.addInterface(anInterface);
+            }
+            return (Class<? extends T>) newClass.toClass();
+
+        } catch (Exception e) {
         }
         return aClass;
     }

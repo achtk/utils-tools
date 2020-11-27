@@ -14,7 +14,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.regex.Matcher;

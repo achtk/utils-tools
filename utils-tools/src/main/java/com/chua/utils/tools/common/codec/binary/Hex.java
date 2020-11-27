@@ -374,4 +374,28 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
         }
         return sb.length() > 0 ? sb.substring(1) : sb.toString();
     }
+    /**
+     * Hex数据间隔
+     *
+     * @param hex Hex
+     * @return 间隔的Hex
+     */
+    public static String every0XSpace(String hex) {
+        return every0XSpace(hex, 2);
+    }
+    /**
+     * Hex数据间隔
+     *
+     * @param hex  Hex
+     * @param size 间隔长度
+     * @return 间隔的Hex
+     */
+    public static String every0XSpace(String hex, int size) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < hex.length() - 1; i += size) {
+            String output = hex.substring(i, (i + size));
+            sb.append(" 0x").append(output);
+        }
+        return sb.length() > 0 ? sb.substring(1) : sb.toString();
+    }
 }

@@ -53,12 +53,31 @@ public class RabbitMqResolver extends NetResolver<Connection> implements NetPubS
     @Override
     public void publish(NetPubSubConf<Channel> netPubSubConf, byte[] data) throws IOException {
         Channel channel = netPubSubConf.getChannel();
+        //队列名称
+        String queueName = netPubSubConf.getQueue();
+
         if (null == channel) {
             channel = connection.createChannel();
+            //声明交换机
+            // 第一个参数，exchange：交换机名称。数据类型：String
+            // 第二个参数，type：交换机的类型(direct/topic/fanout)。数据类型：String
+            channel.exchangeDeclare(netPubSubConf.getExchange(), netPubSubConf.getExchangeType());
+            //队列名称
+            queueName = Strings.isNullOrEmpty(netPubSubConf.getQueue()) ? channel.queueDeclare().getQueue() : netPubSubConf.getQueue();
+            //声明队列
+            // 第一个参数，queueName:对列名称。数据类型：String
+            // 第二个参数，durable：是否持久化, 队列的声明默认是存放到内存中的，如果rabbitmq重启会丢失，如果想重启之后还存在就要使队列持久化，保存到Erlang自带的Mnesia数据库中，当rabbitmq重启之后会读取该数据库。数据类型：boolean
+            // 第三个参数，exclusive：是否排外的。数据类型：boolean
+            // 第四个参数，autoDelete：是否自动删除。数据类型：boolean
+            // 第五个参数，arguments：参数。数据类型：Map<String, Object>
+            channel.queueDeclare(queueName, true, false, false, netPubSubConf.getGetQueueParams());
+            //绑定队列
+            //第一个参数，queueName:对列名称。数据类型：String
+            //第二个参数，exchange：交换机名称。数据类型：String
+            //第三个参数，routingKey：队列跟交换机绑定的键值。数据类型：String
+            channel.queueBind(queueName, netPubSubConf.getExchange(), netPubSubConf.getRoutingKey());
             netPubSubConf.setChannel(channel);
         }
-        //绑定交换机
-        channel.exchangeDeclare(netPubSubConf.getExchange(), netPubSubConf.getExchangeType());
         //发布
         channel.basicPublish(netPubSubConf.getExchange(), netPubSubConf.getRoutingKey(), null, data);
         //尝试关闭管道
@@ -74,22 +93,32 @@ public class RabbitMqResolver extends NetResolver<Connection> implements NetPubS
     @Override
     public void consumer(NetPubSubConf<Channel> netPubSubConf, Consumer<byte[]> consumer) throws IOException {
         Channel channel = netPubSubConf.getChannel();
+
+        //队列名称
+        String queueName = netPubSubConf.getQueue();
         if (null == channel) {
             channel = connection.createChannel();
+            //声明交换机
+            // 第一个参数，exchange：交换机名称。数据类型：String
+            // 第二个参数，type：交换机的类型(direct/topic/fanout)。数据类型：String
+            channel.exchangeDeclare(netPubSubConf.getExchange(), netPubSubConf.getExchangeType(), false, false, false, null);
+            //绑定队列
+            //第一个参数，queueName:对列名称。数据类型：String
+            //第二个参数，exchange：交换机名称。数据类型：String
+            //第三个参数，routingKey：队列跟交换机绑定的键值。数据类型：String
+            channel.queueBind(queueName, netPubSubConf.getExchange(), netPubSubConf.getRoutingKey());
+
+            netPubSubConf.setQueue(queueName);
             netPubSubConf.setChannel(channel);
         }
         //管道
         final Channel fChannel = channel;
-        //绑定交换机
-        fChannel.exchangeDeclare(netPubSubConf.getExchange(), netPubSubConf.getExchangeType());
-        //队列名称
-        String queueName = Strings.isNullOrEmpty(netPubSubConf.getQueue()) ? fChannel.queueDeclare().getQueue() : netPubSubConf.getQueue();
-        //绑定队列
-        fChannel.queueBind(queueName, netPubSubConf.getExchange(), netPubSubConf.getRoutingKey());
+        //队列
+        final String fQueueName = queueName;
         //尝试关闭管道
         if (netPubSubConf.isAutoClose()) {
             //订阅
-            fChannel.basicConsume(queueName, new DefaultConsumer(channel) {
+            fChannel.basicConsume(fQueueName, new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                     super.handleDelivery(consumerTag, envelope, properties, body);
@@ -108,7 +137,7 @@ public class RabbitMqResolver extends NetResolver<Connection> implements NetPubS
         executorService.execute(() -> {
             //订阅
             try {
-                fChannel.basicConsume(queueName, new DefaultConsumer(fChannel) {
+                fChannel.basicConsume(fQueueName, new DefaultConsumer(fChannel) {
                     @Override
                     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                         super.handleDelivery(consumerTag, envelope, properties, body);

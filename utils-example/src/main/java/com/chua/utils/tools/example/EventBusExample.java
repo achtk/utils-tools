@@ -21,15 +21,15 @@ public class EventBusExample {
         // eventBusContextManager.registerEventBus("demo", new GuavaEventBus(), new EventBusDemo());
         // eventBusContextManager.registerEventBus("demo", new GuavaAsyncEventBus(), new EventBusDemo());
         //eventBusContextManager.registerEventBus("demo", new VertxServerEventBus(12345), null);
-        eventBusContextManager.registerEventBus("demo", new VertxEventBus( 12345), new EventBusDemo());
+        eventBusContextManager.registerEventBus("demo", new VertxEventBus(12345), new EventBusDemo());
 
         IntStream.range(0, 10).forEach(action -> {
             eventBusContextManager.sendEventBus("demo", IdHelper.createSimpleUuid());
-        //    eventBusContextManager.sendEventBus("demo1", IdHelper.createSimpleUuid());
+            //    eventBusContextManager.sendEventBus("demo1", IdHelper.createSimpleUuid());
         });
     }
 
-    static class EventBusDemo {
+    public static class EventBusDemo {
 
         private AtomicInteger atomicInteger = new AtomicInteger();
 

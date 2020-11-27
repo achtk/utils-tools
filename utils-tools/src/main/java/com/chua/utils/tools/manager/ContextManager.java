@@ -1,5 +1,7 @@
 package com.chua.utils.tools.manager;
 
+import com.chua.utils.tools.empty.EmptyOrBase;
+import com.chua.utils.tools.function.converter.TypeConverter;
 import com.chua.utils.tools.manager.eventbus.EventBus;
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
 import com.chua.utils.tools.manager.template.HttpTemplate;
@@ -130,5 +132,13 @@ public interface ContextManager {
         return new HttpTemplate();
     }
 
-
+    /**
+     * 创建类型转化器
+     *
+     * @param aClass 待转化的类
+     * @return
+     */
+    default <T> TypeConverter<T> createTypeConverter(Class<T> aClass) {
+        return EmptyOrBase.getTypeConverter(aClass);
+    }
 }

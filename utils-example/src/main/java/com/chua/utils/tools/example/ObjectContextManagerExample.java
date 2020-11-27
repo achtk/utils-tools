@@ -4,15 +4,14 @@ import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.codec.encrypt.Encrypt;
 import com.chua.utils.tools.example.entity.TDemoInfo;
 import com.chua.utils.tools.function.able.InitializingCacheable;
+import com.chua.utils.tools.function.converter.TypeConverter;
 import com.chua.utils.tools.http.entity.ResponseEntity;
-import com.chua.utils.tools.manager.ContextManager;
-import com.chua.utils.tools.manager.ObjectContextManager;
-import com.chua.utils.tools.manager.ProfileAdaptorManager;
-import com.chua.utils.tools.manager.StrategyContextManager;
+import com.chua.utils.tools.manager.*;
 import com.chua.utils.tools.manager.builder.CacheStrategyBuilder;
 import com.chua.utils.tools.manager.builder.LimitStrategyBuilder;
 import com.chua.utils.tools.manager.builder.ProxyStrategyBuilder;
 import com.chua.utils.tools.manager.builder.RetryStrategyBuilder;
+import com.chua.utils.tools.manager.eventbus.GuavaEventBus;
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
 import com.chua.utils.tools.manager.parser.ClassModifyDescriptionParser;
 import com.chua.utils.tools.manager.producer.StandardContextManager;
@@ -24,9 +23,11 @@ import com.chua.utils.tools.resource.entity.Resource;
 import com.chua.utils.tools.resource.template.ResourceTemplate;
 import com.chua.utils.tools.spi.Spi;
 import com.chua.utils.tools.spi.processor.ReflectionExtensionProcessor;
+import com.chua.utils.tools.text.IdHelper;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -47,20 +48,50 @@ public class ObjectContextManagerExample {
     public static void main(String[] args) throws Exception {
         //测试可被缓存对象
         testCacheable();
+        System.out.println();
         //测试对象管理器
         testObjectManager();
+        System.out.println();
         //测试策略管理器
         testStrategyManager();
+        System.out.println();
         //测试配置文件适配器
         testProfileAdaptorManager();
+        System.out.println();
         //测试类描述解析器
         testClassDescriptionParser();
+        System.out.println();
         //测试资源查找器
         testResourceFinderManager();
+        System.out.println();
         //测试MBean
         //testMBeanTemplate();
+        //System.out.println();
         //测试Http
-        testHttpTemplate();
+       // testHttpTemplate();
+        // System.out.println();
+        //测试消息总线管理器
+        testEventBusManager();
+        System.out.println();
+        //测试类型转化器
+        testTypeConverter();
+        System.out.println();
+    }
+
+    private static void testTypeConverter() {
+        System.out.println("==================================测试类型转化器=============================");
+        TypeConverter longTypeConverter = contextManager.createTypeConverter(Long.class);
+        System.out.println("字符串[12]转为Long :"+ longTypeConverter.convert("12"));
+        TypeConverter dateTypeConverter = contextManager.createTypeConverter(Date.class);
+        System.out.println("字符串[12]转为Date :"+ dateTypeConverter.convert("12"));
+        System.out.println("字符串[2020-11-27]转为Date :"+ dateTypeConverter.convert("2020-11-27"));
+    }
+
+    private static void testEventBusManager() {
+        System.out.println("==================================测试消息总线管理器=============================");
+        EventBusContextManager eventBusContextManager = contextManager.createEventBusContextManager();
+        eventBusContextManager.registerEventBus("demo", new GuavaEventBus(), new EventBusExample.EventBusDemo());
+        eventBusContextManager.sendEventBus("demo", IdHelper.createUuid());
     }
 
     private static void testHttpTemplate() throws IOException {
@@ -74,7 +105,7 @@ public class ObjectContextManagerExample {
         System.out.println("==================================测试MBean=============================");
         MBeanTemplate mBeanTemplate = contextManager.createMBeanTemplate();
         mBeanTemplate.register(new TDemoInfo());
-        System.out.println("注册MBean" );
+        System.out.println("注册MBean");
     }
 
     private static void testResourceFinderManager() {
@@ -96,7 +127,7 @@ public class ObjectContextManagerExample {
         ClassModifyDescriptionParser<TDemoInfo> modifyDescriptionParser = parser.modify();
         modifyDescriptionParser.addField("text1", String.class);
         modifyDescriptionParser.addMethod("getText1", String.class, null, "return text1;", null);
-        modifyDescriptionParser.addMethod("public String getText2() {return text1;}");
+        modifyDescriptionParser.addMethod("public String getText2() {return this.uuid;}");
 
         Class<TDemoInfo> aClass = modifyDescriptionParser.toClass().toClass();
         ClassDescriptionParser<TDemoInfo> classDescriptionParser = contextManager.createClassDescriptionParser(aClass);
@@ -105,9 +136,9 @@ public class ObjectContextManagerExample {
         System.out.println("类的超类: " + classDescriptionParser.superDescription().size());
         System.out.println("类的字段: " + classDescriptionParser.fieldDescription().size());
         System.out.println("类的方法: " + classDescriptionParser.methodDescription().size());
+        System.out.println("测试追加的方法(getText2): " + classDescriptionParser.findMethodDescription("getText2").invoke(null));
 
-        System.out.println();
-        System.out.println();
+
     }
 
     /**
@@ -117,7 +148,6 @@ public class ObjectContextManagerExample {
         System.out.println("==================================测试配置文件解析器=============================");
         ProfileAdaptorManager profileAdaptorManager = contextManager.createProfileAdaptorManager();
         System.out.println("当前支持的配置文件:" + profileAdaptorManager.names());
-
         System.out.println("获取json文件解析器: " + profileAdaptorManager.get("json"));
     }
 
@@ -128,8 +158,6 @@ public class ObjectContextManagerExample {
         System.out.println("==================================测试获取可被缓存对象=============================");
         ConcurrentMap cache = InitializingCacheable.getValue(StandardStrategyContextManager.class, "CACHE", ConcurrentMap.class);
         System.out.println(cache);
-        System.out.println();
-        System.out.println();
     }
 
     private static void testObjectManager() {
@@ -143,8 +171,6 @@ public class ObjectContextManagerExample {
         System.out.println("******************************获取所有带有Spi注解的类******************************");
         Set<Class<?>> annotatedWith = objectContextManager.getTypesAnnotatedWith(Spi.class);
         System.out.println(annotatedWith);
-        System.out.println();
-        System.out.println();
     }
 
     /**
@@ -166,8 +192,6 @@ public class ObjectContextManagerExample {
         RetryStrategyBuilder retryStrategyBuilder = strategyContextManager.createRetryStrategyBuilder();
         TDemoInfo tDemoInfo = (TDemoInfo) retryStrategyBuilder.retry(TruePredicate.INSTANCE).create(tDemoInfo1);
         System.out.println(tDemoInfo.getUuid());
-        System.out.println();
-        System.out.println();
     }
 
     private static void testLimitStrategy() {
@@ -175,8 +199,6 @@ public class ObjectContextManagerExample {
         LimitStrategyBuilder limitStrategy = strategyContextManager.createLimitStrategy();
         TDemoInfo tDemoInfo = (TDemoInfo) limitStrategy.limit(1).create(tDemoInfo1);
         System.out.println(tDemoInfo.getUuid());
-        System.out.println();
-        System.out.println();
     }
 
     private static void testProxyStrategy() {
@@ -185,8 +207,6 @@ public class ObjectContextManagerExample {
         ProxyStrategyBuilder proxyStrategyBuilder = strategyContextManager.createProxyStrategy();
         TDemoInfo tDemoInfo = (TDemoInfo) proxyStrategyBuilder.proxy((obj, method, args, proxy) -> "1").create(TDemoInfo.class);
         System.out.println(tDemoInfo.getUuid());
-        System.out.println();
-        System.out.println();
     }
 
     private static void testCacheStrategy() {

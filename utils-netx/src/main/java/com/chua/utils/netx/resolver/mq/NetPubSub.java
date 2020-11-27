@@ -1,6 +1,7 @@
 package com.chua.utils.netx.resolver.mq;
 
 import com.chua.utils.netx.resolver.entity.NetPubSubConf;
+import com.chua.utils.tools.common.ByteHelper;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -21,6 +22,16 @@ public interface NetPubSub<T> {
      * @throws IOException IOException
      */
     void publish(NetPubSubConf<T> netPubSubConf, byte[] data) throws IOException;
+    /**
+     * 发布
+     *
+     * @param netPubSubConf 配置
+     * @param data          数据
+     * @throws IOException IOException
+     */
+    default void publish(NetPubSubConf<T> netPubSubConf, String data) throws IOException {
+        publish(netPubSubConf, ByteHelper.getBytes(data));
+    }
 
     /**
      * 订阅
@@ -30,4 +41,5 @@ public interface NetPubSub<T> {
      * @throws IOException IOException
      */
     void consumer(NetPubSubConf<T> netPubSubConf, Consumer<byte[]> consumer) throws IOException;
+
 }

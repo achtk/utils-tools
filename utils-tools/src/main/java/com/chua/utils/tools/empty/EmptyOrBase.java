@@ -4,6 +4,7 @@ import com.chua.utils.tools.collects.collections.ListHelper;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.function.able.InitializingCacheable;
 import com.chua.utils.tools.function.converter.TypeConverter;
+import com.chua.utils.tools.function.converter.VoidTypeConverter;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.google.common.collect.Lists;
 
@@ -213,6 +214,14 @@ public class EmptyOrBase extends InitializingCacheable {
      * 空 byte[]
      */
     public static final byte[] EMPTY_BYTES = new byte[0];
+    /**
+     * 大写数字
+     */
+    public static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
+            '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+            'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
+            'Z'};
+    private static final TypeConverter VOID_TYPE_CONVERTER = new VoidTypeConverter();
 
     /**
      * 常用基础类型
@@ -256,6 +265,6 @@ public class EmptyOrBase extends InitializingCacheable {
      * @param aClass 类型
      */
     public static TypeConverter getTypeConverter(Class<?> aClass) {
-        return TYPE_CONVERTER.get(aClass);
+        return null == aClass ? VOID_TYPE_CONVERTER : TYPE_CONVERTER.get(aClass);
     }
 }

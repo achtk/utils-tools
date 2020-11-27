@@ -20,7 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * spi扩展器
@@ -189,6 +191,31 @@ public class ExtensionLoader<T> {
         }
 
         return extensionClasses.getObj();
+    }
+
+    /**
+     * 获取优先级最高的扩展实现
+     *
+     * @param name 扩展名称
+     * @return 优先级最高的扩展实现
+     */
+    public <E>E getExtension(Class<E> tClass) {
+        if(null == tClass) {
+            return null;
+        }
+        Collection<ExtensionClass<T>> values = extensionClassMultimap.values();
+        List<ExtensionClass<T>> collect = values.stream().filter(item -> {
+            return tClass.isAssignableFrom(item.getObj().getClass());
+        }).collect(Collectors.toList());
+        ExtensionClass<T> extensionClass = values.stream().filter(item -> {
+            return tClass.isAssignableFrom(item.getObj().getClass());
+        }).sorted(new Comparator<ExtensionClass<T>>() {
+            @Override
+            public int compare(ExtensionClass<T> o1, ExtensionClass<T> o2) {
+                return o1.getOrder() > o2.getOrder() ? 1 : 0;
+            }
+        }).findFirst().get();
+        return (E) extensionClass.getObj();
     }
 
     /**

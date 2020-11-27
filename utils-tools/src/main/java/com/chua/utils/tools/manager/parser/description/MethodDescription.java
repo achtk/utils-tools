@@ -96,6 +96,11 @@ public class MethodDescription<T> {
         if (null == newEntity) {
             return null;
         }
+
+        if(null == params) {
+            params = new Object[0];
+        }
+
         if (paramSize != params.length) {
             return null;
         }
@@ -105,7 +110,7 @@ public class MethodDescription<T> {
             return null;
         }
         try {
-            Object invoke = method.invoke(entity, objects);
+            Object invoke = method.invoke(newEntity, objects);
             return null != invoke && returnType.isAssignableFrom(invoke.getClass()) ? (R) invoke : null;
         } catch (Exception e) {
             return null;

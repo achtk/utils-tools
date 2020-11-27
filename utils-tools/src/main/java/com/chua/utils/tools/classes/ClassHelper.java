@@ -9,11 +9,14 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -664,5 +667,109 @@ public class ClassHelper extends ClassLoaderHelper {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    /**
+     * 获取方法
+     *
+     * @param object     对象
+     * @param methodName 方法名
+     * @param params     参数
+     * @return
+     */
+    public static Method getMethodByName(Object object, String methodName, Object[] params) {
+        List<Method> returnMethods = new ArrayList<>();
+        doWithMethods(object.getClass(), method -> {
+            String name = method.getName();
+            if (!name.equals(methodName)) {
+                return;
+            }
+            Class<?>[] types = method.getParameterTypes();
+            if (types.length != params.length) {
+                return;
+            }
+            AtomicBoolean isMatcher = new AtomicBoolean(true);
+            for (int i = 0; i < types.length; i++) {
+                Class<?> type = types[i];
+                if (!type.isAssignableFrom(params[i].getClass())) {
+                    isMatcher.set(false);
+                    return;
+                }
+            }
+
+            if (!isMatcher.get()) {
+                return;
+            }
+            returnMethods.add(method);
+        });
+
+        return returnMethods.size() != 1 ? null : returnMethods.get(0);
+    }
+
+    /**
+     * 获取方法值
+     *
+     * @param object 对象
+     * @param method 方法
+     * @param params 参数
+     * @return 值
+     */
+    public static Object getMethodValue(Object object, Method method, Object[] params) {
+        return getMethodValue(object, method, params, Object.class);
+    }
+
+    /**
+     * 获取方法值
+     *
+     * @param object     对象
+     * @param method     方法
+     * @param params     参数
+     * @param returnType 返回类型
+     * @param <T>        类型
+     * @return 值
+     */
+    public static <T> T getMethodValue(Object object, Method method, Object[] params, Class<T> returnType) {
+        if (null == method) {
+            return null;
+        }
+
+        if (null == returnType) {
+            returnType = (Class<T>) Object.class;
+        }
+
+        method.setAccessible(true);
+        try {
+            return (T) method.invoke(object, params);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 获取方法值
+     *
+     * @param object     对象
+     * @param methodName 方法名
+     * @param params     参数
+     * @return 值
+     */
+    public static Object getMethodValue(Object object, String methodName, Object[] params) {
+        return getMethodValue(object, methodName, params, Object.class);
+    }
+
+    /**
+     * 获取方法值
+     *
+     * @param object     对象
+     * @param methodName 方法名
+     * @param params     参数
+     * @param returnType 返回类型
+     * @param <T>        类型
+     * @return 值
+     */
+    public static <T> T getMethodValue(Object object, String methodName, Object[] params, Class<T> returnType) {
+        Method method = getMethodByName(object, methodName, params);
+        return getMethodValue(object, method, params, returnType);
     }
 }
