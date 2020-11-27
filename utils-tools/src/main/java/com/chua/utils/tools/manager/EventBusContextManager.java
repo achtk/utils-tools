@@ -10,8 +10,10 @@ import java.util.List;
  * @author CH
  * @version 1.0.0
  * @since 2020/11/9
+ * @see com.chua.utils.tools.manager.producer.StandardEventBusContextManager
+ * @see com.chua.utils.tools.manager.producer.StandardContextManager
  */
-public interface EventBusContextManager {
+public interface EventBusContextManager extends AutoCloseable{
 
     /**
      * 获取所有消息总线

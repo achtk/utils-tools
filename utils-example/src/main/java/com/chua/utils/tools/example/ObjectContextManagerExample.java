@@ -90,7 +90,7 @@ public class ObjectContextManagerExample {
     private static void testEventBusManager() {
         System.out.println("==================================测试消息总线管理器=============================");
         EventBusContextManager eventBusContextManager = contextManager.createEventBusContextManager();
-        eventBusContextManager.registerEventBus("demo", new GuavaEventBus(), new EventBusExample.EventBusDemo());
+        eventBusContextManager.registerEventBus("demo", new GuavaEventBus(), new EventBusExample.EventBusDemo(""));
         eventBusContextManager.sendEventBus("demo", IdHelper.createUuid());
     }
 

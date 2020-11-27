@@ -11,6 +11,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.NetClient;
 import io.vertx.core.net.NetSocket;
+import io.vertx.core.net.SocketAddress;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -56,6 +57,10 @@ public class VertxEventBus extends AbstractVerticle implements ServerEventBus {
                 session.result().write(name);
 
                 session.result().handler(buffer -> {
+                    if(log.isDebugEnabled()) {
+                        SocketAddress socketAddress = session.result().localAddress();
+                        log.debug("获取到远程数据[{}:{}]", socketAddress.host(), socketAddress.port());
+                    }
                     String string = buffer.toString();
                     List<String> strings = Splitter.on("\r\n").trimResults().omitEmptyStrings().splitToList(string);
                     for (String s : strings) {

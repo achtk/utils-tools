@@ -5,8 +5,8 @@ import com.chua.utils.tools.manager.EventBusContextManager;
 import com.chua.utils.tools.manager.eventbus.EventBus;
 import com.chua.utils.tools.manager.eventbus.ServerEventBus;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 标准的消息总线管理器
@@ -42,5 +42,19 @@ public class StandardEventBusContextManager implements EventBusContextManager {
                 eventBus.post(message);
             }
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        Collection<List<EventBus>> values = CONCURRENT_HASH_MAP.values();
+        values.forEach(eventBuses -> {
+            if(eventBuses instanceof ServerEventBus) {
+                try {
+                    ((ServerEventBus) eventBuses).close();
+                } catch (Exception ignore) {
+
+                }
+            }
+        });
     }
 }
