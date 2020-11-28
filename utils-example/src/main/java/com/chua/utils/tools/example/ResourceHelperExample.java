@@ -20,7 +20,7 @@ import java.util.Set;
  */
 public class ResourceHelperExample {
 
-    private static final String EXP = "classpath:**/*.*";
+    private static final String EXP = "classpath:**/*.class";
     private static final Class<Encrypt> ENCRYPT_CLASS = Encrypt.class;
 
 
@@ -32,11 +32,9 @@ public class ResourceHelperExample {
         //资源查找
         //Set<Resource> resources1 = testReflectGetResources();
         //子类查找
-        //testSubGetResources();
+        testSubGetResources();
         //资源查找
         testFastSubGetResources();
-        //资源查找
-        testReflectSubGetResources();
 
     }
 

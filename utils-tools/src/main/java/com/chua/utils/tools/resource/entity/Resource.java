@@ -1,6 +1,6 @@
 package com.chua.utils.tools.resource.entity;
 
-import com.chua.utils.tools.classes.adaptor.JavassistAdaptor;
+import com.chua.utils.tools.classes.adaptor.AsmAdaptor;
 import com.chua.utils.tools.classes.adaptor.MetadataAdapter;
 import com.chua.utils.tools.classes.entity.ClassDescription;
 import com.google.common.base.Strings;
@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
@@ -70,9 +69,9 @@ public class Resource implements Serializable {
      */
     private ClassDescription createDescription() {
         try (InputStream inputStream = url.openStream()) {
-            MetadataAdapter metadataAdapter = new JavassistAdaptor(inputStream);
+            MetadataAdapter metadataAdapter = new AsmAdaptor(inputStream);
             return metadataAdapter.description();
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
     }

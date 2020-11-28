@@ -88,4 +88,18 @@ public interface MetadataAdapter {
 
         return classDescription;
     }
+    /**
+     * 获取描述
+     *
+     * @return 类描述
+     */
+    default ClassDescription descriptionExtends() {
+        if(isEmpty()) {
+            return null;
+        }
+        ClassDescription classDescription = new ClassDescription();
+        classDescription.setSuperClass(getSuperClass());
+        classDescription.setInterfaceNames(getInterfaceName());
+        return classDescription;
+    }
 }

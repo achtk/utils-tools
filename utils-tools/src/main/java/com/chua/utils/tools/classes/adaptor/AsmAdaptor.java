@@ -5,11 +5,13 @@ import com.chua.utils.tools.classes.entity.FieldDescription;
 import com.chua.utils.tools.classes.entity.MethodDescription;
 import jdk.internal.org.objectweb.asm.ClassReader;
 import jdk.internal.org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.ModuleVisitor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.chua.utils.tools.constant.SymbolConstant.*;
@@ -26,17 +28,24 @@ import static javassist.bytecode.AccessFlag.isProtected;
  */
 public class AsmAdaptor implements MetadataAdapter {
 
-    private final ClassReader classReader;
-    private final ClassNode classNode;
+    private ClassReader classReader = null;
+    private ClassNode classNode;
     private InputStream inputStream;
     private List<String> annotations = new ArrayList<>();
     private List<FieldDescription> fieldDescriptions = new ArrayList<>();
     private List<MethodDescription> methodDescriptions = new ArrayList<>();
     private String source;
 
-    public AsmAdaptor(InputStream inputStream) throws IOException {
+    public AsmAdaptor(InputStream inputStream) {
         this.inputStream = inputStream;
-        this.classReader = new ClassReader(inputStream);
+        ClassReader classReader= null;
+        try {
+            classReader = new ClassReader(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        this.classReader = classReader;
         this.classNode = new ClassNode();
         this.classReader.accept(classNode, 0);
         this.source = resolveNewName(classNode.name);
