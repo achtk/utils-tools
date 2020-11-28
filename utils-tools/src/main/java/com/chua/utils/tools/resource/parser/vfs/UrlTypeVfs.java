@@ -41,7 +41,7 @@ public class UrlTypeVfs {
 
     public ParserDir createDir(final URL url, final Matcher matcher) {
         try {
-            URL adaptedUrl = adaptURL(url);
+            URL adaptedUrl = adaptUrl(url);
             return new ZipParserDir(new JarFile(adaptedUrl.getFile()), matcher);
         } catch (Exception e) {
             try {
@@ -54,7 +54,7 @@ public class UrlTypeVfs {
         return null;
     }
 
-    public URL adaptURL(URL url) throws MalformedURLException {
+    public URL adaptUrl(URL url) throws MalformedURLException {
         if (VFS_ZIP.equals(url.getProtocol())) {
             return replaceZipSeparators(url.getPath(), realFile);
         } else if (VFS_FILE.equals(url.getProtocol())) {

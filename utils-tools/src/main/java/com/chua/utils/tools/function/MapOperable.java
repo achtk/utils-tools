@@ -1,17 +1,12 @@
 package com.chua.utils.tools.function;
 
-import bsh.EvalError;
-import bsh.Interpreter;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
-import com.chua.utils.tools.common.BeansHelper;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.converter.TypeConverter;
-import com.google.common.base.Converter;
 import com.google.common.collect.Lists;
 
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Map可操作
@@ -348,6 +343,7 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
      * <p> Long是从{@link #getLong（Object）}的结果中获得的。
      *
      * @param key          查找的关键
+     * @param key2         查找的关键
      * @param defaultValue 默认值
      * @return 如果输入的Map为空，则将Map中的值返回为Long，<code> 默认值 </ code>
      */
@@ -370,7 +366,8 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
      * 以null安全的方式从Map中获取Date。
      * <p> Long是从{@link #getDate（Object）}的结果中获得的。
      *
-     * @param key 查找的关键
+     * @param key    查找的关键
+     * @param format 日期格式
      * @return 如果输入的Map为空，则将Map中的值返回为Date，<code> null </ code>
      */
     default String getDate(final K key, final String format) {
@@ -737,7 +734,9 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
      * 以null安全的方式从Map获取字符串。
      * <p>字符串是通过<code> toString </ code>获得的。
      *
-     * @param key 查找的关键
+     * @param key          查找的关键
+     * @param key2         查找的关键
+     * @param defaultValue 默认值
      * @return Map中的值作为字符串，如果为null，则<code> null </ code>
      */
     default String getString(final K key, K key2, final String defaultValue) {

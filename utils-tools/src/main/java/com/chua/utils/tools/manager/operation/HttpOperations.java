@@ -26,6 +26,7 @@ public interface HttpOperations {
      * @param responseType the type of the return value
      * @param uriVariables the variables to expand the template
      * @return the converted object
+     * @throws IOException IOException
      */
     <T> T getForObject(String url, Class<T> responseType, Object... uriVariables) throws IOException;
 
@@ -38,6 +39,7 @@ public interface HttpOperations {
      * @param responseType the type of the return value
      * @param uriVariables the variables to expand the template
      * @return the converted object
+     * @throws IOException IOException
      */
     <T> ResponseEntity<T> getForEntity(String url, Class<T> responseType, Object... uriVariables) throws IOException;
 
@@ -47,22 +49,26 @@ public interface HttpOperations {
      * <p> URI模板变量使用给定的URI变量（如果有）进行扩展。
      *
      * @param url          the url
+     * @param request      the request
      * @param responseType the type of the return value
      * @param uriVariables the variables to expand the template
+     * @param <T>          type
      * @return the converted object
+     * @throws IOException IOException
      */
     <T> T postForObject(String url, Object request, Class<T> responseType, Map<String, ?> uriVariables) throws IOException;
 
     /**
      * 执行
      *
-     * @param url
-     * @param method
-     * @param requestCallback
-     * @param responseExtractor
-     * @param <T>
-     * @return
-     * @throws IOException
+     * @param url               地址
+     * @param method            方法
+     * @param requestCallback   请求处理
+     * @param responseExtractor 响应处理
+     * @param <T>               类型
+     * @return ResponseEntity
+     * @throws IOException IOException
+     * @see ResponseEntity
      */
     <T> ResponseEntity<T> execute(URI url, String method, RequestCallback requestCallback, ResponseExtractor<T> responseExtractor) throws IOException;
 

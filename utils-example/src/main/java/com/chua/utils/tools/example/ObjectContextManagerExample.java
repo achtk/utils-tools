@@ -17,21 +17,18 @@ import com.chua.utils.tools.manager.parser.ClassModifyDescriptionParser;
 import com.chua.utils.tools.manager.producer.StandardContextManager;
 import com.chua.utils.tools.manager.producer.StandardStrategyContextManager;
 import com.chua.utils.tools.manager.template.HttpTemplate;
-import com.chua.utils.tools.manager.template.MBeanTemplate;
+import com.chua.utils.tools.manager.template.MbeanTemplate;
 import com.chua.utils.tools.predicate.TruePredicate;
 import com.chua.utils.tools.resource.entity.Resource;
 import com.chua.utils.tools.resource.template.ResourceTemplate;
 import com.chua.utils.tools.spi.Spi;
-import com.chua.utils.tools.spi.processor.ReflectionExtensionProcessor;
 import com.chua.utils.tools.text.IdHelper;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author CH
@@ -103,7 +100,7 @@ public class ObjectContextManagerExample {
 
     private static void testMBeanTemplate() throws Exception {
         System.out.println("==================================测试MBean=============================");
-        MBeanTemplate mBeanTemplate = contextManager.createMBeanTemplate();
+        MbeanTemplate mBeanTemplate = contextManager.createMbeanTemplate();
         mBeanTemplate.register(new TDemoInfo());
         System.out.println("注册MBean");
     }

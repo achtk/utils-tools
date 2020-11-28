@@ -21,7 +21,7 @@ import java.util.jar.JarFile;
 public class JbossVfsParser implements Parser {
     @Override
     public boolean matcher(URL url) {
-        return url.getProtocol().equals("vfs");
+        return "vfs".equals(url.getProtocol());
     }
 
     @Override

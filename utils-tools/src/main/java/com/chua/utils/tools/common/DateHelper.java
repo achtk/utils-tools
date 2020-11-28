@@ -29,7 +29,9 @@ public class DateHelper {
 
     public static final int ACCURACY_MILLISECONDS_FORCED = 8;
 
-    // 时间元素
+    /**
+     * =====================================时间元素===============================================
+     */
     private static final String YEAR = "year";
     private static final String MONTH = "month";
     private static final String WEEK = "week";

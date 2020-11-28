@@ -54,7 +54,6 @@ public class ReflectionExtensionProcessor<T> extends AbstractSimpleExtensionProc
         for (Class<? extends T> aClass : subTypesOf) {
             List<ExtensionClass<T>> extensionClasses = buildExtensionClassByClass(aClass);
             for (ExtensionClass<T> extensionClass : extensionClasses) {
-               // extensionClass.setUrl(reflections.getClassFromUrl(extensionClass.getImplClass().getName()));
                 result.add(extensionClass);
             }
         }

@@ -38,6 +38,7 @@ import static com.chua.utils.tools.constant.SymbolConstant.*;
 @NoArgsConstructor
 @Setter
 @Accessors(chain = true)
+@EqualsAndHashCode
 public class Resource implements Serializable {
     /**
      * 资源URL

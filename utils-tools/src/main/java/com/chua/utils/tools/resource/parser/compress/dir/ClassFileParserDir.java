@@ -22,7 +22,10 @@ public class ClassFileParserDir implements ParserDir {
     private Matcher<ParserFile> matcher;
 
     public ClassFileParserDir(File file, Matcher<ParserFile> matcher) {
-        if (file != null && (!file.isFile() || !file.canRead())) {
+        if (null != file) {
+            throw new RuntimeException("cannot use dir " + file);
+        }
+        if (!file.isFile() || !file.canRead()) {
             throw new RuntimeException("cannot use dir " + file);
         }
         this.matcher = matcher;

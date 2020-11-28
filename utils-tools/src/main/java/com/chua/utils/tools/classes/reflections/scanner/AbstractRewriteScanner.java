@@ -1,6 +1,7 @@
 package com.chua.utils.tools.classes.reflections.scanner;
 
 import com.chua.utils.tools.classes.reflections.RewriteStore;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.reflections.Configuration;
@@ -23,6 +24,7 @@ import java.util.function.Predicate;
  */
 @Getter
 @Setter
+@EqualsAndHashCode
 public abstract class AbstractRewriteScanner extends AbstractScanner {
 
     private Configuration configuration;

@@ -179,9 +179,12 @@ public class ParserVfs {
     }
 
     /**
-     *
+     * 文件枚举
      */
     public enum FileEnum implements Parser {
+        /**
+         * xls
+         */
         XLS {
             private Parser parser;
             {
@@ -202,6 +205,9 @@ public class ParserVfs {
                 return null == parser ? null : parser.path(url, matcher);
             }
         },
+        /**
+         * xlsx
+         */
         XLSX {
             private Parser parser;
             {
@@ -222,6 +228,9 @@ public class ParserVfs {
                 return null == parser ? null : parser.path(url, matcher);
             }
         },
+        /**
+         * csv
+         */
         CSV {
             private Parser parser;
             {

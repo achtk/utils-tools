@@ -25,9 +25,9 @@ public class DateTypeConverter implements TypeConverter<Date> {
     private static Pattern FORMAT_DATE2 = Pattern.compile("\\d*\\-\\d*\\-\\d*\\s+\\d*\\:\\d*");
     private static Pattern FORMAT_DATE3 = Pattern.compile("\\d*\\-\\d*\\-\\d*\\s+\\d*\\:\\d*\\:\\d*");
 
-    private static ThreadLocal<SimpleDateFormat> FORMAT_DATE_SDF1 = ThreadLocal.withInitial(() -> new SimpleDateFormat("YYYY-MM-dd HH"));
-    private static ThreadLocal<SimpleDateFormat> FORMAT_DATE_SDF2 = ThreadLocal.withInitial(() -> new SimpleDateFormat("YYYY-MM-dd HH:mm"));
-    private static ThreadLocal<SimpleDateFormat> FORMAT_DATE_SDF3 = ThreadLocal.withInitial(() -> new SimpleDateFormat("YYYY-MM-dd HH:mm:ss"));
+    private static ThreadLocal<SimpleDateFormat> FORMAT_DATE_SDF1 = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH"));
+    private static ThreadLocal<SimpleDateFormat> FORMAT_DATE_SDF2 = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm"));
+    private static ThreadLocal<SimpleDateFormat> FORMAT_DATE_SDF3 = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
     @Override
     public Date convert(Object value) {

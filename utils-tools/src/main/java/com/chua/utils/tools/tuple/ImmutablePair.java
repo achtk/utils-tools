@@ -9,7 +9,7 @@ package com.chua.utils.tools.tuple;
  * @version 1.0.0
  * @since 2020/11/9
  */
-public final class ImmutablePair<L, R> extends Pair<L, R> {
+public final class ImmutablePair<L, R> implements Pair<L, R> {
 
     private final L left;
     private final R right;

@@ -11,9 +11,20 @@ import org.reflections.vfs.Vfs;
  * @since 2020/11/14
  */
 public interface ParserDir {
+    /**
+     * 获取路径
+     * @return 路径
+     */
     String getPath();
 
+    /**
+     * 遍历文件
+     * @return 文件
+     */
     Iterable<ParserFile> getFiles();
 
+    /**
+     * 关闭流
+     */
     void close();
 }

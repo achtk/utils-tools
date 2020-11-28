@@ -22,7 +22,7 @@ public class JarParser implements Parser {
 
     @Override
     public boolean matcher(URL url) {
-        return null != url && url.getProtocol().equals("file") && url.toExternalForm().matches(".*\\.jar(\\!.*|$)");
+        return null != url && "file".equals(url.getProtocol()) && url.toExternalForm().matches(".*\\.jar(\\!.*|$)");
     }
 
     @Override

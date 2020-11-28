@@ -148,7 +148,6 @@ public class RewriteJavassistAdapter implements MetadataAdapter<ClassFile, Field
         return accessFlags != null && AccessFlag.isPublic(accessFlags);
     }
 
-    //
     @Override
     public String getClassName(final ClassFile cls) {
         return cls.getName();
@@ -169,7 +168,6 @@ public class RewriteJavassistAdapter implements MetadataAdapter<ClassFile, Field
         return file.endsWith(".class");
     }
 
-    //
     private List<String> getAnnotationNames(final AnnotationsAttribute... annotationsAttributes) {
         if (annotationsAttributes != null) {
             return Arrays.stream(annotationsAttributes)

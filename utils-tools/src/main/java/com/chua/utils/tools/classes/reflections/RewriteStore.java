@@ -21,6 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Function;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 import static org.reflections.util.Utils.index;
 
 /**
@@ -104,8 +105,8 @@ public class RewriteStore extends Store {
     public boolean put(String index, String key, String value, URL url) {
         synchronized (REFLECT_CACHE) {
             COUNT.increment();
-            return REFLECT_CACHE.computeIfAbsent(url.toExternalForm(), item -> new ConcurrentHashMap<>())
-                    .computeIfAbsent(index, item -> new ConcurrentHashMap<>())
+            return REFLECT_CACHE.computeIfAbsent(url.toExternalForm(), item -> new ConcurrentHashMap<>(DEFAULT_INITIAL_CAPACITY))
+                    .computeIfAbsent(index, item -> new ConcurrentHashMap<>(DEFAULT_INITIAL_CAPACITY))
                     .computeIfAbsent(key, item -> new CopyOnWriteArrayList<>())
                     .add(value);
         }
@@ -171,7 +172,7 @@ public class RewriteStore extends Store {
      * @return
      */
     private Map<String, List<String>> get(String index) {
-        Map<String, List<String>> result = new HashMap<>();
+        Map<String, List<String>> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
 
         Collection<ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>>> mapCollection = REFLECT_CACHE.values();
         for (ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>> map : mapCollection) {
@@ -247,7 +248,7 @@ public class RewriteStore extends Store {
     }
 
     private Map<String, String> getRewriteMap(String index, Collection<String> keys) {
-        Map<String, String> result = new HashMap<>();
+        Map<String, String> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
 
         for (String url : REFLECT_CACHE.keySet()) {
             ConcurrentMap<String, ConcurrentMap<String, CopyOnWriteArrayList<String>>> mapCollection = REFLECT_CACHE.get(url);

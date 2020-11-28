@@ -36,8 +36,9 @@ public class RewriteMemberUsageScanner extends AbstractRewriteScanner{
 
     void scanMember(CtBehavior member, Store store) throws CannotCompileException {
         //key contains this$/val$ means local field/parameter closure
+        //+ " #" + member.getMethodInfo().getLineNumber(0)
         final String key = member.getDeclaringClass().getName() + "." + member.getMethodInfo().getName() +
-                "(" + parameterNames(member.getMethodInfo()) + ")"; //+ " #" + member.getMethodInfo().getLineNumber(0)
+                "(" + parameterNames(member.getMethodInfo()) + ")";
         member.instrument(new ExprEditor() {
             @Override
             public void edit(NewExpr e) throws CannotCompileException {

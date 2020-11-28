@@ -2,7 +2,6 @@ package com.chua.utils.tools.common.codec.binary;
 
 import com.chua.utils.tools.common.codec.BinaryDecoder;
 import com.chua.utils.tools.common.codec.BinaryEncoder;
-import com.chua.utils.tools.constant.NumberConstant;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -380,8 +379,8 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
      * @param hex Hex
      * @return 间隔的Hex
      */
-    public static String every0XSpace(String hex) {
-        return every0XSpace(hex, 2);
+    public static String every0xSpace(String hex) {
+        return every0xSpace(hex, 2);
     }
     /**
      * Hex数据间隔
@@ -390,7 +389,7 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
      * @param size 间隔长度
      * @return 间隔的Hex
      */
-    public static String every0XSpace(String hex, int size) {
+    public static String every0xSpace(String hex, int size) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < hex.length() - 1; i += size) {
             String output = hex.substring(i, (i + size));

@@ -20,7 +20,7 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2020/3/21 14:11
  */
-public abstract class HttpClientStream {
+public class HttpClientStream implements HttpClientStreamBuilder {
 
     protected Map<String, String> headers = new HashMap<>();
     protected Map<String, Object> bodyers = new HashMap<>();
@@ -243,13 +243,6 @@ public abstract class HttpClientStream {
     }
 
     /**
-     * 构建
-     *
-     * @return
-     */
-    public abstract HttpClientBuilder build();
-
-    /**
      * 是否为空
      *
      * @param headerName
@@ -287,5 +280,10 @@ public abstract class HttpClientStream {
             this.addJson(JsonHelper.toJson(bodyers));
         }
 
+    }
+
+    @Override
+    public HttpClientBuilder build() {
+        return null;
     }
 }

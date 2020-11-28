@@ -30,8 +30,7 @@ import java.util.stream.Stream;
 import static com.chua.utils.tools.common.IoHelper.toCharset;
 import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
 import static com.chua.utils.tools.constant.NumberConstant.TWE;
-import static com.chua.utils.tools.constant.StringConstant.LETTER_A;
-import static com.chua.utils.tools.constant.StringConstant.LETTER_Z;
+import static com.chua.utils.tools.constant.StringConstant.*;
 import static com.chua.utils.tools.constant.SymbolConstant.*;
 import static com.google.common.base.Charsets.UTF_8;
 
@@ -1749,8 +1748,8 @@ public class FileHelper {
 
         try {
             path = URLDecoder.decode(url.getPath(), "UTF-8");
-            if (path.contains(".jar!")) {
-                path = path.substring(0, path.lastIndexOf(".jar!") + ".jar".length());
+            if (path.contains(JAR_FILE_EXTENSION_IN)) {
+                path = path.substring(0, path.lastIndexOf(JAR_FILE_EXTENSION_IN) + JAR_FILE_EXTENSION.length());
             }
             if ((file = new java.io.File(path)).exists()) {
                 return file;
@@ -1761,24 +1760,24 @@ public class FileHelper {
 
         try {
             path = url.toExternalForm();
-            if (path.startsWith("jar:")) {
-                path = path.substring("jar:".length());
+            if (path.startsWith(JAR_URL_PREFIX)) {
+                path = path.substring(JAR_URL_PREFIX.length());
             }
 
-            if (path.startsWith("wsjar:")) {
-                path = path.substring("wsjar:".length());
+            if (path.startsWith(WS_JAR_URL_PREFIX)) {
+                path = path.substring(WS_JAR_URL_PREFIX.length());
             }
 
-            if (path.startsWith("file:")) {
-                path = path.substring("file:".length());
+            if (path.startsWith(FILE_URL_PREFIX)) {
+                path = path.substring(FILE_URL_PREFIX.length());
             }
 
-            if (path.contains(".jar!")) {
-                path = path.substring(0, path.indexOf(".jar!") + ".jar".length());
+            if (path.contains(JAR_FILE_EXTENSION_IN)) {
+                path = path.substring(0, path.indexOf(JAR_FILE_EXTENSION_IN) + JAR_FILE_EXTENSION.length());
             }
 
-            if (path.contains(".war!")) {
-                path = path.substring(0, path.indexOf(".war!") + ".war".length());
+            if (path.contains(WAR_FILE_EXTENSION_IN)) {
+                path = path.substring(0, path.indexOf(WAR_FILE_EXTENSION_IN) + WAR_FILE_EXTENSION.length());
             }
 
             if ((file = new java.io.File(path)).exists()) {

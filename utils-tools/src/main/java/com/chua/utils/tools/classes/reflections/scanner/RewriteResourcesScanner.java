@@ -20,7 +20,9 @@ public class RewriteResourcesScanner extends AbstractRewriteScanner {
         return classObject;
     }
 
+    @Override
     public void scan(Object cls, Store store) {
-        throw new UnsupportedOperationException(); //shouldn't get here
+        //shouldn't get here
+        throw new UnsupportedOperationException();
     }
 }

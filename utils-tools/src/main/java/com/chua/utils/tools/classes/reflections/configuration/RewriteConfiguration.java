@@ -30,7 +30,9 @@ import java.util.function.Predicate;
 public class RewriteConfiguration extends ConfigurationBuilder {
 
     private Predicate<String> inputsFilter;
-    /*lazy*/
+    /**
+     * lazy
+     */
     protected MetadataAdapter metadataAdapter;
 
     private Set<AbstractRewriteScanner> rewriteScanners = Sets.newHashSet(new RewriteTypeAnnotationsScanner(), new RewriteSubTypesScanner());
@@ -55,7 +57,9 @@ public class RewriteConfiguration extends ConfigurationBuilder {
         }
     }
 
-    /** sets the metadata adapter used to fetch metadata from classes */
+    /**
+     * sets the metadata adapter used to fetch metadata from classes
+     */
     @Override
     public ConfigurationBuilder setMetadataAdapter(final MetadataAdapter metadataAdapter) {
         this.metadataAdapter = metadataAdapter;

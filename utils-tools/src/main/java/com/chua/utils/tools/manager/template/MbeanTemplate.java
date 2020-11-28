@@ -16,7 +16,7 @@ import java.lang.management.ManagementFactory;
  * @version 1.0.0
  * @since 2020/11/23
  */
-public class MBeanTemplate {
+public class MbeanTemplate {
 
     private static final ContextManager CONTEXT_MANAGER = new StandardContextManager();
     private final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -46,8 +46,8 @@ public class MBeanTemplate {
      *
      * @param object 对象
      */
-    public ObjectInstance createMBean(Object object) throws Exception {
-        return mBeanServer.createMBean(getMBeanName(object), getObjectName(object));
+    public ObjectInstance createMbean(Object object) throws Exception {
+        return mBeanServer.createMBean(getMbeanName(object), getObjectName(object));
     }
 
     /**
@@ -57,7 +57,7 @@ public class MBeanTemplate {
      */
     public void register(Object object) throws Exception {
         Class<?> aClass = object.getClass();
-        String name = getMBeanName(object);
+        String name = getMbeanName(object);
         if (!aClass.getName().endsWith(M_BEAN)) {
             ClassDescriptionParser<?> descriptionParser = CONTEXT_MANAGER.createClassDescriptionParser(aClass);
             ClassModifyDescriptionParser classModifyDescriptionParser = descriptionParser.modify();
@@ -76,7 +76,7 @@ public class MBeanTemplate {
      *
      * @param object 对象
      */
-    public String getMBeanName(Object object) {
+    public String getMbeanName(Object object) {
         Class<?> aClass = object.getClass();
         String name = aClass.getName();
         if (!name.endsWith(M_BEAN)) {

@@ -3,6 +3,7 @@ package com.chua.utils.tools.collects.map;
 import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.ArraysHelper;
 import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.constant.NumberConstant;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
@@ -1257,7 +1258,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
         if (null == properties || properties.isEmpty()) {
             return Collections.emptyMap();
         }
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             result.put(entry.getKey().toString(), entry.getValue());
         }

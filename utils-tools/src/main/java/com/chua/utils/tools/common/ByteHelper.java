@@ -255,7 +255,8 @@ public class ByteHelper {
      */
     public static int toInt(byte[] bytes) {
         int value = 0;
-        for (int i = 0; i < 4; i++) {
+        int intSize = 4;
+        for (int i = 0; i < intSize; i++) {
             int shift = (4 - 1 - i) * 8;
             value += (bytes[i] & 0xFF) << shift;
         }
@@ -283,7 +284,8 @@ public class ByteHelper {
      */
     public static short toShort(byte[] bytes) {
         short value = 0;
-        for (int i = 0; i < 2; i++) {
+        int shortSize = 2;
+        for (int i = 0; i < shortSize; i++) {
             int shift = (2 - 1 - i) * 8;
             value += (bytes[i] & 0xFF) << shift;
         }
@@ -327,7 +329,8 @@ public class ByteHelper {
      */
     public static long toLong(byte[] bytes) {
         long value = 0;
-        for (int i = 0; i < 8; i++) {
+        int longSize = 8;
+        for (int i = 0; i < longSize; i++) {
             int shift = (8 - 1 - i) * 8;
             value += ((long) (bytes[i] & 0xFF)) << shift;
         }
@@ -401,7 +404,8 @@ public class ByteHelper {
      */
     public static byte[] parseHexStringToArray(String source) throws NullPointerException {
         int len = source.length();
-        if (len % 2 != 0) {
+        int shortSize = 2;
+        if (len % shortSize != 0) {
             return null;
         }
         int size = len / 2;

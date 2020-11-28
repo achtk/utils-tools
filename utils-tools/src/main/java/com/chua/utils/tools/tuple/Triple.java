@@ -7,7 +7,7 @@ package com.chua.utils.tools.tuple;
  * @version 1.0.0
  * @since 2020/11/9
  */
-public abstract class Triple<L, M, R> {
+public interface Triple<L, M, R> {
 
     /**
      * <p>从三个推断泛型类型的对象中获得一个不变的三元组。</ p>
@@ -21,7 +21,7 @@ public abstract class Triple<L, M, R> {
      * @param right  正确的元素，可以为null
      * @return 由三个参数组成的三元组，不为null
      */
-    public static <L, M, R> Triple<L, M, R> of(final L left, final M middle, final R right) {
+    static <L, M, R> Triple<L, M, R> of(final L left, final M middle, final R right) {
         return new ImmutableTriple<L, M, R>(left, middle, right);
     }
 
@@ -37,7 +37,7 @@ public abstract class Triple<L, M, R> {
      * @param right  正确的元素，可以为null
      * @return 由三个参数组成的三元组，不为null
      */
-    public static <L, M, R> Triple<L, M, R> with(final L left, final M middle, final R right) {
+    static <L, M, R> Triple<L, M, R> with(final L left, final M middle, final R right) {
         return new ImmutableTriple<L, M, R>(left, middle, right);
     }
     //-----------------------------------------------------------------------
@@ -47,21 +47,21 @@ public abstract class Triple<L, M, R> {
      *
      * @return 左侧元素
      */
-    public abstract L getLeft();
+    L getLeft();
 
     /**
      * <p>从这个三元组中获取中间的元素.</p>
      *
      * @return 中间的元素
      */
-    public abstract M getMiddle();
+    M getMiddle();
 
     /**
      * <p>从这个三元组中获取右侧的元素.</p>
      *
      * @return 右侧的元素
      */
-    public abstract R getRight();
+    R getRight();
 
     //-----------------------------------------------------------------------
 }

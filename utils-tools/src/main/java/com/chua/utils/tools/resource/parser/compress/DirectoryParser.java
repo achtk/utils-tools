@@ -10,6 +10,9 @@ import com.chua.utils.tools.resource.parser.compress.dir.SystemParserDir;
 import java.io.IOException;
 import java.net.URL;
 
+import static com.chua.utils.tools.constant.StringConstant.FILE;
+import static com.chua.utils.tools.constant.StringConstant.JAR_PATTERN;
+
 /**
  * 文件夹解析
  *
@@ -20,7 +23,7 @@ import java.net.URL;
 public class DirectoryParser implements Parser {
     @Override
     public boolean matcher(URL url) {
-        if (url.getProtocol().equals("file") && !url.toExternalForm().matches(".*\\.jar(\\!.*|$)")) {
+        if (FILE.equals(url.getProtocol()) && !url.toExternalForm().matches(JAR_PATTERN)) {
             java.io.File file = FileHelper.tryFile(url);
             return file != null && file.isDirectory();
         }

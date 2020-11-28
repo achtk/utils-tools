@@ -24,7 +24,10 @@ public class SystemParserDir implements ParserDir {
     private Matcher<ParserFile> matcher;
 
     public SystemParserDir(File file, Matcher<ParserFile> matcher) {
-        if (file != null && (!file.isDirectory() || !file.canRead())) {
+        if (file != null) {
+            throw new RuntimeException("cannot use dir " + file);
+        }
+        if (!file.isDirectory() || !file.canRead()) {
             throw new RuntimeException("cannot use dir " + file);
         }
         this.matcher = matcher;

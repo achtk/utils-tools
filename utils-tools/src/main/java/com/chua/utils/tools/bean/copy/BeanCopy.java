@@ -34,6 +34,13 @@ public interface BeanCopy<T> {
         return StandardBeanCopy.<T>of(t);
     }
 
+    /**
+     * 初始化
+     *
+     * @param t   对象
+     * @param <T> 对象类型
+     * @return this
+     */
     static <T> BeanCopy<T> of(Class<T> t) {
         return StandardBeanCopy.<T>of(t);
     }

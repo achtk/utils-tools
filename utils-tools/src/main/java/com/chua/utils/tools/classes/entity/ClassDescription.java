@@ -17,6 +17,7 @@ import java.util.List;
 public class ClassDescription {
 
     public static final ClassDescription INSTANCE = new ClassDescription();
+
     /**
      * 类名
      */
@@ -68,36 +69,31 @@ public class ClassDescription {
         if (parentClass == null) {
             return false;
         }
-        if(!Modifier.isPublic(accessFlags) ||
+        if (!Modifier.isPublic(accessFlags) ||
                 Modifier.isEnum(accessFlags) ||
                 Modifier.isInterface(accessFlags)) {
             return false;
         }
 
-        if(parentClass.getName().contains("PersistentConcurrentOffHeapHashMap")) {
-            System.out.println();
-        }
-
-        if(null != superClass && superClass.equals(parentClass.getName())) {
+        if (null != superClass && superClass.equals(parentClass.getName())) {
             return true;
         }
 
-        if(null == interfaceNames) {
+        if (null == interfaceNames) {
             return false;
         }
         for (String interfaceName : interfaceNames) {
-            if(interfaceName.equals(parentClass.getName())) {
+            if (interfaceName.equals(parentClass.getName())) {
                 return true;
             }
         }
-        return false;
-//        Class<?> selfClass = getSelfClass();
-//
-//        if (selfClass == null) {
-//            return false;
-//        }
-//
-//        return parentClass.isAssignableFrom(selfClass);
+        Class<?> selfClass = getSelfClass();
+
+        if (selfClass == null) {
+            return false;
+        }
+
+        return parentClass.isAssignableFrom(selfClass);
     }
 
     /**

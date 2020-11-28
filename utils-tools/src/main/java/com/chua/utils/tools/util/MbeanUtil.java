@@ -2,10 +2,7 @@ package com.chua.utils.tools.util;
 
 import com.chua.utils.tools.manager.ContextManager;
 import com.chua.utils.tools.manager.producer.StandardContextManager;
-import com.chua.utils.tools.manager.template.MBeanTemplate;
-
-import javax.management.MBeanServer;
-import java.lang.management.ManagementFactory;
+import com.chua.utils.tools.manager.template.MbeanTemplate;
 
 /**
  * MBean工具类
@@ -14,10 +11,10 @@ import java.lang.management.ManagementFactory;
  * @version 1.0.0
  * @since 2020/11/23
  */
-public class MBeanUtil {
+public class MbeanUtil {
 
     private static final ContextManager MANAGER = new StandardContextManager();
-    private static final MBeanTemplate M_BEAN_TEMPLATE = MANAGER.createMBeanTemplate();
+    private static final MbeanTemplate M_BEAN_TEMPLATE = MANAGER.createMbeanTemplate();
 
     private static final String M_BEAN = "MBean";
 
@@ -27,7 +24,7 @@ public class MBeanUtil {
      * @param t   对象
      * @param <T> 类
      */
-    public static <T> void registerMBean(T t) throws Exception {
+    public static <T> void registerMbean(T t) throws Exception {
         M_BEAN_TEMPLATE.register(t);
     }
 

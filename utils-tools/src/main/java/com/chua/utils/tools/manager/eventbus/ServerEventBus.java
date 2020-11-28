@@ -21,7 +21,11 @@ public interface ServerEventBus extends EventBus, AutoCloseable {
      * @param object 对象
      */
     void setObject(Object object);
-
+    /**
+     * 发布消息
+     *
+     * @param event 消息
+     */
     @Override
     default void post(Object event) {
 

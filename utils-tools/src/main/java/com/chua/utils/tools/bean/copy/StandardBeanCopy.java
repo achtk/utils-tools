@@ -10,8 +10,10 @@ import com.chua.utils.tools.manager.parser.description.FieldDescription;
 import net.sf.cglib.beans.BeanMap;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 /**
@@ -56,7 +58,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
 
     @SuppressWarnings("all")
     private StandardBeanCopy(T entity, BeanConfig beanConfig) {
-        if(null == entity) {
+        if (null == entity) {
             this.tClass = (Class<T>) Object.class;
         } else {
             this.tClass = (Class<T>) entity.getClass();
@@ -85,7 +87,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
      * @return this
      */
     public static <T> BeanCopy of(T entity) {
-        if(entity instanceof String) {
+        if (entity instanceof String) {
             return new ClassBeanCopy(entity.toString());
         }
         return new StandardBeanCopy<>(entity);
@@ -128,6 +130,13 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     @Override
     public BeanCopy with(Object entity) {
         if (null == entity || entity instanceof Class) {
+            return this;
+        }
+        if (entity instanceof List) {
+            AtomicInteger atomicInteger = new AtomicInteger();
+            ClassHelper.doWithFields(tClass, field -> {
+                with(field.getName(), ((List) entity).get(atomicInteger.getAndIncrement()));
+            });
             return this;
         }
         return with(BeanMap.create(entity));

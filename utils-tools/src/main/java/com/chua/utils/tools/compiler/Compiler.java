@@ -13,15 +13,15 @@ import java.util.regex.Pattern;
  * @author CHTK
  */
 @Spi("jdk")
-public abstract class Compiler {
+public interface Compiler {
 
-    public static final Pattern PARENT_PATTERN = Pattern.compile("extends\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
-    public static final Pattern INTERFACE_PATTERN = Pattern.compile("implements\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
-    public static final Pattern PACKAGE_PATTERN = Pattern.compile("package\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
-    public static final Pattern CLASS_PATTERN = Pattern.compile("class\\s+([$_a-zA-z][$_a-zA-z0-9]*)");
-    public static final Pattern IMPORT_PATTERN = Pattern.compile("import\\s+(.*)\\;");
-    public static final Pattern FIELD_PATTERN = Pattern.compile("(private|public|protect){1}\\s+(.*)\\;");
-    public static final Pattern METHOD_PATTERN = Pattern.compile("(private|public|protect){1}\\s+(([a-zA-z][$_a-zA-z0-9\\.]*)(\\<(.*?)\\>){0,})\\s+([a-zA-z][$_a-zA-z0-9\\.]*)(\\s+){0,}\\((.*)\\)(\\s+){0,}\\{((.*?)|\n){0,}\\}");
+    static final Pattern PARENT_PATTERN = Pattern.compile("extends\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
+    static final Pattern INTERFACE_PATTERN = Pattern.compile("implements\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
+    static final Pattern PACKAGE_PATTERN = Pattern.compile("package\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
+    static final Pattern CLASS_PATTERN = Pattern.compile("class\\s+([$_a-zA-z][$_a-zA-z0-9]*)");
+    static final Pattern IMPORT_PATTERN = Pattern.compile("import\\s+(.*)\\;");
+    static final Pattern FIELD_PATTERN = Pattern.compile("(private|public|protect){1}\\s+(.*)\\;");
+    static final Pattern METHOD_PATTERN = Pattern.compile("(private|public|protect){1}\\s+(([a-zA-z][$_a-zA-z0-9\\.]*)(\\<(.*?)\\>){0,})\\s+([a-zA-z][$_a-zA-z0-9\\.]*)(\\s+){0,}\\((.*)\\)(\\s+){0,}\\{((.*?)|\n){0,}\\}");
 
     /**
      * 編譯器
@@ -29,7 +29,7 @@ public abstract class Compiler {
      * @param code 源码
      * @return 类
      */
-    public Class<?> compiler(String code) {
+    default Class<?> compiler(String code) {
         return compiler(code, ClassHelper.getDefaultClassLoader());
     }
 
@@ -40,7 +40,7 @@ public abstract class Compiler {
      * @param classLoader 类加载器
      * @return 类
      */
-    public Class<?> compiler(String code, final ClassLoader classLoader) {
+    default Class<?> compiler(String code, final ClassLoader classLoader) {
         code = code.trim();
         Matcher matcher = PACKAGE_PATTERN.matcher(code);
         String pkg;
@@ -81,7 +81,7 @@ public abstract class Compiler {
      * @return Class
      * @throws Throwable Throwable
      */
-    abstract protected Class<?> doCompile(String name, String source) throws Throwable;
+    Class<?> doCompile(String name, String source) throws Throwable;
 
     /**
      * 获取类名
@@ -89,7 +89,7 @@ public abstract class Compiler {
      * @param code 源码
      * @return 类名
      */
-    public String getClassName(String code) {
+    default String getClassName(String code) {
         //获取类名
         Matcher matcher1 = CLASS_PATTERN.matcher(code);
         if (matcher1.find()) {
@@ -102,9 +102,10 @@ public abstract class Compiler {
     /**
      * 获取包名
      *
-     * @return
+     * @param code 源码
+     * @return 包名
      */
-    public String getPkg(String code) {
+    default String getPkg(String code) {
         //获取包名
         Matcher matcher = PACKAGE_PATTERN.matcher(code);
         if (matcher.find()) {

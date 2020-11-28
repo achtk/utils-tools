@@ -7,7 +7,7 @@ package com.chua.utils.tools.tuple;
  * @version 1.0.0
  * @since 2020/11/9
  */
-public abstract class Pair<L, R> {
+public interface Pair<L, R> {
 
     /**
      * <p>从二个推断泛型类型的对象中获得一个不变的二元组。</ p>
@@ -19,7 +19,7 @@ public abstract class Pair<L, R> {
      * @param right 正确的元素，可以为null
      * @return 由二个参数组成的二元组，不为null
      */
-    public static <L, R> Pair<L, R> of(final L left, final R right) {
+    static <L, R> Pair<L, R> of(final L left, final R right) {
         return new ImmutablePair<>(left, right);
     }
 
@@ -33,7 +33,7 @@ public abstract class Pair<L, R> {
      * @param right 正确的元素，可以为null
      * @return 由二个参数组成的二元组，不为null
      */
-    public static <L, R> Pair<L, R> with(final L left, final R right) {
+    static <L, R> Pair<L, R> with(final L left, final R right) {
         return new ImmutablePair<>(left, right);
     }
     //-----------------------------------------------------------------------
@@ -43,28 +43,14 @@ public abstract class Pair<L, R> {
      *
      * @return 左侧元素
      */
-    public abstract L getLeft();
+    L getLeft();
 
     /**
      * <p>从这个二元组中获取右侧的元素.</p>
      *
      * @return 右侧的元素
      */
-    public abstract R getRight();
+    R getRight();
 
-    //-----------------------------------------------------------------------
-
-
-    @Override
-    public int hashCode() {
-        return (getLeft() == null ? 0 : getLeft().hashCode()) ^
-                (getRight() == null ? 0 : getRight().hashCode());
-    }
-
-
-    @Override
-    public String toString() {
-        return new StringBuilder().append('(').append(getLeft()).append(',').append(getRight()).append(')').toString();
-    }
 
 }

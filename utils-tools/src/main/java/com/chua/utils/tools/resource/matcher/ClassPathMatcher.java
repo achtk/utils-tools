@@ -318,7 +318,7 @@ public class ClassPathMatcher extends UrlHelper implements PathMatcher {
                 String jarEntryName = jarEntry.getName();
                 if (jarEntryName.startsWith(rootEntryPath)) {
                     String relativePath = jarEntryName.substring(rootEntryPath.length());
-                    if ("*".equals(relativePath) || ANT_PATH_MATCHER.match(subPath, relativePath)) {
+                    if (SYMBOL_ASTERISK.equals(relativePath) || ANT_PATH_MATCHER.match(subPath, relativePath)) {
                         try {
                             Resource resource = Resource.create(new URL(url.toExternalForm() + jarEntryName));
                             matcher.doWith(resource);

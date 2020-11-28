@@ -29,10 +29,13 @@ public class RewriteMethodParameterNamesScanner extends AbstractRewriteScanner{
                 CodeAttribute codeAttribute = ((MethodInfo) method).getCodeAttribute();
                 LocalVariableAttribute table = codeAttribute != null ? (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag) : null;
                 int length = table != null ? table.tableLength() : 0;
-                int i = Modifier.isStatic(((MethodInfo) method).getAccessFlags()) ? 0 : 1; //skip this
+                //skip this
+                int i = Modifier.isStatic(((MethodInfo) method).getAccessFlags()) ? 0 : 1;
                 if (i < length) {
                     List<String> names = new ArrayList<>(length - i);
-                    while (i < length) names.add(((MethodInfo) method).getConstPool().getUtf8Info(table.nameIndex(i++)));
+                    while (i < length) {
+                        names.add(((MethodInfo) method).getConstPool().getUtf8Info(table.nameIndex(i++)));
+                    }
                     put(store, key, join(names, ", "));
                 }
             }

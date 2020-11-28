@@ -2,10 +2,9 @@ package com.chua.utils.tools.manager;
 
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.converter.TypeConverter;
-import com.chua.utils.tools.manager.eventbus.EventBus;
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
 import com.chua.utils.tools.manager.template.HttpTemplate;
-import com.chua.utils.tools.manager.template.MBeanTemplate;
+import com.chua.utils.tools.manager.template.MbeanTemplate;
 import com.chua.utils.tools.resource.factory.FastResourceFactory;
 import com.chua.utils.tools.resource.factory.ResourceFactory;
 import com.chua.utils.tools.resource.template.ResourceTemplate;
@@ -116,10 +115,10 @@ public interface ContextManager {
      * 创建Mbean模板
      *
      * @return MBeanTemplate
-     * @see MBeanTemplate
+     * @see MbeanTemplate
      */
-    default MBeanTemplate createMBeanTemplate() {
-        return new MBeanTemplate();
+    default MbeanTemplate createMbeanTemplate() {
+        return new MbeanTemplate();
     }
 
     /**

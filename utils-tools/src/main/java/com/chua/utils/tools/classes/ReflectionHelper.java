@@ -5,6 +5,7 @@ import com.chua.utils.tools.cache.ConcurrentCacheProvider;
 import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.classes.callback.MethodCallback;
 import com.chua.utils.tools.collects.collections.CollectionHelper;
+import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.exceptions.NonUniqueException;
 import com.chua.utils.tools.function.Matcher;
@@ -16,6 +17,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * 反射工具类
@@ -261,15 +263,9 @@ public class ReflectionHelper {
         if (null == fieldName) {
             return null;
         }
-
-        List<Field> fieldList = new ArrayList<>();
-
-        for (Field field : getFields(ClassHelper.getClass(object))) {
-            if (fieldName.equals(field.getName())) {
-                fieldList.add(field);
-            }
-        }
-        return fieldList;
+        return getFields(ClassHelper.getClass(object)).stream().filter(field -> {
+            return fieldName.equals(field.getName());
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -327,25 +323,67 @@ public class ReflectionHelper {
     /**
      * 获取所有字段
      *
-     * @param obj 对象
+     * @param obj            对象
+     * @param annotationType 注解
      * @return 所有字段
      */
-    public static List<Field> getFields(final Object obj) {
+    public static List<Field> getAnnotationFields(final Object obj, final Class<? extends Annotation>... annotationType) {
+        return getFields(obj, annotationType);
+    }
+
+    /**
+     * 获取所有字段
+     *
+     * @param obj            对象
+     * @param annotationType 注解
+     * @return 所有字段
+     */
+    public static List<Field> getFields(final Object obj, final Class<? extends Annotation>[] annotationType) {
         if (null == obj) {
             return Collections.emptyList();
         }
         final Class<?> aClass = ClassHelper.getClass(obj);
 
-        return CacheStorage.doWith(() -> {
-            List<Field> result = new ArrayList<>();
-            Class<?> newClass = aClass;
-            while (!ClassHelper.isObject(newClass)) {
-                Field[] fields = newClass.getDeclaredFields();
-                result.addAll(Arrays.asList(fields));
-                newClass = newClass.getSuperclass();
-            }
-            return result;
-        }, aClass, CLASS_FIELD_LOCAL);
+        if (!BooleanHelper.hasLength(annotationType)) {
+            return CacheStorage.doWith(() -> {
+                List<Field> result = new ArrayList<>();
+                Class<?> newClass = aClass;
+                while (!ClassHelper.isObject(newClass)) {
+                    Field[] fields = newClass.getDeclaredFields();
+                    result.addAll(Arrays.asList(fields));
+                    newClass = newClass.getSuperclass();
+                }
+                return result;
+            }, aClass, CLASS_FIELD_LOCAL);
+        }
+
+        List<Field> result = new ArrayList<>();
+        Class<?> newClass = aClass;
+        while (!ClassHelper.isObject(newClass)) {
+            Field[] fields = newClass.getDeclaredFields();
+            result.addAll(Arrays.stream(fields).parallel().filter(method -> {
+                for (Class<? extends Annotation> aClass1 : annotationType) {
+                    Annotation annotation = method.getDeclaredAnnotation(aClass1);
+                    if (null == annotation) {
+                        continue;
+                    }
+                    return true;
+                }
+                return false;
+            }).collect(Collectors.toList()));
+            newClass = newClass.getSuperclass();
+        }
+        return result;
+    }
+
+    /**
+     * 获取所有字段
+     *
+     * @param obj 对象
+     * @return 所有字段
+     */
+    public static List<Field> getFields(final Object obj) {
+        return getFields(obj, null);
     }
 
     /**
@@ -411,21 +449,61 @@ public class ReflectionHelper {
      * @return 所有字段
      */
     public static List<Method> getMethods(final Object obj) {
+        return getMethods(obj, null);
+    }
+
+    /**
+     * 获取所有方法
+     *
+     * @param obj 对象
+     * @return 所有字段
+     */
+    public static List<Method> getAnnotationMethods(final Object obj, final Class<? extends Annotation>... annotationType) {
+        return getMethods(obj, annotationType);
+    }
+
+    /**
+     * 获取所有方法
+     *
+     * @param obj            对象
+     * @param annotationType 注解
+     * @return 所有字段
+     */
+    public static List<Method> getMethods(final Object obj, final Class<? extends Annotation>[] annotationType) {
         if (null == obj) {
             return Collections.emptyList();
         }
         final Class<?> aClass = ClassHelper.getClass(obj);
 
-        return CacheStorage.doWith(() -> {
-            List<Method> result = new ArrayList<>();
-            Class<?> newClass = aClass;
-            while (!ClassHelper.isObject(newClass)) {
-                Method[] methods = newClass.getDeclaredMethods();
-                result.addAll(Arrays.asList(methods));
-                newClass = newClass.getSuperclass();
-            }
-            return result;
-        }, aClass, CLASS_METHOD);
+        if (!BooleanHelper.hasLength(annotationType)) {
+            return CacheStorage.doWith(() -> {
+                List<Method> result = new ArrayList<>();
+                Class<?> newClass = aClass;
+                while (!ClassHelper.isObject(newClass)) {
+                    Method[] methods = newClass.getDeclaredMethods();
+                    result.addAll(Arrays.asList(methods));
+                    newClass = newClass.getSuperclass();
+                }
+                return result;
+            }, aClass, CLASS_METHOD);
+        }
+        List<Method> result = new ArrayList<>();
+        Class<?> newClass = aClass;
+        while (!ClassHelper.isObject(newClass)) {
+            Method[] methods = newClass.getDeclaredMethods();
+            result.addAll(Arrays.stream(methods).parallel().filter(method -> {
+                for (Class<? extends Annotation> aClass1 : annotationType) {
+                    Annotation annotation = method.getDeclaredAnnotation(aClass1);
+                    if (null == annotation) {
+                        continue;
+                    }
+                    return true;
+                }
+                return false;
+            }).collect(Collectors.toList()));
+            newClass = newClass.getSuperclass();
+        }
+        return result;
     }
 
     /**

@@ -83,15 +83,10 @@ public class AntPathMatcher implements PathMatcher {
      * @return boolean
      */
     protected Boolean doMatch(final String pattern, final String path, final boolean fullMatch, final Map<String, String> uriTemplateVariables) {
-        if (path.startsWith(this.pathSeparator) != pattern.startsWith(this.pathSeparator)) {
+        String[] patternDirs = getPatternDirs(path, fullMatch, pattern);
+        if (null == patternDirs) {
             return false;
         }
-
-        String[] patternDirs = tokenizePattern(pattern);
-        if (fullMatch && this.caseSensitive && !isPotentialMatch(path, patternDirs)) {
-            return false;
-        }
-
         String[] pathDirs = tokenizePath(path);
 
         int pattIdxStart = 0;
@@ -203,6 +198,26 @@ public class AntPathMatcher implements PathMatcher {
         }
 
         return true;
+    }
+
+    /**
+     * 路径匹配
+     *
+     * @param pattern   表达式
+     * @param path      路径
+     * @param fullMatch 全词匹配
+     * @return 匹配
+     */
+    private String[] getPatternDirs(String path, boolean fullMatch, String pattern) {
+        if (path.startsWith(this.pathSeparator) != pattern.startsWith(this.pathSeparator)) {
+            return null;
+        }
+
+        String[] patternDirs = tokenizePattern(pattern);
+        if (fullMatch && this.caseSensitive && !isPotentialMatch(path, patternDirs)) {
+            return null;
+        }
+        return patternDirs;
     }
 
     /**

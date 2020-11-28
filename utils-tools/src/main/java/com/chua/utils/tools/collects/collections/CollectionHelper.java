@@ -1,8 +1,8 @@
 package com.chua.utils.tools.collects.collections;
 
+import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.collects.iterator.IndexIterator;
 import com.chua.utils.tools.common.ArraysHelper;
-import com.chua.utils.tools.common.BeansHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.function.Filter;
@@ -201,7 +201,7 @@ public class CollectionHelper {
         List<T> result = new ArrayList<>(source.size());
         for (String item : source) {
             List<String> strings = Splitter.on(StringHelper.getStringOrDefault(delimiter, ",")).trimResults().omitEmptyStrings().splitToList(item);
-            T entity = BeansHelper.setProperty(tClass, strings);
+            T entity = BeanCopy.of(tClass).with(strings).create();
             if (null == entity) {
                 continue;
             }

@@ -124,6 +124,10 @@ public class StringConstant {
      */
     public static final String JAR = "jar";
     /**
+     * ".*\\.jar(\\!.*|$)"
+     */
+    public static final String JAR_PATTERN = ".*\\.jar(\\!.*|$)";
+    /**
      * file
      */
     public static final String FILE = "file";
@@ -261,6 +265,10 @@ public class StringConstant {
      * URL prefix for loading from a jar file: "jar:".
      */
     public static final String JAR_URL_PREFIX = "jar:";
+    /**
+     * URL prefix for loading from a jar file: "wsjar:".
+     */
+    public static final String WS_JAR_URL_PREFIX = "wsjar:";
 
     /**
      * URL prefix for loading from a war file on Tomcat: "war:".
@@ -308,9 +316,22 @@ public class StringConstant {
     public static final String URL_PROTOCOL_VFS = "vfs";
 
     /**
+     * File extension for a regular jar file: ".war!".
+     */
+    public static final String WAR_FILE_EXTENSION_IN = ".war!";
+    /**
+     * File extension for a regular jar file: ".war".
+     */
+    public static final String WAR_FILE_EXTENSION = ".war";
+    /**
      * File extension for a regular jar file: ".jar".
      */
     public static final String JAR_FILE_EXTENSION = ".jar";
+
+    /**
+     * File extension for a regular jar file: ".jar!".
+     */
+    public static final String JAR_FILE_EXTENSION_IN = ".jar!";
 
     /**
      * Separator between JAR URL and file path within the JAR: "!/".
