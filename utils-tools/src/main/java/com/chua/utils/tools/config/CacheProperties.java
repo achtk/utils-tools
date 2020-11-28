@@ -31,11 +31,11 @@ public class CacheProperties {
     /**
      * 内存存储最大数量
      */
-    private int memMaximumSize = 1000;
+    private int memMaximumSize = 500000;
     /**
      * 硬盘存储最大数量
      */
-    private long diskMaximumSize = 10000;
+    private long diskMaximumSize = 500000;
     /**
      * 超时时间
      */

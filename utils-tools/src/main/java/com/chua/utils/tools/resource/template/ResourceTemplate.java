@@ -2,31 +2,27 @@ package com.chua.utils.tools.resource.template;
 
 import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
+import com.chua.utils.tools.cache.GuavaMultiValueCacheProvider;
+import com.chua.utils.tools.cache.MultiValueCacheProvider;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.entity.ClassDescription;
 import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.common.skip.SkipPatterns;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.resource.entity.Resource;
 import com.chua.utils.tools.resource.factory.FastResourceFactory;
-import com.chua.utils.tools.resource.factory.ReflectionFactory;
 import com.chua.utils.tools.resource.factory.ResourceFactory;
 import com.chua.utils.tools.storage.CacheStorage;
 import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_DOLLAR;
 
@@ -55,7 +51,7 @@ public class ResourceTemplate {
     /**
      * 子类关系缓存
      */
-    private static final Multimap<String, String> SUB_CACHE = HashMultimap.create();
+    private static final MultiValueCacheProvider<String, String> SUB_CACHE = new GuavaMultiValueCacheProvider();
     @Setter
     private ClassLoader classLoader;
 
@@ -104,20 +100,22 @@ public class ResourceTemplate {
             List<Class<?>> subType = new ArrayList<>();
             if (SUB_CACHE.size() == 0) {
                 resources.forEach(resource -> {
-                    ClassDescription classDescription = resource.getClassDescription();
+
+                    ClassDescription classDescription = resource.makeClassDescription();
                     if (null == classDescription) {
                         return;
                     }
+
                     String name = classDescription.getName();
                     String superClass = classDescription.getSuperClass();
                     if (!Strings.isNullOrEmpty(superClass)) {
-                        SUB_CACHE.put(superClass, name);
+                        SUB_CACHE.add(superClass, name);
                     }
 
                     List<String> interfaceNames = classDescription.getInterfaceNames();
                     if (BooleanHelper.hasLength(interfaceNames)) {
                         for (String interfaceName : interfaceNames) {
-                            SUB_CACHE.put(interfaceName, name);
+                            SUB_CACHE.add(interfaceName, name);
                         }
                     }
                 });
@@ -127,7 +125,7 @@ public class ResourceTemplate {
 
             for (int i = 0; i < subs.size(); i++) {
                 String sub = subs.get(i);
-                Collection<String> strings = SUB_CACHE.get(sub);
+                Set<String> strings = SUB_CACHE.get(sub);
                 if (null != strings) {
                     subs.addAll(strings);
                 }

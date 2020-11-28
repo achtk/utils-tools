@@ -6,7 +6,6 @@ import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.matcher.AntPathMatcher;
 import com.chua.utils.tools.resource.entity.Resource;
-import com.chua.utils.tools.resource.parser.compress.dir.ZipParserDir;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,11 +18,11 @@ import java.net.URLConnection;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.FileHandler;
 import java.util.zip.ZipFile;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
@@ -288,10 +287,10 @@ public class ClassPathMatcher extends UrlHelper implements PathMatcher {
      * @return
      */
     private void doFindPathMatchingJarResources(URL url, String subPath, AtomicInteger count, Set<Resource> result) throws IOException {
-        final Class<?> aClass = ClassHelper.forName(subPath);
-        if (null == aClass) {
-            //return result;
-        }
+//        final Class<?> aClass = ClassHelper.forName(subPath);
+//        if (null == aClass) {
+//            //return result;
+//        }
         //jar文件
         ZipFile jarFile = null;
         try {

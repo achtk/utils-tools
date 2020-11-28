@@ -12,7 +12,6 @@ import com.chua.utils.tools.resource.factory.FastResourceFactory;
 import com.chua.utils.tools.resource.factory.ReflectionFactory;
 import com.chua.utils.tools.resource.template.ResourceTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +20,7 @@ import java.util.Set;
  */
 public class ResourceHelperExample {
 
-    private static final String EXP = "classpath:**/*.class";
+    private static final String EXP = "classpath:**/*.*";
     private static final Class<Encrypt> ENCRYPT_CLASS = Encrypt.class;
 
 
@@ -33,7 +32,7 @@ public class ResourceHelperExample {
         //资源查找
         //Set<Resource> resources1 = testReflectGetResources();
         //子类查找
-        testSubGetResources();
+        //testSubGetResources();
         //资源查找
         testFastSubGetResources();
         //资源查找
