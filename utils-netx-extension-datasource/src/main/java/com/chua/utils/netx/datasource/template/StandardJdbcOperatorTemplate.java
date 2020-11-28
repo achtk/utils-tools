@@ -6,6 +6,7 @@ import com.chua.utils.netx.datasource.transform.JdbcOperatorTransform;
 import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.bean.copy.StandardBeanCopy;
 import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.constant.NumberConstant;
 import com.chua.utils.tools.dsl.CreateTableStepSqlBuilder;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.properties.OperatorProperties;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 
 /**
  * 标准的jdbc工具
@@ -276,7 +279,7 @@ public class StandardJdbcOperatorTemplate implements JdbcOperatorTemplate {
         int columnCount = metaData.getColumnCount();
         while (rs.next()) {
             if(Map.class.isAssignableFrom(tClass)) {
-                Map<String, Object> param = new HashMap<>();
+                Map<String, Object> param = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
                 for (int i = 1; i < columnCount + 1; i++) {
                     param.put(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, metaData.getColumnName(i).toLowerCase()), rs.getObject(i));
                 }

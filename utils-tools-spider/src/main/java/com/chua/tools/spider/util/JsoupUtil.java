@@ -51,14 +51,14 @@ public class JsoupUtil {
             }
             conn.timeout(pageRequest.getTimeoutMillis());
             //是否需要校验ssl
-            conn.validateTLSCertificates(pageRequest.isValidateTLSCertificates());
+            conn.validateTLSCertificates(pageRequest.isValidateTlsCertificates());
             // 取消默认1M限制
             conn.maxBodySize(0);
 
-            // 代理
-//            if (pageRequest.getProxy() != null) {
-//                conn.proxy(pageRequest.getProxy());
-//            }
+            //代理
+            if (pageRequest.getProxy() != null) {
+                conn.proxy(pageRequest.getProxy());
+            }
 
             // 发出请求
             return pageRequest.isIfPost() ? conn.post() : conn.get();
@@ -96,13 +96,14 @@ public class JsoupUtil {
                 conn.referrer(pageRequest.getReferrer());
             }
             conn.timeout(pageRequest.getTimeoutMillis());
-            conn.validateTLSCertificates(pageRequest.isValidateTLSCertificates());
-            conn.maxBodySize(0);    // 取消默认1M限制
+            conn.validateTLSCertificates(pageRequest.isValidateTlsCertificates());
+            // 取消默认1M限制
+            conn.maxBodySize(0);
 
             // 代理
-//            if (pageRequest.getProxy() != null) {
-//                conn.proxy(pageRequest.getProxy());
-//            }
+            if (pageRequest.getProxy() != null) {
+                conn.proxy(pageRequest.getProxy());
+            }
 
             conn.ignoreContentType(true);
             conn.method(pageRequest.isIfPost() ? Connection.Method.POST : Connection.Method.GET);

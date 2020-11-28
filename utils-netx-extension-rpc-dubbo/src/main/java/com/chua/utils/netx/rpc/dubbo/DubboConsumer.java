@@ -1,6 +1,5 @@
 package com.chua.utils.netx.rpc.dubbo;
 
-import com.alibaba.dubbo.config.*;
 import com.chua.utils.netx.rpc.config.RpcApplicationConfig;
 import com.chua.utils.netx.rpc.config.RpcConsumerConfig;
 import com.chua.utils.netx.rpc.config.RpcMethodConfig;
@@ -8,6 +7,7 @@ import com.chua.utils.netx.rpc.config.RpcRegistryConfig;
 import com.chua.utils.netx.rpc.resolver.IRpcConsumer;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import org.apache.dubbo.config.*;
 
 import java.util.ArrayList;
 import java.util.List;

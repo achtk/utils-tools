@@ -44,7 +44,7 @@ public class HtmlUnitPageLoader implements PageLoader {
             webClient.getOptions().setThrowExceptionOnScriptError(false);
             webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
             webClient.getOptions().setDoNotTrackEnabled(false);
-            webClient.getOptions().setUseInsecureSSL(!pageRequest.isValidateTLSCertificates());
+            webClient.getOptions().setUseInsecureSSL(!pageRequest.isValidateTlsCertificates());
 
             if (pageRequest.getParamMap() != null && !pageRequest.getParamMap().isEmpty()) {
                 for (Map.Entry<String, String> paramItem : pageRequest.getParamMap().entrySet()) {
@@ -71,12 +71,12 @@ public class HtmlUnitPageLoader implements PageLoader {
             webClient.setJavaScriptTimeout(pageRequest.getTimeoutMillis());
             webClient.waitForBackgroundJavaScript(pageRequest.getTimeoutMillis());
 
-            // 代理
-//            if (pageRequest.getProxy() != null) {
-//                InetSocketAddress address = (InetSocketAddress) pageRequest.getProxy().address();
-//                boolean isSocks = pageRequest.getProxy().type() == Proxy.Type.SOCKS;
-//                webClient.getOptions().setProxyConfig(new ProxyConfig(address.getHostName(), address.getPort(), isSocks));
-//            }
+            //代理
+            if (pageRequest.getProxy() != null) {
+                InetSocketAddress address = (InetSocketAddress) pageRequest.getProxy().address();
+                boolean isSocks = pageRequest.getProxy().type() == Proxy.Type.SOCKS;
+                webClient.getOptions().setProxyConfig(new ProxyConfig(address.getHostName(), address.getPort(), isSocks));
+            }
 
             // 发出请求
             if (pageRequest.isIfPost()) {

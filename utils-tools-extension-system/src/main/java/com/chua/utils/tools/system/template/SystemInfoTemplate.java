@@ -19,6 +19,9 @@ import java.util.stream.Collectors;
  */
 public class SystemInfoTemplate {
 
+    private static final int K = 1024;
+    private static final float F_K = 1024.0f;
+    private static final int DEFAULT_SIZE = 1 << 4;
     private SystemInfo systemInfo = new SystemInfo();
     private DecimalFormat format = new DecimalFormat("###.0");
     /**
@@ -31,7 +34,7 @@ public class SystemInfoTemplate {
         return null == data ? Collections.emptyList() : data.stream().map(new Function<GraphicsCard, Map<String, Object>>() {
             @Override
             public Map<String, Object> apply(GraphicsCard data) {
-                Map<String, Object> param = new HashMap<>();
+                Map<String, Object> param = new HashMap<>(DEFAULT_SIZE);
                 param.putAll(BeanMap.create(data));
                 param.put("VRamSize", getNetFileSizeDescription(Long.parseLong(param.getOrDefault("VRam", "0").toString())));
                 return param;
@@ -48,7 +51,7 @@ public class SystemInfoTemplate {
         return null == data ? Collections.emptyList() : data.stream().map(new Function<SoundCard, Map<String, Object>>() {
             @Override
             public Map<String, Object> apply(SoundCard data) {
-                Map<String, Object> param = new HashMap<>();
+                Map<String, Object> param = new HashMap<>(DEFAULT_SIZE);
                 param.putAll(BeanMap.create(data));
                 return param;
             }
@@ -64,7 +67,7 @@ public class SystemInfoTemplate {
         return null == data ? Collections.emptyList() : data.stream().map(new Function<UsbDevice, Map<String, Object>>() {
             @Override
             public Map<String, Object> apply(UsbDevice data) {
-                Map<String, Object> param = new HashMap<>();
+                Map<String, Object> param = new HashMap<>(DEFAULT_SIZE);
                 param.putAll(BeanMap.create(data));
                 return param;
             }
@@ -80,7 +83,7 @@ public class SystemInfoTemplate {
         return null == data ? Collections.emptyList() : data.stream().map(new Function<Display, Map<String, Object>>() {
             @Override
             public Map<String, Object> apply(Display display) {
-                Map<String, Object> param = new HashMap<>();
+                Map<String, Object> param = new HashMap<>(DEFAULT_SIZE);
                 param.putAll(BeanMap.create(display));
                 return param;
             }
@@ -92,12 +95,12 @@ public class SystemInfoTemplate {
      * @return 网卡信息
      */
     public List<Map<String, Object>> createNetworkInfo() {
-        List<NetworkIF> networkIFs = systemInfo.getHardware().getNetworkIFs();
-        return null == networkIFs ? Collections.emptyList() : networkIFs.stream().map(new Function<NetworkIF, Map<String, Object>>() {
+        List<NetworkIF> networkifs = systemInfo.getHardware().getNetworkIFs();
+        return null == networkifs ? Collections.emptyList() : networkifs.stream().map(new Function<NetworkIF, Map<String, Object>>() {
             @Override
-            public Map<String, Object> apply(NetworkIF networkIF) {
-                Map<String, Object> param = new HashMap<>();
-                param.putAll(BeanMap.create(networkIF));
+            public Map<String, Object> apply(NetworkIF networkif) {
+                Map<String, Object> param = new HashMap<>(DEFAULT_SIZE);
+                param.putAll(BeanMap.create(networkif));
                 return param;
             }
         }).collect(Collectors.toList());
@@ -131,7 +134,7 @@ public class SystemInfoTemplate {
         memoryInfo.setPhysicalMemorys(null != globalMemory.getPhysicalMemory() ? globalMemory.getPhysicalMemory().stream().map(new Function<PhysicalMemory, Map<String, Object>>() {
             @Override
             public Map<String, Object> apply(PhysicalMemory physicalMemory) {
-                Map<String, Object> result = new HashMap<>();
+                Map<String, Object> result = new HashMap<>(DEFAULT_SIZE);
                 result.putAll(BeanMap.create(physicalMemory));
                 return result;
             }
@@ -168,7 +171,7 @@ public class SystemInfoTemplate {
             disk.setPartitions(null != diskStore.getPartitions() ? diskStore.getPartitions().stream().map(new Function<HWPartition, Map<String, Object>>() {
                 @Override
                 public Map<String, Object> apply(HWPartition hwPartition) {
-                    Map<String, Object> result = new HashMap<>();
+                    Map<String, Object> result = new HashMap<>(DEFAULT_SIZE);
                     result.putAll(BeanMap.create(hwPartition));
                     result.put("sizeSize", getNetFileSizeDescription(Long.parseLong(result.getOrDefault("size", "0").toString())));
                     return result;
@@ -188,16 +191,16 @@ public class SystemInfoTemplate {
      */
     public String getNetFileSizeDescription(long size) {
         StringBuffer bytes = new StringBuffer();
-        if (size >= 1024 * 1024 * 1024) {
-            double i = (size / (1024.0 * 1024.0 * 1024.0));
+        if (size >= K * K * K) {
+            double i = (size / (F_K * F_K * F_K));
             bytes.append(format.format(i)).append("GB");
-        } else if (size >= 1024 * 1024) {
-            double i = (size / (1024.0 * 1024.0));
+        } else if (size >= K * K) {
+            double i = (size / (F_K * F_K));
             bytes.append(format.format(i)).append("MB");
-        } else if (size >= 1024) {
-            double i = (size / (1024.0));
+        } else if (size >= K) {
+            double i = (size / (F_K));
             bytes.append(format.format(i)).append("KB");
-        } else if (size < 1024) {
+        } else if (size < K) {
             if (size <= 0) {
                 bytes.append("0B");
             } else {

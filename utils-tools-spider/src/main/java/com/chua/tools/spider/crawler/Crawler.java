@@ -3,10 +3,12 @@ package com.chua.tools.spider.crawler;
 import com.chua.tools.spider.config.CrawlerConf;
 import com.chua.tools.spider.loader.PageLoader;
 import com.chua.tools.spider.parser.PageParser;
+import com.chua.tools.spider.proxy.PageProxy;
 import com.chua.tools.spider.task.CrawlerTask;
 import com.chua.tools.spider.task.Task;
 import com.chua.tools.spider.url.LocaleUrlLoader;
 import com.chua.tools.spider.url.UrlLoader;
+import com.chua.utils.tools.common.ThreadHelper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,15 +41,25 @@ public class Crawler {
      */
     private int threadCount = 1;
     /**
+     * 最大线程数
+     */
+    private static final int THREAD_MAX_COUNT = 1000;
+    /**
+     * 检验时间
+     */
+    private static final int TEST_OF_TIME = 5;
+    /**
      * 爬虫线程池
      */
-    private ExecutorService crawlerService = Executors.newCachedThreadPool();
+    private ExecutorService crawlerService = ThreadHelper.newCachedThreadPool();
     /**
      * 爬虫线程引用镜像
      */
     private List<Task> crawlerTasks = new CopyOnWriteArrayList<>();
 
-    // ---------------------- builder ----------------------
+    /**
+     * ---------------------- builder ----------------------
+     */
     public static class Builder {
 
         private Crawler crawler = new Crawler();
@@ -224,15 +235,15 @@ public class Crawler {
         }
 
         /**
-         * 代理生成器
+         * 页面代理
          *
-         * @param proxyMaker 代理生成器
+         * @param pageProxy 页面代理
          * @return Builder
          */
-//        public Builder setProxyMaker(ProxyMaker proxyMaker) {
-//            crawler.crawlerConf.setProxyMaker(proxyMaker);
-//            return this;
-//        }
+        public Builder setProxyMaker(PageProxy pageProxy) {
+            crawler.crawlerConf.setPageProxy(pageProxy);
+            return this;
+        }
 
         /**
          * 失败重试次数，大于零时生效
@@ -264,26 +275,27 @@ public class Crawler {
     }
 
 
-    // ---------------------- crawler thread ----------------------
-
     /**
+     * ---------------------- crawler thread ----------------------
      * 启动
-     *
-     * @param sync true=同步方式、false=异步方式
      */
     private void start(boolean sync) {
         if (urlLoader == null) {
             throw new RuntimeException("crawler urlLoader can not be null.");
         }
+
         if (urlLoader.nowNum() <= 0) {
             throw new RuntimeException("crawler indexUrl can not be empty.");
         }
-        if (threadCount < 1 || threadCount > 1000) {
+
+        if (threadCount < 1 || threadCount > THREAD_MAX_COUNT) {
             throw new RuntimeException("crawler threadCount invalid, threadCount : " + threadCount);
         }
+
         if (crawlerConf.getPageLoader() == null) {
             throw new RuntimeException("crawler pageLoader can not be null.");
         }
+
         if (crawlerConf.getParser() == null) {
             throw new RuntimeException("crawler pageParser can not be null.");
         }
@@ -300,7 +312,7 @@ public class Crawler {
 
         if (sync) {
             try {
-                while (!crawlerService.awaitTermination(5, TimeUnit.SECONDS)) {
+                while (!crawlerService.awaitTermination(TEST_OF_TIME, TimeUnit.SECONDS)) {
                     log.info(">>>>>>>>>>> crawler still running ...");
                 }
             } catch (InterruptedException e) {

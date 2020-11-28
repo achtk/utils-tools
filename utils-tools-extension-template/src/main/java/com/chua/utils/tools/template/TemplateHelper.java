@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class TemplateHelper {
 
-    private static final Configuration CONFIGURATION = new Configuration();
+    private static final Configuration CONFIGURATION = new Configuration(Configuration.VERSION_2_3_30);
     private static final String DEFAULT = "default_template";
 
     static {

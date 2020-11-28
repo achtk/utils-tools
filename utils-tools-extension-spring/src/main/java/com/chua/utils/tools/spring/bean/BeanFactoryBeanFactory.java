@@ -166,15 +166,6 @@ public class BeanFactoryBeanFactory implements IBeanFactory, SingletonBeanRegist
      * @param beanClass 类
      */
     private Class<?> doAnalysisGetterSetter(Class<?> beanClass) {
-//        try {
-//            GetterSetterProperties getterAndSetter = ClassHelper.doAnalyzeGetterAndSetter(beanClass, true, new AnnotationInfoProperties(Autowired.class.getName(), 1, "*"));
-//            if (getterAndSetter.isEmpty()) {
-//                return beanClass;
-//            }
-//            return getterAndSetter.getRecordClass();
-//        } catch (Throwable throwable) {
-//            throwable.printStackTrace();
-//        }
         return beanClass;
     }
 

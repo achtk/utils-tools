@@ -6,6 +6,8 @@ import org.seimicrawler.xpath.JXDocument;
 
 import java.util.*;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * xparser
  *
@@ -27,7 +29,7 @@ public interface XpathParser extends PageParser {
         if (null == xpath) {
             return;
         }
-        Map<String, List<String>> param = new HashMap<>();
+        Map<String, List<String>> param = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         JXDocument jxDocument = JXDocument.create(html);
         for (String s : xpath) {
             List<Object> list = jxDocument.sel(s);

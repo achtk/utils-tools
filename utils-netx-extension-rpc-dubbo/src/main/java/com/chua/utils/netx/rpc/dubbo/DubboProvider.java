@@ -1,9 +1,9 @@
 package com.chua.utils.netx.rpc.dubbo;
 
-import com.alibaba.dubbo.config.*;
 import com.chua.utils.netx.rpc.config.*;
 import com.chua.utils.netx.rpc.resolver.IRpcProvider;
 import com.google.common.base.Preconditions;
+import org.apache.dubbo.config.*;
 
 import java.util.ArrayList;
 import java.util.List;

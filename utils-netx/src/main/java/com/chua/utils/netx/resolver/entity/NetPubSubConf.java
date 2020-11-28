@@ -73,6 +73,6 @@ public class NetPubSubConf<T> {
     /**
      * 多线程
      */
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private ExecutorService executorService;
 
 }

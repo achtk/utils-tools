@@ -1,12 +1,9 @@
 package com.chua.utils.netx.centor.service;
 
 import com.chua.utils.netx.centor.listener.Listener;
-import com.chua.utils.tools.common.BeansHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * 中心服务

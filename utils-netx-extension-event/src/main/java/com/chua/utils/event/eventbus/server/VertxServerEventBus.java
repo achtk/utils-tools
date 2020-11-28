@@ -1,30 +1,19 @@
 package com.chua.utils.event.eventbus.server;
 
-import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.ThreadHelper;
-import com.chua.utils.tools.manager.eventbus.EventBus;
-import com.chua.utils.tools.manager.eventbus.ServerEventBus;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.AsyncEventBus;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.cli.CLI;
 import io.vertx.core.net.NetServer;
 import io.vertx.core.net.NetSocket;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executor;
 
 /**
  * 监测服务
@@ -39,7 +28,7 @@ public class VertxServerEventBus extends AbstractVerticle implements com.chua.ut
     private static final Multimap<String, NetSocket> CLIENT_LIST = HashMultimap.create();
     private static final List<Object> LINK = new CopyOnWriteArrayList();
 
-    private static final AsyncEventBus eventBus = new AsyncEventBus(ThreadHelper.newSingleThreadExecutor());
+    private static final AsyncEventBus EVENT_BUS = new AsyncEventBus(ThreadHelper.newSingleThreadExecutor());
     private Vertx vertx = Vertx.vertx();
     /**
      * 创建TCP服务器
@@ -106,18 +95,18 @@ public class VertxServerEventBus extends AbstractVerticle implements com.chua.ut
         if (null == object) {
             return;
         }
-        eventBus.register(object);
+        EVENT_BUS.register(object);
         LINK.add(object);
     }
 
     @Override
     public void unregister(Object object) {
-        eventBus.unregister(object);
+        EVENT_BUS.unregister(object);
     }
 
     @Override
     public void post(String channel, Object event) {
-        eventBus.post(event);
+        EVENT_BUS.post(event);
         sendEventBus(channel, event);
     }
 

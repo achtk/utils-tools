@@ -7,6 +7,7 @@ import com.chua.tools.spider.parser.Parser;
 import com.chua.tools.spider.process.ApiParserProcessor;
 import com.chua.tools.spider.process.PageParserProcessor;
 import com.chua.tools.spider.process.ParserProcessor;
+import com.chua.tools.spider.proxy.PageProxy;
 import com.chua.tools.spider.util.RegexUtil;
 import com.chua.tools.spider.util.UrlUtil;
 import lombok.Data;
@@ -36,6 +37,10 @@ public class CrawlerConf {
         }
     };
     /**
+     * 页面代理
+     */
+    private PageProxy pageProxy;
+    /**
      * 页面处理器
      */
     private List<Parser> parser = new ArrayList<>();
@@ -56,7 +61,7 @@ public class CrawlerConf {
     /**
      * 是否验证https
      */
-    private volatile boolean isValidateTLSCertificates = true;
+    private volatile boolean isValidateTlsCertificates = true;
 
     /**
      * 是否扩散

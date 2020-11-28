@@ -4,7 +4,6 @@ import com.chua.tools.spider.config.CrawlerConf;
 import com.chua.tools.spider.crawler.Crawler;
 import com.chua.tools.spider.request.PageRequest;
 
-import java.net.Proxy;
 import java.util.Random;
 
 /**
@@ -39,10 +38,6 @@ public class UrlUtil {
         String userAgent = crawlerConf.getUserAgentList().size() > 1
                 ? crawlerConf.getUserAgentList().get(new Random().nextInt(crawlerConf.getUserAgentList().size()))
                 : crawlerConf.getUserAgentList().size() == 1 ? crawlerConf.getUserAgentList().get(0) : null;
-//        Proxy proxy = null;
-//        if (crawlerConf.getProxyMaker() != null) {
-//            proxy = crawlerConf.getProxyMaker().make();
-//        }
 
         PageRequest pageRequest = new PageRequest();
         pageRequest.setUrl(url);
@@ -54,7 +49,7 @@ public class UrlUtil {
         pageRequest.setIfPost(crawlerConf.isPost());
         pageRequest.setTimeoutMillis(crawlerConf.getTimeoutMillis());
         pageRequest.setProxy(null);
-        pageRequest.setValidateTLSCertificates(crawlerConf.isValidateTLSCertificates());
+        pageRequest.setValidateTlsCertificates(crawlerConf.isValidateTlsCertificates());
 
         return pageRequest;
     }

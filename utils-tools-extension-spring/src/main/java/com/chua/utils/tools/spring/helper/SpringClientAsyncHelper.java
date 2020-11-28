@@ -49,6 +49,7 @@ public class SpringClientAsyncHelper {
         this.requestConfig = requestConfig;
     }
 
+
     /**
      * @return
      */

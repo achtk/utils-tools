@@ -23,6 +23,6 @@ public class PageRequest {
     private String referrer;
     private boolean ifPost;
     private int timeoutMillis;
-    private boolean isValidateTLSCertificates;
+    private boolean isValidateTlsCertificates;
     private PageProxy proxy;
 }

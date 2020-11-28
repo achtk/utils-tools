@@ -37,7 +37,7 @@ public class SeleniumPhantomjsPageLoader implements PageLoader {
 
         // driver init
         DesiredCapabilities dcaps = new DesiredCapabilities();
-        dcaps.setCapability(CapabilityType.ACCEPT_SSL_CERTS, !pageRequest.isValidateTLSCertificates());
+        dcaps.setCapability(CapabilityType.ACCEPT_SSL_CERTS, !pageRequest.isValidateTlsCertificates());
         dcaps.setCapability(CapabilityType.TAKES_SCREENSHOT, false);
         dcaps.setCapability(CapabilityType.SUPPORTS_FINDING_BY_CSS, true);
         dcaps.setJavascriptEnabled(true);
@@ -51,10 +51,6 @@ public class SeleniumPhantomjsPageLoader implements PageLoader {
             System.setProperty("http.nonProxyHosts", "localhost");
             dcaps.setCapability(CapabilityType.PROXY, pageRequest.getProxy());
         }
-
-//        dcaps.setBrowserName(BrowserType.CHROME);
-//        dcaps.setVersion("70");
-//        dcaps.setPlatform(Platform.WIN10);
 
         WebDriver webDriver = new PhantomJSDriver(dcaps);
 
