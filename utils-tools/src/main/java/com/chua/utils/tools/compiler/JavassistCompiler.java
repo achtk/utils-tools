@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * @author CHTK
  */
 @Slf4j
-public class JavassistCompiler extends Compiler {
+public class JavassistCompiler implements Compiler {
 
     private static final Pattern IMPORT_PATTERN = Pattern.compile("import\\s+([\\w\\.\\*]+);");
 

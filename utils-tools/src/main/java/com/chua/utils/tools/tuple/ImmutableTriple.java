@@ -10,7 +10,7 @@ package com.chua.utils.tools.tuple;
  * @version 1.0.0
  * @since 2020/11/9
  */
-public final class ImmutableTriple<L, M, R> extends Triple<L, M, R> {
+public final class ImmutableTriple<L, M, R> implements Triple<L, M, R> {
 
     private final L left;
     private final M middle;

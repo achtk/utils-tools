@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
  * @author CHTK
  */
 @Slf4j
-public class JdkCompiler extends Compiler {
+public class JdkCompiler implements Compiler {
     @Override
-    protected Class<?> doCompile(String name, String source) throws Throwable {
+    public Class<?> doCompile(String name, String source) throws Throwable {
         DynamicCompiler dynamicCompiler = new DynamicCompiler(ClassHelper.getDefaultClassLoader());
         dynamicCompiler.addSource(name, source);
         return FinderHelper.firstElement(dynamicCompiler.build().values());
