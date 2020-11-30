@@ -62,12 +62,12 @@ public class ConcurrentCacheProvider<K, V> implements CacheProvider<K, V>, Cache
             return null;
         }
         Properties properties = cache.get(name);
-        long ints = PropertiesHelper.longs(properties, DEFAULT_TIMEOUT_FIELDS);
+        long longs = PropertiesHelper.longs(properties, DEFAULT_TIMEOUT_FIELDS);
         V value = (V) MapOperableHelper.getObject(properties, DEFAULT_KEY_FIELDS);
-        if (-1L == ints) {
+        if (-1L == longs) {
             return value;
         }
-        if (System.currentTimeMillis() - ints > timeout) {
+        if (System.currentTimeMillis() - longs > timeout) {
             remove(name);
             return null;
         }

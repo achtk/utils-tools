@@ -3,6 +3,7 @@ package com.chua.utils.tools.classes.adaptor;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.entity.FieldDescription;
 import com.chua.utils.tools.classes.entity.MethodDescription;
+import com.google.common.base.Strings;
 import jdk.internal.org.objectweb.asm.ClassReader;
 import jdk.internal.org.objectweb.asm.tree.ClassNode;
 
@@ -118,7 +119,10 @@ public class AsmAdaptor implements MetadataAdapter {
      * @param descriptor 名称
      * @return 名称
      */
-    private String resolveNewName(String descriptor) {
+    public static String resolveNewName(String descriptor) {
+        if(Strings.isNullOrEmpty(descriptor)) {
+            return null;
+        }
         String newDescriptor = descriptor;
         if (descriptor.startsWith("L")) {
             newDescriptor = descriptor.substring(1);

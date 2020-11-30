@@ -39,7 +39,7 @@ public class CacheProperties {
     /**
      * 超时时间
      */
-    private long expire = 30L;
+    private long expire = 3L;
     /**
      * 超时时间
      */

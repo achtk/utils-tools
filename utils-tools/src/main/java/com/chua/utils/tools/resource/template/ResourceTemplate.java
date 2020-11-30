@@ -5,8 +5,9 @@ import com.chua.utils.tools.cache.ConcurrentCacheProvider;
 import com.chua.utils.tools.cache.GuavaMultiValueCacheProvider;
 import com.chua.utils.tools.cache.MultiValueCacheProvider;
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.classes.entity.ClassDescription;
+import com.chua.utils.tools.classes.adaptor.AsmAdaptor;
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.common.skip.SkipPatterns;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.Matcher;
@@ -19,10 +20,14 @@ import com.google.common.collect.Lists;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.objectweb.asm.ClassReader;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_DOLLAR;
 
@@ -99,26 +104,38 @@ public class ResourceTemplate {
             Set<Resource> resources = getResources(ANY);
             List<Class<?>> subType = new ArrayList<>();
             if (SUB_CACHE.size() == 0) {
-                resources.forEach(resource -> {
-
-                    ClassDescription classDescription = resource.makeClassDescription();
-                    if (null == classDescription) {
-                        return;
+                ExecutorService executorService = ThreadHelper.newProcessorThreadExecutor();
+                List<Future<String>> futures = new ArrayList<>();
+                resources.parallelStream().forEach(resource -> futures.add(executorService.submit(() -> {
+                    ClassReader classReader;
+                    try (InputStream inputStream = resource.getUrl().openStream()) {
+                        classReader = new ClassReader(inputStream);
+                    } catch (Exception e) {
+                        return null;
                     }
 
-                    String name = classDescription.getName();
-                    String superClass = classDescription.getSuperClass();
+                    String name = AsmAdaptor.resolveNewName(classReader.getClassName());
+                    String superClass = AsmAdaptor.resolveNewName(classReader.getSuperName());
                     if (!Strings.isNullOrEmpty(superClass)) {
                         SUB_CACHE.add(superClass, name);
                     }
 
-                    List<String> interfaceNames = classDescription.getInterfaceNames();
+                    String[] interfaceNames = classReader.getInterfaces();
                     if (BooleanHelper.hasLength(interfaceNames)) {
                         for (String interfaceName : interfaceNames) {
-                            SUB_CACHE.add(interfaceName, name);
+                            SUB_CACHE.add(AsmAdaptor.resolveNewName(interfaceName), name);
                         }
                     }
-                });
+                    return null;
+                })));
+                for (Future<String> future : futures) {
+                    try {
+                        future.get();
+                    } catch (Exception ignore) {
+                    }
+                }
+
+                executorService.shutdown();
             }
             List<String> subs = new ArrayList<>();
             subs.add(encryptClass.getName());

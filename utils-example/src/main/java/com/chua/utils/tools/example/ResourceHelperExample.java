@@ -24,18 +24,24 @@ public class ResourceHelperExample {
     private static final Class<Encrypt> ENCRYPT_CLASS = Encrypt.class;
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         // PathMatcher pathMatcher = new AntPathMatcher();
         // System.out.println(pathMatcher.match("**/*.class", "org/springframework/Demo.class"));
         //资源查找
-        Set<Resource> resources = testFastGetResources();
+        //Set<Resource> resources = testFastGetResources();
         //资源查找
         //Set<Resource> resources1 = testReflectGetResources();
-        //子类查找
-        testSubGetResources();
         //资源查找
+        long s1 = System.currentTimeMillis();
         testFastSubGetResources();
-
+        System.out.println("FastResource: " + (System.currentTimeMillis() - s1));
+        Thread.sleep(2000);
+        //子类查找
+        long s2 = System.currentTimeMillis();
+        testSubGetResources();
+        System.out.println("ReflectResource: " + (System.currentTimeMillis() - s2));
+        Thread.sleep(3500);
+        System.out.println();
     }
 
     private static void testSubGetResources() {

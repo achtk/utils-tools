@@ -46,7 +46,7 @@ public class ConcurrentSetValueCacheProvider<K, V> implements MultiValueCachePro
 
     @Override
     public Set<V> get(K name) {
-        return get(name);
+        return threadLocal.get().get(name);
     }
 
     @Override

@@ -8,7 +8,6 @@ import com.chua.utils.tools.common.skip.SkipPatterns;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import sun.misc.ClassLoaderUtil;
 import sun.misc.SharedSecrets;
 import sun.misc.URLClassPath;
 
@@ -86,11 +85,6 @@ public class ClassLoaderHelper extends ReflectionHelper {
         List<URL> cache = new ArrayList<>(urlsByClassLoader.length);
         Arrays.stream(urlsByClassLoader).parallel().forEach(url -> {
             String form = url.toExternalForm();
-            for (String item : SkipPatterns.DEFAULT) {
-                if (StringHelper.wildcardMatch(FileHelper.getName(form), item)) {
-                    return;
-                }
-            }
             for (String item : SkipPatterns.JDK_LIB) {
                 if (StringHelper.wildcardMatch(FileHelper.getName(form), item)) {
                     return;
