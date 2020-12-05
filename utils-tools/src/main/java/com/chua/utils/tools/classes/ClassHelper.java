@@ -1,15 +1,16 @@
 package com.chua.utils.tools.classes;
 
+import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.common.ArraysHelper;
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.StringHelper;
-import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.Filter;
+import com.chua.utils.tools.function.converter.TypeConverter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -68,6 +69,7 @@ public class ClassHelper extends ClassLoaderHelper {
                     try {
                         return Class.forName(type, false, classLoader);
                     } catch (Throwable e) {
+                        reflectionsExceptions.add(e);
                         String message = e.getMessage();
                         String errorName = "wrong name: ";
                         int index = message.indexOf(errorName);
@@ -78,6 +80,7 @@ public class ClassHelper extends ClassLoaderHelper {
                         try {
                             return Class.forName(newName, false, classLoader);
                         } catch (ClassNotFoundException classNotFoundException) {
+                            reflectionsExceptions.add(classNotFoundException);
                             return null;
                         }
                     }
@@ -211,7 +214,7 @@ public class ClassHelper extends ClassLoaderHelper {
             for (String pkg : packages) {
                 try {
                     return forNameNoClassLoader(pkg + "." + className);
-                } catch (ClassNotFoundException e2) {
+                } catch (ClassNotFoundException ignore) {
                 }
             }
         }
@@ -287,7 +290,7 @@ public class ClassHelper extends ClassLoaderHelper {
      * </p>
      *
      * @param tClass 类
-     * @return
+     * @return T
      */
     public static <T> T safeForObject(Class<? extends T> tClass) {
         if (null == tClass) {
@@ -379,6 +382,7 @@ public class ClassHelper extends ClassLoaderHelper {
      *
      * @param clazz        类
      * @param classLoaders 类加载器(默认当前线程类加载器)
+     * @param <T> 类型
      * @return 对象
      */
     public static <T> T forObject(Class<?> clazz, ClassLoader... classLoaders) {
@@ -411,6 +415,7 @@ public class ClassHelper extends ClassLoaderHelper {
      * @param <T>        类类型
      * @return 对象
      */
+    @SuppressWarnings("Unchecked")
     public static <T> T forObject(String className, Class<T> returnType) {
         Object object = forObject(className);
         return null == object || returnType.isAssignableFrom(object.getClass()) ? (T) object : null;
@@ -771,5 +776,55 @@ public class ClassHelper extends ClassLoaderHelper {
     public static <T> T getMethodValue(Object object, String methodName, Object[] params, Class<T> returnType) {
         Method method = getMethodByName(object, methodName, params);
         return getMethodValue(object, method, params, returnType);
+    }
+
+    /**
+     * 类型转化
+     *
+     * @param item 数据
+     * @param type 类型
+     * @param <T>  类型
+     * @return 类型数据
+     */
+    public static <T> T converter(Object item, Class<T> type) {
+        if (null == item || null == type || item instanceof Class) {
+            return null;
+        }
+
+        if (type.isAssignableFrom(item.getClass())) {
+            return (T) item;
+        }
+
+        TypeConverter<T> typeConverter = getTypeConverter(type);
+        if (null != typeConverter) {
+            return typeConverter.convert(item);
+        }
+
+        if (item instanceof Map) {
+            return BeanCopy.of(ClassHelper.forObject(type)).with(item).create();
+        }
+
+        if (item instanceof String) {
+            try {
+                return JsonHelper.fromJson((String) item, type);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        return BeanCopy.converter(item, ClassHelper.forObject(type));
+    }
+
+    /**
+     * 类型转化
+     *
+     * @param item 数据
+     * @param type 类型
+     * @param <T>  类型
+     * @return 类型数据
+     */
+    public static <T> T converter(Object item, String type) {
+        return (T) converter(item, ClassHelper.forName(type));
     }
 }

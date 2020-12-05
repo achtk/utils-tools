@@ -92,8 +92,12 @@ public enum SQLDialectEnum {
     /**
      * mariadb
      */
-    MARIADB(SqlDialect.MARIADB_URL, SqlDialect.MARIADB_DRIVER, SqlDialect.MARIADB);
+    MARIADB(SqlDialect.MARIADB_URL, SqlDialect.MARIADB_DRIVER, SqlDialect.MARIADB),
 
+    /**
+     * UNKNOWN
+     */
+    UNKNOWN(SqlDialect.UNKNOWN, SqlDialect.UNKNOWN, SqlDialect.UNKNOWN);
 
     private String driver;
     private String url;

@@ -7,6 +7,7 @@ import com.chua.utils.tools.collects.HashOperateMap;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.function.Converter;
 import com.chua.utils.tools.manager.parser.description.FieldDescription;
+import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
 
 import java.util.HashMap;
@@ -87,7 +88,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
      * @return this
      */
     public static <T> BeanCopy of(T entity) {
-        if (entity instanceof String) {
+        if (null != entity && entity instanceof String) {
             return new ClassBeanCopy(entity.toString());
         }
         return new StandardBeanCopy<>(entity);
@@ -139,6 +140,11 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
             });
             return this;
         }
+
+        if(entity instanceof Map) {
+            with((Map<String, Object>) entity);
+            return this;
+        }
         return with(BeanMap.create(entity));
     }
 
@@ -153,7 +159,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
 
     @Override
     public T create() {
-        if (MapOperableHelper.isEmpty(withParams)) {
+        if (MapOperableHelper.isEmpty(withParams) || null == entity) {
             return entity;
         }
         ObjectCreate<T> objectCreate;

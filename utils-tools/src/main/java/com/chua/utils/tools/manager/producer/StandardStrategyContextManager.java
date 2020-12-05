@@ -4,6 +4,7 @@ import com.chua.utils.tools.function.able.InitializingCacheable;
 import com.chua.utils.tools.manager.StrategyContextManager;
 import com.chua.utils.tools.manager.builder.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

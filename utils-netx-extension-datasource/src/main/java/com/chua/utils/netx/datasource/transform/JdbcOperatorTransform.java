@@ -1,5 +1,6 @@
 package com.chua.utils.netx.datasource.transform;
 
+import com.chua.utils.netx.datasource.dialect.SqlDialect;
 import com.chua.utils.netx.datasource.properties.DataSourceProperties;
 import com.chua.utils.tools.properties.OperatorProperties;
 import com.chua.utils.tools.transform.OperatorTransform;
@@ -33,6 +34,9 @@ public class JdbcOperatorTransform implements OperatorTransform<DataSource> {
         }
 
         hikariConfig.setJdbcUrl(operatorProperties.url());
+        if(Strings.isNullOrEmpty(operatorProperties.driver()) && !Strings.isNullOrEmpty(operatorProperties.dialect())) {
+            operatorProperties.driver(SqlDialect.getDriver(operatorProperties.dialect()));
+        }
         hikariConfig.setDriverClassName(operatorProperties.driver());
 
         if (!Strings.isNullOrEmpty(operatorProperties.username())) {

@@ -33,7 +33,10 @@ public class OperatorProperties {
      * 密码
      */
     private String password;
-
+    /**
+     * 方言
+     */
+    private String dialect;
     /**
      * 额外参数
      */

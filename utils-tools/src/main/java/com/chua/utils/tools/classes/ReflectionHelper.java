@@ -2,6 +2,7 @@ package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
+import com.chua.utils.tools.classes.adaptor.AsmAdaptor;
 import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.classes.callback.MethodCallback;
 import com.chua.utils.tools.collects.collections.CollectionHelper;
@@ -10,9 +11,17 @@ import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.exceptions.NonUniqueException;
 import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.manager.parser.description.FieldDescription;
+import com.chua.utils.tools.named.NamedHelper;
 import com.chua.utils.tools.storage.CacheStorage;
 import com.google.common.base.Strings;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
@@ -209,6 +218,48 @@ public class ReflectionHelper {
     /**
      * 获取字段值
      *
+     * @param obj       对象
+     * @param fieldName 字段名称
+     * @param fieldType 字段类型
+     * @return 值
+     */
+    public static Object getFieldValue(final Object obj, final String fieldName, final String fieldType) {
+        if (null == obj || null == fieldName) {
+            return null;
+        }
+
+        ClassReader classReader = null;
+        try {
+            classReader = new ClassReader(obj.getClass().getName());
+        } catch (IOException ignore) {
+        }
+        if (null == classReader) {
+            List<Field> field = getField(obj, fieldName);
+            Optional<Field> first = field.stream().filter(field1 -> {
+                return field1.getType().getName().equals(fieldType);
+            }).findFirst();
+            if (first.isPresent()) {
+                return getFieldValue(obj, first.get());
+            }
+            return null;
+        }
+        ClassNode classNode = new ClassNode();
+        classReader.accept(classNode, 0);
+        MethodVisitor mv = classNode.visitMethod(Opcodes.AALOAD, "get" + NamedHelper.firstUpperCase(fieldName), fieldType, null, null);
+        mv.visitFieldInsn(Opcodes.GETFIELD, Type.getInternalName(ClassHelper.forName(fieldType)), "str", fieldType);
+        Optional<FieldNode> first = classNode.fields.stream().filter(fieldNode -> {
+            return fieldNode.name.equals(fieldName) && AsmAdaptor.resolveNewName(fieldNode.desc).equals(fieldType);
+        }).findFirst();
+
+        if (first.isPresent()) {
+            return first.get().value;
+        }
+        return null;
+    }
+
+    /**
+     * 获取字段值
+     *
      * @param obj   对象
      * @param field 字段
      * @return 值
@@ -217,6 +268,7 @@ public class ReflectionHelper {
         if (null == obj || null == field) {
             return null;
         }
+
         field.setAccessible(true);
         try {
             return field.get(obj);

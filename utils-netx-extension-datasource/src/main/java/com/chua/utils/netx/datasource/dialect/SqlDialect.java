@@ -4,6 +4,7 @@ import net.sf.cglib.beans.BeanMap;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 /**
  * 数据库方言
@@ -17,6 +18,7 @@ public class SqlDialect {
     public static String DB_NAME = "<db_name>";
     public static String PORT = "<port>";
     public static String IP = "<ip>";
+    public static String UNKNOWN = "";
     /**
      * MySQL 驱动程序
      */
@@ -24,6 +26,7 @@ public class SqlDialect {
     /**
      * MySQL 链接地址
      * <p>jdbc:mysql://" + IP + ":" + PORT + "/DB_NAME</p>
+     * <p>时区: serverTimezone=UTC</p>
      */
     public static final String MYSQL_URL = "jdbc:mysql://" + IP + ":" + PORT + "/" + DB_NAME;
     /**
@@ -173,6 +176,15 @@ public class SqlDialect {
     private static final String DRIVER = "driver";
     private static final String URL = "url";
     private static final String JDBC_URL = "jdbcUrl";
+
+    /**
+     * 通过方言获取驱动
+     * @param dialect 方言
+     * @return 驱动
+     */
+    public static String getDriver(String dialect) {
+        return Arrays.stream(SQLDialectEnum.values()).filter(sqlDialectEnum -> dialect.equals(sqlDialectEnum.getDataSourceType())).findFirst().orElse(SQLDialectEnum.UNKNOWN).getDriver();
+    }
 
     /**
      * 猜测数据库类型

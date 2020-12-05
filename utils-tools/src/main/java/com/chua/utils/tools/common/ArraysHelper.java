@@ -1,5 +1,6 @@
 package com.chua.utils.tools.common;
 
+
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -148,6 +149,15 @@ public class ArraysHelper {
      */
     public static String[] toArray(List<String> list) {
         return list.toArray(new String[list.size()]);
+    }
+    /**
+     * 把List转换成字符串数组
+     *
+     * @param collection 字符串List
+     * @return 字符串数组
+     */
+    public static Object[] toArray(Collection<?> collection) {
+        return collection.toArray(new Object[collection.size()]);
     }
 
     /**

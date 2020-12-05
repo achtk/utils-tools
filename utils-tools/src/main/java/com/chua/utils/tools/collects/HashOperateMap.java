@@ -22,6 +22,42 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
 
     private final Interpreter interpreter = new Interpreter();
 
+    private final static HashOperateMap INSTANCE = HashOperateMap.create();
+    /**
+     * 创建 HashOperateMap
+     *
+     * @return HashOperateMap
+     */
+    public static HashOperateMap create() {
+        return new HashOperateMap();
+    }
+    /**
+     * 创建 HashOperateMap
+     *
+     * @return HashOperateMap
+     */
+    public static HashOperateMap emptyMap() {
+        return INSTANCE;
+    }
+
+    /**
+     * 创建 HashOperateMap
+     *
+     * @return HashOperateMap
+     */
+    public static HashOperateMap create(String key, Object value) {
+        return new HashOperateMap().append(key, value);
+    }
+
+    /**
+     * 创建 HashOperateMap
+     *
+     * @return HashOperateMap
+     */
+    public static HashOperateMap create(Map<String, Object> params) {
+        return new HashOperateMap().append(params);
+    }
+
     @Override
     public Object put(String key, Object value) {
         this.setKeyValue(key, value);
@@ -82,9 +118,20 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
     }
 
     @Override
-    public BiAppendable<String, Object> append(String v1, Object v2) {
+    public HashOperateMap append(String v1, Object v2) {
         this.put(v1, v2);
         this.setKeyValue(v1, v2);
+        return this;
+    }
+
+    /**
+     * 添加
+     *
+     * @param params 数据
+     * @return this
+     */
+    public HashOperateMap append(Map<String, Object> params) {
+        this.putAll(params);
         return this;
     }
 

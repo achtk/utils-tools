@@ -10,7 +10,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>utils-example</artifactId>
-
+    <properties>
+        <calcite.version>1.21.0</calcite.version>
+    </properties>
+    <!-- cqengine-->
     <dependencies>
         <dependency>
             <groupId>com.sun</groupId>
@@ -20,6 +23,17 @@
             <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>
         </dependency>
 
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.21</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-netx-extension-calcite</artifactId>
+            <version>1.0</version>
+        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-tools-extension-plugins</artifactId>
@@ -241,6 +255,12 @@
             <groupId>com.chua</groupId>
             <artifactId>utils-tools-schedule</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>2.5.13</version>
+            <scope>compile</scope>
         </dependency>
 
         <!--        <dependency>-->

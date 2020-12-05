@@ -5,9 +5,14 @@ import com.chua.utils.tools.collects.SetMultiValueMap;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.config.CacheProperties;
 
+import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 
 /**
  * ConcurrentMap方式缓存
@@ -17,16 +22,10 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class ConcurrentSetValueCacheProvider<K, V> implements MultiValueCacheProvider<K, V> {
 
-    private final ThreadLocal<SetMultiValueMap<K, V>> threadLocal = new ThreadLocal<SetMultiValueMap<K, V>>() {
-        @Override
-        protected SetMultiValueMap<K, V> initialValue() {
-            MultiValueSetMap<K, V> valueMap = MultiValueSetMap.create();
-            return valueMap;
-        }
-    };
+    private final SetMultiValueMap<K, V> threadLocal = MultiValueSetMap.create();
 
     public SetMultiValueMap<K, V> get() {
-        return threadLocal.get();
+        return threadLocal;
     }
 
     @Override
@@ -41,27 +40,31 @@ public class ConcurrentSetValueCacheProvider<K, V> implements MultiValueCachePro
 
     @Override
     public ConcurrentMap<K, Set<V>> asMap() {
-        return null;
+        ConcurrentMap<K, Set<V>> targetMap = new ConcurrentHashMap<>();
+        for (Map.Entry<K, Set<V>> entry : threadLocal.entrySet()) {
+            targetMap.put(entry.getKey(), entry.getValue());
+        }
+        return targetMap;
     }
 
     @Override
     public Set<V> get(K name) {
-        return threadLocal.get().get(name);
+        return threadLocal.get(name);
     }
 
     @Override
     public Set<V> put(K name, Set<V> value) {
-        return get().put(name, value);
+        return threadLocal.put(name, value);
     }
 
     @Override
     public Set<V> update(K name, Set<V> value) {
-        return get().put(name, value);
+        return threadLocal.put(name, value);
     }
 
     @Override
     public void remove(K name) {
-        get().remove(name);
+        threadLocal.remove(name);
     }
 
     @Override
@@ -73,17 +76,29 @@ public class ConcurrentSetValueCacheProvider<K, V> implements MultiValueCachePro
 
     @Override
     public void removeAll() {
-        get().clear();
+        threadLocal.clear();
     }
 
     @Override
     public long size() {
-        return get().size();
+        return threadLocal.size();
     }
 
 
     @Override
     public V getIndex(K k, int index) {
-        return FinderHelper.findElement(index, get().get(k));
+        return FinderHelper.findElement(index, threadLocal.get(k));
     }
+
+    @Override
+    public void add(K keyValue, @Nullable V value) {
+        threadLocal.computeIfAbsent(keyValue, k -> new HashSet<>()).add(value);
+    }
+
+    @Override
+    public void addAll(K key, Set<? extends V> values) {
+        threadLocal.computeIfAbsent(key, k -> new HashSet<>()).addAll(values);
+    }
+
+
 }

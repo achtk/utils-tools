@@ -4,6 +4,7 @@ import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.collects.HashOperateMap;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.function.Converter;
+import net.sf.cglib.beans.BeanCopier;
 
 import java.util.Map;
 import java.util.Properties;
@@ -35,6 +36,23 @@ public interface BeanCopy<T> {
     }
 
     /**
+     * 对象转化
+     *
+     * @param source 原始对象
+     * @param target 目标对象
+     * @param <T>    目标对象类型
+     * @return 目标对象
+     */
+    static <T> T converter(Object source, T target) {
+        if (null == source || null == target) {
+            return target;
+        }
+        BeanCopier beanCopier = BeanCopier.create(source.getClass(), target.getClass(), false);
+        beanCopier.copy(source, target, null);
+        return target;
+    }
+
+    /**
      * 初始化
      *
      * @param t   对象
@@ -42,7 +60,7 @@ public interface BeanCopy<T> {
      * @return this
      */
     static <T> BeanCopy<T> of(Class<T> t) {
-        return StandardBeanCopy.<T>of(t);
+        return StandardBeanCopy.of(t);
     }
 
     /**
@@ -140,4 +158,6 @@ public interface BeanCopy<T> {
      * @return 字段
      */
     HashOperateMap asMap();
+
+
 }

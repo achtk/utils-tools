@@ -34,10 +34,10 @@ public class IdHelper {
      * 雪花ID
      *
      * @param workerId     工作ID (0~31)
-     * @param datacenterId 数据中心ID (0~31)
+     * @param dataCenter 数据中心ID (0~31)
      * @return 雪花算法
      */
-    public static Snowflake createSnowflake(long workerId, long datacenterId) {
-        return new Snowflake(3, 1);
+    public static Snowflake createSnowflake(long workerId, long dataCenter) {
+        return new Snowflake(workerId, dataCenter);
     }
 }
