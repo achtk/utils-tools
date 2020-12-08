@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "defaultSchema": "testcreateindex",
+  "schemas": [
+    {
+      "type": "custom",
+      "name": "testcreateindex",
+      "factory": "org.apache.calcite.adapter.elasticsearch.ElasticsearchSchemaFactory",
+      "operand": {
+        "host": "localhost",
+        "index": "testcreateindex"
+      }
+    }
+  ]
+}

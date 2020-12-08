@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "defaultSchema": "KAFKA",
+  "schemas": [
+    {
+      "name": "KAFKA",
+      "tables": [
+        {
+          "name": "TABLE_NAME",
+          "type": "custom",
+          "factory": "org.apache.calcite.adapter.kafka.KafkaTableFactory",
+          "row.converter": "com.example.CustKafkaRowConverter",
+          "operand": {
+            "bootstrap.servers": "host1:port,host2:port",
+            "topic.name": "kafka.topic.name",
+            "consumer.params": {
+              "key.deserializer": "org.apache.kafka.common.serialization.ByteArrayDeserializer",
+              "value.deserializer": "org.apache.kafka.common.serialization.ByteArrayDeserializer"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

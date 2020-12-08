@@ -825,6 +825,15 @@ public class IoHelper {
      * url 转 list
      *
      * @param url     类
+     * @return List
+     */
+    public static List<String> toList(URL url) throws IOException {
+        return Splitter.on("\r\n").omitEmptyStrings().trimResults().splitToList(toString(url, StandardCharsets.UTF_8));
+    }
+    /**
+     * url 转 list
+     *
+     * @param url     类
      * @param charset 编码
      * @return List
      */
@@ -841,6 +850,16 @@ public class IoHelper {
      */
     public static InputStreamReader toUtf8InputStreamReader(InputStream inputStream) {
         return new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * is转 reader
+     *
+     * @param file 文件
+     * @return InputStreamReader
+     */
+    public static InputStreamReader toUtf8InputStreamReader(String file) throws FileNotFoundException {
+        return new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
     }
 
     /**

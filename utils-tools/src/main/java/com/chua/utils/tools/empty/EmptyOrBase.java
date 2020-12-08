@@ -8,7 +8,6 @@ import com.chua.utils.tools.function.converter.VoidTypeConverter;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.google.common.collect.Lists;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -222,7 +221,9 @@ public class EmptyOrBase extends InitializingCacheable {
             '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
             'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
             'Z'};
+    public static final Object[] EMPTY_OBJECT = new Object[0];
     private static final TypeConverter VOID_TYPE_CONVERTER = new VoidTypeConverter();
+    private static final String SPECIAL_SYMBOL = ".$|()[{^?*+\\";
 
     /**
      * 常用基础类型
@@ -267,5 +268,22 @@ public class EmptyOrBase extends InitializingCacheable {
      */
     public static TypeConverter getTypeConverter(Class<?> aClass) {
         return null == aClass ? VOID_TYPE_CONVERTER : TYPE_CONVERTER.get(aClass);
+    }
+
+    /**
+     * 是否是正则表达式特殊符号
+     *
+     * @return 特殊符号
+     */
+    public static boolean SpecialSymbol(String regex) {
+        char ch = 0;
+        return ((regex.toCharArray().length == 1 && ".$|()[{^?*+\\" .indexOf(ch = regex.charAt(0)) == -1) ||
+                (
+                        regex.length() == 2 &&
+                        regex.charAt(0) == '\\' &&
+                                (((ch = regex.charAt(1)) - '0') | ('9' - ch)) < 0 &&
+                                ((ch - 'a') | ('z' - ch)) < 0 &&
+                                ((ch - 'A') | ('Z' - ch)) < 0)) &&
+                (ch < Character.MIN_HIGH_SURROGATE || ch > Character.MAX_LOW_SURROGATE);
     }
 }

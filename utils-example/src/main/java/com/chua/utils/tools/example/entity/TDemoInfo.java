@@ -17,22 +17,19 @@ import java.util.Date;
 public class TDemoInfo {
     @Id
     @GeneratedValue
-    private Integer id;
+    public Integer id;
 
-    private Date time;
+    public Date time;
 
     @Column
-    private String name;
+    public String name;
     @Column
-    private String title;
+    public String title;
     @Column
-    private String demoTitle;
+    public String demoTitle;
     @Column
-    private String test;
+    public String test;
 
     private String uuid = IdHelper.createUuid();
 
-    public String getUuid() {
-        return IdHelper.createUuid();
-    }
 }

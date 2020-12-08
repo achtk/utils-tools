@@ -1,6 +1,9 @@
 package com.chua.utils.tools.common;
 
 
+import com.chua.utils.tools.empty.EmptyOrBase;
+import com.google.common.base.Splitter;
+
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -150,6 +153,7 @@ public class ArraysHelper {
     public static String[] toArray(List<String> list) {
         return list.toArray(new String[list.size()]);
     }
+
     /**
      * 把List转换成字符串数组
      *
@@ -582,6 +586,49 @@ public class ArraysHelper {
      */
     public static String[] emptyString() {
         return EMPTY_ARRAY;
+    }
+
+    /**
+     * 获取数据
+     *
+     * @param mapSource 集合数据
+     * @param fields    字段
+     * @return 数据
+     */
+    public static Object[] toArray(Map<String, Object> mapSource, List<String> fields) {
+        if (null == mapSource || mapSource.isEmpty() || null == fields || fields.isEmpty()) {
+            return EmptyOrBase.EMPTY_OBJECT;
+        }
+        Object[] result = new Object[fields.size()];
+        int length = fields.size();
+        for (int i = 0; i < length; i++) {
+            result[i] = mapSource.get(fields.get(i));
+        }
+        return result;
+    }
+
+    /**
+     * 分割数据
+     *
+     * @param source           数据
+     * @param delimiter        分隔符
+     * @param omitEmptyStrings 是否去除空值
+     * @return 分割后数据
+     */
+    public static String[] splice(String source, String delimiter, final boolean omitEmptyStrings) {
+        if (null == source || null == delimiter) {
+            return EmptyOrBase.EMPTY_STRING;
+        }
+        Splitter splitter = null;
+        if (!EmptyOrBase.SpecialSymbol(delimiter)) {
+            splitter = Splitter.onPattern(delimiter);
+        } else {
+            splitter = Splitter.on(delimiter);
+        }
+        if(omitEmptyStrings) {
+            splitter.trimResults().omitEmptyStrings();
+        }
+        return toArray(splitter.splitToList(source));
     }
 
     /**

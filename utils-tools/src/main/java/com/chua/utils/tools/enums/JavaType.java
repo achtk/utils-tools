@@ -1,5 +1,6 @@
 package com.chua.utils.tools.enums;
 
+import com.chua.utils.tools.classes.ClassHelper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,8 +9,6 @@ import java.net.URL;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * JavaType -> JdbcType
@@ -128,9 +127,13 @@ public enum JavaType {
     /**
      * DATALINK
      */
-    DATALINK("DATALINK", URL.class.getName());
+    DATALINK("DATALINK", URL.class.getName()),
+    /**
+     * ANY
+     */
+    ANY("ANY", URL.class.getName());
 
-    private static JavaType DEFAULT = VARCHAR;
+    private static JavaType DEFAULT = ANY;
     private String jdbcType;
     private String javaType;
 
@@ -154,6 +157,19 @@ public enum JavaType {
      */
     public static String toJdbcType(String javaTypeStr) {
         return Arrays.stream(values()).filter(javaType1 -> javaType1.getJavaType().equals(javaTypeStr)).findFirst().orElse(DEFAULT).getJdbcType();
+    }
+
+    /**
+     * javaType -> jdbcType
+     *
+     * @param javaTypeStr jdbcType
+     * @return jdbcType
+     */
+    public static String toJdbcType(Object javaTypeStr) {
+        if(null == javaTypeStr) {
+            return DEFAULT.getJdbcType();
+        }
+        return Arrays.stream(values()).filter(javaType1 -> javaType1.getJavaType().equals(ClassHelper.getClass(javaTypeStr))).findFirst().orElse(DEFAULT).getJdbcType();
     }
 
 }

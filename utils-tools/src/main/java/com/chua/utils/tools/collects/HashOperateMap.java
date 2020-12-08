@@ -6,8 +6,12 @@ import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.function.BiAppendable;
 import com.chua.utils.tools.function.MapOperable;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -23,6 +27,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
     private final Interpreter interpreter = new Interpreter();
 
     private final static HashOperateMap INSTANCE = HashOperateMap.create();
+
     /**
      * 创建 HashOperateMap
      *
@@ -31,6 +36,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
     public static HashOperateMap create() {
         return new HashOperateMap();
     }
+
     /**
      * 创建 HashOperateMap
      *
@@ -56,6 +62,41 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      */
     public static HashOperateMap create(Map<String, Object> params) {
         return new HashOperateMap().append(params);
+    }
+
+    /**
+     * 创建 HashOperateMap
+     *
+     * @param params 数据
+     * @return HashOperateMap
+     */
+    public static HashOperateMap create(String params) {
+        return create(params, ",", ":");
+    }
+
+    /**
+     * 创建 HashOperateMap
+     *
+     * @param params            数据
+     * @param lineSeparator     数据分隔符
+     * @param keyValueSeparator 键值对分隔符
+     * @return HashOperateMap
+     */
+    public static HashOperateMap create(String params, String lineSeparator, String keyValueSeparator) {
+        HashOperateMap hashOperateMap = new HashOperateMap();
+        Splitter.on(lineSeparator)
+                .trimResults()
+                .omitEmptyStrings()
+                .splitToStream(params)
+                .forEach(item -> {
+                    List<String> strings = Splitter.on(keyValueSeparator).trimResults().omitEmptyStrings().splitToList(item);
+                    if (strings.size() == 2) {
+                        hashOperateMap.put(strings.get(0), strings.get(1));
+                    } else if (strings.size() > 2) {
+                        hashOperateMap.put(strings.get(0), Joiner.on(keyValueSeparator).join(strings.subList(1, strings.size())));
+                    }
+                });
+        return hashOperateMap;
     }
 
     @Override
@@ -215,5 +256,52 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
         BeanCopy<T> beanCopy = BeanCopy.of(t1);
         beanCopy.with(this);
         return beanCopy.create();
+    }
+
+    /**
+     * 获取实体
+     *
+     * @param key    索引
+     * @param tClass 类型
+     * @param <T>    类型
+     * @return 实体
+     */
+    public <T> T getEntity(String key, Class<T> tClass) {
+        Object object = getObject(key);
+        return null == object || (null != tClass && tClass.isAssignableFrom(object.getClass())) ? (T) object : null;
+    }
+
+    /**
+     * 字段是否有效(存在/非空)
+     *
+     * @param key 索引
+     * @return 有效返回true
+     */
+    public boolean isValid(String key) {
+        if (Strings.isNullOrEmpty(key)) {
+            return false;
+        }
+        return null != getObject(key);
+    }
+    /**
+     * 字段是否都有效(存在/非空)
+     *
+     * @param keys 索引
+     * @return 有效返回true
+     */
+    public boolean isValids(String... keys) {
+        if(null == keys) {
+            return false;
+        }
+
+        boolean isAllValid = true;
+        for (String key : keys) {
+            boolean valid = isValid(key);
+            if(!valid) {
+                isAllValid = false;
+                break;
+            }
+        }
+        return isAllValid;
     }
 }

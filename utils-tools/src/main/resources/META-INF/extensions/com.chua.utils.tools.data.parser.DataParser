@@ -1,0 +1,3 @@
+bcp=com.chua.utils.tools.data.parser.BcpFileDataParser
+csv=com.chua.utils.tools.data.parser.CsvFileDataParser
+mem=com.chua.utils.tools.data.parser.MemFileDataParser
