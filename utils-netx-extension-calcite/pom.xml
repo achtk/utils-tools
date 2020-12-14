@@ -23,6 +23,7 @@
             <groupId>org.apache.calcite</groupId>
             <artifactId>calcite-elasticsearch5</artifactId>
             <version>1.16.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-kafka -->
@@ -30,6 +31,7 @@
             <groupId>org.apache.calcite</groupId>
             <artifactId>calcite-kafka</artifactId>
             <version>1.26.0</version>
+            <scope>provided</scope>
         </dependency>
 
 
@@ -38,14 +40,23 @@
             <groupId>org.apache.calcite</groupId>
             <artifactId>calcite-elasticsearch</artifactId>
             <version>1.26.0</version>
+            <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-druid -->
+        <dependency>
+            <groupId>org.apache.calcite</groupId>
+            <artifactId>calcite-druid</artifactId>
+            <version>1.26.0</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-mongodb -->
         <dependency>
             <groupId>org.apache.calcite</groupId>
             <artifactId>calcite-mongodb</artifactId>
             <version>1.26.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-redis -->
@@ -53,12 +64,14 @@
             <groupId>org.apache.calcite</groupId>
             <artifactId>calcite-redis</artifactId>
             <version>1.26.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.github.bluejoe2008</groupId>
             <artifactId>solr-sql</artifactId>
             <version>0.9.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

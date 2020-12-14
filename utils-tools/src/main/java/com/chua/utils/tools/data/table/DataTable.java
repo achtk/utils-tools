@@ -14,6 +14,7 @@ import lombok.experimental.Accessors;
  *
  * @author CH
  * @version 1.0.0
+ * @see com.chua.utils.tools.data.table.wrapper.TableWrapper
  * @since 2020/12/8
  */
 @Getter
@@ -21,6 +22,7 @@ import lombok.experimental.Accessors;
 @Builder
 @Accessors(chain = true)
 public class DataTable {
+
     /**
      * 标识
      */
@@ -32,6 +34,7 @@ public class DataTable {
 
     /**
      * 获取表名
+     *
      * @return
      */
     public String getName() {
@@ -62,5 +65,9 @@ public class DataTable {
      * 数据包裹方式
      */
     private Wrapper<?> wrapper;
-
+    /**
+     * 额外参数
+     */
+    @Builder.Default
+    private HashOperateMap operate2 = HashOperateMap.create();
 }

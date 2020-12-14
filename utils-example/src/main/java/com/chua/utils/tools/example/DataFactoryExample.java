@@ -1,14 +1,12 @@
 package com.chua.utils.tools.example;
 
 import com.chua.utils.netx.datasource.transform.JdbcOperatorTransform;
-import com.chua.utils.tools.collects.HashOperateMap;
 import com.chua.utils.tools.common.FileHelper;
 import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.data.factory.DataFactory;
 import com.chua.utils.tools.data.factory.StandardDataFactory;
-import com.chua.utils.tools.data.table.DataTable;
-import com.chua.utils.tools.data.table.type.TableType;
+import com.chua.utils.tools.data.table.wrapper.TableWrapper;
 import com.chua.utils.tools.example.entity.TDemoInfo;
 import com.chua.utils.tools.properties.OperatorProperties;
 import com.chua.utils.tools.random.RandomUtil;
@@ -61,15 +59,24 @@ public class DataFactoryExample {
         //测试Csv数据
         //testFileSchema("TEMP.csv");
         //测试Bcp数据
-       // testFileSchema("TEMP.bcp");
+        // testFileSchema("TEMP.bcp");
+        //测试redis数据
+        testRedisSchema();
         //测试Csv和共享和数据库数据
-        testCsvAndShareAndDbSchema();
+        //testCsvAndShareAndDbSchema();
+    }
+
+    private static void testRedisSchema() throws Exception {
+        System.out.println("===================================测试内存数据=====================================");
+        DataFactory dataFactory = new StandardDataFactory();
+        dataFactory.addSchema("DUAL", TableWrapper.creatRedisTable().source().createTable("demo1").createColumn(new String[]{"f1", "f2"}).end().build().create());
+        printData(dataFactory.getConnection(), "SELECT * from \"DUAL\".\"demo1\"");
     }
 
     private static void testMemorySchema() throws Exception {
         System.out.println("===================================测试内存数据=====================================");
         DataFactory dataFactory = new StandardDataFactory();
-        dataFactory.addSchema("DUAL", DataTable.builder().name("test").tableType(TableType.MEM).source(createTDemoInfos()).build());
+        dataFactory.addSchema("DUAL", TableWrapper.createMemTable("test").source(createTDemoInfos()).create());
 
         printData(dataFactory.getConnection(), "SELECT * from \"DUAL\".\"test\"");
     }
@@ -77,7 +84,7 @@ public class DataFactoryExample {
     private static void testFileSchema(String name) throws Exception {
         System.out.println("===================================测试" + name + "数据=====================================");
         DataFactory dataFactory = new StandardDataFactory();
-        dataFactory.addSchema("DUAL", DataTable.builder().name("test").source(name).build());
+        dataFactory.addSchema("DUAL", TableWrapper.createFileTable("DUAL").source(name).create());
 
         System.out.println(dataFactory.schema());
         printData(dataFactory.getConnection(), "SELECT * from \"DUAL\".\"test\"");
@@ -106,20 +113,12 @@ public class DataFactoryExample {
     private static void testCsvAndShareAndDbSchema() throws Exception {
         System.out.println("===================================测试Csv和共享和数据库数据=====================================");
         DataFactory dataFactory = new StandardDataFactory();
-        DataTable dataTable = DataTable.builder()
-                .operate(HashOperateMap.create(
-                        "jdbcDriver: com.mysql.jdbc.Driver," +
-                                "jdbcUrl:jdbc:mysql://localhost:3306/xxl_job?serverTimezone=UTC," +
-                                "jdbcUser: root," +
-                                "jdbcPassword: root"))
-                .tableType(TableType.DATA_SOURCE)
-                .build();
         //添加数据库数据
-        dataFactory.addSchema("xxl_job", dataTable);
+        dataFactory.addSchema("xxl_job", TableWrapper.createDataSourceTable().source("com.mysql.jdbc.Driver","jdbc:mysql://localhost:3306/xxl_job?serverTimezone=UTC","root","root").create());
         //添加bcp数据
-        dataFactory.addSchema("DUAL1", DataTable.builder().name("test").source("TEMP.bcp").build());
+        dataFactory.addSchema("DUAL1", TableWrapper.createFileTable("test").source("TEMP.bcp").create());
         //添加内存数据
-        dataFactory.addSchema("DUAL2", DataTable.builder().name("test").tableType(TableType.MEM).source(createTDemoInfos()).build());
+        dataFactory.addSchema("DUAL2", TableWrapper.createMemTable("test").source(createTDemoInfos()).create());
 
         printData(dataFactory.getConnection(), "" +
                 "select xx.*,dt1.*,dt2.* from \"xxl_job\".\"xxl_job_log_report\" xx " +
@@ -128,7 +127,6 @@ public class DataFactoryExample {
         );
         System.out.println(dataFactory.schema());
     }
-
 
 
     public static List<TDemoInfo> createTDemoInfos() {

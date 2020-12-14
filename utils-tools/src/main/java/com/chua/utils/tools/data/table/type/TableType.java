@@ -13,6 +13,10 @@ public enum TableType {
      */
     MEM,
     /**
+     * druid
+     */
+    DRUID,
+    /**
      * 文件
      */
     FILE,
@@ -28,6 +32,10 @@ public enum TableType {
      * redis
      */
     REDIS,
+    /**
+     * elasticSearch
+     */
+    ELASTIC_SEARCH,
     /**
      * kafka
      */

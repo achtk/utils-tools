@@ -34,7 +34,7 @@ public class ConcurrentCacheProvider<K, V> implements CacheProvider<K, V>, Cache
     }
 
     @Override
-    public CacheProvider configure(CacheProperties cacheProperties) {
+    public CacheProvider<K, V> configure(CacheProperties cacheProperties) {
         return this;
     }
 
@@ -57,6 +57,7 @@ public class ConcurrentCacheProvider<K, V> implements CacheProvider<K, V>, Cache
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public V get(K name) {
         if (null == name) {
             return null;

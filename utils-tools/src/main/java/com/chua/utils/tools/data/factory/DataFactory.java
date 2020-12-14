@@ -31,7 +31,24 @@ public interface DataFactory {
 
     /**
      * schema信息
+     *
      * @return schema信息
      */
     String schema();
+
+    /**
+     * 获取url
+     *
+     * @return url
+     */
+    String getUrl();
+
+    /**
+     * 获取驱动
+     *
+     * @return 驱动
+     */
+    default String getDriver() {
+        return "org.apache.calcite.jdbc.Driver";
+    }
 }

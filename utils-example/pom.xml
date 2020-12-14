@@ -264,10 +264,72 @@
         </dependency>
 
         <!--        <dependency>-->
-<!--            <groupId>com.chua</groupId>-->
-<!--            <artifactId>utils-opencv</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--        </dependency>-->
+        <!--            <groupId>com.chua</groupId>-->
+        <!--            <artifactId>utils-opencv</artifactId>-->
+        <!--            <version>1.0</version>-->
+        <!--        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-elasticsearch5 -->
+        <dependency>
+            <groupId>org.apache.calcite</groupId>
+            <artifactId>calcite-elasticsearch5</artifactId>
+            <version>1.16.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>calcite-linq4j</artifactId>
+                    <groupId>org.apache.calcite</groupId>
+                </exclusion>
+            </exclusions>
+
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-kafka -->
+        <dependency>
+            <groupId>org.apache.calcite</groupId>
+            <artifactId>calcite-kafka</artifactId>
+            <version>1.26.0</version>
+
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-elasticsearch -->
+        <dependency>
+            <groupId>org.apache.calcite</groupId>
+            <artifactId>calcite-elasticsearch</artifactId>
+            <version>1.26.0</version>
+
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-druid -->
+        <dependency>
+            <groupId>org.apache.calcite</groupId>
+            <artifactId>calcite-druid</artifactId>
+            <version>1.26.0</version>
+
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-mongodb -->
+        <dependency>
+            <groupId>org.apache.calcite</groupId>
+            <artifactId>calcite-mongodb</artifactId>
+            <version>1.26.0</version>
+
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-redis -->
+        <dependency>
+            <groupId>org.apache.calcite</groupId>
+            <artifactId>calcite-redis</artifactId>
+            <version>1.26.0</version>
+
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.bluejoe2008</groupId>
+            <artifactId>solr-sql</artifactId>
+            <version>0.9.1</version>
+
+        </dependency>
 
     </dependencies>
 

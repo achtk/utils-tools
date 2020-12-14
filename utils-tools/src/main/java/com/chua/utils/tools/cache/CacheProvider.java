@@ -1,7 +1,7 @@
 package com.chua.utils.tools.cache;
 
 import com.chua.utils.tools.collects.map.MapOperableHelper;
-import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.config.CacheProperties;
 
 import java.util.Collections;
@@ -21,7 +21,7 @@ public interface CacheProvider<K, V> {
      * @param cacheProperties 缓存配置
      * @return CacheProvider
      */
-    CacheProvider configure(CacheProperties cacheProperties);
+    CacheProvider<K, V> configure(CacheProperties cacheProperties);
 
     /**
      * 初始化
@@ -41,6 +41,29 @@ public interface CacheProvider<K, V> {
     boolean containsKey(K name);
 
     /**
+     * 是否存在缓存
+     *
+     * @param anEnum 索引
+     * @return boolean
+     */
+    @SuppressWarnings("unchecked")
+    default boolean containsKey(Enum<?> anEnum) {
+        if (null == anEnum) {
+            return false;
+        }
+        ConcurrentMap<K, V> kvConcurrentMap = asMap();
+        if (null == kvConcurrentMap || kvConcurrentMap.isEmpty()) {
+            return false;
+        }
+
+        K k = FinderHelper.firstElement(kvConcurrentMap.keySet());
+        if (k instanceof String) {
+            return containsKey((K) anEnum.name().toLowerCase());
+        }
+        return false;
+    }
+
+    /**
      * 获取所有数据
      *
      * @return ConcurrentMap<K, T>
@@ -56,6 +79,29 @@ public interface CacheProvider<K, V> {
     V get(K name);
 
     /**
+     * 获取缓存
+     *
+     * @param anEnum 索引
+     * @return V
+     */
+    @SuppressWarnings("unchecked")
+    default V get(Enum<?> anEnum) {
+        if (null == anEnum) {
+            return null;
+        }
+        ConcurrentMap<K, V> kvConcurrentMap = asMap();
+        if (null == kvConcurrentMap || kvConcurrentMap.isEmpty()) {
+            return null;
+        }
+
+        K k = FinderHelper.firstElement(kvConcurrentMap.keySet());
+        if (k instanceof String) {
+            return get((K) anEnum.name().toLowerCase());
+        }
+        return null;
+    }
+
+    /**
      * 保存缓存
      *
      * @param name  索引
@@ -68,7 +114,6 @@ public interface CacheProvider<K, V> {
      * 保存缓存
      *
      * @param params 缓存数据
-     * @return T
      */
     default void putAll(Map<K, V> params) {
         if (MapOperableHelper.isEmpty(params)) {

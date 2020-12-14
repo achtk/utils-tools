@@ -1,5 +1,6 @@
 package com.chua.utils.tools.data.factory;
 
+import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.collects.HashOperateMap;
 import com.chua.utils.tools.common.FileHelper;
@@ -48,6 +49,7 @@ public class StandardDataFactory implements DataFactory {
     private static final String REDIS_FACTORY = "org.apache.calcite.adapter.redis.RedisSchemaFactory";
     private static final String KAFKA_FACTORY = "org.apache.calcite.adapter.kafka.KafkaTableFactory";
     private static final String MONGO_FACTORY = "org.apache.calcite.adapter.mongodb.MongoSchemaFactory";
+    private static final String DRUID_FACTORY = "org.apache.calcite.adapter.druid.DruidSchemaFactory";
     private static final String COMMON_FACTORY = "com.chua.utils.netx.data.schema.CalciteDataSchemaFactory";
 
     private final Multimap<String, DataTable> schemaDataTable = HashMultimap.create();
@@ -67,6 +69,9 @@ public class StandardDataFactory implements DataFactory {
         FACTORY_CACHE.put(TableType.KAFKA, KAFKA_FACTORY);
         //@see calcite-kafka.json
         FACTORY_CACHE.put(TableType.MONGO, MONGO_FACTORY);
+        //@see calcite-druid.json
+        FACTORY_CACHE.put(TableType.DRUID, DRUID_FACTORY);
+        FACTORY_CACHE.put(TableType.DATA_SOURCE, DATA_SOURCE_FACTORY);
         FACTORY_CACHE.put(TableType.MEM, COMMON_FACTORY);
         FACTORY_CACHE.put(TableType.IO, COMMON_FACTORY);
 
@@ -77,14 +82,13 @@ public class StandardDataFactory implements DataFactory {
         ExtensionLoader<DataParser> extensionLoader = ExtensionFactory.getExtensionLoader(DataParser.class);
         Multimap<String, ExtensionClass<DataParser>> allSpiService = extensionLoader.getAllExtensionClassess();
 
-        allSpiService.keySet().stream().filter(item -> {
-            return !item.equals(DataParser.class.getName());
-        }).forEach(name -> {
+        allSpiService.keySet().stream().filter(item -> !item.equals(DataParser.class.getName())).forEach(name -> {
             PARSER_CACHE.put(name, extensionLoader.getExtension(name));
         });
     }
 
     private CalciteInfo calciteInfo;
+    private Properties info;
 
     /**
      * 获取数据表
@@ -134,9 +138,20 @@ public class StandardDataFactory implements DataFactory {
 
     @Override
     public Connection getConnection() throws SQLException {
-        List<Schema> schemas = schemaDataTable.asMap().entrySet().parallelStream().map(entry -> {
-            Collection<DataTable> entryValue = entry.getValue();
+        String url = getUrl();
+        return DriverManager.getConnection(CALCITE_URL, info);
+    }
 
+    @Override
+    public String schema() {
+        return JsonHelper.toFormatJson(calciteInfo);
+    }
+
+    @Override
+    public String getUrl() {
+        List<Map<String, Object>> schemas = schemaDataTable.asMap().entrySet().parallelStream().map(entry -> {
+            Collection<DataTable> entryValue = entry.getValue();
+            Map<String, Object> result = new HashMap<>();
             Schema schema = new Schema();
             schema.setName(entry.getKey());
             //只判断第一个类型
@@ -146,30 +161,19 @@ public class StandardDataFactory implements DataFactory {
             //创建参数
             this.createOperate(schema, operateMap, dataTable);
             schema.setOperand(operateMap);
-            return schema;
+            result.putAll(BeanCopy.of(schema).asMap());
+            if(null != dataTable.getOperate2()) {
+                result.putAll(dataTable.getOperate2());
+            }
+            return result;
         }).collect(Collectors.toList());
 
         this.calciteInfo = new CalciteInfo();
         calciteInfo.setSchemas(schemas);
 
-        Properties info = new Properties();
+        this.info = new Properties();
         info.put("model", "inline:" + JsonHelper.toFormatJson(calciteInfo));
-        return DriverManager.getConnection(CALCITE_URL, info);
-    }
-
-    /**
-     * 添加其它参数
-     *
-     * @param schema
-     * @param operateMap
-     * @param dataTable
-     */
-    private void createOther(Schema schema, HashOperateMap operateMap, DataTable dataTable) {
-    }
-
-    @Override
-    public String schema() {
-        return JsonHelper.toFormatJson(calciteInfo);
+        return CALCITE_URL + "model=inline:" + JsonHelper.toJson(calciteInfo);
     }
 
     /**
@@ -181,6 +185,7 @@ public class StandardDataFactory implements DataFactory {
      * @return 集合
      */
     private void createOperate(Schema schema, HashOperateMap operateMap, DataTable dataTable) {
+        HashOperateMap operate = dataTable.getOperate();
         if (dataTable.getTableType() == TableType.DATA_SOURCE) {
             if (null != dataTable.getOperate()) {
                 operateMap.putAll(dataTable.getOperate());
@@ -191,13 +196,11 @@ public class StandardDataFactory implements DataFactory {
                 operateMap.put("dataSource", dataDataSource.getDataSourceClass());
             }
         } else if (dataTable.getTableType() == TableType.MONGO) {
-            HashOperateMap operate = dataTable.getOperate();
             if (operate.isValids("host", "database")) {
                 log.error("调用mongo至少需要配置[host][database]");
                 return;
             }
         } else if (dataTable.getTableType() == TableType.REDIS) {
-            HashOperateMap operate = dataTable.getOperate();
             if (operate.isValids("host", "port", "table", "database")) {
                 log.error("调用redis至少需要配置" +
                         "==>[host]\r\n" +
@@ -206,9 +209,7 @@ public class StandardDataFactory implements DataFactory {
                         "==>[database]");
                 return;
             }
-            schema.put("table", operate.getObject("table"));
         } else if (dataTable.getTableType() == TableType.SOLR) {
-            HashOperateMap operate = dataTable.getOperate();
             if (operate.isValids("solrServerURL", "solrCollection", "columns", "columnMapping")) {
                 log.error("调用solr至少需要配置" +
                         "==>[solrServerURL]\r\n" +
@@ -218,6 +219,7 @@ public class StandardDataFactory implements DataFactory {
                 return;
             }
         }
+        operateMap.putAll(operate);
     }
 
     /**
@@ -285,7 +287,7 @@ public class StandardDataFactory implements DataFactory {
         /**
          * 数据库
          */
-        private List<Schema> schemas = Lists.newArrayList();
+        private List<Map<String, Object>> schemas = Lists.newArrayList();
     }
 
     /**
@@ -293,7 +295,7 @@ public class StandardDataFactory implements DataFactory {
      */
     @Getter
     @Setter
-    class Schema extends HashMap<String, Object> {
+    class Schema  {
         /**
          * 数据库名称
          */

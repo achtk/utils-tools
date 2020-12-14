@@ -13,6 +13,7 @@ import com.google.common.base.Strings;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -35,6 +36,17 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      */
     public static HashOperateMap create() {
         return new HashOperateMap();
+    }
+
+    /**
+     * 创建 HashOperateMap
+     *
+     * @return HashOperateMap
+     */
+    public static HashOperateMap create(Consumer<HashOperateMap> consumer) {
+        HashOperateMap operateMap = new HashOperateMap();
+        consumer.accept(operateMap);
+        return operateMap;
     }
 
     /**
@@ -283,6 +295,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
         }
         return null != getObject(key);
     }
+
     /**
      * 字段是否都有效(存在/非空)
      *
@@ -290,14 +303,14 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      * @return 有效返回true
      */
     public boolean isValids(String... keys) {
-        if(null == keys) {
+        if (null == keys) {
             return false;
         }
 
         boolean isAllValid = true;
         for (String key : keys) {
             boolean valid = isValid(key);
-            if(!valid) {
+            if (!valid) {
                 isAllValid = false;
                 break;
             }

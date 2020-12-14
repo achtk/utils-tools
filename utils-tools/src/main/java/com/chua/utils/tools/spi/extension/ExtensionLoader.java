@@ -7,9 +7,9 @@ import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.spi.Spi;
 import com.chua.utils.tools.spi.entity.ExtensionClass;
 import com.chua.utils.tools.spi.entity.SpiConfig;
+import com.chua.utils.tools.spi.processor.AbstractSimpleExtensionProcessor;
 import com.chua.utils.tools.spi.processor.CustomExtensionProcessor;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
-import com.chua.utils.tools.spi.processor.AbstractSimpleExtensionProcessor;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -21,8 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * spi扩展器
@@ -331,7 +329,7 @@ public class ExtensionLoader<T> {
     public Map<String, ExtensionClass<T>> asMap() {
         Multimap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
         if (null == multimap) {
-            return null;
+            return Collections.emptyMap();
         }
         Set<String> names = multimap.keySet();
         Map<String, ExtensionClass<T>> result = new HashMap<>(names.size());
