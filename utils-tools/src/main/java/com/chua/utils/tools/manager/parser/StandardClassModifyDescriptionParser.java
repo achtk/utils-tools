@@ -3,11 +3,14 @@ package com.chua.utils.tools.manager.parser;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.JavassistHelper;
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.manager.parser.description.FieldDescription;
 import com.chua.utils.tools.manager.parser.description.MethodDescription;
 import com.chua.utils.tools.manager.parser.description.ModifyDescription;
 import com.chua.utils.tools.named.NamedHelper;
 import com.google.common.base.Strings;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import javassist.*;
 import javassist.bytecode.*;
 import javassist.bytecode.annotation.MemberValue;
@@ -55,6 +58,10 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
      * 待添加的方法
      */
     private final Map<String, Annotation[]> methodCache = new HashMap<>();
+    /**
+     * 待添加的方法
+     */
+    private final Table<String, Class<Annotation>, Map<String, Object>> methodTable = HashBasedTable.create();
     /**
      * 待替换的方法
      */
@@ -108,6 +115,13 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     public void addMethod(String method, Annotation[] annotations) {
         if (!Strings.isNullOrEmpty(method)) {
             methodCache.put(method, annotations);
+        }
+    }
+
+    @Override
+    public void addMethod(String method, Class<Annotation> annotations, Map<String, Object> params) {
+        if (!Strings.isNullOrEmpty(method)) {
+            methodTable.put(method, annotations, params);
         }
     }
 
@@ -189,8 +203,10 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
         ModifyDescription<T> modifyDescription = new ModifyDescription<>();
         //添加字段
         this.renderFields(modifyDescription);
-        //添加字段
+        //添加方法
         this.renderMethods(modifyDescription);
+        //添加方法
+        this.renderMethodsWithClassAnnotation(modifyDescription);
         //添加接口
         this.renderInterfaces(modifyDescription);
         //添加父类(必须不存在父类)
@@ -219,6 +235,29 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
         Class<?> aClass = classLoader.loadClass(ctClass.toClass().getName());
         modifyDescription.setAClass((Class<T>) aClass);
         return modifyDescription;
+    }
+
+    /**
+     * 添加方法
+     *
+     * @param modifyDescription 修改描述
+     */
+    private void renderMethodsWithClassAnnotation(ModifyDescription<T> modifyDescription) {
+        Set<String> strings = methodTable.rowKeySet();
+        for (String string : strings) {
+
+            try {
+                CtMethod ctMethod = CtMethod.make(string, ctClass);
+                Map<Class<Annotation>, Map<String, Object>> row = methodTable.row(string);
+                Set<Class<Annotation>> classes = row.keySet();
+                Class<Annotation> annotationClass = FinderHelper.firstElement(classes);
+
+                this.makeMethodAnnotationInfo(annotationClass, row.get(annotationClass), ctMethod);
+                ctClass.addMethod(ctMethod);
+            } catch (CannotCompileException e) {
+                modifyDescription.addThrowable(e);
+            }
+        }
     }
 
     /**
@@ -401,6 +440,29 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     /**
      * 方法添加注解
      *
+     * @param ctMethod        方法
+     * @param annotationClass 注解
+     * @param params          注解参数
+     */
+    private void makeMethodAnnotationInfo(Class<?> annotationClass, Map<String, Object> params, CtMethod ctMethod) {
+        if (null == annotationClass) {
+            return;
+        }
+
+        ClassFile classFile = ctClass.getClassFile();
+        ConstPool constPool = classFile.getConstPool();
+        MethodInfo methodInfo = ctMethod.getMethodInfo();
+        AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
+        javassist.bytecode.annotation.Annotation annotation1 = new javassist.bytecode.annotation.Annotation(annotationClass.getName(), constPool);
+        this.addAnnotationValue(annotation1, params, constPool);
+
+        annotationsAttribute.addAnnotation(annotation1);
+        methodInfo.addAttribute(annotationsAttribute);
+    }
+
+    /**
+     * 方法添加注解
+     *
      * @param ctMethod    方法
      * @param annotations 注解
      */
@@ -469,11 +531,10 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
      * 注解赋值
      *
      * @param annotation1 待赋值
-     * @param annotation  添加的注解
+     * @param annotationValue  添加的注解
      * @param constPool   对象池
      */
-    private void addAnnotationValue(javassist.bytecode.annotation.Annotation annotation1, Annotation annotation, ConstPool constPool) {
-        Map<String, Object> annotationValue = ClassHelper.getAnnotationValue(annotation);
+    private void addAnnotationValue(javassist.bytecode.annotation.Annotation annotation1, Map<String, Object> annotationValue, ConstPool constPool) {
         for (Map.Entry<String, Object> entry : annotationValue.entrySet()) {
             MemberValue memberValue = JavassistHelper.getMemberValue(entry.getValue(), constPool);
             if (null == memberValue) {
@@ -481,6 +542,17 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
             }
             annotation1.addMemberValue(entry.getKey(), memberValue);
         }
+    }
+    /**
+     * 注解赋值
+     *
+     * @param annotation1 待赋值
+     * @param annotation  添加的注解
+     * @param constPool   对象池
+     */
+    private void addAnnotationValue(javassist.bytecode.annotation.Annotation annotation1, Annotation annotation, ConstPool constPool) {
+        Map<String, Object> annotationValue = ClassHelper.getAnnotationValue(annotation);
+        this.addAnnotationValue(annotation1, annotationValue, constPool);
     }
 
 

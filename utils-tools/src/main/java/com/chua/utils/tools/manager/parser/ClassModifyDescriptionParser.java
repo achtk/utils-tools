@@ -1,16 +1,14 @@
 package com.chua.utils.tools.manager.parser;
 
-import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.manager.parser.description.ModifyDescription;
-import javassist.CtMethod;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.chua.utils.tools.constant.StringConstant.PRIVATE;
 import static com.chua.utils.tools.constant.StringConstant.PUBLIC;
-import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_EMPTY;
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_SEMICOLON;
 
 /**
@@ -43,6 +41,13 @@ public interface ClassModifyDescriptionParser<T> {
      * @param annotations 注解
      */
     void addMethod(String method, Annotation... annotations);
+    /**
+     * 添加方法
+     *
+     * @param method      完整方法(不包含泛型)
+     * @param annotations 注解
+     */
+    void addMethod(String method, Class<Annotation> annotations, Map<String, Object> params);
 
     /**
      * 添加方法

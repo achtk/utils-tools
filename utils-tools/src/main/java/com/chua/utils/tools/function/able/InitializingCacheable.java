@@ -4,14 +4,11 @@ import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.collects.HashTripleMap;
 import com.chua.utils.tools.collects.TripleMap;
 import com.chua.utils.tools.common.FinderHelper;
-import com.chua.utils.tools.manager.ObjectContextManager;
-import com.chua.utils.tools.manager.producer.StandardScannerObjectContextManager;
 import lombok.Data;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 初始化可被缓存接口
@@ -52,11 +49,11 @@ public class InitializingCacheable implements Cacheable {
      * 加载所有{@link InitializingCacheable}子类
      */
     public static void reload() {
-        ObjectContextManager objectContextManager = new StandardScannerObjectContextManager();
-        Set<Class<? extends InitializingCacheable>> classes = objectContextManager.getSubTypesOf(InitializingCacheable.class);
-        for (Class<? extends InitializingCacheable> aClass : classes) {
-            doAnalyseClassCache(ClassHelper.safeForObject(aClass));
-        }
+//        ObjectContextManager objectContextManager = new StandardScannerObjectContextManager();
+//        Set<Class<? extends InitializingCacheable>> classes = objectContextManager.getSubTypesOf(InitializingCacheable.class);
+//        for (Class<? extends InitializingCacheable> aClass : classes) {
+//            doAnalyseClassCache(ClassHelper.safeForObject(aClass));
+//        }
     }
 
     /**

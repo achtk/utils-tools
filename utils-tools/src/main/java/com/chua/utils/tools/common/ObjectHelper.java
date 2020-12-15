@@ -1,8 +1,6 @@
 package com.chua.utils.tools.common;
 
 
-import com.chua.utils.tools.function.Matcher;
-
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -316,4 +314,53 @@ public class ObjectHelper {
     public static String nullToEmpty(String source) {
         return null == source ? "" : source.toString();
     }
+
+    /**
+     * 类型是否一致
+     *
+     * @param source 元数据
+     * @param target 目标数据
+     * @return 一致返回true
+     */
+    public static boolean isTypeEquals(Class<?> source, Class<?> target) {
+        if (null == source && null == target) {
+            return true;
+        }
+        if (null == source || null == target) {
+            return false;
+        }
+        return source.isAssignableFrom(target);
+    }
+
+    /**
+     * 类型是否一致
+     *
+     * @param source 元数据
+     * @param target 目标数据
+     * @return 一致返回true
+     */
+    public static boolean isTypeEquals(Class<?>[] source, Class<?>[] target) {
+        if (null == source && null == target) {
+            return true;
+        }
+        if (null == source || null == target) {
+            return false;
+        }
+
+        if (source.length != target.length) {
+            return false;
+        }
+
+        for (int i = 0; i < source.length; i++) {
+            Class<?> sourceClass = source[i];
+            Class<?> targetClass = target[i];
+            if (!isTypeEquals(sourceClass, targetClass)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
 }

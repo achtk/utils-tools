@@ -7,6 +7,8 @@ import com.chua.utils.tools.classes.callback.FieldCallback;
 import com.chua.utils.tools.classes.callback.MethodCallback;
 import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.BooleanHelper;
+import com.chua.utils.tools.common.FinderHelper;
+import com.chua.utils.tools.common.ObjectHelper;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.exceptions.NonUniqueException;
 import com.chua.utils.tools.function.Matcher;
@@ -26,6 +28,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -235,9 +239,7 @@ public class ReflectionHelper {
         }
         if (null == classReader) {
             List<Field> field = getField(obj, fieldName);
-            Optional<Field> first = field.stream().filter(field1 -> {
-                return field1.getType().getName().equals(fieldType);
-            }).findFirst();
+            Optional<Field> first = field.stream().filter(field1 -> field1.getType().getName().equals(fieldType)).findFirst();
             if (first.isPresent()) {
                 return getFieldValue(obj, first.get());
             }
@@ -247,14 +249,31 @@ public class ReflectionHelper {
         classReader.accept(classNode, 0);
         MethodVisitor mv = classNode.visitMethod(Opcodes.AALOAD, "get" + NamedHelper.firstUpperCase(fieldName), fieldType, null, null);
         mv.visitFieldInsn(Opcodes.GETFIELD, Type.getInternalName(ClassHelper.forName(fieldType)), "str", fieldType);
-        Optional<FieldNode> first = classNode.fields.stream().filter(fieldNode -> {
-            return fieldNode.name.equals(fieldName) && AsmAdaptor.resolveNewName(fieldNode.desc).equals(fieldType);
-        }).findFirst();
+        Optional<FieldNode> first = classNode.fields.stream().filter(fieldNode -> fieldNode.name.equals(fieldName) && AsmAdaptor.resolveNewName(fieldNode.desc).equals(fieldType)).findFirst();
 
         if (first.isPresent()) {
             return first.get().value;
         }
         return null;
+    }
+
+    /**
+     * 设置字段值
+     *
+     * @param field 字段
+     * @param value 值
+     * @param bean  对象
+     */
+    public static void setFieldValue(Field field, Object value, Object bean) throws IllegalAccessException {
+        if (null == field) {
+            return;
+        }
+        Class<?> type = field.getType();
+        if (!type.isAssignableFrom(value.getClass())) {
+            return;
+        }
+        field.setAccessible(true);
+        field.set(bean, value);
     }
 
     /**
@@ -315,9 +334,20 @@ public class ReflectionHelper {
         if (null == fieldName) {
             return null;
         }
-        return getFields(ClassHelper.getClass(object)).stream().filter(field -> {
-            return fieldName.equals(field.getName());
-        }).collect(Collectors.toList());
+        return getFields(ClassHelper.getClass(object)).stream().filter(field -> fieldName.equals(field.getName())).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+    /**
+     * 字段查询
+     *
+     * @param object    处理对象
+     * @param fieldName 字段名称
+     * @return 字段
+     */
+    public static void doWithOnlyField(final Object object, final String fieldName, final Consumer<Field> consumer) {
+        List<Field> fields = getField(object, fieldName);
+        if(null != fields && fields.size() == 1) {
+            consumer.accept(FinderHelper.firstElement(fields));
+        }
     }
 
     /**
@@ -750,6 +780,161 @@ public class ReflectionHelper {
                 continue;
             }
             return (T) annotation;
+        }
+        return null;
+    }
+
+
+    /**
+     * 添加接口
+     * <p>如果接口不存在或者对象为类返回null</p>
+     *
+     * @param bean           对象
+     * @param interfaceClass 接口
+     * @return 对象
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T addInterface(Object bean, Class<T> interfaceClass) throws Exception {
+        return addInterfaceMethods(bean, interfaceClass, null);
+    }
+
+    /**
+     * 添加接口并处理方法
+     * <p>如果接口不存在或者对象为类返回null</p>
+     *
+     * @param bean           对象
+     * @param interfaceClass 接口
+     * @return 对象
+     */
+    public static <T> T addInterfaceMethods(final Object bean, final Class<T> interfaceClass, final BiFunction<String, List<Class<?>>, String> consumer) throws Exception {
+        if (null == interfaceClass) {
+            return null;
+        }
+
+        if (bean instanceof Class) {
+            return null;
+        }
+
+        if (interfaceClass.isAssignableFrom(bean.getClass())) {
+            return (T) bean;
+        }
+        return (T) JavassistHelper.addInterface(bean, consumer, interfaceClass);
+    }
+
+    /**
+     * 通过名称-参数查找对象
+     *
+     * @param member 对象
+     * @param name   注解名称
+     * @param params 参数
+     */
+    public static List<Method> findWithMethod(Object member, String name, Class<?>... params) {
+        return (List<Method>) findWithName(member, Method.class, name, params);
+    }
+
+    /**
+     * 通过名称-参数查找对象
+     *
+     * @param member 对象
+     * @param name   注解名称
+     * @param params 参数
+     */
+    public static List<Field> findWithField(Object member, String name, Class<?> params) {
+        return (List<Field>) findWithName(member, Field.class, name, params);
+    }
+
+    /**
+     * 通过名称-参数查找对象
+     *
+     * @param member 对象
+     * @param name   注解名称
+     * @param params 参数
+     */
+    public static List<? extends Member> findWithName(Object member, Class<? extends Member> type, String name, Class<?>... params) {
+        if (null == member) {
+            return Collections.emptyList();
+        }
+        Class<?> aClass = ClassHelper.getClass(member);
+        if (Method.class.isAssignableFrom(type)) {
+            Arrays.stream(aClass.getDeclaredMethods()).map(method -> {
+                if (!method.getName().equals(name)) {
+                    return null;
+                }
+                if (!ObjectHelper.isTypeEquals(method.getParameterTypes(), params)) {
+                    return null;
+                }
+                return member;
+            }).filter(Objects::nonNull).collect(Collectors.toList());
+        } else if (member instanceof Field) {
+            Arrays.stream(aClass.getDeclaredFields()).map(field -> {
+                if (!field.getName().equals(name)) {
+                    return null;
+                }
+
+                if (!ObjectHelper.isTypeEquals(new Class<?>[]{field.getType()}, params)) {
+                    return null;
+                }
+                return member;
+            }).filter(Objects::nonNull).collect(Collectors.toList());
+        } else {
+            Arrays.stream(aClass.getDeclaredConstructors()).map(constructor -> {
+                if (!constructor.getName().equals(name)) {
+                    return null;
+                }
+
+                if (!ObjectHelper.isTypeEquals(constructor.getParameterTypes(), params)) {
+                    return null;
+                }
+                return member;
+            }).filter(Objects::nonNull).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * 查找注解
+     *
+     * @param member 对象
+     * @param name   注解名称
+     * @return
+     */
+    public static Member findWithAnnotation(Member member, String name) {
+        if (null == member) {
+            return null;
+        }
+        Annotation[] declaredAnnotations = null;
+        if (member instanceof Method) {
+            declaredAnnotations = ((Method) member).getDeclaredAnnotations();
+        } else if (member instanceof Field) {
+            declaredAnnotations = ((Field) member).getDeclaredAnnotations();
+        } else {
+            declaredAnnotations = ((Constructor) member).getDeclaredAnnotations();
+        }
+
+        if (null == declaredAnnotations || declaredAnnotations.length == 0) {
+            return null;
+        }
+
+        List<Member> collect = Arrays.stream(declaredAnnotations).map(annotation -> annotation.annotationType().getName().equals(name) ? member : null).filter(Objects::nonNull).collect(Collectors.toList());
+        return FinderHelper.firstElement(collect);
+    }
+
+
+    /**
+     * 获取方法的注解
+     *
+     * @param method 方法
+     * @param name   注解名称
+     * @return 注解
+     */
+    public static Annotation findAnnotation(Method method, String name) {
+        if (null == method || Strings.isNullOrEmpty(name)) {
+            return null;
+        }
+        for (Annotation annotation : method.getDeclaredAnnotations()) {
+            if (annotation.annotationType().getName().equals(name)) {
+                return annotation;
+            }
         }
         return null;
     }

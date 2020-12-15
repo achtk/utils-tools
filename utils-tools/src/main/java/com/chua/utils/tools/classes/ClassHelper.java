@@ -382,7 +382,7 @@ public class ClassHelper extends ClassLoaderHelper {
      *
      * @param clazz        类
      * @param classLoaders 类加载器(默认当前线程类加载器)
-     * @param <T> 类型
+     * @param <T>          类型
      * @return 对象
      */
     public static <T> T forObject(Class<?> clazz, ClassLoader... classLoaders) {
@@ -827,4 +827,6 @@ public class ClassHelper extends ClassLoaderHelper {
     public static <T> T converter(Object item, String type) {
         return (T) converter(item, ClassHelper.forName(type));
     }
+
+
 }

@@ -2,17 +2,18 @@ package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.function.able.InitializingCacheable;
+import com.google.common.base.Strings;
 import javassist.*;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
-import javassist.bytecode.FieldInfo;
 import javassist.bytecode.annotation.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static com.chua.utils.tools.constant.StringConstant.JAVASSIST;
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_WELL;
@@ -288,5 +289,151 @@ public class JavassistHelper extends InitializingCacheable {
 
             }
         };
+    }
+
+    /**
+     * 添加接口
+     *
+     * @param bean           对象
+     * @param interfaceClass 接口
+     * @return 对象
+     */
+    public static Object addInterface(Object bean, BiFunction<String, List<Class<?>>, String> consumer, Class<?>... interfaceClass) throws Exception {
+        if (null == interfaceClass) {
+            return null;
+        }
+
+        if (bean instanceof Class) {
+            return null;
+        }
+
+        for (Class<?> aClass : interfaceClass) {
+            if (aClass.isAssignableFrom(bean.getClass())) {
+                return bean;
+            }
+        }
+
+        String name = bean.getClass().getName();
+        ClassPool classPool = getClassPool();
+        CtClass ctClass = classPool.get(name);
+        ctClass.setName(name + JAVASSIST);
+
+        for (Class<?> aClass : interfaceClass) {
+            try {
+                CtClass interfaceCtClass = classPool.get(aClass.getName());
+                ctClass.addInterface(interfaceCtClass);
+                if (null != consumer) {
+                    repairMethods(ctClass, consumer, interfaceCtClass, classPool);
+                }
+            } catch (NotFoundException e) {
+                e.getMessage();
+            }
+        }
+        return toEntity(ctClass, classPool);
+    }
+
+    /**
+     * 比较接口方法
+     *
+     * @param ctClass        源对象
+     * @param consumer       方法处理
+     * @param interfaceClass 接口
+     * @param classPool      类池
+     */
+    private static void repairMethods(CtClass ctClass, BiFunction<String, List<Class<?>>, String> consumer, CtClass interfaceClass, ClassPool classPool) {
+        CtMethod[] methods = interfaceClass.getDeclaredMethods();
+        for (int i = 0; i < methods.length; i++) {
+            CtMethod statelessMethods = null;
+            CtMethod method = methods[i];
+            try {
+                CtMethod ctMethod = ctClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+                if (null != ctMethod) {
+                    continue;
+                }
+                statelessMethods = generateStatelessMethods(method, ctClass, classPool);
+            } catch (NotFoundException ignore) {
+                try {
+                    statelessMethods = generateStatelessMethods(method, ctClass, classPool);
+                } catch (NotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                String apply = consumer.apply(statelessMethods.getName(), toClass(statelessMethods.getParameterTypes()));
+                if(!Strings.isNullOrEmpty(apply) && !apply.endsWith(";")) {
+                    apply += ";";
+                }
+                statelessMethods.setBody(apply);
+                ctClass.addMethod(statelessMethods);
+            } catch (NotFoundException | CannotCompileException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * ct类转类
+     *
+     * @param ctClasses ct类
+     * @return 类
+     */
+    private static List<Class<?>> toClass(CtClass[] ctClasses) {
+        if (null == ctClasses) {
+            return null;
+        }
+        ClassPool classPool = getClassPool();
+        return Arrays.stream(ctClasses).map(ctClass -> {
+            return ClassHelper.forName(ctClass.getName());
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * 方法拷贝(无状态)
+     *
+     * @param ctMethod  方法
+     * @param ctClass   生成的类
+     * @param classPool 类池
+     * @return 方法
+     */
+    private static CtMethod generateStatelessMethods(final CtMethod ctMethod, CtClass ctClass, ClassPool classPool) throws NotFoundException {
+        CtClass returnType = ctMethod.getReturnType();
+        CtClass[] parameters = ctMethod.getParameterTypes();
+        CtClass[] newParameters = new CtClass[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            CtClass parameter = parameters[i];
+            newParameters[i] = classPool.get(parameter.getName());
+        }
+        CtMethod ctMethod1 = new CtMethod(returnType, ctMethod.getName(), newParameters, ctClass);
+        ctMethod1.setModifiers(Modifier.PUBLIC);
+        return ctMethod1;
+    }
+
+    /**
+     * CtClass -> Object
+     *
+     * @param ctClass   ctClass
+     * @param classPool classPool
+     * @return 对象
+     */
+    private static Object toEntity(CtClass ctClass, ClassPool classPool) throws Exception {
+        try {
+            return ClassHelper.forObject(ctClass.toClass());
+        } catch (CannotCompileException cannotCompileException) {
+            //类加载器
+            Loader classLoader = new Loader(classPool);
+            classLoader.addTranslator(classPool, new Translator() {
+                @Override
+                public void start(ClassPool pool) {
+
+                }
+
+                @Override
+                public void onLoad(ClassPool pool, String classname) {
+
+                }
+            });
+            Class<?> aClass = classLoader.loadClass(ctClass.toClass().getName());
+            return ClassHelper.forObject(aClass);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.chua.utils.tools.manager.parser.description;
 
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class ModifyDescription<T> {
     /**
      * 异常说明
      */
+    @Getter
     private List<Throwable> throwableList = new ArrayList<>();
     /**
      * 类
