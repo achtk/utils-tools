@@ -11,7 +11,6 @@ import com.chua.utils.tools.manager.builder.CacheStrategyBuilder;
 import com.chua.utils.tools.manager.builder.LimitStrategyBuilder;
 import com.chua.utils.tools.manager.builder.ProxyStrategyBuilder;
 import com.chua.utils.tools.manager.builder.RetryStrategyBuilder;
-import com.chua.utils.tools.manager.eventbus.GuavaEventBus;
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
 import com.chua.utils.tools.manager.parser.ClassModifyDescriptionParser;
 import com.chua.utils.tools.manager.producer.StandardContextManager;
@@ -22,7 +21,6 @@ import com.chua.utils.tools.predicate.TruePredicate;
 import com.chua.utils.tools.resource.entity.Resource;
 import com.chua.utils.tools.resource.template.ResourceTemplate;
 import com.chua.utils.tools.spi.Spi;
-import com.chua.utils.tools.text.IdHelper;
 
 import java.io.IOException;
 import java.util.Date;
@@ -87,8 +85,8 @@ public class ObjectContextManagerExample {
     private static void testEventBusManager() {
         System.out.println("==================================测试消息总线管理器=============================");
         EventBusContextManager eventBusContextManager = contextManager.createEventBusContextManager();
-        eventBusContextManager.registerEventBus("demo", new GuavaEventBus(), new EventBusExample.EventBusDemo(""));
-        eventBusContextManager.sendEventBus("demo", IdHelper.createUuid());
+        //eventBusContextManager.registerEventBus("demo", new GuavaEventBus(), new EventBusExample.EventBusDemo(""));
+       // eventBusContextManager.sendEventBus("demo", IdHelper.createUuid());
     }
 
     private static void testHttpTemplate() throws IOException {

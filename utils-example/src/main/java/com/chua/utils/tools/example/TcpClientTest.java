@@ -1,3 +1,4 @@
+/*
 package com.chua.utils.tools.example;
 
 import com.chua.utils.netx.centor.ClientConfigCenter;
@@ -7,10 +8,12 @@ import com.chua.utils.tools.handler.DataWriteHandler;
 import com.chua.utils.tools.properties.NetProperties;
 import io.vertx.core.buffer.Buffer;
 
+*/
 /**
  * @author CH
  * @date 2020-10-07
- */
+ *//*
+
 public class TcpClientTest {
 
 	public static void main(String[] args) throws Throwable {
@@ -40,3 +43,4 @@ public class TcpClientTest {
 		}
 	}
 }
+*/

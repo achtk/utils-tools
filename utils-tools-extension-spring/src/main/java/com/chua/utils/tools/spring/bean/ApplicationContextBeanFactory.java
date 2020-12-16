@@ -43,7 +43,6 @@ public class ApplicationContextBeanFactory implements IBeanFactory {
     @NonNull
     private final ApplicationContext applicationContext;
 
-
     /**
      * 获取环境变量
      */

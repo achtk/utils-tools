@@ -415,7 +415,7 @@ public class JavassistHelper extends InitializingCacheable {
      * @param classPool classPool
      * @return 对象
      */
-    private static Object toEntity(CtClass ctClass, ClassPool classPool) throws Exception {
+    public static Object toEntity(CtClass ctClass, ClassPool classPool) throws Exception {
         try {
             return ClassHelper.forObject(ctClass.toClass());
         } catch (CannotCompileException cannotCompileException) {

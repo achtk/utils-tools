@@ -1,13 +1,16 @@
+/*
 package com.chua.utils.tools.example;
 
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.system.template.SystemInfoTemplate;
 
+*/
 /**
  * @author CH
  * @version 1.0.0
  * @since 2020/11/26
- */
+ *//*
+
 public class SystemInfoTemplateExample {
 
     public static void main(String[] args) {
@@ -30,3 +33,4 @@ public class SystemInfoTemplateExample {
         System.out.println(JsonHelper.toFormatJson(template.createUsbDeviceInfo()));
     }
 }
+*/

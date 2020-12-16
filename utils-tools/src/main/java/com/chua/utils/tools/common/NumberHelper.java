@@ -12,7 +12,8 @@ import java.util.regex.Pattern;
 
 import static com.chua.utils.tools.constant.StringConstant.HEX_16_UPPER;
 import static com.chua.utils.tools.constant.StringConstant.ZERO;
-import static com.chua.utils.tools.constant.SymbolConstant.*;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_MINS;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_WELL;
 
 /**
  * 数字处理
@@ -1109,23 +1110,23 @@ public class NumberHelper {
 
     /**
      * <pre>
-     *   NumberHelper.toLong(null) = 0L
-     *   NumberHelper.toLong("")   = 0L
-     *   NumberHelper.toLong("1")  = 1L
+     *   NumberHelper.toLongValue(null) = 0L
+     *   NumberHelper.toLongValue("")   = 0L
+     *   NumberHelper.toLongValue("1")  = 1L
      * </pre>
      *
      * @param str 原始数据
      * @since 2.1
      */
-    public static long toLong(final String str) {
-        return toLong(str, 0L);
+    public static long toLongValue(final String str) {
+        return toLongValue(str, 0L);
     }
 
     /**
      * <pre>
-     *   NumberHelper.toLong(null, 1L) = 1L
-     *   NumberHelper.toLong("", 1L)   = 1L
-     *   NumberHelper.toLong("1", 0L)  = 1L
+     *   NumberHelper.toLongValue(null, 1L) = 1L
+     *   NumberHelper.toLongValue("", 1L)   = 1L
+     *   NumberHelper.toLongValue("1", 0L)  = 1L
      * </pre>
      *
      * @param str          原始数据
@@ -1133,7 +1134,7 @@ public class NumberHelper {
      * @return the long represented by the string, or the default if conversion fails
      * @since 2.1
      */
-    public static long toLong(final String str, final long defaultValue) {
+    public static long toLongValue(final String str, final long defaultValue) {
         if (str == null) {
             return defaultValue;
         }
@@ -1142,6 +1143,20 @@ public class NumberHelper {
         } catch (final NumberFormatException nfe) {
             return defaultValue;
         }
+    }
+
+    /**
+     * <pre>
+     *   NumberHelper.toLong(null) = null
+     *   NumberHelper.toLong("")   = null
+     *   NumberHelper.toLong("1")  = 1L
+     * </pre>
+     *
+     * @param str 原始数据
+     * @since 2.1
+     */
+    public static Long toLong(final String str) {
+        return toLong(str, 0L);
     }
 
     /**
@@ -1241,6 +1256,58 @@ public class NumberHelper {
      * <code>0.0f</code> is returned.</p>
      *
      * <pre>
+     *   NumberHelper.toFloatValue(null)   = 0.0f
+     *   NumberHelper.toFloatValue("")     = 0.0f
+     *   NumberHelper.toFloatValue("1.5")  = 1.5f
+     * </pre>
+     *
+     * @param str the string to convert, may be <code>null</code>
+     * @return the float represented by the string, or <code>0.0f</code>
+     * if conversion fails
+     * @since 2.1
+     */
+    public static float toFloatValue(final String str) {
+        return toFloatValue(str, 0.0f);
+    }
+
+    /**
+     * <p>Convert a <code>String</code> to a <code>float</code>, returning a
+     * default value if the conversion fails.</p>
+     *
+     * <p>If the string <code>str</code> is <code>null</code>, the default
+     * value is returned.</p>
+     *
+     * <pre>
+     *   NumberHelper.toFloatValue(null, 1.1f)   = 1.1f
+     *   NumberHelper.toFloatValue("", 1.1f)     = 1.1f
+     *   NumberHelper.toFloatValue("1.5", 0.0f)  = 1.5f
+     * </pre>
+     *
+     * @param str          the string to convert, may be <code>null</code>
+     * @param defaultValue the default value
+     * @return the float represented by the string, or defaultValue
+     * if conversion fails
+     * @since 2.1
+     */
+    public static float toFloatValue(final String str, final float defaultValue) {
+        if (str == null) {
+            return defaultValue;
+        }
+        try {
+            return Float.parseFloat(str);
+        } catch (final NumberFormatException nfe) {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * <p>Convert a <code>String</code> to a <code>float</code>, returning
+     * <code>0.0f</code> if the conversion fails.</p>
+     *
+     * <p>If the string <code>str</code> is <code>null</code>,
+     * <code>0.0f</code> is returned.</p>
+     *
+     * <pre>
      *   NumberHelper.toFloat(null)   = 0.0f
      *   NumberHelper.toFloat("")     = 0.0f
      *   NumberHelper.toFloat("1.5")  = 1.5f
@@ -1251,8 +1318,8 @@ public class NumberHelper {
      * if conversion fails
      * @since 2.1
      */
-    public static float toFloat(final String str) {
-        return toFloat(str, 0.0f);
+    public static Float toFloat(final String str) {
+        return toFloat(str, null);
     }
 
     /**
@@ -1274,7 +1341,7 @@ public class NumberHelper {
      * if conversion fails
      * @since 2.1
      */
-    public static float toFloat(final String str, final float defaultValue) {
+    public static Float toFloat(final String str, final Float defaultValue) {
         if (str == null) {
             return defaultValue;
         }
@@ -1285,6 +1352,57 @@ public class NumberHelper {
         }
     }
 
+    /**
+     * <p>Convert a <code>String</code> to a <code>double</code>, returning
+     * <code>0.0d</code> if the conversion fails.</p>
+     *
+     * <p>If the string <code>str</code> is <code>null</code>,
+     * <code>0.0d</code> is returned.</p>
+     *
+     * <pre>
+     *   NumberHelper.toDoubleValue(null)   = 0.0d
+     *   NumberHelper.toDoubleValue("")     = 0.0d
+     *   NumberHelper.toDoubleValue("1.5")  = 1.5d
+     * </pre>
+     *
+     * @param str the string to convert, may be <code>null</code>
+     * @return the double represented by the string, or <code>0.0d</code>
+     * if conversion fails
+     * @since 2.1
+     */
+    public static double toDoubleValue(final String str) {
+        return toDoubleValue(str, 0.0d);
+    }
+
+    /**
+     * <p>Convert a <code>String</code> to a <code>double</code>, returning a
+     * default value if the conversion fails.</p>
+     *
+     * <p>If the string <code>str</code> is <code>null</code>, the default
+     * value is returned.</p>
+     *
+     * <pre>
+     *   NumberHelper.toDoubleValue(null, 1.1d)   = 1.1d
+     *   NumberHelper.toDoubleValue("", 1.1d)     = 1.1d
+     *   NumberHelper.toDoubleValue("1.5", 0.0d)  = 1.5d
+     * </pre>
+     *
+     * @param str          the string to convert, may be <code>null</code>
+     * @param defaultValue the default value
+     * @return the double represented by the string, or defaultValue
+     * if conversion fails
+     * @since 2.1
+     */
+    public static double toDoubleValue(final String str, final double defaultValue) {
+        if (str == null) {
+            return defaultValue;
+        }
+        try {
+            return Double.parseDouble(str);
+        } catch (final NumberFormatException nfe) {
+            return defaultValue;
+        }
+    }
     /**
      * <p>Convert a <code>String</code> to a <code>double</code>, returning
      * <code>0.0d</code> if the conversion fails.</p>
@@ -1336,7 +1454,6 @@ public class NumberHelper {
             return defaultValue;
         }
     }
-
     /**
      * <p>Convert a <code>BigDecimal</code> to a <code>double</code>.</p>
      *

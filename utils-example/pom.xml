@@ -15,6 +15,27 @@
     </properties>
     <!-- cqengine-->
     <dependencies>
+
+        <dependency>
+            <groupId>io.projectreactor.netty</groupId>
+            <artifactId>reactor-netty</artifactId>
+            <version>[0.9.12.RELEASE, 1.0.0)</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <version>3.1.4.RELEASE</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>4.1.54.Final</version>
+        </dependency>
+
         <dependency>
             <groupId>com.sun</groupId>
             <artifactId>tools</artifactId>
@@ -52,35 +73,6 @@
             <version>1.10.19</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.javatuples</groupId>
-            <artifactId>javatuples</artifactId>
-            <version>1.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.4.7</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.3.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.15</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.beanshell</groupId>
-            <artifactId>bsh-core</artifactId>
-            <version>2.0b4</version>
-        </dependency>
 
         <dependency>
             <groupId>com.chua</groupId>
@@ -91,12 +83,6 @@
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-http-extension-okhttp</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-tools-extension-system</artifactId>
             <version>1.0</version>
         </dependency>
 
@@ -138,12 +124,6 @@
 
 
         <dependency>
-            <groupId>com.xuxueli</groupId>
-            <artifactId>xxl-crawler</artifactId>
-            <version>1.2.2</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-tools-spider</artifactId>
             <version>1.0</version>
@@ -157,15 +137,10 @@
 
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-netx-extension-vertx</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.chua</groupId>
             <artifactId>utils-tools-extension-feign</artifactId>
             <version>1.0</version>
         </dependency>
+
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-netx-extension-lucene</artifactId>
@@ -173,23 +148,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq</artifactId>
-            <version>3.9.5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-meta</artifactId>
-            <version>3.9.5</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-codegen</artifactId>
-            <version>3.9.5</version>
-        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-tools-extension-operator</artifactId>
@@ -247,12 +205,6 @@
 
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-netx-extension-event</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
             <artifactId>utils-tools-schedule</artifactId>
             <version>1.0</version>
         </dependency>
@@ -270,18 +222,6 @@
         <!--        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-elasticsearch5 -->
-        <dependency>
-            <groupId>org.apache.calcite</groupId>
-            <artifactId>calcite-elasticsearch5</artifactId>
-            <version>1.16.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>calcite-linq4j</artifactId>
-                    <groupId>org.apache.calcite</groupId>
-                </exclusion>
-            </exclusions>
-
-        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.calcite/calcite-kafka -->
         <dependency>
@@ -328,10 +268,19 @@
             <groupId>com.github.bluejoe2008</groupId>
             <artifactId>solr-sql</artifactId>
             <version>0.9.1</version>
-
         </dependency>
 
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>4.1.54.Final</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 
 </project>
