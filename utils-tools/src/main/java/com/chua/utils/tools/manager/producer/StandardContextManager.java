@@ -27,7 +27,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class StandardContextManager implements ContextManager {
 
     private EventBusContextManager eventBusContextManager = new StandardEventBusContextManager();
-    //private ObjectContextManager contextManager = new StandardScannerObjectContextManager();
     private StrategyContextManager strategyContextManager = new StandardStrategyContextManager();
     private ProfileAdaptorManager profileAdaptorManager = new StandardProfileAdaptorManager(null);
 
@@ -43,11 +42,6 @@ public class StandardContextManager implements ContextManager {
     public ObjectContextManager createObjectContextManager(boolean scanner) {
         return null;
     }
-
-    //@Override
-   // public ObjectContextManager createObjectContextManager(boolean scanner) {
-   //     return contextManager;
-   // }
 
     @Override
     public StrategyContextManager createStrategyContextManager() {

@@ -41,11 +41,13 @@ public interface ClassModifyDescriptionParser<T> {
      * @param annotations 注解
      */
     void addMethod(String method, Annotation... annotations);
+
     /**
      * 添加方法
      *
      * @param method      完整方法(不包含泛型)
      * @param annotations 注解
+     * @param params      注解参数
      */
     void addMethod(String method, Class<Annotation> annotations, Map<String, Object> params);
 

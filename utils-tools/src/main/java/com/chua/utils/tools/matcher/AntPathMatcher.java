@@ -95,34 +95,13 @@ public class AntPathMatcher implements PathMatcher {
         int pathIdxEnd = pathDirs.length - 1;
 
         // Match all elements up to the first **
-        while (pattIdxStart <= pattIdxEnd && pathIdxStart <= pathIdxEnd) {
-            String pattDir = patternDirs[pattIdxStart];
-            if (SYMBOL_ASTERISKS.equals(pattDir)) {
-                break;
-            }
-            if (!matchStrings(pattDir, pathDirs[pathIdxStart], uriTemplateVariables)) {
-                return false;
-            }
-            pattIdxStart++;
-            pathIdxStart++;
+        boolean element = matchAllElement(patternDirs, pathDirs, pattIdxEnd, pattIdxStart, pathIdxEnd, pathIdxStart, uriTemplateVariables);
+        if (!element) {
+            return false;
         }
 
         if (pathIdxStart > pathIdxEnd) {
-            if (pattIdxStart > pattIdxEnd) {
-                return (pattern.endsWith(this.pathSeparator) == path.endsWith(this.pathSeparator));
-            }
-            if (!fullMatch) {
-                return true;
-            }
-            if (pattIdxStart == pattIdxEnd && SYMBOL_ASTERISK.equals(patternDirs[pattIdxStart]) && path.endsWith(this.pathSeparator)) {
-                return true;
-            }
-            for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
-                if (!SYMBOL_ASTERISKS.equals(patternDirs[i])) {
-                    return false;
-                }
-            }
-            return true;
+            return isMatcher(pattIdxStart, pattIdxEnd, pattern, path, patternDirs, fullMatch);
         } else if (pattIdxStart > pattIdxEnd) {
             return false;
         } else if (!fullMatch && SYMBOL_ASTERISKS.equals(patternDirs[pattIdxStart])) {
@@ -151,6 +130,47 @@ public class AntPathMatcher implements PathMatcher {
             return true;
         }
 
+        boolean loop = doWithLoop(
+                pattIdxStart,
+                pattIdxEnd,
+                pathIdxStart,
+                pathIdxEnd,
+                patternDirs,
+                pathDirs,
+                uriTemplateVariables);
+
+        if (!loop) {
+            return loop;
+        }
+        for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
+            if (!SYMBOL_ASTERISKS.equals(patternDirs[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * 循环查询
+     *
+     * @param pattIdxStart         pattIdxStart
+     * @param pattIdxEnd           pattIdxEnd
+     * @param pathIdxStart         pathIdxStart
+     * @param pathIdxEnd           pathIdxEnd
+     * @param patternDirs          patternDirs
+     * @param pathDirs             pathDirs
+     * @param uriTemplateVariables uriTemplateVariables
+     * @return boolean
+     */
+    private boolean doWithLoop(
+            int pattIdxStart,
+            int pattIdxEnd,
+            int pathIdxStart,
+            int pathIdxEnd,
+            String[] patternDirs,
+            String[] pathDirs,
+            Map<String, String> uriTemplateVariables) {
         while (pattIdxStart != pattIdxEnd && pathIdxStart <= pathIdxEnd) {
             int patIdxTmp = -1;
             for (int i = pattIdxStart + 1; i <= pattIdxEnd; i++) {
@@ -190,13 +210,62 @@ public class AntPathMatcher implements PathMatcher {
             pattIdxStart = patIdxTmp;
             pathIdxStart = foundIdx + patLength;
         }
+        return true;
+    }
 
+    /**
+     * 匹配
+     *
+     * @param pattIdxStart pattIdxStart
+     * @param pattIdxEnd   pattIdxEnd
+     * @param pattern      pattern
+     * @param path         path
+     * @param patternDirs  patternDirs
+     * @param fullMatch    fullMatch
+     * @return Boolean
+     */
+    private Boolean isMatcher(int pattIdxStart, int pattIdxEnd, String pattern, String path, String[] patternDirs, boolean fullMatch) {
+        if (pattIdxStart > pattIdxEnd) {
+            return (pattern.endsWith(this.pathSeparator) == path.endsWith(this.pathSeparator));
+        }
+        if (!fullMatch) {
+            return true;
+        }
+        if (pattIdxStart == pattIdxEnd && SYMBOL_ASTERISK.equals(patternDirs[pattIdxStart]) && path.endsWith(this.pathSeparator)) {
+            return true;
+        }
         for (int i = pattIdxStart; i <= pattIdxEnd; i++) {
             if (!SYMBOL_ASTERISKS.equals(patternDirs[i])) {
                 return false;
             }
         }
+        return true;
+    }
 
+    /**
+     * Match all elements up to the first **
+     *
+     * @param patternDirs          patternDirs
+     * @param pathDirs             pathDirs
+     * @param pattIdxEnd           pattIdxEnd
+     * @param pattIdxStart         pattIdxStart
+     * @param pathIdxEnd           pathIdxEnd
+     * @param pathIdxStart         pathIdxStart
+     * @param uriTemplateVariables uriTemplateVariables
+     * @return boolean
+     */
+    private boolean matchAllElement(String[] patternDirs, String[] pathDirs, int pattIdxEnd, int pattIdxStart, int pathIdxEnd, int pathIdxStart, Map<String, String> uriTemplateVariables) {
+        while (pattIdxStart <= pattIdxEnd && pathIdxStart <= pathIdxEnd) {
+            String pattDir = patternDirs[pattIdxStart];
+            if (SYMBOL_ASTERISKS.equals(pattDir)) {
+                break;
+            }
+            if (!matchStrings(pattDir, pathDirs[pathIdxStart], uriTemplateVariables)) {
+                return false;
+            }
+            pattIdxStart++;
+            pathIdxStart++;
+        }
         return true;
     }
 

@@ -36,6 +36,8 @@ public class AsmAdaptor implements MetadataAdapter {
     private List<FieldDescription> fieldDescriptions = new ArrayList<>();
     private List<MethodDescription> methodDescriptions = new ArrayList<>();
     private String source;
+    private static final String L = "L";
+    private static final String RETURN_L = "()L";
 
     public AsmAdaptor(InputStream inputStream) {
         this.inputStream = inputStream;
@@ -124,11 +126,11 @@ public class AsmAdaptor implements MetadataAdapter {
             return null;
         }
         String newDescriptor = descriptor;
-        if (descriptor.startsWith("L")) {
+        if (descriptor.startsWith(L)) {
             newDescriptor = descriptor.substring(1);
         }
 
-        if (descriptor.startsWith("()L")) {
+        if (descriptor.startsWith(RETURN_L)) {
             newDescriptor = descriptor.substring(3);
         }
         newDescriptor = newDescriptor.replace(SYMBOL_LEFT_SLASH, SYMBOL_DOT);

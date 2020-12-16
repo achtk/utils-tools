@@ -287,11 +287,6 @@ public class ClassPathMatcher extends UrlHelper implements PathMatcher {
      * @return
      */
     private void doFindPathMatchingJarResources(URL url, String subPath, AtomicInteger count, Set<Resource> result) throws IOException {
-//        final Class<?> aClass = ClassHelper.forName(subPath);
-//        if (null == aClass) {
-//            //return result;
-//        }
-        //jar文件
         ZipFile jarFile = null;
         try {
             URLConnection urlConnection = url.openConnection();

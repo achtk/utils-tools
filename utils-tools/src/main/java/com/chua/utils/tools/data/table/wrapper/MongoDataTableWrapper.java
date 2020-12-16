@@ -17,7 +17,7 @@ public class MongoDataTableWrapper {
     private static final String FACTORY = "org.apache.calcite.adapter.mongodb.MongoSchemaFactory";
 
     private static final String HOST = "127.0.0.1";
-    private static final int port = 6379;
+    private static final int PORT = 6379;
     private static final int DATABASE = 0;
     private static final String PASSWORD = "";
 
@@ -27,7 +27,7 @@ public class MongoDataTableWrapper {
      * @return DataTableWrapperBuilder
      */
     public DataTableWrapperBuilder source() {
-        return source(HOST, port, DATABASE, PASSWORD);
+        return source(HOST, PORT, DATABASE, PASSWORD);
     }
 
     /**
@@ -37,7 +37,7 @@ public class MongoDataTableWrapper {
      * @return DataTableWrapperBuilder
      */
     public DataTableWrapperBuilder source(String host) {
-        return source(host, port, DATABASE, PASSWORD);
+        return source(host, PORT, DATABASE, PASSWORD);
     }
 
     /**

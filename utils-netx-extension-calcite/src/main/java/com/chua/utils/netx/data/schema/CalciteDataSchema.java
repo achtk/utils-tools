@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * 方解石数据架图工厂
  *
@@ -29,7 +31,7 @@ public class CalciteDataSchema extends AbstractSchema {
 
     @Override
     protected Map<String, Table> getTableMap() {
-        Map<String, Table> tableMap = new HashMap<>();
+        Map<String, Table> tableMap = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         ids.forEach(id -> {
             DataTable dataTable = StandardDataFactory.getDataTable(id);
             if (null == dataTable.getParser()) {

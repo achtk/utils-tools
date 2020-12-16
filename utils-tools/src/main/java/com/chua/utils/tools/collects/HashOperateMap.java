@@ -96,15 +96,16 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      */
     public static HashOperateMap create(String params, String lineSeparator, String keyValueSeparator) {
         HashOperateMap hashOperateMap = new HashOperateMap();
+        int size = 2;
         Splitter.on(lineSeparator)
                 .trimResults()
                 .omitEmptyStrings()
                 .splitToStream(params)
                 .forEach(item -> {
                     List<String> strings = Splitter.on(keyValueSeparator).trimResults().omitEmptyStrings().splitToList(item);
-                    if (strings.size() == 2) {
+                    if (strings.size() == size) {
                         hashOperateMap.put(strings.get(0), strings.get(1));
-                    } else if (strings.size() > 2) {
+                    } else if (strings.size() > size) {
                         hashOperateMap.put(strings.get(0), Joiner.on(keyValueSeparator).join(strings.subList(1, strings.size())));
                     }
                 });

@@ -34,6 +34,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * 数据工厂
  *
@@ -151,7 +153,7 @@ public class StandardDataFactory implements DataFactory {
     public String getUrl() {
         List<Map<String, Object>> schemas = schemaDataTable.asMap().entrySet().parallelStream().map(entry -> {
             Collection<DataTable> entryValue = entry.getValue();
-            Map<String, Object> result = new HashMap<>();
+            Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
             Schema schema = new Schema();
             schema.setName(entry.getKey());
             //只判断第一个类型
@@ -194,29 +196,6 @@ public class StandardDataFactory implements DataFactory {
             if (null != source && source instanceof DataSource) {
                 DataDataSource dataDataSource = new DataDataSource((DataSource) source);
                 operateMap.put("dataSource", dataDataSource.getDataSourceClass());
-            }
-        } else if (dataTable.getTableType() == TableType.MONGO) {
-            if (operate.isValids("host", "database")) {
-                log.error("调用mongo至少需要配置[host][database]");
-                return;
-            }
-        } else if (dataTable.getTableType() == TableType.REDIS) {
-            if (operate.isValids("host", "port", "table", "database")) {
-                log.error("调用redis至少需要配置" +
-                        "==>[host]\r\n" +
-                        "==>[port]\r\n" +
-                        "==>[table]\r\n" +
-                        "==>[database]");
-                return;
-            }
-        } else if (dataTable.getTableType() == TableType.SOLR) {
-            if (operate.isValids("solrServerURL", "solrCollection", "columns", "columnMapping")) {
-                log.error("调用solr至少需要配置" +
-                        "==>[solrServerURL]\r\n" +
-                        "==>[solrCollection]\r\n" +
-                        "==>[columns]\r\n" +
-                        "==>[columnMapping]");
-                return;
             }
         }
         operateMap.putAll(operate);

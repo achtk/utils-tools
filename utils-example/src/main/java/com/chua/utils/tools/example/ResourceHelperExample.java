@@ -25,12 +25,10 @@ public class ResourceHelperExample {
 
 
     public static void main(String[] args) throws InterruptedException {
-        // PathMatcher pathMatcher = new AntPathMatcher();
-        // System.out.println(pathMatcher.match("**/*.class", "org/springframework/Demo.class"));
         //资源查找
-        //Set<Resource> resources = testFastGetResources();
+        Set<Resource> resources = testFastGetResources();
         //资源查找
-        //Set<Resource> resources1 = testReflectGetResources();
+        Set<Resource> resources1 = testReflectGetResources();
         //资源查找
         long s1 = System.currentTimeMillis();
         testFastSubGetResources();

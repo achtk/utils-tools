@@ -44,7 +44,8 @@ public class DataSourceDataTableWrapper {
      * @return DataTableWrapperBuilder
      */
     public DataTableWrapperBuilder source(String... mapSource) {
-        if (mapSource.length < 3) {
+        int size = 3;
+        if (mapSource.length < size) {
             return null;
         }
         return () -> {

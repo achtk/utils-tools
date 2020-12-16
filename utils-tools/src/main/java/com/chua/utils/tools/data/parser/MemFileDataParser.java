@@ -12,6 +12,8 @@ import lombok.Setter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * 内存解析器
  *
@@ -47,7 +49,7 @@ public class MemFileDataParser implements DataParser {
                 Map<String, Object> mapData = (Map<String, Object>) item;
                 return mapData.keySet().stream().collect(Collectors.toMap(key -> key.toUpperCase(), key -> ((Map) item).get(key)));
             }
-            Map<String, Object> items = new HashMap<>();
+            Map<String, Object> items = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
             ClassHelper.doWithFields(ClassHelper.getClass(item), field -> {
                 items.put(field.getName().toUpperCase(), ClassHelper.getFieldValue(item, field));
             });

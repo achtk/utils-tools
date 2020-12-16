@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.function.Function;
+
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 
 /**
  * ConcurrentMap方式缓存
@@ -40,7 +41,7 @@ public class ConcurrentSetValueCacheProvider<K, V> implements MultiValueCachePro
 
     @Override
     public ConcurrentMap<K, Set<V>> asMap() {
-        ConcurrentMap<K, Set<V>> targetMap = new ConcurrentHashMap<>();
+        ConcurrentMap<K, Set<V>> targetMap = new ConcurrentHashMap<>(DEFAULT_INITIAL_CAPACITY);
         for (Map.Entry<K, Set<V>> entry : threadLocal.entrySet()) {
             targetMap.put(entry.getKey(), entry.getValue());
         }
