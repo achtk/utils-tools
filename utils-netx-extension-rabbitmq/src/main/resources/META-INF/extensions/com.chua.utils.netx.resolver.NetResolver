@@ -1,1 +1,1 @@
-rabbit=com.chua.utils.netx.redis.rabbitmq.resolver.RabbitMqResolver
+rabbit=com.chua.utils.netx.rabbitmq.resolver.RabbitMqResolver

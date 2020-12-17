@@ -1,4 +1,4 @@
-package com.chua.utils.netx.redis.rabbitmq.util;
+package com.chua.utils.netx.rabbitmq.util;
 
 import com.rabbitmq.client.Channel;
 

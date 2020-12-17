@@ -152,7 +152,7 @@ public class AntPathMatcher implements PathMatcher {
     }
 
     /**
-     * 循环查询
+     * the doWithLoop
      *
      * @param pattIdxStart         pattIdxStart
      * @param pattIdxEnd           pattIdxEnd

@@ -1,4 +1,4 @@
-package com.chua.utils.netx.redis.rabbitmq.resolver;
+package com.chua.utils.netx.rabbitmq.resolver;
 
 import com.chua.utils.netx.resolver.NetResolver;
 import com.chua.utils.netx.resolver.entity.NetPubSubConf;
