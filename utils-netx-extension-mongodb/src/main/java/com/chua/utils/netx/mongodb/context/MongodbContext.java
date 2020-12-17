@@ -35,16 +35,15 @@ import java.util.Set;
  *
  * @author CH
  */
-@SuppressWarnings("ALL")
 public class MongodbContext implements MongoOperations, AutoCloseable {
 
     private final MongoTemplate mongoTemplate;
-    private final INetFactory<MongoTemplate> netxFactory;
+    private final INetFactory<MongoTemplate> netFactory;
 
     public MongodbContext(NetProperties netProperties) {
-        this.netxFactory = new MongodbFactory(netProperties);
-        this.netxFactory.start();
-        this.mongoTemplate = this.netxFactory.client();
+        this.netFactory = new MongodbFactory(netProperties);
+        this.netFactory.start();
+        this.mongoTemplate = this.netFactory.client();
     }
 
 
@@ -640,8 +639,8 @@ public class MongodbContext implements MongoOperations, AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        if (null != this.netxFactory) {
-            netxFactory.close();
+        if (null != this.netFactory) {
+            netFactory.close();
         }
     }
 }

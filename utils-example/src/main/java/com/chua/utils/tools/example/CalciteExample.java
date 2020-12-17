@@ -1,16 +1,15 @@
 package com.chua.utils.tools.example;
 
-import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.sql.*;
-import java.util.List;
-import java.util.Map;
+import com.alibaba.druid.pool.DruidDataSource;
+import org.apache.calcite.adapter.jdbc.JdbcSchema;
+import org.apache.calcite.plan.RelOptUtil;
+import org.apache.calcite.prepare.PlannerImpl;
+import org.apache.calcite.rel.RelNode;
+import org.apache.calcite.schema.Schema;
+import org.apache.calcite.schema.SchemaPlus;
+import org.apache.calcite.sql.SqlNode;
+import org.apache.calcite.tools.FrameworkConfig;
+import org.apache.calcite.tools.Frameworks;
 
 /**
  * @author CH
@@ -21,25 +20,23 @@ public class CalciteExample {
 
 
     public static void main(String[] args) throws Exception {
-        String url = Resources.toString(Resources.getResource("calcite.json"), StandardCharsets.UTF_8);
-        Connection connection = DriverManager.getConnection("jdbc:calcite:model=inline:" + url);
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("select * from SALES.SALES where ID = 'c'");
-        System.out.println(JSON.toJSONString(getData(resultSet)));
+        final SchemaPlus rootSchema = Frameworks.createRootSchema(true);
+        //创建Mysql的数据源schema
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setUrl("jdbc:mysql://localhost:3306/xxl_job?serverTimezone=UTC");
+        dataSource.setUsername("root");
+        dataSource.setPassword("root");
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        Schema schema = JdbcSchema.create(rootSchema, "xxl_job_log_report", dataSource, null, "xxl_job");
+        rootSchema.add("xxl_job", schema);
+        final FrameworkConfig config = Frameworks.newConfigBuilder().defaultSchema(rootSchema).build();
+        String sql = "select * from \"xxl_job\".\"xxl_job_log_report\"";
+        PlannerImpl planner = new PlannerImpl(config);//执行计划需要进行解析，验证，转换三步
+        SqlNode parse = planner.parse(sql);
+        SqlNode validate = planner.validate(parse);
+        RelNode convert = planner.convert(validate);//
+        String s = RelOptUtil.toString(convert);//输出可读的关系表达式
+        System.out.println(s);
     }
 
-    public static List<Map<String,Object>> getData(ResultSet resultSet)throws Exception{
-        List<Map<String,Object>> list = Lists.newArrayList();
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int columnSize = metaData.getColumnCount();
-
-        while (resultSet.next()) {
-            Map<String, Object> map = Maps.newLinkedHashMap();
-            for (int i = 1; i < columnSize + 1; i++) {
-                map.put(metaData.getColumnLabel(i), resultSet.getObject(i));
-            }
-            list.add(map);
-        }
-        return list;
-    }
 }

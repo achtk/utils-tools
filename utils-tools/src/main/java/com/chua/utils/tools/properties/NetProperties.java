@@ -2,7 +2,6 @@ package com.chua.utils.tools.properties;
 
 
 import com.chua.utils.tools.common.NetHelper;
-import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.constant.SymbolConstant;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +61,7 @@ public class NetProperties extends Properties implements StatelessProperties {
     /**
      * 连接超时
      */
-    private int connectTimeout = 10000;
+    private int connectTimeout = connectionTimeout;
     /**
      * 数据库名称
      */
