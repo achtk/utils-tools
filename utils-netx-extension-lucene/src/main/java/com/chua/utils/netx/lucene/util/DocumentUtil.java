@@ -2,9 +2,8 @@ package com.chua.utils.netx.lucene.util;
 
 import com.chua.utils.netx.lucene.entity.DataDocument;
 import com.google.common.base.Strings;
-import org.apache.lucene.document.Document;
+import org.apache.lucene.document.*;
 import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexableField;
 
 import java.util.ArrayList;
@@ -89,7 +88,21 @@ public class DocumentUtil {
         Document document = new Document();
 
         for (Map.Entry<String, Object> entry : dataDocument.getData().entrySet()) {
-            TextField textField = new TextField(entry.getKey(), entry.getValue() + "", Store.YES);
+            Object value = entry.getValue();
+            Field textField = null;
+            if (value instanceof String) {
+                textField = new TextField(entry.getKey(), entry.getValue() + "", Store.YES);
+            } else if (value instanceof Integer) {
+                textField = new IntPoint(entry.getKey(), (Integer) entry.getValue());
+            } else if (value instanceof Long) {
+                textField = new LongPoint(entry.getKey(), (Long) entry.getValue());
+            } else if (value instanceof Float) {
+                textField = new FloatPoint(entry.getKey(), (Float) entry.getValue());
+            } else if (value instanceof Double) {
+                textField = new DoublePoint(entry.getKey(), (Double) entry.getValue());
+            } else if (value instanceof Number) {
+                textField = new NumericDocValuesField(entry.getKey(), ((Number) entry.getValue()).longValue());
+            }
             document.add(textField);
         }
         TextField createTimeField = new TextField(CREATE_TIME, System.currentTimeMillis() + "", Store.YES);

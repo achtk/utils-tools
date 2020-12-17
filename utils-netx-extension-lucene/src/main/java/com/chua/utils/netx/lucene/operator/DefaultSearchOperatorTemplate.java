@@ -3,11 +3,9 @@ package com.chua.utils.netx.lucene.operator;
 import com.chua.utils.netx.lucene.entity.DataDocument;
 import com.chua.utils.netx.lucene.entity.HitData;
 import com.chua.utils.tools.common.ThreadHelper;
-import com.chua.utils.tools.constant.NumberConstant;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
@@ -128,7 +126,7 @@ public class DefaultSearchOperatorTemplate implements SearchOperatorTemplate {
         int thread = Math.min(size, Runtime.getRuntime().availableProcessors() * 2);
         //结果集
         final List<Map<String, Object>> data = new ArrayList<>();
-        ExecutorService executorService = ThreadHelper.newFixedThreadExecutor(thread);
+        ExecutorService executorService = ThreadHelper.newFixedThreadExecutor(thread, "luence-task");
         final int newPageSize = (pageSize < 0 || pageSize > 1000 ? 1000 : pageSize);
         //当前页
         int endPage = offset * newPageSize;
@@ -141,43 +139,55 @@ public class DefaultSearchOperatorTemplate implements SearchOperatorTemplate {
         //排序
         Sort sort1 = getSort(sort);
         CountDownLatch countDownLatch = new CountDownLatch(thread);
-        List<Future<List<Map<String, Object>>>> futureList = new ArrayList<>();
         for (IndexReader indexReader : indexReaderList) {
-            int finalPageSize = pageSize;
             executorService.execute(new Runnable() {
-                @SneakyThrows
                 @Override
                 public void run() {
                     if (longAdder.intValue() >= newPageSize) {
-                        countDownLatch.countDown();
+                        complete(countDownLatch);
                         return;
                     }
-                    // 1 创建查询解析器对象
-                    // 参数一:默认的搜索域, 参数二:使用的分析器
-                    StandardQueryParser queryParser = new StandardQueryParser(indexOperatorTemplate.getAnalyzer());
-                    // 支持后缀匹配，如*国 则可以搜索中国、美国等以国字结尾的词，*:*可以查询所有索引
-                    queryParser.setAllowLeadingWildcard(true);
-                    // 2 使用查询解析器对象, 实例化Query对象
-                    Query query = queryParser.parse(keyword, DataDocument.UNIQUELY_IDENTIFIES);
+                    try {
+                        // 1 创建查询解析器对象
+                        // 参数一:默认的搜索域, 参数二:使用的分析器
+                        StandardQueryParser queryParser = new StandardQueryParser(indexOperatorTemplate.getAnalyzer());
+                        // 支持后缀匹配，如*国 则可以搜索中国、美国等以国字结尾的词，*:*可以查询所有索引
+                        queryParser.setAllowLeadingWildcard(true);
+                        // 2 使用查询解析器对象, 实例化Query对象
+                        Query query = queryParser.parse(keyword, DataDocument.UNIQUELY_IDENTIFIES);
 
-                    // 3. 创建索引搜索对象(IndexSearcher), 用于执行索引
-                    IndexSearcher searcher = new IndexSearcher(indexReader);
-                    // 4. 使用IndexSearcher对象执行搜索, 返回搜索结果集TopDocs
-                    // 参数一:使用的查询对象, 参数二:指定要返回的搜索结果排序后的前n个
-                    TopDocs topDocs = null;
-                    if (null != sort1) {
-                        topDocs = searcher.search(query, endPage, sort1);
-                    } else {
-                        topDocs = searcher.search(query, endPage);
-                    }
-                    hitAdder.add(topDocs.totalHits.value);
-                    for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-                        if (longAdder.intValue() >= newPageSize) {
-                            countDownLatch.countDown();
-                            break;
+                        // 3. 创建索引搜索对象(IndexSearcher), 用于执行索引
+                        IndexSearcher searcher = new IndexSearcher(indexReader);
+                        // 4. 使用IndexSearcher对象执行搜索, 返回搜索结果集TopDocs
+                        // 参数一:使用的查询对象, 参数二:指定要返回的搜索结果排序后的前n个
+                        TopDocs topDocs = null;
+                        if (null != sort1) {
+                            topDocs = searcher.search(query, endPage, sort1);
+                        } else {
+                            topDocs = searcher.search(query, endPage);
                         }
-                        data.add(toMap(searcher, scoreDoc, columns));
-                        longAdder.increment();
+                        Thread thread1 = Thread.currentThread();
+                        log.info("{}, {}#{}({})", thread1.getName(), thread1.getPriority(), keyword, topDocs.totalHits.value);
+                        hitAdder.add(topDocs.totalHits.value);
+                        for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+                            if (longAdder.intValue() >= newPageSize) {
+                                complete(countDownLatch);
+                                break;
+                            }
+                            data.add(toMap(searcher, scoreDoc, columns));
+                            longAdder.increment();
+                        }
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    } finally {
+                        countDownLatch.countDown();
+                    }
+                }
+
+                private void complete(CountDownLatch countDownLatch) {
+                    long count = countDownLatch.getCount();
+                    for (int i = 0; i < count; i++) {
+                        countDownLatch.countDown();
                     }
                 }
             });
