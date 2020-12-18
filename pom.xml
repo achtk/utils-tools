@@ -267,6 +267,7 @@
         <module>utils-netx-extension-calcite</module>
         <module>utils-netx-extension-neo4j</module>
         <module>utils-netx-extension-etxd</module>
+        <module>utils-tools-extension-gps</module>
     </modules>
 
     <build>
