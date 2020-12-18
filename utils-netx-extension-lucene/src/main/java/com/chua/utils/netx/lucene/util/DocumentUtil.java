@@ -2,8 +2,11 @@ package com.chua.utils.netx.lucene.util;
 
 import com.chua.utils.netx.lucene.entity.DataDocument;
 import com.google.common.base.Strings;
-import org.apache.lucene.document.*;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexableField;
 
 import java.util.ArrayList;
@@ -93,15 +96,15 @@ public class DocumentUtil {
             if (value instanceof String) {
                 textField = new TextField(entry.getKey(), entry.getValue() + "", Store.YES);
             } else if (value instanceof Integer) {
-                textField = new IntPoint(entry.getKey(), (Integer) entry.getValue());
+                textField = new StoredField(entry.getKey(), (Integer) entry.getValue());
             } else if (value instanceof Long) {
-                textField = new LongPoint(entry.getKey(), (Long) entry.getValue());
+                textField = new StoredField(entry.getKey(), (Long) entry.getValue());
             } else if (value instanceof Float) {
-                textField = new FloatPoint(entry.getKey(), (Float) entry.getValue());
+                textField = new StoredField(entry.getKey(), (Float) entry.getValue());
             } else if (value instanceof Double) {
-                textField = new DoublePoint(entry.getKey(), (Double) entry.getValue());
-            } else if (value instanceof Number) {
-                textField = new NumericDocValuesField(entry.getKey(), ((Number) entry.getValue()).longValue());
+                textField = new StoredField(entry.getKey(), (Double) entry.getValue());
+            } else if (value instanceof byte[]) {
+                textField = new StoredField(entry.getKey(), (byte[]) entry.getValue());
             }
             document.add(textField);
         }

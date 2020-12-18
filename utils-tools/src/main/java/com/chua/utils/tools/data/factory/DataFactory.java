@@ -1,9 +1,12 @@
 package com.chua.utils.tools.data.factory;
 
 import com.chua.utils.tools.data.table.DataTable;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 数据工厂
@@ -50,5 +53,41 @@ public interface DataFactory {
      */
     default String getDriver() {
         return "org.apache.calcite.jdbc.Driver";
+    }
+
+    /**
+     * 创建数据源
+     *
+     * @param sql sql
+     * @return 数据源
+     * @throws Exception Exception
+     */
+    default List<Map<String, Object>> queryForList(final String sql) throws Exception {
+        Connection connection = getConnection();
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(sql);
+        return getData(resultSet);
+    }
+
+    /**
+     * 格式化结果
+     *
+     * @param resultSet 结果
+     * @return List
+     * @throws Exception Exception
+     */
+    default List<Map<String, Object>> getData(ResultSet resultSet) throws Exception {
+        List<Map<String, Object>> list = Lists.newArrayList();
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnSize = metaData.getColumnCount();
+
+        while (resultSet.next()) {
+            Map<String, Object> map = Maps.newLinkedHashMap();
+            for (int i = 1; i < columnSize + 1; i++) {
+                map.put(metaData.getColumnLabel(i), resultSet.getObject(i));
+            }
+            list.add(map);
+        }
+        return list;
     }
 }

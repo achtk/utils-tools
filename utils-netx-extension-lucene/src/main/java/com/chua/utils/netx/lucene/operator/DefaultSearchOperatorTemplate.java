@@ -13,8 +13,10 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.SortField.Type;
+import org.apache.lucene.util.BytesRef;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -166,8 +168,10 @@ public class DefaultSearchOperatorTemplate implements SearchOperatorTemplate {
                         } else {
                             topDocs = searcher.search(query, endPage);
                         }
-                        Thread thread1 = Thread.currentThread();
-                        log.info("{}, {}#{}({})", thread1.getName(), thread1.getPriority(), keyword, topDocs.totalHits.value);
+                        if(log.isDebugEnabled()) {
+                            Thread thread1 = Thread.currentThread();
+                            log.debug("{}, {}#{}({})", thread1.getName(), thread1.getPriority(), keyword, topDocs.totalHits.value);
+                        }
                         hitAdder.add(topDocs.totalHits.value);
                         for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                             if (longAdder.intValue() >= newPageSize) {
@@ -250,7 +254,7 @@ public class DefaultSearchOperatorTemplate implements SearchOperatorTemplate {
         if (null == columns || columns.isEmpty()) {
             List<IndexableField> documentFields = document.getFields();
             for (IndexableField indexableField : documentFields) {
-                map.put(indexableField.name(), indexableField.stringValue());
+                map.put(indexableField.name(), tryValue(indexableField));
             }
         } else {
             Document finalDocument = document;
@@ -263,6 +267,28 @@ public class DefaultSearchOperatorTemplate implements SearchOperatorTemplate {
             });
         }
         return map;
+    }
+
+    private Object tryValue(IndexableField indexableField) {
+        Number number = indexableField.numericValue();
+        if(null != number) {
+            return number;
+        }
+        BytesRef bytesRef = indexableField.binaryValue();
+        if(null != bytesRef) {
+            return bytesRef;
+        }
+
+        Reader reader = indexableField.readerValue();
+        if(null != reader) {
+            return reader;
+        }
+
+        CharSequence charSequenceValue = indexableField.getCharSequenceValue();
+        if(null != charSequenceValue) {
+            return charSequenceValue;
+        }
+        return indexableField.stringValue();
     }
 
     /**

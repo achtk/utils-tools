@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 默认的文档操作模板
@@ -54,10 +56,15 @@ public class DefaultDocumentOperatorTemplate implements DocumentOperatorTemplate
         }
         List<IndexWriter> indexWriterList = indexOperatorTemplate.indexWrite(index);
         int size = indexWriterList.size();
-        for (int i = 0; i < dataDocument.size(); i++) {
-            IndexWriter indexWriter = indexWriterList.get(i % size);
-            indexWriter.addDocument(DocumentUtil.map2Document(dataDocument.get(i)));
-        }
+        AtomicInteger atomic = new AtomicInteger();
+        dataDocument.parallelStream().forEach(dataDocument1 -> {
+            IndexWriter indexWriter = indexWriterList.get(atomic.get() % size);
+            try {
+                indexWriter.addDocument(DocumentUtil.map2Document(dataDocument.get(atomic.getAndIncrement())));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         for (IndexWriter indexWriter : indexWriterList) {
             indexWriter.commit();
             indexWriter.close();

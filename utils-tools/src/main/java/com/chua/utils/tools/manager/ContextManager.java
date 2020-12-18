@@ -1,5 +1,7 @@
 package com.chua.utils.tools.manager;
 
+import com.chua.utils.tools.data.factory.DataFactory;
+import com.chua.utils.tools.data.factory.StandardDataFactory;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.converter.TypeConverter;
 import com.chua.utils.tools.manager.parser.ClassDescriptionParser;
@@ -139,5 +141,14 @@ public interface ContextManager {
      */
     default <T> TypeConverter<T> createTypeConverter(Class<T> aClass) {
         return EmptyOrBase.getTypeConverter(aClass);
+    }
+
+    /**
+     * 数据工厂
+     *
+     * @return 数据工厂
+     */
+    default DataFactory createDataFactory() {
+        return new StandardDataFactory();
     }
 }

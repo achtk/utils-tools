@@ -2,6 +2,8 @@ package com.chua.utils.tools.example;
 
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.codec.encrypt.Encrypt;
+import com.chua.utils.tools.data.factory.DataFactory;
+import com.chua.utils.tools.data.table.wrapper.TableWrapper;
 import com.chua.utils.tools.example.entity.TDemoInfo;
 import com.chua.utils.tools.function.able.InitializingCacheable;
 import com.chua.utils.tools.function.converter.TypeConverter;
@@ -24,6 +26,7 @@ import com.chua.utils.tools.spi.Spi;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -41,36 +44,48 @@ public class ObjectContextManagerExample {
     private static StrategyContextManager strategyContextManager = contextManager.createStrategyContextManager();
 
     public static void main(String[] args) throws Exception {
-        //测试可被缓存对象
-        testCacheable();
-        System.out.println();
-        //测试对象管理器
-        testObjectManager();
-        System.out.println();
-        //测试策略管理器
-        testStrategyManager();
-        System.out.println();
-        //测试配置文件适配器
-        testProfileAdaptorManager();
-        System.out.println();
-        //测试类描述解析器
-        testClassDescriptionParser();
-        System.out.println();
-        //测试资源查找器
-        testResourceFinderManager();
-        System.out.println();
-        //测试MBean
-        //testMBeanTemplate();
-        //System.out.println();
-        //测试Http
-       // testHttpTemplate();
-        // System.out.println();
-        //测试消息总线管理器
-        testEventBusManager();
-        System.out.println();
-        //测试类型转化器
+//        //测试可被缓存对象
+//        testCacheable();
+//        System.out.println();
+//        //测试对象管理器
+//        testObjectManager();
+//        System.out.println();
+//        //测试策略管理器
+//        testStrategyManager();
+//        System.out.println();
+//        //测试配置文件适配器
+//        testProfileAdaptorManager();
+//        System.out.println();
+//        //测试类描述解析器
+//        testClassDescriptionParser();
+//        System.out.println();
+//        //测试资源查找器
+//        testResourceFinderManager();
+//        System.out.println();
+//        //测试MBean
+//        //testMBeanTemplate();
+//        //System.out.println();
+//        //测试Http
+//       // testHttpTemplate();
+//        // System.out.println();
+//        //测试消息总线管理器
+//        testEventBusManager();
+//        System.out.println();
+//        //测试类型转化器
         testTypeConverter();
         System.out.println();
+        //测试数据工厂
+        testDataFactory();
+    }
+
+    private static void testDataFactory() throws Exception {
+        System.out.println("==================================测试数据工厂=============================");
+        DataFactory dataFactory = contextManager.createDataFactory();
+        dataFactory.addSchema("system", TableWrapper.createFileTable("test").source("TEMP.bcp").create());
+
+        List<Map<String, Object>> mapList = dataFactory.queryForList("select * from \"test\"");
+        System.out.println(mapList);
+
     }
 
     private static void testTypeConverter() {

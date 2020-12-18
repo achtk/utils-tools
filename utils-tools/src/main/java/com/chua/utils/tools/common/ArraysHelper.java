@@ -626,7 +626,7 @@ public class ArraysHelper {
             splitter = Splitter.on(delimiter);
         }
         if(omitEmptyStrings) {
-            splitter.trimResults().omitEmptyStrings();
+            splitter = splitter.trimResults().omitEmptyStrings();
         }
         return toArray(splitter.splitToList(source));
     }
