@@ -2,12 +2,13 @@ package com.chua.utils.tools.opencv.util;
 
 import com.google.common.base.Strings;
 import lombok.Data;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.bytedeco.ffmpeg.global.avcodec;
 import org.bytedeco.ffmpeg.global.avutil;
-import org.bytedeco.javacv.*;
 import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.*;
+import org.bytedeco.opencv.global.opencv_core;
+import org.bytedeco.opencv.opencv_core.IplImage;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -16,8 +17,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
+
+import static org.bytedeco.opencv.helper.opencv_imgcodecs.cvLoadImage;
 
 /**
  * ffmpeg工具
@@ -28,7 +32,41 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class VideoUtils {
     /**
-     * 压缩
+     * 转视频
+     *
+     * @param images 图片集合
+     * @param video  视频
+     */
+    public static void toVideo(final File images, final File video) throws Exception {
+        FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(video.getName(), 640, 480);
+        //设置视频编码层模式
+        recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
+        //设置视频为25帧每秒
+        recorder.setFrameRate(25);
+        //设置视频图像数据格式
+        recorder.setPixelFormat(avutil.AV_PIX_FMT_YUV420P);
+        recorder.setFormat(FilenameUtils.getExtension(video.getName()));
+        recorder.start();
+        //
+        OpenCVFrameConverter.ToIplImage conveter = new OpenCVFrameConverter.ToIplImage();
+        // 列出目录中所有的图片，都是jpg的，以1.jpg,2.jpg的方式，方便操作
+        File[] files = images.listFiles();
+        Arrays.stream(files).forEach(item -> {
+            IplImage image = cvLoadImage(item.getAbsolutePath());
+            try {
+                recorder.record(conveter.convert(image));
+            } catch (FrameRecorder.Exception ignore) {
+
+            } finally {
+                opencv_core.cvReleaseImage(image);
+            }
+        });
+        recorder.stop();
+        recorder.release();
+    }
+
+    /**
+     * 转图片
      *
      * @param sourceFile 源文件
      * @param destFile   目标文件
@@ -38,7 +76,7 @@ public class VideoUtils {
     }
 
     /**
-     * 压缩
+     * 转图片
      *
      * @param inputStream 源文件
      * @param destFile    目标文件
@@ -50,7 +88,7 @@ public class VideoUtils {
         FFmpegFrameGrabber frameGrabber = new FFmpegFrameGrabber(inputStream);
         //帧的转换器
         Java2DFrameConverter converter = new Java2DFrameConverter();
-        if(!destFile.exists()) {
+        if (!destFile.exists()) {
             destFile.mkdirs();
         }
         //帧
@@ -160,9 +198,9 @@ public class VideoUtils {
     /**
      * 旋转
      *
-     * @param src
-     * @param angel
-     * @return
+     * @param src   源图片
+     * @param angel 角度
+     * @return BufferedImage
      */
     private static BufferedImage rotate(BufferedImage src, int angel) {
         int width = src.getWidth(null);
