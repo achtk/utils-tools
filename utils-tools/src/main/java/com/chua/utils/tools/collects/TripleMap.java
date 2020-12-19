@@ -32,7 +32,7 @@ public interface TripleMap<L, M, R> {
      * @param left 左端数据
      * @return 二元元组
      */
-    ListMultiValueMap<M, R> byLeft(L left);
+    MultiListValueMap<M, R> byLeft(L left);
 
     /**
      * 获取左端, 右端数据
@@ -40,7 +40,7 @@ public interface TripleMap<L, M, R> {
      * @param middle 中端数据
      * @return 二元元组
      */
-    ListMultiValueMap<L, R> byMiddle(M middle);
+    MultiListValueMap<L, R> byMiddle(M middle);
 
     /**
      * 获取左端, 中端数据
@@ -48,7 +48,7 @@ public interface TripleMap<L, M, R> {
      * @param right 右端数据
      * @return 二元元组
      */
-    ListMultiValueMap<L, M> byRight(R right);
+    MultiListValueMap<L, M> byRight(R right);
 
     /**
      * 获取右端数据

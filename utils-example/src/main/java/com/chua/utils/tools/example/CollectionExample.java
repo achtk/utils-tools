@@ -2,8 +2,7 @@ package com.chua.utils.tools.example;
 
 import com.chua.utils.tools.collects.*;
 import com.chua.utils.tools.common.JsonHelper;
-
-import java.util.concurrent.TimeUnit;
+import com.chua.utils.tools.example.entity.TDemoInfo;
 
 /**
  * @author CH
@@ -56,13 +55,22 @@ public class CollectionExample {
 
 
         System.out.println("***********************测试MultiValueMap***********************");
-        ListMultiValueMap<String, Integer> multiValueMap = new MultiValueMap<>();
+        MultiListValueMap<String, Integer> multiValueMap = new MultiValueMap<>();
         multiValueMap.add("a", 1);
         multiValueMap.add("a", 2);
         multiValueMap.add("b", 2);
         multiValueMap.add("c", 3);
         System.out.println("ListMultiValueMap: " + JsonHelper.toJson(multiValueMap));
         System.out.println("get(a): " + multiValueMap.get("a"));
+        System.out.println("***********************测试 MultiSortValueMap***********************");
+        MultiSortValueMap<String, TDemoInfo> sortValueMap = MultiValueSortMap.create("id");
+        sortValueMap.put("a", new TDemoInfo().setId(3));
+        sortValueMap.put("a", new TDemoInfo().setId(1));
+        sortValueMap.put("a", new TDemoInfo().setId(33));
+        sortValueMap.put("b", new TDemoInfo().setId(3));
+        sortValueMap.put("c", new TDemoInfo().setId(3));
+        System.out.println("MultiSortValueMap: " + JsonHelper.toJson(sortValueMap));
+        System.out.println("get(a): " + sortValueMap.get("a"));
 
         System.out.println("***********************测试RangeMap***********************");
         RangeMap<Integer, String> rangeMap = new RangeHashMap<>();
@@ -82,7 +90,6 @@ public class CollectionExample {
         timeMap.put("b", 2);
         timeMap.put("c", 3);
         System.out.println("TimeMap: " + JsonHelper.toJson(timeMap));
-        Thread.sleep(TimeUnit.SECONDS.toMillis(2));
         System.out.println("get(a): " + timeMap.get("a"));
     }
 }

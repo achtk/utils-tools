@@ -1,7 +1,6 @@
 package com.chua.utils.tools.example;
 
-import com.chua.utils.tools.collects.HashOperateMap;
-import com.chua.utils.tools.collects.HashLazySortMultiValueMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.example.entity.TDemoInfo;
 
 import java.util.Date;
@@ -15,51 +14,34 @@ import java.util.Map;
 public class HashOperateMapExample {
 
     public static void main(String[] args) {
-        //测试懒加载排序集合
-        testHashLazySortMultiValueMap();
         //测试可操作集合
         testHashOperateMap();
     }
 
     private static void testHashOperateMap() {
         System.out.println("******************************测试可操作集合********************************");
-        HashOperateMap hashOperateMap = new HashOperateMap();
-        System.out.println("是否是Map: " + (hashOperateMap instanceof Map));
-        hashOperateMap.append("date", new Date());
-        hashOperateMap.append("time", System.currentTimeMillis());
-        hashOperateMap.append("name", System.currentTimeMillis());
-        hashOperateMap.append("text", "1,2,3,4,test");
-        System.out.println("当前存储的数据: " + hashOperateMap);
+        OperateHashMap operateHashMap = new OperateHashMap();
+        System.out.println("是否是Map: " + (operateHashMap instanceof Map));
+        operateHashMap.append("date", new Date());
+        operateHashMap.append("time", System.currentTimeMillis());
+        operateHashMap.append("name", System.currentTimeMillis());
+        operateHashMap.append("text", "1,2,3,4,test");
+        System.out.println("当前存储的数据: " + operateHashMap);
 
-        System.out.println("keySet:" + hashOperateMap.keySet());
-        System.out.println("time:" + hashOperateMap.get("time"));
-        System.out.println("time:" + hashOperateMap.getLong("time"));
+        System.out.println("keySet:" + operateHashMap.keySet());
+        System.out.println("time:" + operateHashMap.get("time"));
+        System.out.println("time:" + operateHashMap.getLong("time"));
 
-        System.out.println("date:" + hashOperateMap.get("date"));
-        System.out.println("date:" + hashOperateMap.getDate("date"));
-        System.out.println("time:" + hashOperateMap.getDate("time"));
-        System.out.println("date:" + hashOperateMap.getDate("date", "yyyy-MM-dd HH:mm:ss"));
+        System.out.println("date:" + operateHashMap.get("date"));
+        System.out.println("date:" + operateHashMap.getDate("date"));
+        System.out.println("time:" + operateHashMap.getDate("time"));
+        System.out.println("date:" + operateHashMap.getDate("date", "yyyy-MM-dd HH:mm:ss"));
 
 
-        System.out.println("text To List: " + hashOperateMap.splitToList("text", ","));
-        System.out.println("text To IntList: " + hashOperateMap.splitToList("text", ",", Integer.class));
-        System.out.println("time + text = " + hashOperateMap.expression("time + text"));
-        System.out.println("TDemoInfo: " + hashOperateMap.getBean(TDemoInfo.class));
+        System.out.println("text To List: " + operateHashMap.splitToList("text", ","));
+        System.out.println("text To IntList: " + operateHashMap.splitToList("text", ",", Integer.class));
+        System.out.println("time + text = " + operateHashMap.expression("time + text"));
+        System.out.println("TDemoInfo: " + operateHashMap.getBean(TDemoInfo.class));
     }
 
-    private static void testHashLazySortMultiValueMap() {
-        System.out.println("******************************测试懒加载排序集合********************************");
-        HashLazySortMultiValueMap<String, Integer> hashSortMap = new HashLazySortMultiValueMap<>();
-        hashSortMap.add("test1", 2);
-        hashSortMap.add("test1", 3);
-        hashSortMap.add("test1", 1);
-        hashSortMap.add("test2", 8);
-        hashSortMap.add("test2", 1);
-        hashSortMap.add("test3", 1);
-
-        System.out.println("test1:" + hashSortMap.get("test1"));
-        System.out.println("test2:" + hashSortMap.get("test2"));
-        System.out.println("test3:" + hashSortMap.get("test3"));
-
-    }
 }

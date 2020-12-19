@@ -1,7 +1,7 @@
 package com.chua.utils.tools.cache;
 
+import com.chua.utils.tools.collects.MultiSetValueMap;
 import com.chua.utils.tools.collects.MultiValueSetMap;
-import com.chua.utils.tools.collects.SetMultiValueMap;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.config.CacheProperties;
 
@@ -23,9 +23,9 @@ import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPAC
  */
 public class ConcurrentSetValueCacheProvider<K, V> implements MultiValueCacheProvider<K, V> {
 
-    private final SetMultiValueMap<K, V> threadLocal = MultiValueSetMap.create();
+    private final MultiSetValueMap<K, V> threadLocal = MultiValueSetMap.create();
 
-    public SetMultiValueMap<K, V> get() {
+    public MultiSetValueMap<K, V> get() {
         return threadLocal;
     }
 

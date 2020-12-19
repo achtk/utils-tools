@@ -2,6 +2,7 @@ package com.chua.utils.tools.example.entity;
 
 import com.chua.utils.tools.text.IdHelper;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.Date;
  */
 @Data
 @Entity
+@Accessors(chain = true)
 @Table(name = "t_demo_info")
 public class TDemoInfo {
     @Id

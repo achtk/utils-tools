@@ -1,6 +1,6 @@
 package com.chua.utils.tools.data.table.wrapper;
 
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.data.table.DataTable;
 import com.chua.utils.tools.data.table.type.TableType;
 
@@ -43,7 +43,7 @@ public class DruidDataTableWrapper {
             DataTable.DataTableBuilder builder = DataTable.builder();
             builder.tableType(tableType);
 
-            HashOperateMap operate = HashOperateMap.create();
+            OperateHashMap operate = OperateHashMap.create();
             operate.put("url", url);
             operate.put("coordinatorUrl", coordinatorUrl);
 

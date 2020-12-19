@@ -1,13 +1,8 @@
 package com.chua.utils.tools.collects;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * 多值Map
@@ -16,9 +11,9 @@ import java.util.concurrent.ConcurrentMap;
  * @version 1.0.0
  * @since 2020/10/17
  */
-public class MultiValueSetMap<K, V> implements SetMultiValueMap<K, V>, Cloneable, Serializable {
+public class MultiValueSetMap<K, V> implements MultiSetValueMap<K, V>, Cloneable, Serializable {
 
-    private transient final ConcurrentMap<K, Set<V>> targetMap = new ConcurrentHashMap<>();
+    private transient final Map<K, Set<V>> targetMap = new HashMap<>();
 
     public static <V, K> MultiValueSetMap<K, V> create() {
         return new MultiValueSetMap<>();
@@ -97,7 +92,7 @@ public class MultiValueSetMap<K, V> implements SetMultiValueMap<K, V>, Cloneable
     }
 
     @Override
-    public void addAll(SetMultiValueMap<K, V> values) {
+    public void addAll(MultiSetValueMap<K, V> values) {
         targetMap.putAll(values);
     }
 

@@ -1,6 +1,6 @@
 package com.chua.utils.tools.data.table.wrapper;
 
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.data.table.DataTable;
 import com.chua.utils.tools.data.table.type.TableType;
 
@@ -75,7 +75,7 @@ public class MongoDataTableWrapper {
     public DataTableWrapperBuilder source(String host, int port, int database, String password) {
         return () -> {
             DataTable.DataTableBuilder builder = DataTable.builder();
-            HashOperateMap.create(hashOperateMap -> {
+            OperateHashMap.create(hashOperateMap -> {
                 hashOperateMap.put("host", host);
                 hashOperateMap.put("port", port);
                 hashOperateMap.put("database", database);

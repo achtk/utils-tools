@@ -3,11 +3,10 @@ package com.chua.utils.tools.bean.copy;
 import com.chua.utils.tools.bean.config.BeanConfig;
 import com.chua.utils.tools.bean.interpreter.NameInterpreter;
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.function.Converter;
 import com.chua.utils.tools.manager.parser.description.FieldDescription;
-import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.beans.BeanMap;
 
 import java.util.HashMap;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 
 /**
  * 标准的bean拷贝
@@ -172,18 +170,18 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     }
 
     @Override
-    public HashOperateMap asMap() {
-        HashOperateMap hashOperateMap = new HashOperateMap();
+    public OperateHashMap asMap() {
+        OperateHashMap operateHashMap = new OperateHashMap();
         BeanMap beanMap = null;
         try {
             beanMap = BeanMap.create(entity);
-            hashOperateMap.putAll(beanMap);
+            operateHashMap.putAll(beanMap);
         } catch (Exception e) {
             ClassHelper.doWithFields(tClass, field -> {
-                hashOperateMap.put(field.getName(), ClassHelper.getFieldValue(entity, field));
+                operateHashMap.put(field.getName(), ClassHelper.getFieldValue(entity, field));
             });
         }
-        return hashOperateMap;
+        return operateHashMap;
     }
 
 

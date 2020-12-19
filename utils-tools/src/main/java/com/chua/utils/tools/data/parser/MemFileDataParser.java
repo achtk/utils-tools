@@ -1,7 +1,7 @@
 package com.chua.utils.tools.data.parser;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.common.ArraysHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.enums.JavaType;
@@ -26,7 +26,7 @@ import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPAC
 public class MemFileDataParser implements DataParser {
 
     private Object source;
-    private HashOperateMap operate;
+    private OperateHashMap operate;
     private List<String> header;
     private Map<String, String> headers = new HashMap<>();
     private List<Map<String, Object>> copySource = new ArrayList<>();

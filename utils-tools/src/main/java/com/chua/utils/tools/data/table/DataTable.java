@@ -1,6 +1,6 @@
 package com.chua.utils.tools.data.table;
 
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.common.FileHelper;
 import com.chua.utils.tools.data.table.type.TableType;
 import com.chua.utils.tools.data.wrapper.Wrapper;
@@ -60,7 +60,7 @@ public class DataTable {
      * 参数
      */
     @Builder.Default
-    private HashOperateMap operate = HashOperateMap.create();
+    private OperateHashMap operate = OperateHashMap.create();
     /**
      * 数据包裹方式
      */
@@ -69,5 +69,5 @@ public class DataTable {
      * 额外参数
      */
     @Builder.Default
-    private HashOperateMap operate2 = HashOperateMap.create();
+    private OperateHashMap operate2 = OperateHashMap.create();
 }

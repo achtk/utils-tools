@@ -1,6 +1,6 @@
 package com.chua.utils.tools.data.parser;
 
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 
 import java.util.Map;
 
@@ -31,14 +31,14 @@ public interface DataParser {
      *
      * @return 参数
      */
-    HashOperateMap getOperate();
+    OperateHashMap getOperate();
 
     /**
      * 设置参数
      *
-     * @param hashOperateMap 参数
+     * @param operateHashMap 参数
      */
-    void setOperate(HashOperateMap hashOperateMap);
+    void setOperate(OperateHashMap operateHashMap);
 
     /**
      * 获取表头

@@ -1,7 +1,7 @@
 package com.chua.utils.tools.bean.script;
 
 import com.chua.utils.tools.annotations.Binder;
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,7 +34,7 @@ public class ValueScript {
      * @see com.chua.utils.tools.annotations.Binder#value()
      * @see com.chua.utils.tools.annotations.Binder#factory()
      */
-    private HashOperateMap operate;
+    private OperateHashMap operate;
     /**
      * 主体数据
      */

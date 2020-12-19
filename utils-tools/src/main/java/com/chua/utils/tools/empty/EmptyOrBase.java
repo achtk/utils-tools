@@ -3,14 +3,11 @@ package com.chua.utils.tools.empty;
 import com.chua.utils.tools.collects.collections.ListHelper;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.function.able.InitializingCacheable;
+import com.chua.utils.tools.function.converter.Converter;
 import com.chua.utils.tools.function.converter.TypeConverter;
-import com.chua.utils.tools.function.converter.VoidTypeConverter;
-import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.google.common.collect.Lists;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import static com.chua.utils.tools.constant.ClassConstant.*;
 
@@ -222,7 +219,6 @@ public class EmptyOrBase extends InitializingCacheable {
             'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
             'Z'};
     public static final Object[] EMPTY_OBJECT = new Object[0];
-    private static final TypeConverter VOID_TYPE_CONVERTER = new VoidTypeConverter();
     private static final String SPECIAL_SYMBOL = ".$|()[{^?*+\\";
 
     /**
@@ -249,17 +245,6 @@ public class EmptyOrBase extends InitializingCacheable {
         return BASE_TYPE_LIST;
     }
 
-    /**
-     * 类型转化器
-     */
-    public static final ConcurrentMap<Class, TypeConverter> TYPE_CONVERTER = new ConcurrentHashMap<Class, TypeConverter>() {
-        {
-            Set<TypeConverter> allSpiService = ExtensionFactory.getExtensionLoader(TypeConverter.class).getAllSpiService();
-            for (TypeConverter typeConverter : allSpiService) {
-                put(typeConverter.getType(), typeConverter);
-            }
-        }
-    };
 
     /**
      * 获取类型的类型转化器
@@ -267,7 +252,7 @@ public class EmptyOrBase extends InitializingCacheable {
      * @param aClass 类型
      */
     public static TypeConverter getTypeConverter(Class<?> aClass) {
-        return null == aClass ? VOID_TYPE_CONVERTER : TYPE_CONVERTER.get(aClass);
+        return Converter.getTypeConverter(aClass);
     }
 
     /**
@@ -277,13 +262,14 @@ public class EmptyOrBase extends InitializingCacheable {
      */
     public static boolean SpecialSymbol(String regex) {
         char ch = 0;
-        return ((regex.toCharArray().length == 1 && ".$|()[{^?*+\\" .indexOf(ch = regex.charAt(0)) == -1) ||
+        return ((regex.toCharArray().length == 1 && ".$|()[{^?*+\\".indexOf(ch = regex.charAt(0)) == -1) ||
                 (
                         regex.length() == 2 &&
-                        regex.charAt(0) == '\\' &&
+                                regex.charAt(0) == '\\' &&
                                 (((ch = regex.charAt(1)) - '0') | ('9' - ch)) < 0 &&
                                 ((ch - 'a') | ('z' - ch)) < 0 &&
                                 ((ch - 'A') | ('Z' - ch)) < 0)) &&
                 (ch < Character.MIN_HIGH_SURROGATE || ch > Character.MAX_LOW_SURROGATE);
     }
+
 }

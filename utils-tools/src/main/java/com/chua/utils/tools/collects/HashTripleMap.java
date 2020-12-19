@@ -1,13 +1,9 @@
 package com.chua.utils.tools.collects;
 
-import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.collects.iterator.IndexIterator;
-import com.chua.utils.tools.tuple.Pair;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 三元集合
@@ -35,8 +31,8 @@ public class HashTripleMap<L, M, R> implements TripleMap<L, M, R> {
     }
 
     @Override
-    public ListMultiValueMap<M, R> byLeft(L left) {
-        ListMultiValueMap<M, R> result = new MultiValueMap<>();
+    public MultiListValueMap<M, R> byLeft(L left) {
+        MultiListValueMap<M, R> result = new MultiValueMap<>();
         IndexIterator indexIterator = new IndexIterator(leftList, left);
         while (indexIterator.hasNext()) {
             Integer integer = indexIterator.next();
@@ -47,8 +43,8 @@ public class HashTripleMap<L, M, R> implements TripleMap<L, M, R> {
     }
 
     @Override
-    public ListMultiValueMap<L, R> byMiddle(M middle) {
-        ListMultiValueMap<L, R> result = new MultiValueMap<>();
+    public MultiListValueMap<L, R> byMiddle(M middle) {
+        MultiListValueMap<L, R> result = new MultiValueMap<>();
         IndexIterator indexIterator = new IndexIterator(middleList, middle);
         while (indexIterator.hasNext()) {
             Integer integer = indexIterator.next();
@@ -59,8 +55,8 @@ public class HashTripleMap<L, M, R> implements TripleMap<L, M, R> {
     }
 
     @Override
-    public ListMultiValueMap<L, M> byRight(R right) {
-        ListMultiValueMap<L, M> result = new MultiValueMap<>();
+    public MultiListValueMap<L, M> byRight(R right) {
+        MultiListValueMap<L, M> result = new MultiValueMap<>();
         IndexIterator indexIterator = new IndexIterator(rightList, right);
         while (indexIterator.hasNext()) {
             Integer integer = indexIterator.next();

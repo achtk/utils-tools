@@ -1,6 +1,6 @@
 package com.chua.utils.tools.data.table.wrapper;
 
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.data.table.DataTable;
 import com.chua.utils.tools.data.table.type.TableType;
 import lombok.AllArgsConstructor;
@@ -32,7 +32,7 @@ public class DataSourceDataTableWrapper {
             DataTable.DataTableBuilder builder = DataTable.builder();
             builder.tableType(tableType);
             builder.name(name);
-            builder.operate(HashOperateMap.create(mapSource));
+            builder.operate(OperateHashMap.create(mapSource));
             return builder.build();
         };
     }
@@ -53,7 +53,7 @@ public class DataSourceDataTableWrapper {
             builder.tableType(tableType);
             builder.name(name);
 
-            HashOperateMap operate = HashOperateMap.create();
+            OperateHashMap operate = OperateHashMap.create();
             operate.put("jdbcDriver", mapSource[0]);
             operate.put("jdbcUrl", mapSource[1]);
             operate.put("jdbcUser", mapSource[2]);
@@ -78,7 +78,7 @@ public class DataSourceDataTableWrapper {
             builder.tableType(tableType);
             builder.name(name);
 
-            HashOperateMap operate = HashOperateMap.create();
+            OperateHashMap operate = OperateHashMap.create();
             operate.put("jdbcDriver", driver);
             operate.put("jdbcUrl", url);
             operate.put("jdbcUser", username);

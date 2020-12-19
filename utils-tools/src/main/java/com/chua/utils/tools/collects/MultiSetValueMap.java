@@ -6,8 +6,10 @@ import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 可重复值接口
@@ -16,7 +18,7 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2020/10/17
  */
-public interface ListMultiValueMap<K, V> extends Map<K, List<V>> {
+public interface MultiSetValueMap<K, V> extends Map<K, Set<V>> {
     /**
      * 获取第一个值
      *
@@ -46,7 +48,7 @@ public interface ListMultiValueMap<K, V> extends Map<K, List<V>> {
      * @param filter 过滤器
      * @return List<V>
      */
-    default List<V> doWithFilter(K k, Filter<V> filter) {
+    default Set<V> doWithFilter(K k, Filter<V> filter) {
         return CollectionHelper.doWithFilter(get(k), filter);
     }
 
@@ -74,14 +76,14 @@ public interface ListMultiValueMap<K, V> extends Map<K, List<V>> {
      * @param key    索引
      * @param values 值
      */
-    void addAll(K key, List<? extends V> values);
+    void addAll(K key, Set<? extends V> values);
 
     /**
      * 添加值
      *
      * @param values 值
      */
-    void addAll(ListMultiValueMap<K, V> values);
+    void addAll(MultiSetValueMap<K, V> values);
 
     /**
      * 设置值
@@ -118,7 +120,22 @@ public interface ListMultiValueMap<K, V> extends Map<K, List<V>> {
      * @return boolean
      */
     default boolean containsValue(K k, V v) {
-        List<V> vs = get(k);
+        Set<V> vs = get(k);
         return CollectionHelper.contains(vs, v);
+    }
+
+    /**
+     * 获取Map
+     *
+     * @param k 索引
+     * @return Map<V, K>
+     */
+    default Map<V, K> asMap(K k) {
+        Collection<V> vs = get(k);
+        Map<V, K> result = new HashMap<>(vs.size());
+        for (V v : vs) {
+            result.put(v, k);
+        }
+        return result;
     }
 }

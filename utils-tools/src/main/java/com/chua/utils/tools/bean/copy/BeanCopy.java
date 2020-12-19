@@ -1,14 +1,13 @@
 package com.chua.utils.tools.bean.copy;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.function.Converter;
 import net.sf.cglib.beans.BeanCopier;
 
 import java.util.Map;
 import java.util.Properties;
-import java.util.function.Supplier;
 
 /**
  * <p>bean拷贝</p>
@@ -157,7 +156,7 @@ public interface BeanCopy<T> {
      *
      * @return 字段
      */
-    HashOperateMap asMap();
+    OperateHashMap asMap();
 
 
 }

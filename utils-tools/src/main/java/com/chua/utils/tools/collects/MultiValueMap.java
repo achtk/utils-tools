@@ -11,7 +11,7 @@ import java.util.*;
  * @version 1.0.0
  * @since 2020/10/17
  */
-public class MultiValueMap<K, V> implements ListMultiValueMap<K, V>, Cloneable, Serializable {
+public class MultiValueMap<K, V> implements MultiListValueMap<K, V>, Cloneable, Serializable {
 
     private final transient Map<K, List<V>> targetMap = new HashMap<>();
 
@@ -88,7 +88,7 @@ public class MultiValueMap<K, V> implements ListMultiValueMap<K, V>, Cloneable, 
     }
 
     @Override
-    public void addAll(ListMultiValueMap<K, V> values) {
+    public void addAll(MultiListValueMap<K, V> values) {
         targetMap.putAll(values);
     }
 

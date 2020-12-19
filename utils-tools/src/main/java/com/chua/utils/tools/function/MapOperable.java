@@ -1,7 +1,7 @@
 package com.chua.utils.tools.function;
 
 import com.chua.utils.tools.collects.map.MapOperableHelper;
-import com.chua.utils.tools.empty.EmptyOrBase;
+import com.chua.utils.tools.function.converter.Converter;
 import com.chua.utils.tools.function.converter.TypeConverter;
 import com.google.common.collect.Lists;
 
@@ -423,7 +423,7 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
         if (null == strings) {
             return null;
         }
-        TypeConverter<T> typeConverter = EmptyOrBase.getTypeConverter(tClass);
+        TypeConverter<T> typeConverter = Converter.getTypeConverter(tClass);
 
         if (null == typeConverter) {
             return null;

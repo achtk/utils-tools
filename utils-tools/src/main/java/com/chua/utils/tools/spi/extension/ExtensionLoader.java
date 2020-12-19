@@ -1,5 +1,7 @@
 package com.chua.utils.tools.spi.extension;
 
+import com.chua.utils.tools.collects.MultiSortValueMap;
+import com.chua.utils.tools.collects.MultiValueSortMap;
 import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
@@ -12,8 +14,7 @@ import com.chua.utils.tools.spi.processor.CustomExtensionProcessor;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -56,7 +58,12 @@ public class ExtensionLoader<T> {
     /**
      * 缓存数据
      */
-    private final Multimap<String, ExtensionClass<T>> extensionClassMultimap = HashMultimap.create();
+    private final MultiSortValueMap<String, ExtensionClass<T>> extensionClassMultimap = MultiValueSortMap.create(new Comparator<ExtensionClass<T>>() {
+        @Override
+        public int compare(ExtensionClass<T> o1, ExtensionClass<T> o2) {
+            return Ordering.natural().compare(o2.getOrder(), o1.getOrder());
+        }
+    });
 
     private ExtensionLoader() {
     }
@@ -119,7 +126,7 @@ public class ExtensionLoader<T> {
      * @param name 扩展名称
      * @return 返回所有的扩展对象
      */
-    public Collection<ExtensionClass<T>> getExtensionClasses(String name) {
+    public SortedSet<ExtensionClass<T>> getExtensionClasses(String name) {
         if (Strings.isNullOrEmpty(name)) {
             return null;
         }
@@ -136,7 +143,7 @@ public class ExtensionLoader<T> {
         if (null == name) {
             return null;
         }
-        Collection<ExtensionClass<T>> classes = getExtensionClasses(name.toLowerCase());
+        SortedSet<ExtensionClass<T>> classes = getExtensionClasses(name.toLowerCase());
         if (CollectionHelper.isEmpty(classes)) {
             if (ANY.equals(name)) {
                 return FinderHelper.firstElement(extensionClassMultimap.values());
@@ -144,17 +151,7 @@ public class ExtensionLoader<T> {
             return null;
         }
 
-        int maxOrder = -1;
-        ExtensionClass<T> result = null;
-
-        for (ExtensionClass<T> aClass : classes) {
-            int order = aClass.getOrder();
-            if (order > maxOrder) {
-                result = aClass;
-                maxOrder = order;
-            }
-        }
-        return result;
+        return classes.first();
     }
 
     /**
@@ -265,7 +262,7 @@ public class ExtensionLoader<T> {
      *
      * @return 所有缓存
      */
-    public synchronized Multimap<String, ExtensionClass<T>> getAllExtensionClassess() {
+    public synchronized MultiSortValueMap<String, ExtensionClass<T>> getAllExtensionClassess() {
         return extensionClassMultimap;
     }
 
@@ -275,7 +272,7 @@ public class ExtensionLoader<T> {
      * @return 所有的Spi服务
      */
     public Set<T> getAllSpiService() {
-        Multimap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
+        MultiSortValueMap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
         if (null == multimap) {
             return null;
         }
@@ -318,7 +315,7 @@ public class ExtensionLoader<T> {
      * @return 所有Spi名称
      */
     public Set<String> keys() {
-        Multimap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
+        MultiSortValueMap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
         return null == multimap ? null : multimap.keySet();
     }
 
@@ -328,7 +325,7 @@ public class ExtensionLoader<T> {
      * @return 优先级高的所有实现
      */
     public Map<String, ExtensionClass<T>> asMap() {
-        Multimap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
+        MultiSortValueMap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
         if (null == multimap) {
             return Collections.emptyMap();
         }
@@ -364,15 +361,15 @@ public class ExtensionLoader<T> {
      */
     private void cache(Collection<ExtensionClass<T>> collection) {
         if (null == collection) {
-            collection = Collections.emptyList();
+            collection = new TreeSet<>();
         }
         collection.parallelStream().forEach(new Consumer<ExtensionClass<T>>() {
             @Override
             public void accept(ExtensionClass<T> tExtensionClass) {
                 extensionClassMultimap.put(tExtensionClass.getName(), tExtensionClass);
+                extensionClassMultimap.put(service.getName(), tExtensionClass);
             }
         });
-        extensionClassMultimap.putAll(service.getName(), collection);
     }
 
     /**
@@ -415,6 +412,22 @@ public class ExtensionLoader<T> {
             result.put(key, extension);
         });
 
+        return result;
+    }
+
+    /**
+     * 优先级数据
+     *
+     * @return 优先级数据
+     */
+    public <K> Map<K, T> toPriorityMap(final Function<ExtensionClass<T>, K> supplier) {
+        Map<K, T> result = new HashMap<>();
+        Map<String, ExtensionClass<T>> first = extensionClassMultimap.getAllFirst();
+        for (Map.Entry<String, ExtensionClass<T>> entry : first.entrySet()) {
+            if (!entry.getKey().equals(service.getName())) {
+                result.put(supplier.apply(entry.getValue()), entry.getValue().getObj());
+            }
+        }
         return result;
     }
 }

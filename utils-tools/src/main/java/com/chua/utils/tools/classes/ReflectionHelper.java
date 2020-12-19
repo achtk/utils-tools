@@ -330,12 +330,33 @@ public class ReflectionHelper {
      * @param fieldName 字段名称
      * @return 字段
      */
+    public static Object getFieldIfOnlyValue(final Object object, final String fieldName) {
+        Field ifOnly = getFieldIfOnly(object, fieldName);
+        if (null == ifOnly) {
+            return null;
+        }
+        ifOnly.setAccessible(true);
+        try {
+            return ifOnly.get(object);
+        } catch (IllegalAccessException e) {
+            return null;
+        }
+    }
+
+    /**
+     * 字段查询
+     *
+     * @param object    处理对象
+     * @param fieldName 字段名称
+     * @return 字段
+     */
     public static List<Field> getField(final Object object, final String fieldName) {
         if (null == fieldName) {
             return null;
         }
         return getFields(ClassHelper.getClass(object)).stream().filter(field -> fieldName.equals(field.getName())).filter(Objects::nonNull).collect(Collectors.toList());
     }
+
     /**
      * 字段查询
      *
@@ -345,7 +366,7 @@ public class ReflectionHelper {
      */
     public static void doWithOnlyField(final Object object, final String fieldName, final Consumer<Field> consumer) {
         List<Field> fields = getField(object, fieldName);
-        if(null != fields && fields.size() == 1) {
+        if (null != fields && fields.size() == 1) {
             consumer.accept(FinderHelper.firstElement(fields));
         }
     }

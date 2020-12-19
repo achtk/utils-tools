@@ -1,6 +1,6 @@
 package com.chua.utils.tools.data.table.wrapper;
 
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.data.table.DataTable;
 import com.chua.utils.tools.data.table.type.TableType;
 import com.google.common.base.Joiner;
@@ -67,7 +67,7 @@ public class SolrDataTableWrapper {
      */
     public DataTableWrapperTableBuilder source(String host, String collection, String zkHosts) {
         DataTable.DataTableBuilder builder = DataTable.builder();
-        HashOperateMap.create(hashOperateMap -> {
+        OperateHashMap.create(hashOperateMap -> {
             hashOperateMap.put("solrServerURL", host);
             hashOperateMap.put("solrCollection", collection);
             hashOperateMap.put("solrZkHosts", zkHosts);

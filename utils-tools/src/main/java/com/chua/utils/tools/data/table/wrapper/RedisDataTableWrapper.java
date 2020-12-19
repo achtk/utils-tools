@@ -1,6 +1,6 @@
 package com.chua.utils.tools.data.table.wrapper;
 
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.data.table.DataTable;
 import com.chua.utils.tools.data.table.type.TableType;
 import lombok.AllArgsConstructor;
@@ -70,7 +70,7 @@ public class RedisDataTableWrapper {
      */
     public DataTableWrapperTableBuilder source(String host, int port, int database, String password) {
         DataTable.DataTableBuilder builder = DataTable.builder();
-        HashOperateMap operate = HashOperateMap.create();
+        OperateHashMap operate = OperateHashMap.create();
         operate.put("host", host);
         operate.put("port", port);
         operate.put("database", database);
@@ -144,7 +144,7 @@ public class RedisDataTableWrapper {
          */
         public DataTableWrapperBuilder build() {
             return () -> {
-                dataTable.setOperate2(HashOperateMap.create("tables", tables));
+                dataTable.setOperate2(OperateHashMap.create("tables", tables));
                 return dataTable;
             };
         }

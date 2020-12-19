@@ -5,8 +5,7 @@ import com.chua.utils.netx.datasource.connection.JdbcConnectionOperator;
 import com.chua.utils.netx.datasource.transform.JdbcOperatorTransform;
 import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.bean.copy.StandardBeanCopy;
-import com.chua.utils.tools.collects.HashOperateMap;
-import com.chua.utils.tools.constant.NumberConstant;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.dsl.CreateTableStepSqlBuilder;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.properties.OperatorProperties;
@@ -35,7 +34,7 @@ public class StandardJdbcOperatorTemplate implements JdbcOperatorTemplate {
     private OperatorTransform<DataSource> operatorTransform = new JdbcOperatorTransform();
     private DataSource dataSource;
     private ConnectionOperator connectionOperator;
-    private HashOperateMap operateMap;
+    private OperateHashMap operateMap;
 
     public StandardJdbcOperatorTemplate(DataSource dataSource) {
         this.dataSource = dataSource;

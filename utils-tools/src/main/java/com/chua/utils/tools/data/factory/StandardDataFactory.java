@@ -2,7 +2,8 @@ package com.chua.utils.tools.data.factory;
 
 import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.MultiSortValueMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.common.FileHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.JsonHelper;
@@ -82,7 +83,7 @@ public class StandardDataFactory implements DataFactory {
         PARSER_CACHE.put(TableType.MEM.name().toLowerCase(), new MemFileDataParser());
 
         ExtensionLoader<DataParser> extensionLoader = ExtensionFactory.getExtensionLoader(DataParser.class);
-        Multimap<String, ExtensionClass<DataParser>> allSpiService = extensionLoader.getAllExtensionClassess();
+        MultiSortValueMap<String, ExtensionClass<DataParser>> allSpiService = extensionLoader.getAllExtensionClassess();
 
         allSpiService.keySet().stream().filter(item -> !item.equals(DataParser.class.getName())).forEach(name -> {
             PARSER_CACHE.put(name, extensionLoader.getExtension(name));
@@ -159,7 +160,7 @@ public class StandardDataFactory implements DataFactory {
             //只判断第一个类型
             DataTable dataTable = FinderHelper.firstElement(entryValue);
             schema.setFactory(FACTORY_CACHE.get(dataTable.getTableType()));
-            HashOperateMap operateMap = HashOperateMap.create("id", entryValue.stream().map(dataTable1 -> dataTable1.getId()).collect(Collectors.toList()));
+            OperateHashMap operateMap = OperateHashMap.create("id", entryValue.stream().map(dataTable1 -> dataTable1.getId()).collect(Collectors.toList()));
             //创建参数
             this.createOperate(schema, operateMap, dataTable);
             schema.setOperand(operateMap);
@@ -186,8 +187,8 @@ public class StandardDataFactory implements DataFactory {
      * @param dataTable  表
      * @return 集合
      */
-    private void createOperate(Schema schema, HashOperateMap operateMap, DataTable dataTable) {
-        HashOperateMap operate = dataTable.getOperate();
+    private void createOperate(Schema schema, OperateHashMap operateMap, DataTable dataTable) {
+        OperateHashMap operate = dataTable.getOperate();
         if (dataTable.getTableType() == TableType.DATA_SOURCE) {
             if (null != dataTable.getOperate()) {
                 operateMap.putAll(dataTable.getOperate());
@@ -290,6 +291,6 @@ public class StandardDataFactory implements DataFactory {
         /**
          * 额外参数
          */
-        private HashOperateMap operand;
+        private OperateHashMap operand;
     }
 }

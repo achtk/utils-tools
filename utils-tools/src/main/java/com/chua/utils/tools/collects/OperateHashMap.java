@@ -25,19 +25,19 @@ import java.util.function.Predicate;
  * @version 1.0.0
  * @since 2020/10/31
  */
-public class HashOperateMap extends HashMap<String, Object> implements MapOperable<String>, BiAppendable<String, Object> {
+public class OperateHashMap extends HashMap<String, Object> implements MapOperable<String>, BiAppendable<String, Object> {
 
     private final Interpreter interpreter = new Interpreter();
 
-    private final static HashOperateMap INSTANCE = HashOperateMap.create();
+    private final static OperateHashMap INSTANCE = OperateHashMap.create();
 
     /**
      * 创建 HashOperateMap
      *
      * @return HashOperateMap
      */
-    public static HashOperateMap create() {
-        return new HashOperateMap();
+    public static OperateHashMap create() {
+        return new OperateHashMap();
     }
 
     /**
@@ -45,8 +45,8 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      *
      * @return HashOperateMap
      */
-    public static HashOperateMap create(Consumer<HashOperateMap> consumer) {
-        HashOperateMap operateMap = new HashOperateMap();
+    public static OperateHashMap create(Consumer<OperateHashMap> consumer) {
+        OperateHashMap operateMap = new OperateHashMap();
         consumer.accept(operateMap);
         return operateMap;
     }
@@ -56,7 +56,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      *
      * @return HashOperateMap
      */
-    public static HashOperateMap emptyMap() {
+    public static OperateHashMap emptyMap() {
         return INSTANCE;
     }
 
@@ -65,8 +65,8 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      *
      * @return HashOperateMap
      */
-    public static HashOperateMap create(String key, Object value) {
-        return new HashOperateMap().append(key, value);
+    public static OperateHashMap create(String key, Object value) {
+        return new OperateHashMap().append(key, value);
     }
 
     /**
@@ -74,8 +74,8 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      *
      * @return HashOperateMap
      */
-    public static HashOperateMap create(Map<String, Object> params) {
-        return new HashOperateMap().append(params);
+    public static OperateHashMap create(Map<String, Object> params) {
+        return new OperateHashMap().append(params);
     }
 
     /**
@@ -84,7 +84,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      * @param params 数据
      * @return HashOperateMap
      */
-    public static HashOperateMap create(String params) {
+    public static OperateHashMap create(String params) {
         return create(params, ",", ":");
     }
 
@@ -96,8 +96,8 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      * @param keyValueSeparator 键值对分隔符
      * @return HashOperateMap
      */
-    public static HashOperateMap create(String params, String lineSeparator, String keyValueSeparator) {
-        HashOperateMap hashOperateMap = new HashOperateMap();
+    public static OperateHashMap create(String params, String lineSeparator, String keyValueSeparator) {
+        OperateHashMap operateHashMap = new OperateHashMap();
         int size = 2;
         Splitter.on(lineSeparator)
                 .trimResults()
@@ -106,12 +106,12 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
                 .forEach(item -> {
                     List<String> strings = Splitter.on(keyValueSeparator).trimResults().omitEmptyStrings().splitToList(item);
                     if (strings.size() == size) {
-                        hashOperateMap.put(strings.get(0), strings.get(1));
+                        operateHashMap.put(strings.get(0), strings.get(1));
                     } else if (strings.size() > size) {
-                        hashOperateMap.put(strings.get(0), Joiner.on(keyValueSeparator).join(strings.subList(1, strings.size())));
+                        operateHashMap.put(strings.get(0), Joiner.on(keyValueSeparator).join(strings.subList(1, strings.size())));
                     }
                 });
-        return hashOperateMap;
+        return operateHashMap;
     }
 
     @Override
@@ -130,7 +130,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
             return;
         }
         BeanCopy<Object> beanCopy = BeanCopy.of(object);
-        HashOperateMap operateMap = beanCopy.asMap();
+        OperateHashMap operateMap = beanCopy.asMap();
         this.putAll(operateMap);
     }
 
@@ -174,7 +174,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
     }
 
     @Override
-    public HashOperateMap append(String v1, Object v2) {
+    public OperateHashMap append(String v1, Object v2) {
         this.put(v1, v2);
         this.setKeyValue(v1, v2);
         return this;
@@ -186,7 +186,7 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
      * @param params 数据
      * @return this
      */
-    public HashOperateMap append(Map<String, Object> params) {
+    public OperateHashMap append(Map<String, Object> params) {
         this.putAll(params);
         return this;
     }

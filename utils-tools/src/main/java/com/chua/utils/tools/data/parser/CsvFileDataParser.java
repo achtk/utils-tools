@@ -1,6 +1,6 @@
 package com.chua.utils.tools.data.parser;
 
-import com.chua.utils.tools.collects.HashOperateMap;
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.common.ArraysHelper;
 import com.google.common.base.Strings;
 import com.google.common.io.Resources;
@@ -28,7 +28,7 @@ import java.util.Map;
 public class CsvFileDataParser implements DataParser {
 
     private Object source;
-    private HashOperateMap operate;
+    private OperateHashMap operate;
     private String delimiter = ",";
     private URL url;
     private Map<String, String> header = new HashMap<>();
