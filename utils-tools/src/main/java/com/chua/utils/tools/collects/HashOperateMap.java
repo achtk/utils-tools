@@ -6,6 +6,8 @@ import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.function.BiAppendable;
 import com.chua.utils.tools.function.MapOperable;
+import com.chua.utils.tools.function.converter.ClassTypeConverter;
+import com.chua.utils.tools.function.converter.TypeConverter;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -282,6 +284,34 @@ public class HashOperateMap extends HashMap<String, Object> implements MapOperab
     public <T> T getEntity(String key, Class<T> tClass) {
         Object object = getObject(key);
         return null == object || (null != tClass && tClass.isAssignableFrom(object.getClass())) ? (T) object : null;
+    }
+
+    /**
+     * 获取类
+     *
+     * @param key 索引
+     * @return 类
+     */
+    public Class<?> getClass(final String key) {
+        return getClass(key, Object.class);
+    }
+
+    /**
+     * 获取类
+     *
+     * @param key    索引
+     * @param tClass 类型
+     * @param <T>    类型
+     * @return 类
+     */
+    public <T> Class<? extends T> getClass(String key, final Class<T> tClass) {
+        TypeConverter<Class> typeConverter = new ClassTypeConverter();
+        Object object = getObject(key);
+        Class aClass = typeConverter.convert(object);
+        if (null == aClass || null == tClass) {
+            return null;
+        }
+        return tClass.isAssignableFrom(aClass) ? aClass : null;
     }
 
     /**

@@ -1,0 +1,2 @@
+script=com.chua.utils.tools.bean.creator.ScriptValueCreator
+java=com.chua.utils.tools.bean.creator.JavaValueCreator

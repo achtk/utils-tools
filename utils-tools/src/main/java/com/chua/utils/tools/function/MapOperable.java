@@ -762,7 +762,7 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
      * @return Map中的值，如果Map输入为空，则为<code> null </ code>
      */
     default Object getObject(K key) {
-        return MapOperableHelper.getString(getMap(), key);
+        return MapOperableHelper.getObject(getMap(), key);
     }
 
     /**

@@ -13,7 +13,8 @@ import static com.chua.utils.tools.constant.NumberConstant.HEX_0X01;
 import static com.chua.utils.tools.constant.NumberConstant.TWE;
 
 /**
- * Hex
+ * Hex<br />
+ * 部分工具来自于HuTool系列
  *
  * @author CH
  * @version 1.0.0
@@ -373,6 +374,7 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
         }
         return sb.length() > 0 ? sb.substring(1) : sb.toString();
     }
+
     /**
      * Hex数据间隔
      *
@@ -382,6 +384,7 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
     public static String every0xSpace(String hex) {
         return every0xSpace(hex, 2);
     }
+
     /**
      * Hex数据间隔
      *
@@ -396,5 +399,22 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
             sb.append(" 0x").append(output);
         }
         return sb.length() > 0 ? sb.substring(1) : sb.toString();
+    }
+
+    /**
+     * 将byte值转为16进制并添加到{@link StringBuilder}中
+     *
+     * @param builder     {@link StringBuilder}
+     * @param b           byte
+     * @param toLowerCase 是否使用小写
+     * @since 4.4.1
+     */
+    public static void appendHex(StringBuilder builder, byte b, boolean toLowerCase) {
+        final char[] toDigits = toLowerCase ? DIGITS_LOWER : DIGITS_UPPER;
+
+        int high = (b & 0xf0) >>> 4;//高位
+        int low = b & 0x0f;//低位
+        builder.append(toDigits[high]);
+        builder.append(toDigits[low]);
     }
 }

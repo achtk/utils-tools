@@ -19,6 +19,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -197,8 +198,8 @@ public class ExtensionLoader<T> {
      * @param name 扩展名称
      * @return 优先级最高的扩展实现
      */
-    public <E>E getExtension(Class<E> tClass) {
-        if(null == tClass) {
+    public <E> E getExtension(Class<E> tClass) {
+        if (null == tClass) {
             return null;
         }
         Collection<ExtensionClass<T>> values = extensionClassMultimap.values();
@@ -396,5 +397,24 @@ public class ExtensionLoader<T> {
      */
     public void appendExtension(final ExtensionClass<T> extensionClass) {
         extensionClassMultimap.put(extensionClass.getName(), extensionClass);
+    }
+
+    /**
+     * 获取Map所有接口
+     *
+     * @return 所有接口
+     */
+    public Map<String, T> toMap() {
+        Map<String, T> result = new ConcurrentHashMap<>();
+        Map<String, ExtensionClass<T>> extensionClassMap = asMap();
+        extensionClassMap.keySet().forEach(key -> {
+            T extension = getExtension(key);
+            if (extension == null) {
+                return;
+            }
+            result.put(key, extension);
+        });
+
+        return result;
     }
 }

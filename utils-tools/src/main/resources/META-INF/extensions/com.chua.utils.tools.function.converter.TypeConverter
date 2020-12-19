@@ -13,3 +13,5 @@ big-integer-type=com.chua.utils.tools.function.converter.BigIntegerTypeConverter
 big-decimal-type=com.chua.utils.tools.function.converter.BigDecimalTypeConverter
 date-type=com.chua.utils.tools.function.converter.DateTypeConverter
 void-type=com.chua.utils.tools.function.converter.VoidTypeConverter
+enum-type=com.chua.utils.tools.function.converter.EnumTypeConverter
+pattern-type=com.chua.utils.tools.function.converter.PatternTypeConverter
