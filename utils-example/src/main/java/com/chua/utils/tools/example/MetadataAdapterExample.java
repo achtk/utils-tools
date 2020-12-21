@@ -20,7 +20,7 @@ public class MetadataAdapterExample {
         InputStream inputStream = Paths.get("D:\\work\\utils-tools-parent\\utils-example\\target\\classes\\com\\chua\\utils\\tools\\example\\entity\\TDemoInfo.class").toUri().toURL().openStream();
         MetadataAdapter metadataAdapter = new AsmAdaptor(inputStream);
         System.out.println("获取父类:" + metadataAdapter.getSuperClass());
-        System.out.println("获取接口:" + metadataAdapter.getInterfaceName());
+        System.out.println("获取接口:" + metadataAdapter.getAnnotations());
         System.out.println("获取接口:" + metadataAdapter.getInterfaceName());
         System.out.println("获取方法:" + metadataAdapter.getMethods());
         System.out.println("获取字段:" + metadataAdapter.getFields());

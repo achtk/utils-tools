@@ -65,7 +65,7 @@ public class UrlUtils extends UrlHelper {
             }
         }
         String preUrl = stringBuilder.toString();
-        if(preUrl.endsWith("/")) {
+        if(preUrl.endsWith(SYMBOL_LEFT_SLASH)) {
             preUrl = preUrl.substring(0, preUrl.length() - 1);
         }
         return parseUrl(preUrl);

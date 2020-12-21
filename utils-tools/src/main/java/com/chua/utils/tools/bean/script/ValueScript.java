@@ -32,6 +32,7 @@ public class ValueScript {
      *
      * @see com.chua.utils.tools.annotations.Binder#type()
      * @see com.chua.utils.tools.annotations.Binder#value()
+     * @see com.chua.utils.tools.annotations.Binder#profile()
      * @see com.chua.utils.tools.annotations.Binder#factory()
      */
     private OperateHashMap operate;
@@ -39,6 +40,10 @@ public class ValueScript {
      * 主体数据
      */
     public static final String VALUE = "value";
+    /**
+     * profile
+     */
+    public static final String PROFILE = "profile";
     /**
      * 工厂数据
      */

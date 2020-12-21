@@ -16,7 +16,20 @@ import java.util.Set;
  */
 public class DuplexHashMap<K, V> implements DuplexMap<K, V> {
 
-    private final BiMap<K, V> map = HashBiMap.create();
+    private BiMap<K, V> map;
+
+    public DuplexHashMap() {
+        this.map = HashBiMap.create();
+    }
+
+    /**
+     * 大小
+     * @param expectedSize 大小
+     */
+    public DuplexHashMap(int expectedSize) {
+        this.map = HashBiMap.create(expectedSize);
+    }
+
 
     @Override
     public int size() {

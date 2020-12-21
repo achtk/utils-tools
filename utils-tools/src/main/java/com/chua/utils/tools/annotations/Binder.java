@@ -23,6 +23,14 @@ public @interface Binder {
     String value() default "";
 
     /**
+     * 配置文件
+     *
+     * @return 配置文件
+     * @see Type#PROFILE
+     */
+    String profile() default "";
+
+    /**
      * 注册类型
      *
      * @return 注册类型
@@ -61,6 +69,10 @@ public @interface Binder {
          * restful
          */
         REST,
+        /**
+         * profile
+         */
+        PROFILE,
         /**
          * Proxy
          */

@@ -1,14 +1,11 @@
 package com.chua.utils.tools.example;
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.classes.reflections.RewriteReflections;
-import com.chua.utils.tools.classes.reflections.configuration.RewriteConfiguration;
 import com.chua.utils.tools.example.entity.TDemoInfo;
+import com.chua.utils.tools.util.ClassUtils;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.Column;
-import java.lang.reflect.Field;
-import java.util.Set;
 
 /**
  * @author CH
@@ -17,7 +14,7 @@ import java.util.Set;
  */
 public class ClassHelperExample {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         System.out.println("获取类所在的资源文件: " + ClassHelper.getUrlByClass(LoggerFactory.class));
         System.out.println("判断类是否是Object: " + ClassHelper.isObject(Object.class));
         System.out.println("字符串转类: " + ClassHelper.forName(LoggerFactory.class.getName()));
@@ -29,5 +26,7 @@ public class ClassHelperExample {
         System.out.println("获取对象的字段: " + ClassHelper.getFields(new TDemoInfo()));
         System.out.println("获取对象含有[@Column]的字段: " + ClassHelper.getAnnotationFields(new TDemoInfo(), Column.class));
         System.out.println("获取类加载器加载的URL: " + ClassHelper.getUrlsByClassLoader(ClassHelper.getDefaultClassLoader()));
+        System.out.println("获取字段值:" + ClassUtils.getFieldIfOnlyValue(new TDemoInfo(), "uuid"));
+        System.out.println("方法插入日志:" + ClassUtils.insertCode(new TDemoInfo(), "getId", 0, "{System.out.println(this.getClass().toString());}"));
     }
 }

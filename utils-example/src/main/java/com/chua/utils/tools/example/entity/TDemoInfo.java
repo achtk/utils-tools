@@ -34,4 +34,7 @@ public class TDemoInfo {
 
     private String uuid = IdHelper.createUuid();
 
+    public Integer getId() {
+        return id;
+    }
 }
