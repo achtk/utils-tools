@@ -418,7 +418,11 @@ public class JavassistHelper extends InitializingCacheable {
     public static Object toEntity(CtClass ctClass, ClassPool classPool) throws Exception {
         try {
             return ClassHelper.forObject(ctClass.toClass());
-        } catch (CannotCompileException cannotCompileException) {
+        } catch (Throwable e) {
+            if(!(e instanceof CannotCompileException)) {
+               e.printStackTrace();
+               return null;
+            }
             //类加载器
             Loader classLoader = new Loader(classPool);
             classLoader.addTranslator(classPool, new Translator() {

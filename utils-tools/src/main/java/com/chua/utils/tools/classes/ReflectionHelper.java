@@ -81,7 +81,7 @@ public class ReflectionHelper extends JavassistHelper {
      * @param aClass 类
      * @return 有无参构造返回true, 如果为null返回false
      */
-    public static boolean hasNoArgsConstructor(final Class<?> aClass) {
+    public static boolean hasNoArgsConstructor(final Class<?> aClass) throws Exception {
         if (null == aClass) {
             return false;
         }
@@ -102,7 +102,7 @@ public class ReflectionHelper extends JavassistHelper {
      * @param matcher 比较器
      * @return 所有构造
      */
-    public static void doWithLocalConstructors(final Class<?> aClass, final Matcher<Constructor<?>> matcher) {
+    public static void doWithLocalConstructors(final Class<?> aClass, final Matcher<Constructor<?>> matcher) throws Exception {
         for (Constructor<?> constructor : getLocalConstructors(aClass)) {
             try {
                 matcher.doWith(constructor);
@@ -117,7 +117,7 @@ public class ReflectionHelper extends JavassistHelper {
      * @param object 对象
      * @return 所有构造
      */
-    public static List<Constructor<?>> getLocalConstructors(final Object object) {
+    public static List<Constructor<?>> getLocalConstructors(final Object object) throws Exception {
         if (null == object) {
             return Collections.emptyList();
         }
