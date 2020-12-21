@@ -3,9 +3,9 @@ package com.chua.utils.tools.classes.adaptor;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.classes.entity.FieldDescription;
 import com.chua.utils.tools.classes.entity.MethodDescription;
+import com.chua.utils.tools.entity.ClassNode;
 import com.google.common.base.Strings;
-import jdk.internal.org.objectweb.asm.ClassReader;
-import jdk.internal.org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.ClassReader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -98,12 +98,12 @@ public class AsmAdaptor implements MetadataAdapter {
 
     @Override
     public List<MethodDescription> getMethods() {
-        return classNode.methods.stream().map(fieldNode -> {
+        return classNode.methods.stream().map(methodNode -> {
             MethodDescription methodDescription = new MethodDescription();
-            methodDescription.setName(resolveNewName(fieldNode.name));
-            methodDescription.setType(ClassHelper.forName(resolveNewName(fieldNode.desc)));
-            methodDescription.setModifier(getModifier(fieldNode.access));
-            methodDescription.setAnnotations(Optional.ofNullable(fieldNode.visibleAnnotations).orElse(Collections.emptyList()).stream().map(annotationNode -> resolveNewName(annotationNode.desc)).collect(Collectors.toList()));
+            methodDescription.setName(resolveNewName(methodNode.name));
+            methodDescription.setType(ClassHelper.forName(resolveNewName(methodNode.desc)));
+            methodDescription.setModifier(getModifier(methodNode.access));
+            methodDescription.setAnnotations(Optional.ofNullable(methodNode.visibleAnnotations).orElse(Collections.emptyList()).stream().map(annotationNode -> resolveNewName(annotationNode.desc)).collect(Collectors.toList()));
             return methodDescription;
         }).collect(Collectors.toList());
     }

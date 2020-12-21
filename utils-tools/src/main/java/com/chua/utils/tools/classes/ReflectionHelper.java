@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2020/11/11
  */
-public class ReflectionHelper {
+public class ReflectionHelper extends JavassistHelper {
 
     /**
      * 类-字段关系
