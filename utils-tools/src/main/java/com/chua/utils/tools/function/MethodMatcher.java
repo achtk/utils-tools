@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
  * 方法匹配
  * @author CH
  */
+@FunctionalInterface
 public interface MethodMatcher {
     /**
      * 方法拦截
@@ -18,5 +19,5 @@ public interface MethodMatcher {
      * @return
      * @throws Throwable
      */
-    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable;
+    Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable;
 }

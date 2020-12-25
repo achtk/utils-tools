@@ -15,6 +15,7 @@ import java.util.*;
  * @version 1.0.0
  * @since 2020/10/31
  */
+@FunctionalInterface
 public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
     /**
      * 获取Map

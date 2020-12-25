@@ -1,7 +1,5 @@
 package com.chua.utils.tools.function;
 
-import java.io.IOException;
-
 /**
  * 可追加
  *
@@ -9,6 +7,7 @@ import java.io.IOException;
  * @version 1.0.0
  * @since 2020/10/30
  */
+@FunctionalInterface
 public interface BiAppendable<S, S1> {
     /**
      * 追加数据

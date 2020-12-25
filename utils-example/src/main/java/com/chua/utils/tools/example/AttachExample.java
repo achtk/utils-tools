@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class AttachExample {
 
-    public static void main(String[] args) throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
+    public static void main(String[] ars) throws IOException, AttachNotSupportedException, AgentLoadException, AgentInitializationException {
         VirtualMachine virtualMachine = VirtualMachine.attach("2936");
         List<VirtualMachineDescriptor> virtualMachineDescriptors = VirtualMachine.list();
         File temp = new File("D:\\work\\utils-tools-parent\\utils-agent\\target\\utils-agent-1.0-SNAPSHOT.jar");

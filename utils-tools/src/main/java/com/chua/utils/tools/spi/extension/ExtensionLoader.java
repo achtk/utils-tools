@@ -1,8 +1,8 @@
 package com.chua.utils.tools.spi.extension;
 
+import com.chua.utils.tools.aware.NamedFactoryAware;
 import com.chua.utils.tools.collects.MultiSortValueMap;
 import com.chua.utils.tools.collects.MultiValueSortMap;
-import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.constant.StringConstant;
@@ -55,15 +55,17 @@ public class ExtensionLoader<T> {
      * 处理器
      */
     private ExtensionProcessor extensionProcessor = new CustomExtensionProcessor();
-    /**
-     * 缓存数据
-     */
-    private final MultiSortValueMap<String, ExtensionClass<T>> extensionClassMultimap = MultiValueSortMap.create(new Comparator<ExtensionClass<T>>() {
+
+    private final Comparator<ExtensionClass<T>> comparator = new Comparator<ExtensionClass<T>>() {
         @Override
         public int compare(ExtensionClass<T> o1, ExtensionClass<T> o2) {
             return Ordering.natural().compare(o2.getOrder(), o1.getOrder());
         }
-    });
+    };
+    /**
+     * 缓存数据
+     */
+    private final MultiSortValueMap<String, ExtensionClass<T>> extensionClassMultimap = MultiValueSortMap.create(comparator);
 
     private ExtensionLoader() {
     }
@@ -97,7 +99,7 @@ public class ExtensionLoader<T> {
      *
      * @return this
      */
-    public ExtensionLoader<T> search() {
+    public synchronized ExtensionLoader<T> search() {
         Preconditions.checkArgument(null != service);
 
         long startTime = 0L;
@@ -126,11 +128,76 @@ public class ExtensionLoader<T> {
      * @param name 扩展名称
      * @return 返回所有的扩展对象
      */
-    public SortedSet<ExtensionClass<T>> getExtensionClasses(String name) {
-        if (Strings.isNullOrEmpty(name)) {
+    public synchronized SortedSet<ExtensionClass<T>> getExtensionClasses(String name) {
+        if (null == name) {
             return null;
         }
-        return extensionClassMultimap.get(name);
+        MultiSortValueMap<String, ExtensionClass<T>> sortMap = new MultiValueSortMap<>(comparator);
+
+        for (Map.Entry<String, ExtensionClass<T>> entry : extensionClassMultimap.entrySet()) {
+            String key = entry.getKey();
+            if (key.equals(service.getName())) {
+                continue;
+            }
+            ExtensionClass<T> extensionClass = entry.getValue();
+            NamedFactoryAware namedFactoryAware = extensionClass.getNamedFactoryAware();
+            sortMap.put(key, extensionClass);
+            if (null != namedFactoryAware) {
+                String named = namedFactoryAware.named();
+                if (null != named) {
+                    sortMap.put(namedFactoryAware.named(), extensionClass);
+                }
+            }
+        }
+        return sortMap.get(name);
+    }
+
+    /**
+     * 获取当前spi下的所有加载器
+     *
+     * @param name 扩展名称
+     * @return 返回所有的扩展对象
+     */
+    public synchronized ExtensionClass<T> getExtensionClassOne(String name) {
+        if (null == name) {
+            return null;
+        }
+        MultiSortValueMap<String, ExtensionClass<T>> sortMap = new MultiValueSortMap<>(comparator);
+
+        for (Map.Entry<String, ExtensionClass<T>> entry : extensionClassMultimap.entrySet()) {
+            String key = entry.getKey();
+            if (key.equals(service.getName())) {
+                continue;
+            }
+            ExtensionClass<T> extensionClass = entry.getValue();
+            NamedFactoryAware namedFactoryAware = extensionClass.getNamedFactoryAware();
+            if (null == namedFactoryAware) {
+                sortMap.put(key, extensionClass);
+                continue;
+            }
+            String named = namedFactoryAware.named();
+            if (null != named) {
+                sortMap.put(namedFactoryAware.named(), extensionClass);
+            }
+        }
+
+
+        if (Strings.isNullOrEmpty(name) && sortMap.keySet().size() == 1) {
+            return sortMap.values().stream().findFirst().get();
+        }
+
+        SortedSet<ExtensionClass<T>> extensionClasses = null;
+        if (sortMap.containsKey(name)) {
+            extensionClasses = sortMap.get(name);
+        } else {
+            extensionClasses = getExtensionClasses(name);
+        }
+
+        if(null == extensionClasses) {
+            return null;
+        }
+
+        return extensionClasses.first();
     }
 
     /**
@@ -139,19 +206,11 @@ public class ExtensionLoader<T> {
      * @param name 扩展名称
      * @return 当前spi下优先级最高的加载器
      */
-    public ExtensionClass<T> getExtensionClass(String name) {
+    public synchronized ExtensionClass<T> getExtensionClass(String name) {
         if (null == name) {
             return null;
         }
-        SortedSet<ExtensionClass<T>> classes = getExtensionClasses(name.toLowerCase());
-        if (CollectionHelper.isEmpty(classes)) {
-            if (ANY.equals(name)) {
-                return FinderHelper.firstElement(extensionClassMultimap.values());
-            }
-            return null;
-        }
-
-        return classes.first();
+        return getExtensionClassOne(name.toLowerCase());
     }
 
     /**
@@ -161,7 +220,7 @@ public class ExtensionLoader<T> {
      * @param <T>  类型
      * @return 当前spi下的所有实现
      */
-    public List<T> getExtensions(String name) {
+    public synchronized List<T> getExtensions(String name) {
         Collection<ExtensionClass<T>> extensionClasses = getExtensionClasses(name);
         if (null == extensionClasses) {
             return null;
@@ -175,12 +234,25 @@ public class ExtensionLoader<T> {
     }
 
     /**
+     * 当实现是唯一的情况下获取唯一的扩展实现, 否则返回 null
+     *
+     * @return 优先级最高的扩展实现
+     */
+    public synchronized T getExtension() {
+        ExtensionClass<T> extensionClasses = getExtensionClass("");
+        if (null == extensionClasses) {
+            return null;
+        }
+        return extensionClasses.getObj();
+    }
+
+    /**
      * 获取优先级最高的扩展实现
      *
      * @param name 扩展名称
      * @return 优先级最高的扩展实现
      */
-    public T getExtension(String name) {
+    public synchronized T getExtension(String name) {
         ExtensionClass<T> extensionClasses = getExtensionClass(name);
         if (null == extensionClasses) {
             return null;
@@ -195,7 +267,7 @@ public class ExtensionLoader<T> {
      * @param name 扩展名称
      * @return 优先级最高的扩展实现
      */
-    public <E> E getExtension(Class<E> tClass) {
+    public synchronized <E> E getExtension(Class<E> tClass) {
         if (null == tClass) {
             return null;
         }
@@ -219,7 +291,7 @@ public class ExtensionLoader<T> {
      *
      * @return
      */
-    public T getFirst() {
+    public synchronized T getFirst() {
         Set<String> strings = extensionClassMultimap.keySet();
         if (!BooleanHelper.hasLength(strings)) {
             return null;
@@ -234,7 +306,7 @@ public class ExtensionLoader<T> {
      * @return 优先级最高的扩展实现
      * @see #getExtension(String)
      */
-    public T getSpiService(String name) {
+    public synchronized T getSpiService(String name) {
         return getExtension(name);
     }
 
@@ -243,7 +315,7 @@ public class ExtensionLoader<T> {
      *
      * @return 当前spi注解标识的实现
      */
-    public T getSpiService() {
+    public synchronized T getSpiService() {
         Preconditions.checkArgument(null != service);
         Spi spi = service.getDeclaredAnnotation(Spi.class);
         if (null == spi) {
@@ -271,7 +343,7 @@ public class ExtensionLoader<T> {
      *
      * @return 所有的Spi服务
      */
-    public Set<T> getAllSpiService() {
+    public synchronized Set<T> getAllSpiService() {
         MultiSortValueMap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
         if (null == multimap) {
             return null;
@@ -293,7 +365,7 @@ public class ExtensionLoader<T> {
      *
      * @return 获取不为空的实现
      */
-    public T getNotNullSpiService() {
+    public synchronized T getNotNullSpiService() {
         return FinderHelper.firstElement(getAllSpiService());
     }
 
@@ -302,7 +374,7 @@ public class ExtensionLoader<T> {
      *
      * @return 随机实现
      */
-    public T getRandomSpiService() {
+    public synchronized T getRandomSpiService() {
         Set<T> spiService = getAllSpiService();
         int size = spiService.size();
         int index = ((Double) (Math.random() * size)).intValue() + 1;
@@ -314,7 +386,7 @@ public class ExtensionLoader<T> {
      *
      * @return 所有Spi名称
      */
-    public Set<String> keys() {
+    public synchronized Set<String> keys() {
         MultiSortValueMap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
         return null == multimap ? null : multimap.keySet();
     }
@@ -324,7 +396,7 @@ public class ExtensionLoader<T> {
      *
      * @return 优先级高的所有实现
      */
-    public Map<String, ExtensionClass<T>> asMap() {
+    public synchronized Map<String, ExtensionClass<T>> asMap() {
         MultiSortValueMap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
         if (null == multimap) {
             return Collections.emptyMap();
@@ -342,7 +414,7 @@ public class ExtensionLoader<T> {
     /**
      * 重置缓存
      */
-    public void refresh() {
+    public synchronized void refresh() {
         if (null != extensionProcessor) {
             extensionProcessor.removeAll();
             if (extensionProcessor instanceof AbstractSimpleExtensionProcessor) {
@@ -363,7 +435,7 @@ public class ExtensionLoader<T> {
         if (null == collection) {
             collection = new TreeSet<>();
         }
-        collection.parallelStream().forEach(new Consumer<ExtensionClass<T>>() {
+        collection.forEach(new Consumer<ExtensionClass<T>>() {
             @Override
             public void accept(ExtensionClass<T> tExtensionClass) {
                 extensionClassMultimap.put(tExtensionClass.getName(), tExtensionClass);

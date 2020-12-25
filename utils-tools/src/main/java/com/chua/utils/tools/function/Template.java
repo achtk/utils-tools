@@ -7,6 +7,7 @@ package com.chua.utils.tools.function;
  * @version 1.0.0
  * @since 2020/10/21
  */
+@FunctionalInterface
 public interface Template<T> {
     /**
      * 获取模板

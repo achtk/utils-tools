@@ -4,6 +4,7 @@ package com.chua.utils.tools.function;
  * 消费者
  * @author CH
  */
+@FunctionalInterface
 public interface IConsumer<I> {
     /**
      * 处理下一个

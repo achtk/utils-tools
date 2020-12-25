@@ -7,6 +7,7 @@ package com.chua.utils.tools.function;
  * @version 1.0.0
  * @since 2020/10/22
  */
+@FunctionalInterface
 public interface BiMatcher<T, T2> {
 
     /**

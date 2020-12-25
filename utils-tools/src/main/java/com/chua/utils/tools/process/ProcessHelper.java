@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 public class ProcessHelper {
 
     private static final Pattern COMMANDS_PATTERN = Pattern.compile("[\\,\\s+]{1}");
+
     /**
      * 创建进程<br>
      * 命令带参数时参数可作为其中一个参数，也可以将命令和参数组合为一个字符串传入
@@ -49,6 +50,21 @@ public class ProcessHelper {
      */
     public static String exec(String command) {
         return exec(command, CharsetHelper.systemCharset());
+    }
+
+    /**
+     * 执行命令<br>
+     * 命令带参数时参数可作为其中一个参数，也可以将命令和参数组合为一个字符串传入
+     *
+     * @param command 命令
+     * @return {@link Process}
+     */
+    public static void execProcess(String command) {
+        try {
+            createProcess(command);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

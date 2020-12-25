@@ -631,35 +631,6 @@ public class BooleanHelper {
         }
     }
 
-    /**
-     * 是否为空
-     *
-     * @param source
-     * @return
-     */
-    public static <T> boolean isEmpty(final Collection<T> source) {
-        return !hasLength(source);
-    }
-
-    /**
-     * 是否为空
-     *
-     * @param source
-     * @return
-     */
-    public static <T> boolean isEmpty(final T[] source) {
-        return !hasLength(source);
-    }
-
-    /**
-     * 是否为空
-     *
-     * @param source
-     * @return
-     */
-    public static boolean isEmpty(final String source) {
-        return StringHelper.isEmpty(source);
-    }
 
     /**
      * 是否不为空

@@ -7,6 +7,7 @@ package com.chua.utils.tools.function;
  * @version 1.0.0
  * @since 2020/10/31
  */
+@FunctionalInterface
 public interface Operable<I, O> {
     /**
      * 操作输出

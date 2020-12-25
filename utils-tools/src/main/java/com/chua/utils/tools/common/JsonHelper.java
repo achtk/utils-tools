@@ -73,7 +73,7 @@ public class JsonHelper {
      * json转对象
      *
      * @param json json
-     * @return String
+     * @return 对象
      */
     public static Object toObject(final String json) {
         try {
@@ -88,7 +88,7 @@ public class JsonHelper {
      * json转对象
      *
      * @param json json
-     * @return
+     * @return List
      */
     public static List<Object> fromJson2List(final String json) {
         return fromJson(json, List.class);
@@ -99,8 +99,8 @@ public class JsonHelper {
      *
      * @param json   json
      * @param tClass 类型
-     * @param <T>
-     * @return
+     * @param <T>    类型
+     * @return T
      */
     public static <T> T fromJson(final String json, final Class<T> tClass) {
         JavaType javaType = OBJECT_MAPPER.getTypeFactory().constructType(tClass);
@@ -112,8 +112,8 @@ public class JsonHelper {
      *
      * @param json     json
      * @param javaType 类型
-     * @param <T>
-     * @return
+     * @param <T>      类型
+     * @return T
      */
     private static <T> T fromJson(final String json, final JavaType javaType) {
         if (null == json) {
@@ -132,8 +132,8 @@ public class JsonHelper {
      *
      * @param url      url
      * @param javaType 类型
-     * @param <T>
-     * @return
+     * @param <T>      类型
+     * @return T
      */
     private static <T> T fromJson(final URL url, final JavaType javaType) {
         if (null == url) {
@@ -152,7 +152,7 @@ public class JsonHelper {
      *
      * @param json   json
      * @param tClass 类型
-     * @return
+     * @return List
      */
     public static <T> List<T> fromJson2List(final String json, final Class<T> tClass) {
         CollectionType collectionType = OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, tClass);
@@ -164,7 +164,7 @@ public class JsonHelper {
      *
      * @param url    url
      * @param tClass 类型
-     * @return
+     * @return List
      */
     public static <T> List<T> fromJson2List(final URL url, final Class<T> tClass) {
         CollectionType collectionType = OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, tClass);
@@ -176,7 +176,7 @@ public class JsonHelper {
      *
      * @param json   json
      * @param tClass 类型
-     * @return
+     * @return Set
      */
     public static <T> Set<T> fromJson2Set(final String json, final Class<T> tClass) {
         CollectionType collectionType = OBJECT_MAPPER.getTypeFactory().constructCollectionType(Set.class, tClass);
@@ -197,7 +197,7 @@ public class JsonHelper {
      * json转对象
      *
      * @param bytes json
-     * @return
+     * @return Map
      */
     public static Map<String, Object> fromJson2Map(final byte[] bytes) {
         if (null == bytes) {
@@ -211,8 +211,8 @@ public class JsonHelper {
      *
      * @param bytes    json
      * @param javaType 类型
-     * @param <T>
-     * @return
+     * @param <T>      类型
+     * @return T
      */
     private static <T> T fromJson(final byte[] bytes, final JavaType javaType) {
         if (null == bytes) {
@@ -230,7 +230,7 @@ public class JsonHelper {
      * json转对象
      *
      * @param json json
-     * @return
+     * @return Map
      */
     public static <V> Map<String, V> fromJson2Map(final String json, final Class<V> valueClass) {
         MapType mapType = OBJECT_MAPPER.getTypeFactory().constructMapType(Map.class, String.class, valueClass);
@@ -241,7 +241,7 @@ public class JsonHelper {
      * json转对象
      *
      * @param json json
-     * @return
+     * @return Map
      */
     public static <K, V> Map<K, V> fromJson2Map(final String json, final Class<K> keyClass, final Class<V> valueClass) {
         MapType mapType = OBJECT_MAPPER.getTypeFactory().constructMapType(Map.class, keyClass, valueClass);
@@ -252,7 +252,7 @@ public class JsonHelper {
      * json转对象
      *
      * @param json json
-     * @return
+     * @return 对象
      */
     public static Object fromJson2Object(final String json) {
         return fromJson(json, Object.class);
@@ -263,8 +263,8 @@ public class JsonHelper {
      *
      * @param xmlString 字符串
      * @param tClass    类型
-     * @param <T>
-     * @return
+     * @param <T>       类型
+     * @return T
      */
     public static <T> T fromXmlJson(final String xmlString, final Class<T> tClass) {
         try {
@@ -280,8 +280,8 @@ public class JsonHelper {
      *
      * @param ymlString 字符串
      * @param tClass    类型
-     * @param <T>
-     * @return
+     * @param <T>       类型
+     * @return T
      */
     public static <T> T fromYmlJson(final String ymlString, final Class<T> tClass) {
         try {
@@ -297,8 +297,8 @@ public class JsonHelper {
      *
      * @param file   文件
      * @param tClass 类型
-     * @param <T>
-     * @return
+     * @param <T>    类型
+     * @return T
      */
     public static <T> T fromJson(final File file, final Class<? extends T> tClass) {
         if (null == file) {
@@ -317,8 +317,8 @@ public class JsonHelper {
      *
      * @param inputStream 流
      * @param tClass      类型
-     * @param <T>
-     * @return
+     * @param <T>         类型
+     * @return T
      */
     public static <T> T fromJson(final InputStream inputStream, final Class<T> tClass) {
         return fromJson(new InputStreamReader(inputStream, Charsets.UTF_8), tClass);
@@ -327,10 +327,22 @@ public class JsonHelper {
     /**
      * 流转对象
      *
+     * @param inputStream 流
+     * @param javaType    类型
+     * @param <T>         类型
+     * @return T
+     */
+    public static <T> T fromJson(final InputStream inputStream, final JavaType javaType) {
+        return fromJson(new InputStreamReader(inputStream, Charsets.UTF_8), javaType);
+    }
+
+    /**
+     * 流转对象
+     *
      * @param inputStreamReader 流
      * @param tClass            类型
-     * @param <T>
-     * @return
+     * @param <T>               类型
+     * @return T
      */
     public static <T> T fromJson(final InputStreamReader inputStreamReader, final Class<T> tClass) {
         try {
@@ -344,12 +356,31 @@ public class JsonHelper {
     }
 
     /**
+     * 流转对象
+     *
+     * @param inputStreamReader 流
+     * @param javaType          类型
+     * @param <T>               类型
+     * @return T
+     */
+    public static <T> T fromJson(final InputStreamReader inputStreamReader, final JavaType javaType) {
+        try {
+            return OBJECT_MAPPER.readValue(inputStreamReader, javaType);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            IoHelper.closeQuietly(inputStreamReader);
+        }
+        return null;
+    }
+
+    /**
      * 文件转对象
      *
      * @param file   文件
      * @param tClass 类型
-     * @param <T>
-     * @return
+     * @param <T>    类型
+     * @return T
      */
     public static <T> T fromYamlJson(final File file, final Class<T> tClass) {
         if (null == file) {
@@ -368,8 +399,8 @@ public class JsonHelper {
      *
      * @param inputStream 流
      * @param tClass      类型
-     * @param <T>
-     * @return
+     * @param <T>         类型
+     * @return T
      */
     public static <T> T fromYamlJson(final InputStream inputStream, final Class<T> tClass) {
         return fromYamlJson(new InputStreamReader(inputStream, Charsets.UTF_8), tClass);
@@ -380,8 +411,8 @@ public class JsonHelper {
      *
      * @param inputStreamReader 流
      * @param tClass            类型
-     * @param <T>
-     * @return
+     * @param <T>               类型
+     * @return T
      */
     public static <T> T fromYamlJson(final InputStreamReader inputStreamReader, final Class<T> tClass) {
         try {
@@ -399,8 +430,8 @@ public class JsonHelper {
      *
      * @param file   文件
      * @param tClass 类型
-     * @param <T>
-     * @return
+     * @param <T>    类型
+     * @return T
      */
     public static <T> T fromXmlJson(final File file, final Class<T> tClass) {
         if (null == file) {
@@ -419,8 +450,8 @@ public class JsonHelper {
      *
      * @param inputStream 流
      * @param tClass      类型
-     * @param <T>
-     * @return
+     * @param <T>         类型
+     * @return T
      */
     public static <T> T fromXmlJson(final InputStream inputStream, final Class<T> tClass) {
         return fromXmlJson(new InputStreamReader(inputStream, Charsets.UTF_8), tClass);
@@ -431,8 +462,8 @@ public class JsonHelper {
      *
      * @param inputStreamReader 流
      * @param tClass            类型
-     * @param <T>
-     * @return
+     * @param <T>               类型
+     * @return T
      */
     public static <T> T fromXmlJson(final InputStreamReader inputStreamReader, final Class<T> tClass) {
         try {
@@ -450,8 +481,8 @@ public class JsonHelper {
      *
      * @param obj    对象
      * @param tClass 类型
-     * @param <T>
-     * @return
+     * @param <T>    类型
+     * @return T
      */
     public static <T> T fromObject(final Object obj, final Class<T> tClass) {
         if (null == obj) {
@@ -480,8 +511,8 @@ public class JsonHelper {
      *
      * @param url    文件
      * @param tClass 类型
-     * @param <T>
-     * @return
+     * @param <T>    类型
+     * @return T
      */
     public static <T> T fromJson(final URL url, final Class<T> tClass) {
         if (null == url) {
@@ -500,8 +531,8 @@ public class JsonHelper {
      *
      * @param bytes  json
      * @param tClass 类型
-     * @param <T>
-     * @return
+     * @param <T>    类型
+     * @return T
      */
     public static <T> T fromJson(final byte[] bytes, final Class<T> tClass) {
         if (null == bytes || null == tClass) {
@@ -519,7 +550,7 @@ public class JsonHelper {
      * 是否为json
      *
      * @param json json
-     * @return
+     * @return 是Json 返回true
      */
     public static boolean isJson(String json) {
         try {

@@ -2,7 +2,6 @@ package com.chua.utils.tools.spi.processor;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.BooleanHelper;
-import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.constant.NumberConstant;
 import com.chua.utils.tools.spi.common.SpiConfigs;
 import com.chua.utils.tools.spi.entity.ExtensionClass;
@@ -163,8 +162,6 @@ public class CustomExtensionProcessor<T> extends AbstractSimpleExtensionProcesso
         String alias = aliasAndClassName[0];
         //类名
         String className = aliasAndClassName[1];
-        //排序
-        String order = aliasAndClassName[2];
         // 读取配置的实现类
         Class<? extends T> tmp;
         try {
@@ -178,15 +175,9 @@ public class CustomExtensionProcessor<T> extends AbstractSimpleExtensionProcesso
             }
             return null;
         }
-        int orderInteger = 0;
-        try {
-            orderInteger = Integer.parseInt(order);
-        } catch (NumberFormatException ignored) {
-        }
         List<ExtensionClass<T>> byClass = buildExtensionClassByClass(tmp);
         for (ExtensionClass<T> aClass : byClass) {
             aClass.setName(alias);
-            aClass.setOrder(orderInteger);
             aClass.setUrl(url);
         }
         return byClass;
@@ -222,7 +213,7 @@ public class CustomExtensionProcessor<T> extends AbstractSimpleExtensionProcesso
             return null;
         }
 
-        String order = "0";
+        String order = "-1";
         int i1 = name.indexOf(nameAndOrder);
         if (i1 > 0) {
             name = name.substring(0, i1).trim();

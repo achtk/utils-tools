@@ -1,14 +1,11 @@
 package com.chua.utils.tools.spi.entity;
 
+import com.chua.utils.tools.aware.NamedFactoryAware;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static com.chua.utils.tools.constant.StringConstant.FILE;
 
@@ -59,6 +56,11 @@ public class ExtensionClass<T> {
      * @see #single
      */
     private T obj;
+
+    /**
+     * 命名工厂
+     */
+    private NamedFactoryAware namedFactoryAware;
     /**
      * 记录时间
      */

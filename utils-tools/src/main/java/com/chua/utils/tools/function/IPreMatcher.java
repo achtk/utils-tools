@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
  * 回调
  * @author CH
  */
+@FunctionalInterface
 public interface IPreMatcher<I> {
     /**
      * 处理下一个

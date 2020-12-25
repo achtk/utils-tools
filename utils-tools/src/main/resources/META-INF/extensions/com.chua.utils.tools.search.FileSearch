@@ -1,0 +1,2 @@
+bfs=com.chua.utils.tools.search.BfsFileSearch
+linux=com.chua.utils.tools.search.LinuxFileSearch

@@ -7,6 +7,7 @@ package com.chua.utils.tools.function;
  * @version 1.0
  * @since 2020/10/24 21:37
  */
+@FunctionalInterface
 public interface Converter<I, O> {
     /**
      * 转化

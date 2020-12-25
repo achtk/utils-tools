@@ -4,6 +4,7 @@ package com.chua.utils.tools.function;
  * 提供者
  * @author CH
  */
+@FunctionalInterface
 public interface ISupplier<O> {
 
     /**

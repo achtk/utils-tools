@@ -1,6 +1,7 @@
 package com.chua.utils.tools.spi.processor;
 
 import com.chua.utils.tools.aware.NamedAware;
+import com.chua.utils.tools.aware.NamedFactoryAware;
 import com.chua.utils.tools.aware.OrderAware;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.spi.Spi;
@@ -79,7 +80,7 @@ public abstract class AbstractSimpleExtensionProcessor<T> implements ExtensionPr
         } catch (Exception e) {
             return Collections.emptyList();
         }
-        if(null == t) {
+        if (null == t) {
             return Collections.emptyList();
         }
         return buildExtensionClassByObject(t);
@@ -173,6 +174,9 @@ public abstract class AbstractSimpleExtensionProcessor<T> implements ExtensionPr
         extensionClass.setInterfaceName(interfaceClass.getName());
         extensionClass.setClassLoader(classLoader);
         extensionClass.setSingle(isSingle);
+        if (t instanceof NamedFactoryAware) {
+            extensionClass.setNamedFactoryAware((NamedFactoryAware) t);
+        }
         return extensionClass;
     }
 

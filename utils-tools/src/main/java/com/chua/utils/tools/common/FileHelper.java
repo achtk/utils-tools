@@ -4,10 +4,12 @@ import com.chua.utils.tools.common.codec.binary.Hex;
 import com.chua.utils.tools.common.filecase.FileWildcard;
 import com.chua.utils.tools.common.filecase.IOCase;
 import com.chua.utils.tools.common.filefilter.*;
+import com.chua.utils.tools.constant.PatternConstant;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.resource.entity.Resource;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -1468,6 +1470,44 @@ public class FileHelper {
      */
     public static boolean wildcardMatch(final String filename, final String wildcardMatcher) {
         return FileWildcard.wildcardMatch(filename, wildcardMatcher, IOCase.SYSTEM);
+    }
+    /**
+     * Checks a filename to see if it matches the specified wildcard matcher,
+     * always testing case-sensitive.
+     * <p>
+     * The wildcard matcher uses the characters '?' and '*' to represent a
+     * single or multiple (zero or more) wildcard characters.
+     * This is the same as often found on Dos/Unix command lines.
+     * The check is case-sensitive always.
+     * <pre>
+     * wildcardMatches("c.txt", "c *.txt")      --&gt; true
+     * wildcardMatches("c.txt", "c *.tx")      --&gt; false
+     * wildcardMatches("c.txt", "*.jpg")      --&gt; false
+     * wildcardMatches("a/b/c.txt", "a/b/*")  --&gt; true
+     * wildcardMatches("c.txt", "*.???")      --&gt; true
+     * wildcardMatches("c.txt", "*.????")     --&gt; false
+     * </pre>
+     * N.B. the sequence "*?" does not work properly at present in match
+     *
+     * @param filename        the filename to match on
+     * @param wildcardMatcher the wildcard string to match against
+     * @return true if the filename matches the wildcard string
+     */
+    public static boolean wildcardMatches(final String filename, final String wildcardMatcher) {
+        List<String> strings = Splitter.on(PatternConstant.PATTERN_EMPTY).trimResults().omitEmptyStrings().splitToList(wildcardMatcher);
+        for (String item : strings) {
+            if(!item.startsWith("*")) {
+                item = "*" + item;
+            }
+
+            if(!item.endsWith("*")) {
+                item += "*";
+            }
+            if(!wildcardMatch(filename, item)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

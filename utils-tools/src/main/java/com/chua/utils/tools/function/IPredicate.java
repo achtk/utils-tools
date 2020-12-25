@@ -4,6 +4,7 @@ package com.chua.utils.tools.function;
  * 回调
  * @author CH
  */
+@FunctionalInterface
 public interface IPredicate<I> {
     /**
      * 处理下一个

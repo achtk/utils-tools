@@ -7,6 +7,7 @@ package com.chua.utils.tools.function;
  * @version 1.0.0
  * @since 2020/12/19
  */
+@FunctionalInterface
 public interface ValueMatcher<E> {
     /**
      * 是否匹配元素

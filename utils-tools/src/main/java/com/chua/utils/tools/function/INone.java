@@ -5,6 +5,7 @@ package com.chua.utils.tools.function;
  * @author CH
  * @since 1.0
  */
+@FunctionalInterface
 public interface INone {
     /**
      * 下一个
