@@ -240,18 +240,19 @@ public class StringUtils extends StringHelper {
      *     <li>{@code StrUtil.isEmpty("abc")    // false}</li>
      * </ul>
      *
-     * <p>注意：该方法与 {@link #isBlank(CharSequence)} 的区别是：该方法不校验空白字符。</p>
+     * <p>注意：该方法与 {@link #isEmpty(CharSequence)} 的区别是：该方法不校验空白字符。</p>
      * <p>建议：</p>
      * <ul>
      *     <li>该方法建议用于工具类或任何可以预期的方法参数的校验中。</li>
-     *     <li>需要同时校验多个字符串时，建议采用 {@link #hasEmpty(CharSequence...)} 或 {@link #isAllEmpty(CharSequence...)}</li>
+     *     <li>需要同时校验多个字符串时，建议采用 {@link #isEmpty(CharSequence)} </li>
      * </ul>
      *
      * @param str 被检测的字符串
      * @return 是否为空
-     * @see #isBlank(CharSequence)
+     * @see #isEmpty(CharSequence)
      */
     public static boolean isEmpty(CharSequence str) {
         return str == null || str.length() == 0;
     }
+
 }
