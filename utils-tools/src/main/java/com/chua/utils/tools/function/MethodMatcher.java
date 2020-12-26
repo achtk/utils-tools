@@ -19,5 +19,5 @@ public interface MethodMatcher {
      * @return
      * @throws Throwable
      */
-    Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable;
+    ScheduleJob intercept(ScheduleJob obj, Method method, ScheduleJob[] args, MethodProxy proxy) throws Throwable;
 }

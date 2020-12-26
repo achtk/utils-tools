@@ -351,6 +351,7 @@ public class ClassHelper extends ClassLoaderHelper {
             try {
                 return tClass.newInstance();
             } catch (Throwable e) {
+                e.printStackTrace();
                 return null;
 //                try {
 //                    if (ReflectionHelper.hasNoArgsConstructor(tClass)) {

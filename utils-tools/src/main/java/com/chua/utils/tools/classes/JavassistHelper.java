@@ -2,6 +2,7 @@ package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.function.able.InitializingCacheable;
+import com.chua.utils.tools.text.IdHelper;
 import com.google.common.base.Strings;
 import javassist.*;
 import javassist.bytecode.ClassFile;
@@ -313,23 +314,87 @@ public class JavassistHelper extends InitializingCacheable {
             }
         }
 
+        boolean anonymousClass = bean.getClass().isAnonymousClass();
+        CtClass newCtClass = null;
+        //if (!anonymousClass) {
+            newCtClass = createClass(bean, consumer, interfaceClass);
+       // } else {
+          //  newCtClass = createAnonymousClass(bean, consumer, interfaceClass);
+      //  }
+        ClassPool classPool = getClassPool();
+        return toEntity(newCtClass, classPool);
+    }
+
+    /**
+     * 非匿名内部类处理
+     *
+     * @param bean           对象
+     * @param consumer       消费者
+     * @param interfaceClass 接口
+     * @return
+     */
+    private static CtClass createClass(Object bean, BiFunction<String, List<Class<?>>, String> consumer, Class<?>[] interfaceClass) throws NotFoundException {
         String name = bean.getClass().getName();
         ClassPool classPool = getClassPool();
-        CtClass ctClass = classPool.get(name);
-        ctClass.setName(name + JAVASSIST);
+        CtClass newCtClass = classPool.get(name);
+        newCtClass.setName(name + JAVASSIST);
+        newCtClass.setModifiers(Modifier.PUBLIC);
 
         for (Class<?> aClass : interfaceClass) {
             try {
                 CtClass interfaceCtClass = classPool.get(aClass.getName());
-                ctClass.addInterface(interfaceCtClass);
+                newCtClass.addInterface(interfaceCtClass);
                 if (null != consumer) {
-                    repairMethods(ctClass, consumer, interfaceCtClass, classPool);
+                    repairMethods(newCtClass, consumer, interfaceCtClass, classPool);
                 }
             } catch (NotFoundException e) {
                 e.getMessage();
             }
         }
-        return toEntity(ctClass, classPool);
+        newCtClass.setModifiers(Modifier.PUBLIC);
+
+        return newCtClass;
+    }
+    /**
+     * 非匿名内部类处理
+     *
+     * @param bean           对象
+     * @param consumer       消费者
+     * @param interfaceClass 接口
+     * @return
+     */
+    private static CtClass createAnonymousClass(Object bean, BiFunction<String, List<Class<?>>, String> consumer, Class<?>[] interfaceClass) throws NotFoundException, CannotCompileException {
+        String name = bean.getClass().getName();
+        ClassPool classPool = getClassPool();
+        CtClass ctClass = classPool.get(name);
+        CtClass newCtClass = classPool.makeClass(name.replace("$", IdHelper.createSimpleUuid()) + JAVASSIST);
+        newCtClass.setModifiers(Modifier.PUBLIC);
+        newCtClass.setSuperclass(ctClass);
+
+        for (Class<?> aClass : interfaceClass) {
+            try {
+                CtClass interfaceCtClass = classPool.get(aClass.getName());
+                newCtClass.addInterface(interfaceCtClass);
+                if (null != consumer) {
+                    CtMethod[] methods = interfaceCtClass.getDeclaredMethods();
+                    for (CtMethod method : methods) {
+                        CtNewMethod.make(
+                                Modifier.PUBLIC,
+                                method.getReturnType(),
+                                method.getName(),
+                                method.getParameterTypes(),
+                                method.getExceptionTypes(),
+                                "{}",
+                                method.getDeclaringClass());
+                    }
+                }
+            } catch (NotFoundException e) {
+                e.getMessage();
+            }
+        }
+        newCtClass.setModifiers(Modifier.PUBLIC);
+
+        return newCtClass;
     }
 
     /**
@@ -360,10 +425,11 @@ public class JavassistHelper extends InitializingCacheable {
             }
             try {
                 String apply = consumer.apply(statelessMethods.getName(), toClass(statelessMethods.getParameterTypes()));
-                if(!Strings.isNullOrEmpty(apply) && !apply.endsWith(";")) {
+                if (!Strings.isNullOrEmpty(apply) && !apply.endsWith(";")) {
                     apply += ";";
                 }
                 statelessMethods.setBody(apply);
+                statelessMethods.setModifiers(Modifier.PUBLIC);
                 ctClass.addMethod(statelessMethods);
             } catch (NotFoundException | CannotCompileException e) {
                 e.printStackTrace();
@@ -419,9 +485,9 @@ public class JavassistHelper extends InitializingCacheable {
         try {
             return ClassHelper.forObject(ctClass.toClass());
         } catch (Throwable e) {
-            if(!(e instanceof CannotCompileException)) {
-               e.printStackTrace();
-               return null;
+            if (!(e instanceof CannotCompileException)) {
+                e.printStackTrace();
+                return null;
             }
             //类加载器
             Loader classLoader = new Loader(classPool);
@@ -436,6 +502,7 @@ public class JavassistHelper extends InitializingCacheable {
 
                 }
             });
+            ctClass.defrost();
             Class<?> aClass = classLoader.loadClass(ctClass.toClass().getName());
             return ClassHelper.forObject(aClass);
         }

@@ -1,7 +1,5 @@
 package com.chua.utils.tools.util;
 
-import lombok.Data;
-
 /**
  * Cron表达式工具类
  * <p>目前支持三种常用的cron表达式 </p>
@@ -14,6 +12,6 @@ import lombok.Data;
  * @version 1.0.0
  * @since 2020/11/25
  */
-public class CronUtil {
+public class CronUtils {
 
 }

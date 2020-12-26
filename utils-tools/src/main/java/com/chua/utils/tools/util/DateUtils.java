@@ -17,6 +17,24 @@ import java.util.Date;
  */
 public class DateUtils extends DateHelper {
     /**
+     * unix 时间长度
+     */
+    private static final int UNIX_LENGTH = 10;
+    /**
+     * 毫秒长度
+     */
+    private static final int MILLISECOND = 13;
+
+
+    private final static String[] DATE_FORMATS = {
+            "EEE, d MMM yyyy HH:mm:ss z",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            "yyyy-MM-dd HH:mm:ss.SSSZ",
+            "yyyy-MM-dd HH:mm:ssZ",
+            "yyyy-MM-dd HH:mm:ss.SSS",
+            "yyyy-MM-dd HH:mm:ss"};
+
+    /**
      * <p>通过尝试各种不同的解析器来解析表示日期的字符串。</ p>
      * <p>解析将依次尝试每种解析模式。
      * 仅当解析了整个输入字符串时，解析才被认为是成功的。
@@ -37,17 +55,54 @@ public class DateUtils extends DateHelper {
      * <p>通过尝试各种不同的解析器来解析表示日期的字符串。</ p>
      * <p>解析将依次尝试每种解析模式。
      * 仅当解析了整个输入字符串时，解析才被认为是成功的。
+     * 如果没有任何匹配的解析模式，则抛出ParseException。</ p>
+     * 解析器将对解析日期宽容。
+     *
+     * @param str 解析日期，不为null
+     * @return 日期
+     * @throws IllegalArgumentException 如果日期字符串或模式数组为null
+     * @throws ParseException           如果没有合适的日期模式（或没有合适的日期）
+     */
+    public static Date parseDate(String str) throws ParseException {
+        return parseDateWithLeniency(str, DATE_FORMATS, true);
+    }
+
+    /**
+     * long 转 Date
+     *
+     * @param longValue 待处理的数据
+     * @return Date
+     * @see Date
+     */
+    public static Date parseDate(final Long longValue) {
+        if (null == longValue) {
+            return null;
+        }
+        int length = longValue.toString().length();
+
+        long newLongValue = longValue;
+        if (length < MILLISECOND) {
+            newLongValue *= ((Double) Math.pow(10D, MILLISECOND - length)).longValue();
+        }
+
+        return new Date(newLongValue);
+    }
+
+    /**
+     * <p>通过尝试各种不同的解析器来解析表示日期的字符串。</ p>
+     * <p>解析将依次尝试每种解析模式。
+     * 仅当解析了整个输入字符串时，解析才被认为是成功的。
      * 如果没有解析模式匹配，则抛出ParseException。</ p>
      *
      * @param str           解析日期，不为null
      * @param parsePatterns 要使用的日期格式模式，请参见SimpleDateFormat，不为null
-     * @param lenient       指定日期/时间解析是否宽松。
+     * @param lenient       指定日期/时间解析。
      * @return Date
      * @throws IllegalArgumentException 如果日期字符串或模式数组为null
      * @throws ParseException           如果没有合适的日期模式
      * @see java.util.Calendar
      */
-    private static Date parseDateWithLeniency(String str, String[] parsePatterns, boolean lenient) throws ParseException {
+    public static Date parseDateWithLeniency(String str, String[] parsePatterns, boolean lenient) throws ParseException {
         if (str == null || parsePatterns == null) {
             throw new IllegalArgumentException("Date and Patterns must not be null");
         }
@@ -55,12 +110,12 @@ public class DateUtils extends DateHelper {
         SimpleDateFormat parser = new SimpleDateFormat();
         parser.setLenient(lenient);
         ParsePosition pos = new ParsePosition(0);
-        for (int i = 0; i < parsePatterns.length; i++) {
+        for (String parsePattern : parsePatterns) {
 
-            String pattern = parsePatterns[i];
+            String pattern = parsePattern;
 
             // LANG-530 - need to make sure 'ZZ' output doesn't get passed to SimpleDateFormat
-            if (parsePatterns[i].endsWith("ZZ")) {
+            if (parsePattern.endsWith("ZZ")) {
                 pattern = pattern.substring(0, pattern.length() - 1);
             }
 
@@ -69,7 +124,7 @@ public class DateUtils extends DateHelper {
 
             String str2 = str;
             // LANG-530 - need to make sure 'ZZ' output doesn't hit SimpleDateFormat as it will ParseException
-            if (parsePatterns[i].endsWith("ZZ")) {
+            if (parsePattern.endsWith("ZZ")) {
                 int signIdx = indexOfSignChars(str2, 0);
                 while (signIdx >= 0) {
                     str2 = reformatTimezone(str2, signIdx);

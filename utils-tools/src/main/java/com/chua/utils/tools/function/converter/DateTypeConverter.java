@@ -3,6 +3,7 @@ package com.chua.utils.tools.function.converter;
 import com.chua.utils.tools.common.DateHelper;
 import com.chua.utils.tools.common.NumberHelper;
 import com.chua.utils.tools.constant.PatternConstant;
+import com.chua.utils.tools.util.DateUtils;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -40,7 +41,7 @@ public class DateTypeConverter implements TypeConverter<Date> {
         }
 
         if (value instanceof Long) {
-            return new Date((Long) value);
+            return DateUtils.parseDate((Long)value);
         }
 
         if (value instanceof String) {

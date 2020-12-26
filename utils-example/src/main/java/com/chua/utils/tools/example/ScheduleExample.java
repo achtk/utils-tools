@@ -1,6 +1,6 @@
 package com.chua.utils.tools.example;
 
-import com.chua.utils.schedule.template.QuartzTemplate;
+import com.chua.utils.schedule.template.QuartzTemplate1;
 import com.chua.utils.tools.common.DateHelper;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.LongAdder;
 public class ScheduleExample {
 
     public static void main(String[] args) throws Exception {
-        QuartzTemplate template = new QuartzTemplate.Builder()
+        QuartzTemplate1 template = new QuartzTemplate1.Builder()
                 .addJob(SimpleJob.class)
                 .addCronTrigger("0/1 * * * * ?")
                 .build();
