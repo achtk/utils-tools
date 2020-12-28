@@ -467,7 +467,7 @@ public class JsonHelper {
      */
     public static <T> T fromXmlJson(final InputStreamReader inputStreamReader, final Class<T> tClass) {
         try {
-            return YAML_OBJECT_MAPPER.readValue(inputStreamReader, tClass);
+            return XML_OBJECT_MAPPER.readValue(inputStreamReader, tClass);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
