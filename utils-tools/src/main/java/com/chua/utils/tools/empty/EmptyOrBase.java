@@ -219,6 +219,7 @@ public class EmptyOrBase extends InitializingCacheable {
             'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
             'Z'};
     public static final Object[] EMPTY_OBJECT = new Object[0];
+    public static final CharSequence TIMEOUT = "timeout";
     private static final String SPECIAL_SYMBOL = ".$|()[{^?*+\\";
 
     /**

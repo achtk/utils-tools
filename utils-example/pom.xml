@@ -290,6 +290,18 @@
             <artifactId>solr-sql</artifactId>
             <version>0.9.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.zbus</groupId>
+            <artifactId>zbus</artifactId>
+            <version>7.2.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.zbus</groupId>
+            <artifactId>zbus</artifactId>
+            <version>1.0.0-b1</version>
+        </dependency>
 
     </dependencies>
 

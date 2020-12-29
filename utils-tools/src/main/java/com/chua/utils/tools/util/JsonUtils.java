@@ -4,6 +4,8 @@ import com.chua.utils.tools.common.JsonHelper;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -182,4 +184,22 @@ public class JsonUtils extends JsonHelper {
         return jsonNode.findPath(key);
     }
 
+    /**
+     * 分隔符转化
+     * <p>{}#Map => {}</p>
+     *
+     * @param source    数据
+     * @param delimiter 分隔符
+     * @return
+     */
+    public static Object fromJson(String source, String delimiter) {
+        if (Strings.isNullOrEmpty(source) || null == delimiter || source.indexOf(delimiter) == -1) {
+            return null;
+        }
+
+        List<String> strings = Splitter.on(delimiter).trimResults().omitEmptyStrings().limit(2).splitToList(source);
+        String value = strings.get(0);
+        String type = strings.get(1);
+        return fromJson(value, ClassUtils.forName(type));
+    }
 }

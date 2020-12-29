@@ -1,6 +1,6 @@
 package com.chua.utils.tools.example;
 
-import com.chua.utils.tools.annotations.Binder;
+import com.chua.utils.tools.annotations.BinderScript;
 import com.chua.utils.tools.bean.creator.ValueCreator;
 import com.chua.utils.tools.bean.script.ValueScript;
 import com.chua.utils.tools.collects.OperateHashMap;
@@ -22,7 +22,7 @@ public class ScriptFactoryExample {
         operate.put(ValueScript.VALUE, "E://test.script");
 
         ValueScript valueScript = new ValueScript();
-        valueScript.setType(Binder.Type.SCRIPT);
+        valueScript.setType(BinderScript.Type.SCRIPT);
         valueScript.setTargetClass(ITestInterface.class);
         valueScript.setOperate(operate);
 

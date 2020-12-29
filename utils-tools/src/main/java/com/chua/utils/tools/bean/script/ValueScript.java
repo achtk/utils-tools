@@ -1,6 +1,6 @@
 package com.chua.utils.tools.bean.script;
 
-import com.chua.utils.tools.annotations.Binder;
+import com.chua.utils.tools.annotations.BinderScript;
 import com.chua.utils.tools.collects.OperateHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,14 +26,14 @@ public class ValueScript {
     /**
      * 类型
      */
-    private Binder.Type type;
+    private BinderScript.Type type;
     /**
      * 参数
      *
-     * @see com.chua.utils.tools.annotations.Binder#type()
-     * @see com.chua.utils.tools.annotations.Binder#value()
-     * @see com.chua.utils.tools.annotations.Binder#profile()
-     * @see com.chua.utils.tools.annotations.Binder#factory()
+     * @see BinderScript#type()
+     * @see BinderScript#value()
+     * @see BinderScript#profile()
+     * @see BinderScript#factory()
      */
     private OperateHashMap operate;
     /**

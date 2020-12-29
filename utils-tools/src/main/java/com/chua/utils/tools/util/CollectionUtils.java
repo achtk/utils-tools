@@ -1,6 +1,7 @@
 package com.chua.utils.tools.util;
 
 import com.chua.utils.tools.collects.collections.CollectionHelper;
+import com.google.common.base.Strings;
 
 import java.util.Collection;
 import java.util.Map;
@@ -130,5 +131,42 @@ public class CollectionUtils extends CollectionHelper {
             return null;
         }
         return source.stream().findFirst().get();
+    }
+
+    /**
+     * 赋值
+     *
+     * @param map        集合
+     * @param <V>        值类型
+     * @param valueClass 值类型
+     */
+    public static <K, V> V putObject(final Map<K, V> map, final K key, final Class<V> valueClass) {
+        return putObject(map, key, null == valueClass ? null : valueClass.getName(), valueClass);
+    }
+
+    /**
+     * 赋值
+     *
+     * @param map        集合
+     * @param objectName 对象名称
+     * @param <V>        值类型
+     * @param valueClass 值类型
+     */
+    public static <K, V> V putObject(final Map<K, V> map, final K key, final String objectName, final Class<V> valueClass) {
+        if (null == map || Strings.isNullOrEmpty(objectName) || null == valueClass || null == key) {
+            return null;
+        }
+        if (String.class.isAssignableFrom(valueClass)) {
+            map.put(key, (V) objectName);
+            return (V) objectName;
+        }
+
+        if (!ClassUtils.isPresent(objectName)) {
+            return null;
+        }
+
+        V v = ClassUtils.forObject(objectName, valueClass);
+        map.put(key, v);
+        return v;
     }
 }

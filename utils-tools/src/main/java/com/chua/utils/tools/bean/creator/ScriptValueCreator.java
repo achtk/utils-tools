@@ -1,7 +1,6 @@
 package com.chua.utils.tools.bean.creator;
 
-import com.chua.utils.tools.annotations.Binder;
-import com.chua.utils.tools.bean.script.BinderScript;
+import com.chua.utils.tools.annotations.BinderScript;
 import com.chua.utils.tools.bean.script.ValueScript;
 import com.chua.utils.tools.classes.JavassistHelper;
 import com.chua.utils.tools.util.StringUtils;
@@ -43,7 +42,7 @@ public class ScriptValueCreator implements ValueCreator {
         if (null == url) {
             return null;
         }
-        BinderScript binderScript = getBinderScript(url);
+        com.chua.utils.tools.bean.script.BinderScript binderScript = getBinderScript(url);
         if (binderScript.getClerical().isEmpty()) {
             return null;
         }
@@ -51,8 +50,8 @@ public class ScriptValueCreator implements ValueCreator {
     }
 
     @Override
-    public boolean isMatcher(Binder.Type type) {
-        return type == Binder.Type.SCRIPT;
+    public boolean isMatcher(BinderScript.Type type) {
+        return type == BinderScript.Type.SCRIPT;
     }
 
     /**
@@ -61,11 +60,11 @@ public class ScriptValueCreator implements ValueCreator {
      * @param url 地址
      * @return 脚本
      */
-    private BinderScript getBinderScript(URL url) {
-        BinderScript binderScript = new BinderScript();
+    private com.chua.utils.tools.bean.script.BinderScript getBinderScript(URL url) {
+        com.chua.utils.tools.bean.script.BinderScript binderScript = new com.chua.utils.tools.bean.script.BinderScript();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
             String line;
-            BinderScript.Clerical clerical = null;
+            com.chua.utils.tools.bean.script.BinderScript.Clerical clerical = null;
             List<String> lines = new ArrayList<>();
             List<String> packages = new ArrayList<>();
             while ((line = br.readLine()) != null) {
@@ -74,7 +73,7 @@ public class ScriptValueCreator implements ValueCreator {
                 if (line.startsWith(">")) {
                     line = line.substring(1);
                     lines.clear();
-                    clerical = new BinderScript.Clerical();
+                    clerical = new com.chua.utils.tools.bean.script.BinderScript.Clerical();
                     List<String> strings = Splitter.on(":").trimResults().splitToList(line);
                     if (strings.size() > 1) {
                         String methodName = strings.get(0).trim();
@@ -128,7 +127,7 @@ public class ScriptValueCreator implements ValueCreator {
      * @param binderScript 脚本
      * @return 对象
      */
-    private Object createInterfaceImpl(Class<?> type, BinderScript binderScript) {
+    private Object createInterfaceImpl(Class<?> type, com.chua.utils.tools.bean.script.BinderScript binderScript) {
         String name = type.getName();
 
         ClassPool classPool = JavassistHelper.getClassPool();
@@ -154,7 +153,7 @@ public class ScriptValueCreator implements ValueCreator {
         }
         ctClassImpl.setModifiers(java.lang.reflect.Modifier.PUBLIC);
 
-        List<BinderScript.Clerical> clerical = binderScript.getClerical();
+        List<com.chua.utils.tools.bean.script.BinderScript.Clerical> clerical = binderScript.getClerical();
 
         for (CtMethod declaredMethod : declaredMethods) {
             CtMethod ctMethod = null;
@@ -238,8 +237,8 @@ public class ScriptValueCreator implements ValueCreator {
      * @param ctClassImpl    实现
      * @return 方法
      */
-    private CtMethod getBinderScriptMethod(List<BinderScript.Clerical> clerical, CtMethod declaredMethod, CtClass ctClassImpl) throws NotFoundException, CannotCompileException {
-        for (BinderScript.Clerical clerical1 : clerical) {
+    private CtMethod getBinderScriptMethod(List<com.chua.utils.tools.bean.script.BinderScript.Clerical> clerical, CtMethod declaredMethod, CtClass ctClassImpl) throws NotFoundException, CannotCompileException {
+        for (com.chua.utils.tools.bean.script.BinderScript.Clerical clerical1 : clerical) {
             CtClass[] parameterTypes = declaredMethod.getParameterTypes();
             CtClass returnType = declaredMethod.getReturnType();
             CtClass[] exceptionTypes = declaredMethod.getExceptionTypes();

@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Binder {
+public @interface BinderScript {
     /**
      * 值
      *

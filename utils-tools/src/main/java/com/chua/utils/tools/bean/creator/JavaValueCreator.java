@@ -1,6 +1,6 @@
 package com.chua.utils.tools.bean.creator;
 
-import com.chua.utils.tools.annotations.Binder;
+import com.chua.utils.tools.annotations.BinderScript;
 import com.chua.utils.tools.bean.script.ValueScript;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.compiler.Compiler;
@@ -54,7 +54,7 @@ public class JavaValueCreator implements ValueCreator {
     }
 
     @Override
-    public boolean isMatcher(Binder.Type type) {
-        return type == Binder.Type.JAVA;
+    public boolean isMatcher(BinderScript.Type type) {
+        return type == BinderScript.Type.JAVA;
     }
 }

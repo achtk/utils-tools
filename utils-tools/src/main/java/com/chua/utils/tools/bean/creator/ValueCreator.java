@@ -1,6 +1,6 @@
 package com.chua.utils.tools.bean.creator;
 
-import com.chua.utils.tools.annotations.Binder;
+import com.chua.utils.tools.annotations.BinderScript;
 import com.chua.utils.tools.bean.script.ValueScript;
 import com.chua.utils.tools.function.ValueMatcher;
 
@@ -11,7 +11,7 @@ import com.chua.utils.tools.function.ValueMatcher;
  * @version 1.0.0
  * @since 2020/12/19
  */
-public interface ValueCreator extends ValueMatcher<Binder.Type> {
+public interface ValueCreator extends ValueMatcher<BinderScript.Type> {
     /**
      * 生成值
      * <p>
