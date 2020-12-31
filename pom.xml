@@ -132,7 +132,7 @@
 
         <bsh.version>2.0b4</bsh.version>
 
-        <slf4j.version>[1.7.30, 3.7.30)</slf4j.version>
+        <slf4j.version>[1.7.25, 1.7.30]</slf4j.version>
 
         <hikaricp.version>3.4.5</hikaricp.version>
         <p6spy.version>3.8.7</p6spy.version>
@@ -270,6 +270,7 @@
         <module>utils-tools-extension-gps</module>
         <module>utils-tools-extension-image</module>
         <module>utils-tools-extension-everything</module>
+        <module>utils-tools-extension-example</module>
     </modules>
 
     <build>

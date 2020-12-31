@@ -15,6 +15,6 @@ public interface HttpClientStreamBuilder {
      *
      * @return
      */
-    public abstract HttpClientBuilder build();
+    HttpClientBuilder build();
 
 }

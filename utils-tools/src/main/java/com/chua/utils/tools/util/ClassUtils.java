@@ -5,9 +5,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import javassist.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -26,6 +26,66 @@ public class ClassUtils extends ClassHelper {
     private static final CharSequence DUPLICATE = "duplicate";
 
     private static final CtClass[] EMPTY = new CtClass[0];
+    private static final Map<String, Class<?>> NAME_PRIMITIVE_MAP = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP;
+    private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP;
+    private static final Map<String, String> ABBREVIATION_MAP;
+    private static final Map<String, String> REVERSE_ABBREVIATION_MAP;
+
+    static {
+        NAME_PRIMITIVE_MAP.put("boolean", Boolean.TYPE);
+        NAME_PRIMITIVE_MAP.put("byte", Byte.TYPE);
+        NAME_PRIMITIVE_MAP.put("char", Character.TYPE);
+        NAME_PRIMITIVE_MAP.put("short", Short.TYPE);
+        NAME_PRIMITIVE_MAP.put("int", Integer.TYPE);
+        NAME_PRIMITIVE_MAP.put("long", Long.TYPE);
+        NAME_PRIMITIVE_MAP.put("double", Double.TYPE);
+        NAME_PRIMITIVE_MAP.put("float", Float.TYPE);
+        NAME_PRIMITIVE_MAP.put("void", Void.TYPE);
+
+        PRIMITIVE_WRAPPER_MAP = new HashMap<>();
+        PRIMITIVE_WRAPPER_MAP.put(Boolean.TYPE, Boolean.class);
+        PRIMITIVE_WRAPPER_MAP.put(Byte.TYPE, Byte.class);
+        PRIMITIVE_WRAPPER_MAP.put(Character.TYPE, Character.class);
+        PRIMITIVE_WRAPPER_MAP.put(Short.TYPE, Short.class);
+        PRIMITIVE_WRAPPER_MAP.put(Integer.TYPE, Integer.class);
+        PRIMITIVE_WRAPPER_MAP.put(Long.TYPE, Long.class);
+        PRIMITIVE_WRAPPER_MAP.put(Double.TYPE, Double.class);
+        PRIMITIVE_WRAPPER_MAP.put(Float.TYPE, Float.class);
+        PRIMITIVE_WRAPPER_MAP.put(Void.TYPE, Void.TYPE);
+
+        WRAPPER_PRIMITIVE_MAP = new HashMap<>();
+        Iterator var0 = PRIMITIVE_WRAPPER_MAP.entrySet().iterator();
+
+        while (var0.hasNext()) {
+            Map.Entry<Class<?>, Class<?>> entry = (Map.Entry) var0.next();
+            Class<?> primitiveClass = entry.getKey();
+            Class<?> wrapperClass = entry.getValue();
+            if (!primitiveClass.equals(wrapperClass)) {
+                WRAPPER_PRIMITIVE_MAP.put(wrapperClass, primitiveClass);
+            }
+        }
+
+        Map<String, String> m = new HashMap();
+        m.put("int", "I");
+        m.put("boolean", "Z");
+        m.put("float", "F");
+        m.put("long", "J");
+        m.put("short", "S");
+        m.put("byte", "B");
+        m.put("double", "D");
+        m.put("char", "C");
+        Map<String, String> r = new HashMap();
+        Iterator var6 = m.entrySet().iterator();
+
+        while (var6.hasNext()) {
+            Map.Entry<String, String> e = (Map.Entry) var6.next();
+            r.put(e.getValue(), e.getKey());
+        }
+
+        ABBREVIATION_MAP = Collections.unmodifiableMap(m);
+        REVERSE_ABBREVIATION_MAP = Collections.unmodifiableMap(r);
+    }
 
     /**
      * 指定行插入代码
@@ -246,7 +306,7 @@ public class ClassUtils extends ClassHelper {
 
             String name = bean.getClass().getName();
             name = name.replace("/", "$");
-            CtClass ctClass = classPool.makeClass( name + "_" + System.nanoTime());
+            CtClass ctClass = classPool.makeClass(name + "_" + System.nanoTime());
             if (null != processor) {
                 processor.accept(ctClass, classPool);
             }
@@ -294,5 +354,48 @@ public class ClassUtils extends ClassHelper {
             }
         }
         return ctClassList.toArray(EMPTY);
+    }
+
+    /**
+     * 设置字段权限
+     *
+     * @param field 字段
+     */
+    public static void setAccessible(Field field) {
+        field.setAccessible(true);
+    }
+
+    /**
+     * 设置方法权限
+     *
+     * @param method 方法
+     */
+    public static void setAccessible(Method method) {
+        method.setAccessible(true);
+    }
+
+    /**
+     * 包裹类
+     *
+     * @param cls 类
+     * @return 包裹类
+     */
+    public static Class<?> wrapperToPrimitive(Class<?> cls) {
+        return WRAPPER_PRIMITIVE_MAP.get(cls);
+    }
+
+    /**
+     * 原始包裹类
+     *
+     * @param cls 类
+     * @return 原始包裹类
+     */
+    public static Class<?> primitiveToWrapper(Class<?> cls) {
+        Class<?> convertedClass = cls;
+        if (cls != null && cls.isPrimitive()) {
+            convertedClass = PRIMITIVE_WRAPPER_MAP.get(cls);
+        }
+
+        return convertedClass;
     }
 }

@@ -1,6 +1,5 @@
 package com.chua.utils.tools.example.entity;
 
-import com.chua.utils.tools.text.IdHelper;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -32,7 +31,7 @@ public class TDemoInfo {
     @Column
     public String test;
 
-    private String uuid = IdHelper.createUuid();
+    private String uuid = "1";
 
     public Integer getId() {
         return id;

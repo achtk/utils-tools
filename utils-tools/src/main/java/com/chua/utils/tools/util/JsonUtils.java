@@ -194,7 +194,7 @@ public class JsonUtils extends JsonHelper {
      */
     public static Object fromJson(String source, String delimiter) {
         if (Strings.isNullOrEmpty(source) || null == delimiter || source.indexOf(delimiter) == -1) {
-            return null;
+            return source;
         }
 
         List<String> strings = Splitter.on(delimiter).trimResults().omitEmptyStrings().limit(2).splitToList(source);

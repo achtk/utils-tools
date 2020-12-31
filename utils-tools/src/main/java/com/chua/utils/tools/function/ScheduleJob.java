@@ -15,7 +15,7 @@ package com.chua.utils.tools.function;
  * @since 2020/12/14
  */
 @FunctionalInterface
-public interface ScheduleJob<T> {
+public interface ScheduleJob {
     /**
      * 调度执行
      *

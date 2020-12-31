@@ -1,5 +1,6 @@
 package com.chua.utils.tools.common;
 
+import com.chua.utils.tools.constant.DateFormatConstant;
 import com.google.common.base.Strings;
 
 import java.text.DateFormat;
@@ -11,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
+import static com.chua.utils.tools.constant.DateFormatConstant.YYYY_MM_DD_HH_MM_SS;
+import static com.chua.utils.tools.constant.DateFormatConstant.YYYY_MM_DD_HH_MM_SS_FMT;
 
 /**
  * 日期工具类
@@ -85,27 +89,6 @@ public class DateHelper {
      */
     public static final long MILLISECONDS_PER_DAY = 86400000;
 
-    public static final String YYYY = "yyyy";
-    public static final String YYYY_MM = "yyyy-MM";
-    public static final String YYYY_MM_DD = "yyyy-MM-dd";
-    public static final String YYYY_MM_DDHH = "yyyy-MM-dd HH";
-    public static final String YYYY_MM_DDHHMM = "yyyy-MM-dd HH:mm";
-    public static final String DATE_FORMAT_TIME = "yyyy-MM-dd HH:mm:ss";
-    public static final String DATE_FORMAT_MILLS_TIME = "yyyy-MM-dd HH:mm:ss.SSS";
-    /**
-     * 普通时间的格式
-     */
-    public static final String YYYY_MM_DDHHMMSS = DATE_FORMAT_TIME;
-    /**
-     * 普通时间的格式
-     */
-    public static final DateTimeFormatter YYYY_MM_DDHHMMSS_DTF = DateTimeFormatter.ofPattern(DATE_FORMAT_TIME);
-
-    /**
-     * 普通时间的格式
-     */
-    public static final String YYYY_MM_DDHHMMSSSSS = DATE_FORMAT_MILLS_TIME;
-
     /**
      * 格式化时间
      * <p>
@@ -122,15 +105,18 @@ public class DateHelper {
 
     /**
      * 格式化时间
-     * <p>
-     * DateHelper.format(new Date()) =
-     * </p>
+     * <br /> 默认格式： yyyy-MM-dd HH:mm:ss
+     * {@link #format(Date, String)}
+     * <pre>
+     *   DateHelper.format(new Date()) =  比如：2020-05-23 17:06:30
+     * </pre>
      *
      * @param date 时间
      * @return 格式化时间
+     * @see #format(Date, String)
      */
     public static String format(Date date) {
-        return format(date, DATE_FORMAT_TIME);
+        return format(date, YYYY_MM_DD_HH_MM_SS);
     }
 
     /**
@@ -156,7 +142,7 @@ public class DateHelper {
      * @return 格式化时间
      */
     public static String format(Date date, DateFormat dateFormat) {
-        DateFormat df = null == dateFormat ? createDefaultDateFormat(YYYY_MM_DDHHMMSS) : dateFormat;
+        DateFormat df = null == dateFormat ? createDefaultDateFormat(YYYY_MM_DD_HH_MM_SS) : dateFormat;
         return df.format(date);
     }
 
@@ -170,7 +156,7 @@ public class DateHelper {
      * @return 格式化时间
      */
     public static String format(long time) {
-        return format(time, DATE_FORMAT_TIME);
+        return format(time, YYYY_MM_DD_HH_MM_SS);
     }
 
     /**
@@ -196,7 +182,7 @@ public class DateHelper {
      * @return 格式化时间
      */
     public static String format(long time, DateFormat dateFormat) {
-        DateFormat df = null == dateFormat ? createDefaultDateFormat(YYYY_MM_DDHHMMSS) : dateFormat;
+        DateFormat df = null == dateFormat ? createDefaultDateFormat(YYYY_MM_DD_HH_MM_SS) : dateFormat;
         return df.format(time);
     }
 
@@ -250,12 +236,12 @@ public class DateHelper {
     }
 
     /**
-     * 当前时间 {@link #YYYY_MM_DDHHMMSS}
+     * 当前时间 {@link DateFormatConstant#YYYY_MM_DD_HH_MM_SS}
      *
      * @return 当前时间
      */
     public static String currentString() {
-        return format(current(), YYYY_MM_DDHHMMSS);
+        return format(current(), YYYY_MM_DD_HH_MM_SS);
     }
 
     /**
@@ -290,7 +276,7 @@ public class DateHelper {
      * @return 之后或之后的日期
      */
     public static String getAfterOrPreNowTime(final String node, final Long num) {
-        return getAfterOrPreNowTime(node, num, YYYY_MM_DDHHMMSS_DTF);
+        return getAfterOrPreNowTime(node, num, YYYY_MM_DD_HH_MM_SS_FMT);
     }
 
     /**
@@ -304,7 +290,7 @@ public class DateHelper {
      *
      * @param node              节点元素（“year”,"month","week","day","huor","minute","second"）
      * @param num               第几天（+：之后，-：之前）
-     * @param dateTimeFormatter 格式化当前时间格式{@link #YYYY_MM_DDHHMMSS_DTF}
+     * @param dateTimeFormatter 格式化当前时间格式{@link #YYYY_MM_DD_HH_MM_SS_FMT}
      * @return 之后或之后的日期
      */
     public static String getAfterOrPreNowTime(String node, Long num, DateTimeFormatter dateTimeFormatter) {

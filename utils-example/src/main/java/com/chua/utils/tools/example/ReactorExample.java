@@ -4,6 +4,8 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,37 +28,20 @@ public class ReactorExample {
         HttpClient httpClient = HttpClient.create();
         HttpClient.ResponseReceiver<?> httpClientResponse = httpClient.secure(sslContextSpec -> {
             sslContextSpec.sslContext(SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE));
-        }).get().uri("https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=java%20ProjectReactor%20MonoHttpClient&fenlei=256&oq=java%2520ProjectReactor%2520httpclient&rsv_pq=bbbc61220003f96c&rsv_t=6307WahNoUFmpzSHzh3I3c5NXvt4RwPYeXe1s7dx7vavNE9q6vLbpNtBCsk&rqlang=cn&rsv_enter=0&rsv_dl=tb&rsv_btype=t&inputT=608&rsv_sug3=836&rsv_sug1=450&rsv_sug7=000&rsv_n=2&rsv_sug4=846&rsv_sug=1");
+        }).get().uri("https://gitee.com/mirrors/reactor-netty");
 
-        Mono<String> stringMono = httpClientResponse.responseContent()
-                .aggregate()
-                .asString();
+        WebClient webClient = WebClient.create();
+        ClientResponse clientResponse =
+                webClient.get().uri("https://gitee.com/mirrors/reactor-netty").exchange().block();
+
+        String string = clientResponse.bodyToMono(String.class).block();
+        System.out.println(string);
+//        String block = httpClientResponse.responseContent()
+//                .aggregate()
+//                .asString().block();
+        //System.out.println(block);
 
 
-        Mono<String> mono = Mono.just("23");
-
-        stringMono.log().doOnSuccess(System.out::println).subscribe(new Subscriber<String>() {
-            @Override
-            public void onSubscribe(Subscription s) {
-                System.out.println("onSubscribe:" + s);
-            }
-
-            @Override
-            public void onNext(String s) {
-                System.out.println("onNext:" + s);
-
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                System.out.println("onError:" + t);
-            }
-
-            @Override
-            public void onComplete() {
-                System.out.println("onComplete:" );
-            }
-        });
     }
 
     private static void testReactor() throws Exception {

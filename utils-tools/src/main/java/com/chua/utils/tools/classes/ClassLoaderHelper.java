@@ -34,7 +34,8 @@ public class ClassLoaderHelper extends ReflectionHelper {
      */
     public static ClassLoader getCallerClassLoader(Class<?> caller) {
         Preconditions.checkNotNull(caller);
-        return caller.getClassLoader();
+        ClassLoader classLoader = caller.getClassLoader();
+        return null == classLoader ? ClassLoader.getSystemClassLoader() : classLoader;
     }
 
     /**

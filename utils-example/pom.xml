@@ -17,6 +17,18 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+            <version>2.3.4.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.xkzhangsan</groupId>
+            <artifactId>xk-time</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>io.projectreactor.netty</groupId>
             <artifactId>reactor-netty</artifactId>
             <version>[0.9.12.RELEASE, 1.0.0)</version>
@@ -26,6 +38,12 @@
             <groupId>it.sauronsoftware.cron4j</groupId>
             <artifactId>cron4j</artifactId>
             <version>2.2.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.jsonzou</groupId>
+            <artifactId>jmockdata</artifactId>
+            <version>4.2.0</version>
         </dependency>
 
         <dependency>
@@ -99,6 +117,12 @@
             <groupId>com.chua</groupId>
             <artifactId>utils-http-extension-httpclient</artifactId>
             <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.javalbert</groupId>
+            <artifactId>faster-than-reflection</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>

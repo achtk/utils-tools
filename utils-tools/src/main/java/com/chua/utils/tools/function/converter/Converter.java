@@ -30,6 +30,20 @@ public class Converter {
         return null == type ? VOID_TYPE_CONVERTER : TYPE_CONVERTER.get(type);
     }
 
+
+    /**
+     * 数据转化
+     *
+     * @param value  数据
+     * @param target 目标类型
+     * @param <T>    类型
+     * @return 目标类型
+     */
+    public static <T> T convertIfNecessary(Object value, Class<T> target) {
+        TypeConverter typeConverter = getTypeConverter(target);
+        return null == typeConverter ? null : (T) typeConverter.convert(value);
+    }
+
     /**
      * 注入类型转化器
      *

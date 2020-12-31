@@ -3,6 +3,9 @@ package com.chua.utils.tools.util;
 import com.chua.utils.tools.common.StringHelper;
 import com.google.common.base.Strings;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_EMPTY;
 
@@ -255,4 +258,101 @@ public class StringUtils extends StringHelper {
         return str == null || str.length() == 0;
     }
 
+    /**
+     * 获取字符串中的时区
+     *
+     * @param timeZoneString 数据
+     * @return 时区
+     */
+    public static TimeZone parseTimeZoneString(String timeZoneString) {
+        TimeZone timeZone = TimeZone.getTimeZone(timeZoneString);
+        if ("GMT".equals(timeZone.getID()) && !timeZoneString.startsWith("GMT")) {
+            // We don't want that GMT fallback...
+            throw new IllegalArgumentException("Invalid time zone specification '" + timeZoneString + "'");
+        }
+        return timeZone;
+    }
+
+    /**
+     * 获取字符串中的位置
+     * <br /> 来自Spring
+     *
+     * @param localeString 元数据
+     * @return Locale
+     */
+    public static Locale parseLocaleString(String localeString) {
+        String[] parts = tokenizeToStringArray(localeString, "_ ", false, false);
+        String language = (parts.length > 0 ? parts[0] : "");
+        String country = (parts.length > 1 ? parts[1] : "");
+
+        validateLocalePart(language);
+        validateLocalePart(country);
+
+        String variant = "";
+        if (parts.length > 2) {
+            // There is definitely a variant, and it is everything after the country
+            // code sans the separator between the country code and the variant.
+            int endIndexOfCountryCode = localeString.indexOf(country, language.length()) + country.length();
+            // Strip off any leading '_' and whitespace, what's left is the variant.
+            variant = trimLeadingWhitespace(localeString.substring(endIndexOfCountryCode));
+            if (variant.startsWith("_")) {
+                variant = trimLeadingCharacter(variant, '_');
+            }
+        }
+        return (language.length() > 0 ? new Locale(language, country, variant) : null);
+    }
+
+    /**
+     * 从给定的{@code String}修剪前导空格。
+     * <br /> 来自Spring
+     *
+     * @param str the {@code String} to check
+     * @return the trimmed {@code String}
+     * @see java.lang.Character#isWhitespace
+     */
+    public static String trimLeadingWhitespace(String str) {
+        if (!hasLength(str)) {
+            return str;
+        }
+
+        StringBuilder sb = new StringBuilder(str);
+        while (sb.length() > 0 && Character.isWhitespace(sb.charAt(0))) {
+            sb.deleteCharAt(0);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 修剪给定的{@code String}中所有出现的提供的前导字符。
+     *
+     * @param str              {@code String}进行检查
+     * @param leadingCharacter the leading character to be trimmed
+     * @return the trimmed {@code String}
+     */
+    public static String trimLeadingCharacter(String str, char leadingCharacter) {
+        if (!hasLength(str)) {
+            return str;
+        }
+
+        StringBuilder sb = new StringBuilder(str);
+        while (sb.length() > 0 && sb.charAt(0) == leadingCharacter) {
+            sb.deleteCharAt(0);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 检验字符串
+     *
+     * @param localePart 本地字符串
+     */
+    private static void validateLocalePart(String localePart) {
+        for (int i = 0; i < localePart.length(); i++) {
+            char ch = localePart.charAt(i);
+            if (ch != ' ' && ch != '_' && ch != '#' && !Character.isLetterOrDigit(ch)) {
+                throw new IllegalArgumentException(
+                        "Locale part \"" + localePart + "\" contains invalid characters");
+            }
+        }
+    }
 }

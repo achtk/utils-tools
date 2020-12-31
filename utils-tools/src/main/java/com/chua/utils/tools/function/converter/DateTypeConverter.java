@@ -5,6 +5,7 @@ import com.chua.utils.tools.common.NumberHelper;
 import com.chua.utils.tools.constant.PatternConstant;
 import com.chua.utils.tools.util.DateUtils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
@@ -53,6 +54,10 @@ public class DateTypeConverter implements TypeConverter<Date> {
                 }
 
 
+                try {
+                    return DateUtils.parseDate(newValue);
+                } catch (ParseException e) {
+                }
                 if (FORMAT_DATE3.matcher(newValue).find()) {
                     return FORMAT_DATE_SDF3.get().parse(newValue);
                 }
