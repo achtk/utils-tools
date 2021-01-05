@@ -1,1 +1,1 @@
-url=com.chua.utils.tools.http.http.HttpClientFactory
+url=com.chua.utils.tools.http.factory.UrlClientFactory

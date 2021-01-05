@@ -1,6 +1,7 @@
 package com.chua.utils.tools.http.http;
 
 import com.chua.utils.tools.http.stream.HttpClientStream;
+import com.chua.utils.tools.spi.Spi;
 
 import static com.chua.utils.tools.constant.HttpConstant.*;
 
@@ -11,6 +12,7 @@ import static com.chua.utils.tools.constant.HttpConstant.*;
  * @version 1.0.0
  * @since 2020/3/21 14:08
  */
+@Spi("url")
 public interface HttpClientFactory {
     /**
      * get

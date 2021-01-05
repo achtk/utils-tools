@@ -1,10 +1,10 @@
 package com.chua.utils.http.httpclient.build;
 
+import com.chua.utils.http.httpclient.sync.Async;
+import com.chua.utils.http.httpclient.sync.Sync;
 import com.chua.utils.tools.http.callback.ResponseCallback;
 import com.chua.utils.tools.http.config.RequestConfig;
 import com.chua.utils.tools.http.entity.ResponseEntity;
-import com.chua.utils.http.httpclient.sync.Async;
-import com.chua.utils.http.httpclient.sync.Sync;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.chua.utils.tools.constant.HttpConstant.*;
@@ -32,17 +32,18 @@ public class HttpClientBuilder implements com.chua.utils.tools.http.builder.Http
      * @return
      */
     @Override
-    public ResponseEntity execute() {
+    public <T> ResponseEntity<T> execute(Class<T> tClass) {
+        ResponseEntity responseEntity = null;
         if (HTTP_METHOD_GET.equals(requestConfig.getMethod())) {
-            return sync.executeGet();
+            responseEntity = sync.executeGet();
         } else if (HTTP_METHOD_POST.equals(requestConfig.getMethod())) {
-            return sync.executePost();
+            responseEntity = sync.executePost();
         } else if (HTTP_METHOD_PUT.equals(requestConfig.getMethod())) {
-            return sync.executePut();
+            responseEntity = sync.executePut();
         } else if (HTTP_METHOD_DELETE.equals(requestConfig.getMethod())) {
-            return sync.executeDelete();
+            responseEntity = sync.executeDelete();
         }
-        return null;
+        return (ResponseEntity<T>) createResponseEntity(responseEntity, tClass);
     }
 
 
@@ -50,15 +51,16 @@ public class HttpClientBuilder implements com.chua.utils.tools.http.builder.Http
      * @return
      */
     @Override
-    public void execute(final ResponseCallback callback) {
+    public <T> void execute(final ResponseCallback callback, Class<T> tClass) {
+        ResponseCallback responseCallback = createCallback(callback, tClass);
         if (HTTP_METHOD_GET.equals(requestConfig.getMethod())) {
-            async.executeGet(callback);
+            async.executeGet(responseCallback);
         } else if (HTTP_METHOD_POST.equals(requestConfig.getMethod())) {
-            async.executePost(callback);
+            async.executePost(responseCallback);
         } else if (HTTP_METHOD_PUT.equals(requestConfig.getMethod())) {
-            async.executePut(callback);
+            async.executePut(responseCallback);
         } else if (HTTP_METHOD_DELETE.equals(requestConfig.getMethod())) {
-            async.executeDelete(callback);
+            async.executeDelete(responseCallback);
         }
     }
 

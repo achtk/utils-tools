@@ -1,13 +1,13 @@
 package com.chua.utils.http.okhttp.stream;
 
-import com.chua.utils.tools.http.callback.ResponseCallback;
-import com.chua.utils.tools.http.config.RequestConfig;
-import com.chua.utils.tools.http.entity.ResponseEntity;
 import com.chua.utils.http.okhttp.downloader.IHttpDownloader;
 import com.chua.utils.http.okhttp.enums.HttpMethod;
 import com.chua.utils.http.okhttp.http.OkHttpHelper;
 import com.chua.utils.tools.common.HttpClientHelper;
 import com.chua.utils.tools.http.builder.HttpClientBuilder;
+import com.chua.utils.tools.http.callback.ResponseCallback;
+import com.chua.utils.tools.http.config.RequestConfig;
+import com.chua.utils.tools.http.entity.ResponseEntity;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
@@ -58,14 +58,14 @@ public class OkHttpStreamBuilder implements HttpClientBuilder {
      * @return
      */
     @Override
-    public ResponseEntity execute() {
-
+    public <T> ResponseEntity<T> execute(Class<T> tClass) {
         OkHttpClient okHttp = getRequest();
+        ResponseEntity responseEntity = null;
 
         if (httpMethod == HttpMethod.GET) {
             try {
                 Response execute = okHttp.newCall(this.builder.build()).execute();
-                return new ResponseEntity(execute.code(), execute.body().string(), execute.message());
+                responseEntity = new ResponseEntity(execute.code(), execute.body().string(), execute.message());
             } catch (IOException e) {
                 if (null != requestConfig.getHandler()) {
                     return requestConfig.getHandler().throwable(e);
@@ -81,7 +81,7 @@ public class OkHttpStreamBuilder implements HttpClientBuilder {
             }
             try {
                 Response execute = okHttp.newCall(post.build()).execute();
-                return new ResponseEntity(execute.code(), execute.body().string());
+                responseEntity = new ResponseEntity(execute.code(), execute.body().string());
             } catch (IOException e) {
                 if (null != requestConfig.getHandler()) {
                     return requestConfig.getHandler().throwable(e);
@@ -97,7 +97,7 @@ public class OkHttpStreamBuilder implements HttpClientBuilder {
             }
             try {
                 Response execute = okHttp.newCall(post.build()).execute();
-                return new ResponseEntity(execute.code(), execute.body().string());
+                responseEntity = new ResponseEntity(execute.code(), execute.body().string());
             } catch (IOException e) {
                 if (null != requestConfig.getHandler()) {
                     return requestConfig.getHandler().throwable(e);
@@ -113,21 +113,21 @@ public class OkHttpStreamBuilder implements HttpClientBuilder {
             }
             try {
                 Response execute = okHttp.newCall(post.build()).execute();
-                return new ResponseEntity(execute.code(), execute.body().string());
+                responseEntity = new ResponseEntity(execute.code(), execute.body().string());
             } catch (IOException e) {
                 if (null != requestConfig.getHandler()) {
                     return requestConfig.getHandler().throwable(e);
                 }
             }
         }
-        return null;
+        return createResponseEntity(responseEntity, tClass);
     }
 
     /**
      * @return
      */
     @Override
-    public void execute(final ResponseCallback callback) {
+    public <T> void execute(final ResponseCallback callback, Class<T> tClass) {
         OkHttpClient okHttp = getRequest();
         Request.Builder post = null;
 
@@ -139,7 +139,7 @@ public class OkHttpStreamBuilder implements HttpClientBuilder {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                callback.onResponse(new ResponseEntity(response.code(), response.body().string()));
+                callback.onResponse(createResponseEntity(new ResponseEntity(response.code(), response.body().string()), tClass));
             }
         };
         if (httpMethod == HttpMethod.GET) {

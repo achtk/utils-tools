@@ -3,6 +3,7 @@ package com.chua.utils.tools.spring.helper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.http.config.RequestConfig;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.http.HttpEntity;
@@ -16,7 +17,9 @@ import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.RestClientException;
 
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 
@@ -74,7 +77,7 @@ public class SpringClientAsyncHelper {
      */
     private String packageGetUrl(RequestConfig requestConfig) {
         String url = requestConfig.getUrl();
-        Map<String, Object> bodyers = requestConfig.getBodyers();
+        Map<String, Object> bodyers = requestConfig.getBody();
         if (!BooleanHelper.hasLength(bodyers)) {
             return url;
         }
@@ -92,7 +95,7 @@ public class SpringClientAsyncHelper {
         if (log.isDebugEnabled()) {
             log.debug("请求信息: {}", requestConfig.getUrl());
         }
-        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBodyers()), packageHeader(requestConfig.getHeaders()));
+        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBody()), packageHeader(requestConfig.getHeaders()));
         try {
             return asyncRestTemplate.exchange(requestConfig.getUrl(), HttpMethod.POST, httpEntity, Object.class);
         } catch (RestClientException e) {
@@ -108,7 +111,7 @@ public class SpringClientAsyncHelper {
         if (log.isDebugEnabled()) {
             log.debug("请求信息: {}", requestConfig.getUrl());
         }
-        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBodyers()), packageHeader(requestConfig.getHeaders()));
+        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBody()), packageHeader(requestConfig.getHeaders()));
         try {
             return asyncRestTemplate.exchange(requestConfig.getUrl(), HttpMethod.PUT, httpEntity, Object.class);
         } catch (RestClientException e) {
@@ -124,7 +127,7 @@ public class SpringClientAsyncHelper {
         if (log.isDebugEnabled()) {
             log.debug("请求信息: {}", requestConfig.getUrl());
         }
-        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBodyers()), packageHeader(requestConfig.getHeaders()));
+        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBody()), packageHeader(requestConfig.getHeaders()));
         try {
             ListenableFuture<ResponseEntity<Object>> exchange = asyncRestTemplate.exchange(requestConfig.getUrl(), HttpMethod.DELETE, httpEntity, Object.class);
             return exchange;
@@ -159,15 +162,15 @@ public class SpringClientAsyncHelper {
      * @return
      * @throws UnsupportedEncodingException
      */
-    private HttpHeaders packageHeader(final Map<String, Object> params) {
+    private HttpHeaders packageHeader(final Multimap<String, String> params) {
         // 创建访问的地址
         HttpHeaders headers = new HttpHeaders();
-        if (params != null) {
-            Set<Map.Entry<String, Object>> entrySet = params.entrySet();
-            for (Map.Entry<String, Object> entry : entrySet) {
-                Object value = entry.getValue();
-                headers.put(entry.getKey(), null == value ? Collections.emptyList() : (value instanceof List ? (List<String>) value : Lists.newArrayList(value.toString())));
-            }
+        if (params == null) {
+            return headers;
+        }
+        Set<String> keySet = params.keySet();
+        for (String key : keySet) {
+            headers.put(key, Lists.newArrayList(params.get(key)));
         }
         return headers;
     }

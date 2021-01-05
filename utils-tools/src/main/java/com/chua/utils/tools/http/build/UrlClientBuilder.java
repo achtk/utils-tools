@@ -26,21 +26,23 @@ public class UrlClientBuilder implements HttpClientBuilder {
     }
 
     @Override
-    public ResponseEntity execute() {
+    public <T> ResponseEntity<T> execute(Class<T> tClass) {
+        ResponseEntity responseEntity = null;
         if (HTTP_METHOD_GET.equals(requestConfig.getMethod())) {
-            return sync.executeGet();
+            responseEntity = sync.executeGet();
         } else if (HTTP_METHOD_POST.equals(requestConfig.getMethod())) {
-            return sync.executePost();
+            responseEntity = sync.executePost();
         } else if (HTTP_METHOD_PUT.equals(requestConfig.getMethod())) {
-            return sync.executePut();
+            responseEntity = sync.executePut();
         } else if (HTTP_METHOD_DELETE.equals(requestConfig.getMethod())) {
-            return sync.executeDelete();
+            responseEntity = sync.executeDelete();
         }
-        return null;
+
+        return (ResponseEntity<T>) createResponseEntity(responseEntity, tClass);
     }
 
     @Override
-    public void execute(ResponseCallback responseCallback) {
+    public <T> void execute(ResponseCallback responseCallback, Class<T> tClass) {
 
     }
 }

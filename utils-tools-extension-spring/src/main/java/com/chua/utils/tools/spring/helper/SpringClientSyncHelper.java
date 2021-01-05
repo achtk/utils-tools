@@ -1,9 +1,10 @@
 package com.chua.utils.tools.spring.helper;
 
+import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.http.config.RequestConfig;
 import com.chua.utils.tools.http.http.HttpStatus;
-import com.chua.utils.tools.common.BooleanHelper;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,12 +16,15 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 
 /**
  * springhttp工具类
+ *
  * @author CH
  */
 @Slf4j
@@ -64,17 +68,18 @@ public class SpringClientSyncHelper {
 
     /**
      * 组装Get-Url
+     *
      * @param requestConfig
      * @return
      */
     private String packageGetUrl(RequestConfig requestConfig) {
         String url = requestConfig.getUrl();
-        Map<String, Object> bodyers = requestConfig.getBodyers();
-        if(!BooleanHelper.hasLength(bodyers)) {
+        Map<String, Object> body = requestConfig.getBody();
+        if (!BooleanHelper.hasLength(body)) {
             return url;
         }
         StringBuffer sb = new StringBuffer();
-        for (Map.Entry<String, Object> entry : bodyers.entrySet()) {
+        for (Map.Entry<String, Object> entry : body.entrySet()) {
             sb.append("&").append(entry.getKey()).append("=").append(entry.getValue());
         }
         return url + "?" + sb.substring(1);
@@ -87,7 +92,7 @@ public class SpringClientSyncHelper {
         if (log.isDebugEnabled()) {
             log.debug("请求信息: {}", requestConfig.getUrl());
         }
-        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBodyers()), packageHeader(requestConfig.getHeaders()));
+        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBody()), packageHeader(requestConfig.getHeaders()));
         try {
             ResponseEntity<String> exchange = restTemplate.exchange(requestConfig.getUrl(), HttpMethod.POST, httpEntity, String.class);
             return new com.chua.utils.tools.http.entity.ResponseEntity(exchange.getStatusCode().value(), exchange.getBody());
@@ -104,7 +109,7 @@ public class SpringClientSyncHelper {
         if (log.isDebugEnabled()) {
             log.debug("请求信息: {}", requestConfig.getUrl());
         }
-        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBodyers()), packageHeader(requestConfig.getHeaders()));
+        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBody()), packageHeader(requestConfig.getHeaders()));
         try {
             ResponseEntity<String> exchange = restTemplate.exchange(requestConfig.getUrl(), HttpMethod.PUT, httpEntity, String.class);
             return new com.chua.utils.tools.http.entity.ResponseEntity(exchange.getStatusCode().value(), exchange.getBody());
@@ -121,7 +126,7 @@ public class SpringClientSyncHelper {
         if (log.isDebugEnabled()) {
             log.debug("请求信息: {}", requestConfig.getUrl());
         }
-        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBodyers()), packageHeader(requestConfig.getHeaders()));
+        HttpEntity httpEntity = new HttpEntity(packageBody(requestConfig.getBody()), packageHeader(requestConfig.getHeaders()));
         try {
             ResponseEntity<String> exchange = restTemplate.exchange(requestConfig.getUrl(), HttpMethod.DELETE, httpEntity, String.class);
             return new com.chua.utils.tools.http.entity.ResponseEntity(exchange.getStatusCode().value(), exchange.getBody());
@@ -156,33 +161,35 @@ public class SpringClientSyncHelper {
      * @return
      * @throws UnsupportedEncodingException
      */
-    private HttpHeaders packageHeader(final Map<String, Object> params) {
+    private HttpHeaders packageHeader(final Multimap<String, String> headers) {
         // 创建访问的地址
-        HttpHeaders headers = new HttpHeaders();
-        if (params != null) {
-            Set<Map.Entry<String, Object>> entrySet = params.entrySet();
-            for (Map.Entry<String, Object> entry : entrySet) {
-                Object value = entry.getValue();
-                headers.put(entry.getKey(), null == value ? Collections.emptyList() : (value instanceof List ? (List<String>) value : Lists.newArrayList(value.toString())));
-            }
+        HttpHeaders httpHeaders = new HttpHeaders();
+        if (headers != null) {
+            return httpHeaders;
         }
-        return headers;
+
+        Set<String> keySet = headers.keySet();
+        for (String key : keySet) {
+            httpHeaders.put(key, Lists.newArrayList(headers.get(key)));
+        }
+        return httpHeaders;
     }
 
 
     /**
      * 渲染template
+     *
      * @param requestConfig 请求参数
      * @return
      */
     private RestTemplate renderTemplate(RequestConfig requestConfig) {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
 
-        if(null != requestConfig.getConnectTimeout() && requestConfig.getConnectTimeout() > 0) {
+        if (null != requestConfig.getConnectTimeout() && requestConfig.getConnectTimeout() > 0) {
             requestFactory.setConnectTimeout(requestConfig.getConnectTimeout().intValue());
         }
 
-        if(null != requestConfig.getReadTimeout() && requestConfig.getReadTimeout() > 0) {
+        if (null != requestConfig.getReadTimeout() && requestConfig.getReadTimeout() > 0) {
             requestFactory.setReadTimeout(requestConfig.getReadTimeout().intValue());
         }
 

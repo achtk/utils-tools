@@ -7,19 +7,17 @@ import com.chua.utils.tools.spring.http.build.SpringClientBuilder;
 
 /**
  * spring客户端流操作
+ *
  * @author CH
  */
-public class SpringClientStream extends HttpClientStream {
+public class RestTemplateClientStream extends HttpClientStream {
 
-    public SpringClientStream(String method) {
-        requestConfig.setMethod(method);
+    public RestTemplateClientStream(String method) {
+        super(method);
     }
 
     @Override
     public HttpClientBuilder build() {
-        if(isNotBlank(requestConfig.getUrl())) {
-            return new SpringClientBuilder(requestConfig);
-        }
-        return null;
+        return new SpringClientBuilder(getRequestConfig());
     }
 }

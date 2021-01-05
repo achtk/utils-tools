@@ -1,8 +1,8 @@
 package com.chua.utils.http.httpclient.sync;
 
+import com.chua.utils.http.httpclient.handler.HttpClientHandler;
 import com.chua.utils.tools.http.config.RequestConfig;
 import com.chua.utils.tools.http.entity.ResponseEntity;
-import com.chua.utils.http.httpclient.handler.HttpClientHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -19,6 +19,7 @@ import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPAC
 
 /**
  * 同步http
+ *
  * @author Administrator
  */
 @Slf4j
@@ -35,12 +36,12 @@ public class Sync extends HttpClientHandler {
      * @return
      */
     public ResponseEntity executeDelete() {
-        Map<String, Object> bodes = requestConfig.getBodyers();
+        Map<String, Object> bodes = requestConfig.getBody();
         if (bodes == null) {
             bodes = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         }
         bodes.put("_method", "delete");
-        requestConfig.setBodyers(bodes);
+        requestConfig.setBody(bodes);
         return executePost();
     }
 
@@ -61,7 +62,7 @@ public class Sync extends HttpClientHandler {
         // 设置请求头
         packageHeader(requestConfig.getHeaders(), httpPut);
 
-        Map<String, Object> bodes = requestConfig.getBodyers();
+        Map<String, Object> bodes = requestConfig.getBody();
         resetParams(bodes, httpPut);
 
         CloseableHttpResponse httpResponse = null;
@@ -70,14 +71,12 @@ public class Sync extends HttpClientHandler {
             return getHttpClientResult(httpResponse, httpClient, httpPut);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("请求异常, 地址: {}, 请求参数: {}", url, null != bodes && !bodes.isEmpty() ? bodes : requestConfig.getText());
+            log.error("请求异常, 地址: {}, 请求参数: {}", url, bodes);
         } finally {
             release(httpResponse, httpClient);
         }
         return null;
     }
-
-
 
 
     /**
@@ -97,7 +96,7 @@ public class Sync extends HttpClientHandler {
         // 设置请求头
         packageHeader(requestConfig.getHeaders(), httpPost);
 
-        Map<String, Object> bodyers = requestConfig.getBodyers();
+        Map<String, Object> bodyers = requestConfig.getBody();
         // 设置请求体
         resetParams(bodyers, httpPost);
 
@@ -109,7 +108,7 @@ public class Sync extends HttpClientHandler {
             return getHttpClientResult(httpResponse, httpClient, httpPost);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("请求异常, 地址: {}, 请求参数: {}", url, null != bodyers && !bodyers.isEmpty() ? bodyers : requestConfig.getText());
+            log.error("请求异常, 地址: {}, 请求参数: {}", url, bodyers);
         } finally {
             // 释放资源
             release(httpResponse, httpClient);
@@ -128,7 +127,7 @@ public class Sync extends HttpClientHandler {
         // 创建访问的地址
         URIBuilder uriBuilder = null;
         try {
-            uriBuilder = packageUriBuilder(requestConfig.getUrl(), requestConfig.getBodyers());
+            uriBuilder = packageUriBuilder(requestConfig.getUrl(), requestConfig.getBody());
         } catch (URISyntaxException e) {
             log.error("获取uri失败!!", e);
             return null;

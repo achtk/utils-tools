@@ -1,23 +1,23 @@
 package com.chua.utils.tools.http.stream;
 
 
+import com.chua.utils.tools.http.build.UrlClientBuilder;
+import com.chua.utils.tools.http.builder.HttpClientBuilder;
+
 /**
  * url builder
  *
  * @author CHTK
  */
-public class UrlClientStream implements HttpClientStream {
+public class UrlClientStream extends HttpClientStream implements ClientStream {
 
-    @Override
-    public JsonClientStream newJsonStream() {
-        return null;
+
+    public UrlClientStream(String method) {
+        super(method);
     }
 
     @Override
-    public FromClientStream newFromStream() {
-        return new FromClientStream() {
-        };
+    public HttpClientBuilder build() {
+        return new UrlClientBuilder(getRequestConfig());
     }
-
-
 }

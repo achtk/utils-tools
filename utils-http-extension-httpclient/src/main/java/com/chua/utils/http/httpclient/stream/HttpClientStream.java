@@ -10,11 +10,8 @@ import com.chua.utils.http.httpclient.build.HttpClientBuilder;
  */
 public class HttpClientStream extends com.chua.utils.tools.http.stream.HttpClientStream {
 
-    public HttpClientStream() {
-    }
-
     public HttpClientStream(String method) {
-        requestConfig.setMethod(method);
+        super(method);
     }
 
     /**
@@ -24,10 +21,7 @@ public class HttpClientStream extends com.chua.utils.tools.http.stream.HttpClien
      */
     @Override
     public HttpClientBuilder build() {
-        if (isNotBlank(requestConfig.getUrl())) {
-            return new HttpClientBuilder(requestConfig);
-        }
-        return null;
+        return new HttpClientBuilder(getRequestConfig());
     }
 
 

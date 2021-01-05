@@ -1,13 +1,14 @@
 package com.chua.utils.tools.http.sync;
 
-import com.chua.utils.tools.http.config.RequestConfig;
-import com.chua.utils.tools.http.entity.ResponseEntity;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.HttpClientHelper;
 import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.constant.HttpConstant;
+import com.chua.utils.tools.http.config.RequestConfig;
+import com.chua.utils.tools.http.entity.ResponseEntity;
 import com.google.common.base.Strings;
+import com.google.common.collect.Multimap;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,8 +21,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static com.chua.utils.tools.constant.HttpConstant.*;
 
@@ -104,18 +107,18 @@ public class Sync {
             //设置缓存
             analysisCache(connection, method);
             //设置消息体
-            analysisBodyer(connection, method);
+            alisander(connection, method);
             //设置配置
             analysisRequestConfig(connection);
             // 建立实际的连接
             // 打开到此 URL 引用的资源的通信链接（如果尚未建立这样的连接）
             // 如果在已打开连接（此时 connected 字段的值为 true）的情况下调用 connect 方法，则忽略该调用
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug("==================================================");
             }
             log.info("发送的URL: {}", requestConfig.getUrl());
-            if(log.isDebugEnabled()) {
-                log.debug("消息体: {}", JsonHelper.toFormatJson(requestConfig.getBodyers()));
+            if (log.isDebugEnabled()) {
+                log.debug("消息体: {}", JsonHelper.toFormatJson(requestConfig.getBody()));
                 log.debug("==================================================");
             }
             connection.connect();
@@ -156,31 +159,20 @@ public class Sync {
      *
      * @param connection 链接
      */
-    private void analysisBodyer(HttpURLConnection connection, String method) {
+    private void alisander(HttpURLConnection connection, String method) {
         if (Objects.equals(HttpConstant.HTTP_METHOD_GET, method)) {
-            String urlWithParameters = HttpClientHelper.createUrlWithParameters(requestConfig.getUrl(), requestConfig.getBodyers());
+            String urlWithParameters = HttpClientHelper.createUrlWithParameters(requestConfig.getUrl(), requestConfig.getBody());
             requestConfig.setUrl(urlWithParameters);
             return;
         }
-        if(!Objects.equals(HttpConstant.HTTP_METHOD_GET, method)) {
-            Map bodyers = requestConfig.getBodyers();
-            if (BooleanHelper.hasLength(bodyers)) {
+        if (!Objects.equals(HttpConstant.HTTP_METHOD_GET, method)) {
+            Map<String, Object> body = requestConfig.getBody();
+            if (BooleanHelper.hasLength(body)) {
                 connection.setDoOutput(true);
                 try {
                     OutputStream outputStream = connection.getOutputStream();
                     OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-                    outputStreamWriter.write(HttpClientHelper.createWithParameters(requestConfig.getBodyers()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            Object requestConfigText = requestConfig.getText();
-            if (null != requestConfigText ) {
-                connection.setDoOutput(true);
-                try {
-                    OutputStream outputStream = connection.getOutputStream();
-                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-                    outputStreamWriter.write(requestConfigText.toString());
+                    outputStreamWriter.write(HttpClientHelper.createWithParameters(body));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -252,14 +244,19 @@ public class Sync {
      * @updateTime 2020/5/30 22:57
      */
     private void analysisHeader(URLConnection connection) {
-        Map<String, String> headers = requestConfig.getHeaders();
+        Multimap<String, String> headers = requestConfig.getHeaders();
         if (null == headers) {
             return;
         }
 
-        for (Map.Entry<String, String> entry : headers.entrySet()) {
-            connection.setRequestProperty(entry.getKey(), entry.getValue());
+        Set<String> keySet = headers.keySet();
+        for (String key : keySet) {
+            Collection<String> strings = headers.get(key);
+            for (String value : strings) {
+                connection.setRequestProperty(key, value);
+            }
         }
+
         // 设置通用的请求属性
         if (Strings.isNullOrEmpty(connection.getRequestProperty(ACCEPT))) {
             connection.setRequestProperty(ACCEPT, ANY);
@@ -278,9 +275,8 @@ public class Sync {
             if (log.isDebugEnabled()) {
                 log.debug("消息头设置完成, header!!");
                 log.debug("=======================================================");
-                for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    connection.setRequestProperty(entry.getKey(), entry.getValue());
-                    log.debug("{}: {}", entry.getKey(), entry.getValue());
+                for (String key : keySet) {
+                    log.debug("{}: {}", key, headers.get(key));
                 }
                 log.debug("=======================================================");
             }

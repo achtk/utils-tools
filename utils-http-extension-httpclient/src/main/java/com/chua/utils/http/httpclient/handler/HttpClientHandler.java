@@ -1,12 +1,12 @@
 package com.chua.utils.http.httpclient.handler;
 
 import com.chua.utils.http.httpclient.action.HttpAsyncAction;
-import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.charset.CharsetHelper;
 import com.chua.utils.tools.http.config.RequestConfig;
 import com.chua.utils.tools.http.entity.ResponseEntity;
 import com.chua.utils.tools.http.meta.MetaType;
 import com.google.common.base.Strings;
+import com.google.common.collect.Multimap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -20,9 +20,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -32,7 +30,6 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.nio.entity.NByteArrayEntity;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
@@ -49,16 +46,13 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import static com.chua.utils.tools.constant.HttpConstant.HTTP_HEADER_CONTENT_TYPE;
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 
 /**
  * HttpClient工具类
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/3/21 15:39
@@ -76,6 +70,7 @@ public class HttpClientHandler {
     public HttpClientHandler(RequestConfig requestConfig) {
         this.requestConfig = requestConfig;
     }
+
     /**
      * 设置请求参数
      *
@@ -97,22 +92,27 @@ public class HttpClientHandler {
 
     /**
      * 获取客户端
+     *
      * @return
      */
     protected CloseableHttpClient getClient() {
         CloseableHttpClient client = (CloseableHttpClient) requestConfig.getClient();
         return null == client ? getCustomClient() : client;
     }
+
     /**
      * 获取客户端
+     *
      * @return
      */
     protected CloseableHttpAsyncClient getAsyncClient() {
         CloseableHttpAsyncClient client = (CloseableHttpAsyncClient) requestConfig.getClient();
         return null == client ? getCustomAsyncClient() : client;
     }
+
     /**
      * 获取客户端
+     *
      * @return
      */
     private CloseableHttpAsyncClient getCustomAsyncClient() {
@@ -121,20 +121,22 @@ public class HttpClientHandler {
         //对照UA字串的标准格式理解一下每部分的意思
         httpAsyncClientBuilder.setUserAgent("Mozilla/5.0(Windows;U;Windows NT 5.1;en-US;rv:0.9.4)");
 
-        if(requestConfig.getMaxConnTotal() > 0) {
+        if (requestConfig.getMaxConnTotal() > 0) {
             httpAsyncClientBuilder.setMaxConnTotal(requestConfig.getMaxConnTotal());
         }
-        if(requestConfig.getMaxConnRoute() > 0) {
+        if (requestConfig.getMaxConnRoute() > 0) {
             httpAsyncClientBuilder.setMaxConnPerRoute(requestConfig.getMaxConnRoute());
         }
 
-        if(!requestConfig.isHttps()) {
+        if (!requestConfig.isHttps()) {
             return httpAsyncClientBuilder.build();
         }
         return httpAsyncClientBuilder.setSSLContext(getSslContext()).build();
     }
+
     /**
      * 获取客户端
+     *
      * @return
      */
     private CloseableHttpClient getCustomClient() {
@@ -143,11 +145,11 @@ public class HttpClientHandler {
         //对照UA字串的标准格式理解一下每部分的意思
         httpClientBuilder.setUserAgent("Mozilla/5.0(Windows;U;Windows NT 5.1;en-US;rv:0.9.4)");
 
-        if(requestConfig.getRetry() > 0) {
+        if (requestConfig.getRetry() > 0) {
             httpClientBuilder.setRetryHandler(new StandardHttpRequestRetryHandler(requestConfig.getRetry(), false));
         }
 
-        if(!Strings.isNullOrEmpty(requestConfig.getDns())) {
+        if (!Strings.isNullOrEmpty(requestConfig.getDns())) {
             httpClientBuilder.setDnsResolver(new DnsResolver() {
                 @Override
                 public InetAddress[] resolve(String host) throws UnknownHostException {
@@ -156,14 +158,14 @@ public class HttpClientHandler {
             });
         }
 
-        if(requestConfig.getMaxConnTotal() > 0) {
+        if (requestConfig.getMaxConnTotal() > 0) {
             httpClientBuilder.setMaxConnTotal(requestConfig.getMaxConnTotal());
         }
-        if(requestConfig.getMaxConnRoute() > 0) {
+        if (requestConfig.getMaxConnRoute() > 0) {
             httpClientBuilder.setMaxConnPerRoute(requestConfig.getMaxConnRoute());
         }
 
-        if(!requestConfig.isHttps()) {
+        if (!requestConfig.isHttps()) {
             return httpClientBuilder.build();
         }
         return httpClientBuilder.setSSLSocketFactory(getSslSocketFactory()).build();
@@ -171,11 +173,12 @@ public class HttpClientHandler {
 
     /**
      * 获取sslContext
+     *
      * @return
      */
     private SSLConnectionSocketFactory getSslSocketFactory() {
-        if(requestConfig.isHttps()) {
-            if(null == requestConfig.getSslSocketFactory()) {
+        if (requestConfig.isHttps()) {
+            if (null == requestConfig.getSslSocketFactory()) {
                 try {
                     SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
 
@@ -201,13 +204,15 @@ public class HttpClientHandler {
         }
         return null;
     }
+
     /**
      * 获取sslContext
+     *
      * @return
      */
     private SSLContext getSslContext() {
-        if(requestConfig.isHttps()) {
-            if(null == requestConfig.getSslSocketFactory()) {
+        if (requestConfig.isHttps()) {
+            if (null == requestConfig.getSslSocketFactory()) {
                 try {
                     return new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
 
@@ -295,7 +300,7 @@ public class HttpClientHandler {
      * @throws Exception
      */
     public ResponseEntity getHttpClientResult(CloseableHttpResponse httpResponse, CloseableHttpClient httpClient, HttpRequestBase httpMethod) throws Exception {
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("请求信息: {}", httpMethod);
         }
         // 执行请求
@@ -311,16 +316,16 @@ public class HttpClientHandler {
             if (httpResponse.getEntity() != null) {
                 content = EntityUtils.toString(httpResponse.getEntity(), ENCODING);
             }
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug("响应状态码: {}", httpResponse.getStatusLine().getStatusCode());
                 log.debug("响应数据是否为空: {}", null != content && !content.isEmpty());
             }
-            if(log.isTraceEnabled()) {
+            if (log.isTraceEnabled()) {
                 log.trace("响应数据: {}", content);
             }
             return new ResponseEntity(httpResponse.getStatusLine().getStatusCode(), content);
         }
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("响应数据异常");
         }
         return new ResponseEntity(HttpStatus.SC_INTERNAL_SERVER_ERROR);
@@ -369,7 +374,7 @@ public class HttpClientHandler {
                 Object value = entry.getValue();
                 nvps.add(new BasicNameValuePair(entry.getKey(), null == value ? "" : value.toString()));
             }
-            if(null == multipartEntityBuilder) {
+            if (null == multipartEntityBuilder) {
                 // 设置到请求的http对象中
                 httpMethod.setEntity(new UrlEncodedFormEntity(nvps, ENCODING));
                 return;
@@ -381,12 +386,13 @@ public class HttpClientHandler {
             httpMethod.setEntity(multipartEntityBuilder.build());
         }
     }
+
     /**
      * Description: 封装请求参数
      *
      * @param url
-     * @throws UnsupportedEncodingException
      * @return
+     * @throws UnsupportedEncodingException
      */
     public URIBuilder packageUriBuilder(final String url, final Map<String, Object> params) throws URISyntaxException {
         // 创建访问的地址
@@ -403,103 +409,109 @@ public class HttpClientHandler {
 
     /**
      * Description: 封装请求头
+     *
      * @param headers
      * @param httpMethod
      */
-    public void packageHeader(Map<String, String> headers, HttpRequestBase httpMethod) {
+    public void packageHeader(Multimap<String, String> headers, HttpRequestBase httpMethod) {
         // 封装请求头
-        if (headers != null) {
-            Set<Map.Entry<String, String>> entrySet = headers.entrySet();
-            for (Map.Entry<String, String> entry : entrySet) {
+        if (headers == null) {
+            return;
+        }
+        Set<String> keySet = headers.keySet();
+        for (String key : keySet) {
+            Collection<String> values = headers.get(key);
+            for (String value : values) {
                 // 设置到请求头到HttpRequestBase对象中
-                httpMethod.setHeader(entry.getKey(), entry.getValue());
+                httpMethod.setHeader(key, value);
             }
         }
     }
 
     /**
      * 设置实体
+     *
      * @param httpEntityEnclosingRequestBase
      * @return
      */
     protected MultipartEntityBuilder resetEntityParams(HttpEntityEnclosingRequestBase httpEntityEnclosingRequestBase) {
-        Map<String, InputStream> streams = requestConfig.getStreams();
+        Map<String, Object> body = requestConfig.getBody();
         MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-        for (Map.Entry<String, InputStream> entry : streams.entrySet()) {
-            multipartEntityBuilder.addBinaryBody(entry.getKey(), entry.getValue());
+        for (Map.Entry<String, Object> entry : body.entrySet()) {
+            multipartEntityBuilder.addBinaryBody(entry.getKey(), (InputStream) entry.getValue());
         }
 
         return multipartEntityBuilder;
-
     }
 
 
     /**
      * 设置json数据
+     *
      * @param httpEntityEnclosingRequestBase
      */
     protected void resetJsonParams(HttpEntityEnclosingRequestBase httpEntityEnclosingRequestBase) {
-        if(!httpEntityEnclosingRequestBase.containsHeader(CONTENT_TYPE)) {
+        if (!httpEntityEnclosingRequestBase.containsHeader(CONTENT_TYPE)) {
             httpEntityEnclosingRequestBase.addHeader(CONTENT_TYPE, "application/json;charset=utf-8");
         } else {
             boolean hasJsonHeader = false;
             Header[] headers = httpEntityEnclosingRequestBase.getHeaders(CONTENT_TYPE);
             for (Header header : headers) {
-                if("application/json".equalsIgnoreCase(header.getValue())) {
+                if ("application/json".equalsIgnoreCase(header.getValue())) {
                     hasJsonHeader = true;
                     break;
                 }
             }
-            if(hasJsonHeader) {
+            if (hasJsonHeader) {
                 httpEntityEnclosingRequestBase.addHeader(CONTENT_TYPE, "application/json;charset=utf-8");
             }
         }
-        Object text = requestConfig.getText();
-        if(text instanceof String) {
-            httpEntityEnclosingRequestBase.setEntity(new StringEntity((String) text, "utf-8"));
-            return;
-        }
-        httpEntityEnclosingRequestBase.setEntity(new StringEntity(JsonHelper.toJson(text), "utf-8"));
     }
 
     /**
      * application/json请求
+     *
      * @return
      */
     protected boolean isJson() {
-        MetaType metaType = requestConfig.getMetaType();
-        return metaType == MetaType.APPLICATION_JSON;
-    }
-    /**
-     *
-     * @return
-     */
-    protected boolean isStream() {
-        return requestConfig.getStreams().size() > 0;
+        return requestConfig.hasHeaderJson();
     }
 
     /**
-     *
+     * @return
+     */
+    protected boolean isStream() {
+        Map<String, Object> body = requestConfig.getBody();
+        for (Object value : body.values()) {
+            if (value instanceof InputStream) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @param metaType
      * @return
      */
     protected ContentType metaTypeToContentType(MetaType metaType) {
-       return ContentType.create(metaType.getValue());
+        return ContentType.create(metaType.getValue());
     }
 
     /**
      * 设置消息体
+     *
      * @param bodyes
      * @param httpEntityEnclosingRequestBase
      */
     public void resetParams(Map<String, Object> bodyes, HttpEntityEnclosingRequestBase httpEntityEnclosingRequestBase) {
         MultipartEntityBuilder multipartEntityBuilder = null;
-        if(isStream()) {
+        if (isStream()) {
             multipartEntityBuilder = resetEntityParams(httpEntityEnclosingRequestBase);
         }
-        if(isJson()) {
+        if (isJson()) {
             resetJsonParams(httpEntityEnclosingRequestBase);
-            return ;
+            return;
         }
 
         //表单方式
@@ -509,35 +521,6 @@ public class HttpClientHandler {
                 packageParam(bodyes, multipartEntityBuilder, httpEntityEnclosingRequestBase);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
-            }
-        } else {
-            Object text = requestConfig.getText();
-            MetaType metaType = requestConfig.getMetaType();
-            String value = metaType.getValue();
-            if(!httpEntityEnclosingRequestBase.containsHeader(HTTP_HEADER_CONTENT_TYPE)) {
-                httpEntityEnclosingRequestBase.addHeader(HTTP_HEADER_CONTENT_TYPE, value + ";charset=utf-8");
-            }
-
-            if(text instanceof String) {
-                if(null != multipartEntityBuilder) {
-                    multipartEntityBuilder.addTextBody(metaType.name(), (String) text, metaTypeToContentType(metaType));
-                    return;
-                }
-                httpEntityEnclosingRequestBase.setEntity(new StringEntity((String) text, "utf-8"));
-            } else if(text instanceof byte[]) {
-                if(MetaType.BYTES == metaType) {
-                    if(null != multipartEntityBuilder) {
-                        multipartEntityBuilder.addBinaryBody(metaType.name(), (byte[]) text);
-                        return;
-                    }
-                    httpEntityEnclosingRequestBase.setEntity(new ByteArrayEntity((byte[]) text));
-                } else if(MetaType.NBYTES == metaType) {
-                    if(null != multipartEntityBuilder) {
-                        multipartEntityBuilder.addBinaryBody(metaType.name(), (byte[]) text);
-                        return;
-                    }
-                    httpEntityEnclosingRequestBase.setEntity(new NByteArrayEntity((byte[]) text));
-                }
             }
         }
     }

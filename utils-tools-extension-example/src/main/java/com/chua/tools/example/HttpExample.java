@@ -13,9 +13,9 @@ public class HttpExample {
 
     public static void main(String[] args) {
         ExtensionLoader<HttpClientFactory> extensionLoader = ExtensionFactory.getExtensionLoader(HttpClientFactory.class);
-        HttpClientFactory httpClientFactory = extensionLoader.getExtension("httpclient");
+        HttpClientFactory httpClientFactory = extensionLoader.getSpiService();
         HttpClientStream httpClientStream = httpClientFactory.newGet();
-        ResponseEntity responseEntity = httpClientStream.url("https://blog.csdn.net/wz6178/article/details/103721735").readTimeout(1).https().build().execute();
+        ResponseEntity responseEntity = httpClientStream.url("https://blog.csdn.net/wz6178/article/details/103721735").build().execute();
         System.out.println(responseEntity.getContent());
     }
 }

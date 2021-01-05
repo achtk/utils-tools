@@ -2,9 +2,9 @@ package com.chua.utils.http.httpclient.sync;
 
 import com.chua.utils.http.httpclient.action.HttpAsyncAction;
 import com.chua.utils.http.httpclient.handler.HttpClientHandler;
+import com.chua.utils.tools.http.callback.ResponseCallback;
 import com.chua.utils.tools.http.config.RequestConfig;
 import com.chua.utils.tools.http.entity.ResponseEntity;
-import com.chua.utils.tools.http.callback.ResponseCallback;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -20,6 +20,7 @@ import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPAC
 
 /**
  * 异步
+ *
  * @author CH
  */
 @Slf4j
@@ -36,12 +37,12 @@ public class Async extends HttpClientHandler {
      * @return
      */
     public ResponseEntity executeDelete(ResponseCallback callback) {
-        Map<String, Object> bodyers = requestConfig.getBodyers();
+        Map<String, Object> bodyers = requestConfig.getBody();
         if (bodyers == null) {
             bodyers = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         }
         bodyers.put("_method", "delete");
-        requestConfig.setBodyers(bodyers);
+        requestConfig.setBody(bodyers);
         return executePost(callback);
     }
 
@@ -63,7 +64,7 @@ public class Async extends HttpClientHandler {
         // 设置请求头
         packageHeader(requestConfig.getHeaders(), httpPut);
 
-        Map<String, Object> bodes = requestConfig.getBodyers();
+        Map<String, Object> bodes = requestConfig.getBody();
         //设置消息体
         resetParams(bodes, httpPut);
 
@@ -87,7 +88,7 @@ public class Async extends HttpClientHandler {
                 });
             } catch (Exception e) {
                 e.printStackTrace();
-                log.error("请求异常, 地址: {}, 请求参数: {}", url, null != bodes && !bodes.isEmpty() ? bodes : requestConfig.getText());
+                log.error("请求异常, 地址: {}, 请求参数: {}", url, bodes);
             }
         } finally {
             release(null, httpClient);
@@ -113,7 +114,7 @@ public class Async extends HttpClientHandler {
         // 设置请求头
         packageHeader(requestConfig.getHeaders(), httpPost);
 
-        Map<String, Object> bodes = requestConfig.getBodyers();
+        Map<String, Object> bodes = requestConfig.getBody();
         //设置消息体
         resetParams(bodes, httpPost);
 
@@ -138,7 +139,7 @@ public class Async extends HttpClientHandler {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("请求异常, 地址: {}, 请求参数: {}", url, null != bodes && !bodes.isEmpty() ? bodes : requestConfig.getText());
+            log.error("请求异常, 地址: {}, 请求参数: {}", url, bodes);
         } finally {
             // 释放资源
             release(null, httpClient);
@@ -158,7 +159,7 @@ public class Async extends HttpClientHandler {
         // 创建访问的地址
         URIBuilder uriBuilder = null;
         try {
-            uriBuilder = packageUriBuilder(requestConfig.getUrl(), requestConfig.getBodyers());
+            uriBuilder = packageUriBuilder(requestConfig.getUrl(), requestConfig.getBody());
         } catch (URISyntaxException e) {
             log.error("获取uri失败!!", e);
             return null;
