@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import org.springframework.web.client.AsyncRestTemplate;
@@ -180,6 +181,9 @@ public class RestClientBuilder implements HttpClientBuilder {
             requestFactory.setReadTimeout(requestConfig.getReadTimeout().intValue());
         }
 
-        return new AsyncRestTemplate(requestFactory);
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+        threadPoolTaskExecutor.initialize();
+        requestFactory.setTaskExecutor(threadPoolTaskExecutor);
+        return new AsyncRestTemplate(requestFactory, renderTemplate(requestConfig));
     }
 }

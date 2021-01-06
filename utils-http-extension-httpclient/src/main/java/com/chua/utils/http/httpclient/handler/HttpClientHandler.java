@@ -18,7 +18,11 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.DnsResolver;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -26,15 +30,25 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.StandardHttpRequestRetryHandler;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
+import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
+import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.nio.conn.NoopIOSessionStrategy;
+import org.apache.http.nio.conn.SchemeIOSessionStrategy;
+import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
+import org.apache.http.nio.reactor.ConnectingIOReactor;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -47,6 +61,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.concurrent.Future;
 
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 
@@ -69,25 +84,6 @@ public class HttpClientHandler {
 
     public HttpClientHandler(RequestConfig requestConfig) {
         this.requestConfig = requestConfig;
-    }
-
-    /**
-     * 设置请求参数
-     *
-     * @return
-     */
-    protected org.apache.http.client.config.RequestConfig setRequestConfig() {
-        org.apache.http.client.config.RequestConfig.Builder requestBuilder = org.apache.http.client.config.RequestConfig.custom();
-        if (requestConfig.getConnectTimeout() > 0) {
-            requestBuilder.setConnectTimeout(requestConfig.getConnectTimeout().intValue());
-        }
-        if (requestConfig.getSocketTimeout() > 0) {
-            requestBuilder.setSocketTimeout(requestConfig.getSocketTimeout().intValue());
-        }
-        requestBuilder.setAuthenticationEnabled(requestConfig.isAuthenticationEnabled());
-        requestBuilder.setContentCompressionEnabled(requestConfig.isContentCompressionEnabled());
-
-        return requestBuilder.build();
     }
 
     /**
@@ -128,10 +124,64 @@ public class HttpClientHandler {
             httpAsyncClientBuilder.setMaxConnPerRoute(requestConfig.getMaxConnRoute());
         }
 
-        if (!requestConfig.isHttps()) {
-            return httpAsyncClientBuilder.build();
+
+        org.apache.http.client.config.RequestConfig.Builder builder = org.apache.http.client.config.RequestConfig.custom();
+        if (requestConfig.getConnectTimeout() > 0) {
+            //连接超时,连接建立时间,三次握手完成时间
+            builder.setConnectTimeout(requestConfig.getConnectTimeout().intValue());
         }
-        return httpAsyncClientBuilder.setSSLContext(getSslContext()).build();
+
+        if (requestConfig.getTimeout() > 0) {
+            //连接超时,连接建立时间,三次握手完成时间
+            builder.setConnectionRequestTimeout(requestConfig.getTimeout().intValue());
+        }
+
+        if (requestConfig.getSocketTimeout() > 0) {
+            //连接超时,连接建立时间,三次握手完成时间
+            builder.setSocketTimeout(requestConfig.getSocketTimeout().intValue());
+        }
+
+        org.apache.http.client.config.RequestConfig config = builder.build();
+
+        //配置io线程
+        IOReactorConfig ioReactorConfig = IOReactorConfig.custom().
+                setIoThreadCount(Runtime.getRuntime().availableProcessors())
+                .setSoKeepAlive(true)
+                .build();
+        //设置连接池大小
+        ConnectingIOReactor ioReactor = null;
+        PoolingNHttpClientConnectionManager connManager = null;
+
+        try {
+            ioReactor = new DefaultConnectingIOReactor(ioReactorConfig);
+            connManager = new PoolingNHttpClientConnectionManager(ioReactor, registry());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (requestConfig.getMaxConnRoute() > 0) {
+            //per route最大连接数设置
+            connManager.setDefaultMaxPerRoute(requestConfig.getMaxConnRoute());
+        }
+
+        if (requestConfig.getMaxConnTotal() > 0) {
+            //最大连接数设置1
+            connManager.setMaxTotal(requestConfig.getMaxConnTotal());
+        }
+
+
+        httpAsyncClientBuilder.setConnectionManager(connManager);
+        httpAsyncClientBuilder.setDefaultRequestConfig(config);
+
+        CloseableHttpAsyncClient client = null;
+        if (!requestConfig.isHttps()) {
+            client = httpAsyncClientBuilder.build();
+        } else {
+            client = httpAsyncClientBuilder.setSSLContext(getSslContext()).build();
+        }
+        client.start();
+
+        return client;
     }
 
     /**
@@ -165,45 +215,47 @@ public class HttpClientHandler {
             httpClientBuilder.setMaxConnPerRoute(requestConfig.getMaxConnRoute());
         }
 
+        org.apache.http.client.config.RequestConfig.Builder builder = org.apache.http.client.config.RequestConfig.custom();
+        if (requestConfig.getConnectTimeout() > 0) {
+            builder.setConnectTimeout(requestConfig.getConnectTimeout().intValue());
+        }
+
+        if (requestConfig.getTimeout() > 0) {
+            builder.setConnectionRequestTimeout(requestConfig.getTimeout().intValue());
+        }
+
+        if (requestConfig.getSocketTimeout() > 0) {
+            builder.setSocketTimeout(requestConfig.getSocketTimeout().intValue());
+        }
+
+        org.apache.http.client.config.RequestConfig config = builder.build();
+        HttpClientConnectionManager connManager = null;
+        try {
+            connManager = new PoolingHttpClientConnectionManager();
+        } catch (Exception e) {
+        }
+
+        httpClientBuilder.setConnectionManager(connManager);
+        httpClientBuilder.setDefaultRequestConfig(config);
+        if (requestConfig.getMaxConnRoute() > 0) {
+            httpClientBuilder.setMaxConnPerRoute(requestConfig.getMaxConnRoute());
+        }
+
+        if (requestConfig.getMaxConnTotal() > 0) {
+            httpClientBuilder.setMaxConnTotal(requestConfig.getMaxConnTotal());
+        }
+
         if (!requestConfig.isHttps()) {
             return httpClientBuilder.build();
         }
-        return httpClientBuilder.setSSLSocketFactory(getSslSocketFactory()).build();
-    }
 
-    /**
-     * 获取sslContext
-     *
-     * @return
-     */
-    private SSLConnectionSocketFactory getSslSocketFactory() {
-        if (requestConfig.isHttps()) {
-            if (null == requestConfig.getSslSocketFactory()) {
-                try {
-                    SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
-
-                        @Override
-                        public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                            return true;
-                        }
-                    }).build();
-
-                    SSLConnectionSocketFactory socketFactory = new SSLConnectionSocketFactory(sslContext);
-                    return socketFactory;
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (KeyManagementException e) {
-                    e.printStackTrace();
-                } catch (KeyStoreException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Object sslSocketFactory = requestConfig.getSslSocketFactory();
-                return sslSocketFactory instanceof SSLConnectionSocketFactory ? (SSLConnectionSocketFactory) sslSocketFactory : null;
-            }
+        try {
+            return httpClientBuilder.setSSLSocketFactory(sslConnectionSocketFactory()).build();
+        } catch (Exception e) {
         }
-        return null;
+        return httpClientBuilder.build();
     }
+
 
     /**
      * 获取sslContext
@@ -247,7 +299,7 @@ public class HttpClientHandler {
      */
     public void getHttpAsyncClientResult(final CloseableHttpAsyncClient httpClient, final HttpRequestBase httpMethod, final HttpAsyncAction action) throws Exception {
         // 执行请求
-        httpClient.execute(httpMethod, new FutureCallback<HttpResponse>() {
+        Future<HttpResponse> execute = httpClient.execute(httpMethod, new FutureCallback<HttpResponse>() {
             @Override
             public void completed(HttpResponse httpResponse) {
                 action.completed(httpResponse);
@@ -263,6 +315,7 @@ public class HttpClientHandler {
                 action.cancelled();
             }
         });
+        execute.get();
     }
 
     /**
@@ -523,5 +576,58 @@ public class HttpClientHandler {
                 e.printStackTrace();
             }
         }
+    }
+
+
+    /**
+     * Registry
+     *
+     * @return
+     */
+    public static Registry<SchemeIOSessionStrategy> registry() throws Exception {
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, getTrustManager(), null);
+        SSLIOSessionStrategy sslioSessionStrategy = new SSLIOSessionStrategy(sslContext, SSLIOSessionStrategy.ALLOW_ALL_HOSTNAME_VERIFIER);
+        return RegistryBuilder.<SchemeIOSessionStrategy>create()
+                .register("http", NoopIOSessionStrategy.INSTANCE)
+                .register("https", sslioSessionStrategy)
+                .build();
+    }
+
+    /**
+     * Registry
+     *
+     * @return
+     */
+    public static SSLConnectionSocketFactory sslConnectionSocketFactory() throws Exception {
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, getTrustManager(), null);
+        return new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+    }
+
+    /**
+     * TrustManager[]
+     *
+     * @return
+     */
+    public static TrustManager[] getTrustManager() {
+        return new TrustManager[]{
+                new X509TrustManager() {
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                        // don't check
+                    }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        // don't check
+                    }
+                }
+        };
     }
 }

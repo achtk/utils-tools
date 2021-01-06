@@ -1,11 +1,14 @@
 package com.chua.utils.tools.http.build;
 
+import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.http.builder.HttpClientBuilder;
 import com.chua.utils.tools.http.callback.ResponseCallback;
 import com.chua.utils.tools.http.config.RequestConfig;
 import com.chua.utils.tools.http.entity.ResponseEntity;
 import com.chua.utils.tools.http.sync.Sync;
 import lombok.AllArgsConstructor;
+
+import java.util.concurrent.ExecutorService;
 
 import static com.chua.utils.tools.constant.HttpConstant.*;
 
@@ -43,6 +46,16 @@ public class UrlClientBuilder implements HttpClientBuilder {
 
     @Override
     public <T> void execute(ResponseCallback responseCallback, Class<T> tClass) {
-
+        ExecutorService executorService = ThreadHelper.newSingleThreadExecutor();
+        executorService.execute(() -> {
+            try {
+                ResponseEntity<T> responseEntity = execute(tClass);
+                responseCallback.onResponse(responseEntity);
+            } catch (Exception e) {
+                responseCallback.onFailure(e);
+            } finally {
+                executorService.shutdownNow();
+            }
+        });
     }
 }

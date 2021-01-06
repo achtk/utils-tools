@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.codec.ClientCodecConfigurer;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -35,7 +36,12 @@ public class FluxClientBuilder implements HttpClientBuilder {
 
     @Override
     public <T> ResponseEntity<T> execute(Class<T> tClass) {
-        WebClient webClient = WebClient.create();
+        WebClient webClient = WebClient.create().mutate().codecs(new Consumer<ClientCodecConfigurer>() {
+            @Override
+            public void accept(ClientCodecConfigurer clientCodecConfigurer) {
+                clientCodecConfigurer.defaultCodecs().maxInMemorySize(1048576);
+            }
+        }).build();
         ResponseEntity<T> responseEntity = new ResponseEntity<>();
 
         Mono<ClientResponse> exchange = null;
@@ -53,39 +59,12 @@ public class FluxClientBuilder implements HttpClientBuilder {
 
     @Override
     public <T> void execute(ResponseCallback responseCallback, Class<T> tClass) {
-        WebClient webClient = WebClient.create();
-
-        Mono<ClientResponse> exchange = null;
-        if (HTTP_METHOD_GET.equals(requestConfig.getMethod())) {
-            exchange = doWithGet(webClient);
-        } else if (HTTP_METHOD_POST.equals(requestConfig.getMethod())) {
-            exchange = doWithPost(webClient);
-        } else if (HTTP_METHOD_PUT.equals(requestConfig.getMethod())) {
-            exchange = doWithPut(webClient);
-        } else if (HTTP_METHOD_DELETE.equals(requestConfig.getMethod())) {
-            exchange = doWithDelete(webClient);
+        try {
+            ResponseEntity<T> execute = execute(tClass);
+            responseCallback.onResponse(execute);
+        } catch (Exception e) {
+            responseCallback.onFailure(e);
         }
-        doWithResponse(exchange, responseCallback, tClass);
-    }
-
-    /**
-     * 处理回调
-     *
-     * @param exchange         响应
-     * @param responseCallback 回调
-     * @param tClass           类型
-     */
-    private <T> void doWithResponse(Mono<ClientResponse> exchange, ResponseCallback responseCallback, Class<T> tClass) {
-        Mono<ClientResponse> responseMono = exchange.retry(requestConfig.getRetry()).timeout(Duration.ofMillis(requestConfig.getTimeout()));
-        responseMono.doOnError(throwable -> {
-            Optional<Consumer<Throwable>> optional = Optional.ofNullable(requestConfig.getThrowableConsumer());
-            if (optional.isPresent()) {
-                optional.get().accept(throwable);
-            }
-            responseCallback.onFailure(throwable);
-        }).doOnSuccess(clientResponse -> {
-            responseCallback.onResponse(createResponse(clientResponse, tClass));
-        });
     }
 
 

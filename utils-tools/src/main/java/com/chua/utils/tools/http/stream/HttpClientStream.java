@@ -141,7 +141,7 @@ public class HttpClientStream implements ClientStream {
      * @param timeout 超时时间
      * @return this
      */
-    public HttpClientStream timeout(int timeout) {
+    public HttpClientStream timeout(long timeout) {
         this.requestConfig.setTimeout(timeout);
         return this;
     }

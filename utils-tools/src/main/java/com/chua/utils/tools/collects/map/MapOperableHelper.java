@@ -930,7 +930,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * @param map 要检查的集合，可以为null
      * @return 如果为空或null，则为true
      */
-    public static boolean isEmpty(Map<?, ?> map) {
+    public static boolean isEmpty(Map map) {
         return (map == null || map.isEmpty());
     }
 

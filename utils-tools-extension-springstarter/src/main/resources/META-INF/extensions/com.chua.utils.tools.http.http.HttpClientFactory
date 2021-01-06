@@ -1,1 +1,2 @@
 rest=com.chua.tools.spring.http.RestHttpClientFactory
+flux=com.chua.tools.spring.http.FluxHttpClientFactory

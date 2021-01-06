@@ -56,8 +56,6 @@ public class Sync extends HttpClientHandler {
         String url = requestConfig.getUrl();
         //
         HttpPut httpPut = new HttpPut(url);
-        //
-        httpPut.setConfig(setRequestConfig());
 
         // 设置请求头
         packageHeader(requestConfig.getHeaders(), httpPut);
@@ -91,8 +89,6 @@ public class Sync extends HttpClientHandler {
         String url = requestConfig.getUrl();
         // 创建http对象
         HttpPost httpPost = new HttpPost(url);
-        //设置链接配置
-        httpPost.setConfig(setRequestConfig());
         // 设置请求头
         packageHeader(requestConfig.getHeaders(), httpPost);
 
@@ -147,7 +143,6 @@ public class Sync extends HttpClientHandler {
         if (null == httpGet) {
             return null;
         }
-        httpGet.setConfig(setRequestConfig());
         packageHeader(requestConfig.getHeaders(), httpGet);
 
         // 创建httpResponse对象

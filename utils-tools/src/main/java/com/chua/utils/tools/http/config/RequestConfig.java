@@ -48,7 +48,7 @@ public class RequestConfig<Client> {
     /**
      * 超时时间
      */
-    private int timeout;
+    private Long timeout = 60_000L;
     /**
      * 异常回调
      */

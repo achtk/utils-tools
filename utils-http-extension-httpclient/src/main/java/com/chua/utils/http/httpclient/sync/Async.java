@@ -11,8 +11,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.util.EntityUtils;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,9 +62,6 @@ public class Async extends HttpClientHandler {
         String url = requestConfig.getUrl();
         //
         HttpPut httpPut = new HttpPut(url);
-        //
-        httpPut.setConfig(setRequestConfig());
-
         // 设置请求头
         packageHeader(requestConfig.getHeaders(), httpPut);
 
@@ -110,7 +111,6 @@ public class Async extends HttpClientHandler {
         // 创建http对象
         HttpPost httpPost = new HttpPost(url);
 
-        httpPost.setConfig(setRequestConfig());
         // 设置请求头
         packageHeader(requestConfig.getHeaders(), httpPost);
 
@@ -178,9 +178,6 @@ public class Async extends HttpClientHandler {
         if (null == httpGet) {
             return null;
         }
-
-        httpGet.setConfig(setRequestConfig());
-
         packageHeader(requestConfig.getHeaders(), httpGet);
 
         try {
@@ -189,6 +186,16 @@ public class Async extends HttpClientHandler {
 
                 @Override
                 public void completed(Object result) {
+                    if(result instanceof BasicHttpResponse) {
+                        BasicHttpResponse basicHttpResponse = (BasicHttpResponse) result;
+
+                        try {
+                            callback.onResponse(new ResponseEntity(basicHttpResponse.getStatusLine().getStatusCode(), EntityUtils.toString(basicHttpResponse.getEntity(), StandardCharsets.UTF_8)));
+                        } catch (IOException e) {
+                            callback.onFailure(e);
+                        }
+                        return;
+                    }
                     callback.onResponse(new ResponseEntity(200, result));
                 }
 

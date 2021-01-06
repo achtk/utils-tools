@@ -47,7 +47,7 @@ public interface HttpClientBuilder {
      * @param responseCallback 回调
      */
     default void execute(ResponseCallback responseCallback) {
-
+        execute(responseCallback, String.class);
     }
 
     /**
@@ -65,7 +65,7 @@ public interface HttpClientBuilder {
 
         Object content = responseEntity.getContent();
 
-        if (String.class.isAssignableFrom(tClass) && content instanceof String) {
+        if (String.class.isAssignableFrom(tClass) || content instanceof String) {
             return responseEntity;
         } else {
             String json = JsonUtils.toJson(content);
@@ -97,8 +97,7 @@ public interface HttpClientBuilder {
 
             @Override
             public void onResponse(ResponseEntity response) {
-                ResponseEntity responseEntity = createResponseEntity(response, tClass);
-                callback.onResponse(response);
+                callback.onResponse(createResponseEntity(response, tClass));
             }
         };
     }
