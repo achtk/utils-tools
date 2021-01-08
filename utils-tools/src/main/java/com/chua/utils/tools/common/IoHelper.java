@@ -432,7 +432,18 @@ public class IoHelper {
      * @return String
      */
     public static String toString(final byte[] input) {
-        return new String(input, Charset.defaultCharset());
+        return toString(input, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 字节数组转字符串
+     *
+     * @param input   字节数组
+     * @param charset 编码
+     * @return String
+     */
+    public static String toString(final byte[] input, final Charset charset) {
+        return new String(input, charset);
     }
 
     /**
@@ -824,12 +835,13 @@ public class IoHelper {
     /**
      * url 转 list
      *
-     * @param url     类
+     * @param url 类
      * @return List
      */
     public static List<String> toList(URL url) throws IOException {
         return Splitter.on("\r\n").omitEmptyStrings().trimResults().splitToList(toString(url, StandardCharsets.UTF_8));
     }
+
     /**
      * url 转 list
      *

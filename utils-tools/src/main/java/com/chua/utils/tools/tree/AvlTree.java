@@ -1,5 +1,6 @@
 package com.chua.utils.tools.tree;
 
+import com.chua.utils.tools.logger.LogUtils;
 import com.chua.utils.tools.tree.printer.LevelOrderPrinter;
 
 /**
@@ -27,7 +28,7 @@ public class AvlTree<E extends Comparable<E>> implements PrintTree<AvlTree.Node>
      * 打印树
      */
     public void print() {
-        System.out.println(new LevelOrderPrinter(this).printString());
+        LogUtils.println(new LevelOrderPrinter(this).printString());
     }
 
     @Override

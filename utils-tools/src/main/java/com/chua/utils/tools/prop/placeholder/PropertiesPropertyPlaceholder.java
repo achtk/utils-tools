@@ -157,7 +157,7 @@ public class PropertiesPropertyPlaceholder implements PropertyPlaceholder {
             if (!properties.containsKey(key)) {
                 continue;
             }
-            value = properties.getProperty(key);
+            value = properties.get(key);
         }
         return value;
     }

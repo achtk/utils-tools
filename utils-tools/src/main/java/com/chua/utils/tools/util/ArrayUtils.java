@@ -25,4 +25,15 @@ public class ArrayUtils extends ArraysHelper {
     public static <T> T[] ifEmpty(T[] array1, T[] array2) {
         return BooleanUtils.isEmpty(array1) ? array2 : array1;
     }
+
+    /**
+     * 获取数组类型
+     *
+     * @param params 数组
+     * @return 数组类型
+     */
+    public static Class<?>[] toClass(Object[] params) {
+
+        return new Class[0];
+    }
 }

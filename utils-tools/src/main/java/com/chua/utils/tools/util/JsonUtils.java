@@ -199,7 +199,20 @@ public class JsonUtils extends JsonHelper {
 
         List<String> strings = Splitter.on(delimiter).trimResults().omitEmptyStrings().limit(2).splitToList(source);
         String value = strings.get(0);
+
+        if(null != value && value.startsWith("\"")) {
+            value = value.substring(1);
+        }
+
+        if(null != value ) {
+            value = value.replace("\\", "");
+        }
+
         String type = strings.get(1);
+
+        if(null != type && type.endsWith("\"")) {
+            type = type.substring(0, type.length() - 1);
+        }
         return fromJson(value, ClassUtils.forName(type));
     }
 }

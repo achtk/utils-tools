@@ -10,6 +10,22 @@ package com.chua.utils.tools.time;
 public interface Cost {
 
     /**
+     * 毫秒
+     *
+     * @return
+     */
+    static Cost mill() {
+        return new MillisecondCost();
+    }
+    /**
+     * 毫秒
+     *
+     * @return
+     */
+    static Cost nano() {
+        return new NanosecondCost();
+    }
+    /**
      * 停止计时，返回计时结果
      *
      * @return 返回计时结果

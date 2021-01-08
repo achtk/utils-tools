@@ -12,6 +12,10 @@ public interface MethodAccess<T> {
 
     Object invoke(T obj, int methodIndex, Object... args);
 
+    default Object invoke(T obj, String name, Class<?>[] parameterTypes, Object... args) {
+        return invoke(obj, methodIndex(name, parameterTypes), args);
+    }
+
     Object call(T obj, int methodIndex);
 
     Object call(T obj, int methodIndex, Object arg0);

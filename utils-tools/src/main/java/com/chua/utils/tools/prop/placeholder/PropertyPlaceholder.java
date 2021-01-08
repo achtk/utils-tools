@@ -1,8 +1,8 @@
 package com.chua.utils.tools.prop.placeholder;
 
-import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.text.IdHelper;
 
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -60,6 +60,17 @@ public interface PropertyPlaceholder {
      */
     default void addPropertySource(Properties properties) {
         addPropertySource(IdHelper.createUuid(), properties);
+    }
+
+    /**
+     * 添加配置
+     *
+     * @param properties 配置
+     */
+    default void addPropertySource(Map<String, Properties> propertieses) {
+        for (Map.Entry<String, Properties> entry : propertieses.entrySet()) {
+            addPropertySource(entry.getKey(), entry.getValue());
+        }
     }
 
     /**

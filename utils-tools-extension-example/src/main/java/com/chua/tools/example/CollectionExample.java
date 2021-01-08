@@ -19,6 +19,22 @@ public class CollectionExample extends BaseExample {
     }
 
     private static void testCollect() {
+        log.info("***********************测试Profile***********************");
+        Profile profile = Profile.create();
+        profile.set("profile1", "a", 1);
+        profile.set("profile1", "b", "1");
+        profile.set("profile2", "a", 2);
+        profile.set("profile2", "c", 3);
+        profile.set("profile3", "d", "${a}");
+        profile.set("profile3", "e", "${d}");
+        profile.set("profile3", "f", "${java.home}");
+        log.info("get(a): {}", profile.getValue("a"));
+        log.info("get(b): {}", profile.getValue("b"));
+        log.info("get(c): {}", profile.getValue("c"));
+        log.info("get(d): {}", profile.getValue("d"));
+        log.info("get(e): {}", profile.getValue("e"));
+        log.info("get(f): {}", profile.getValue("f"));
+
         log.info("***********************测试LoopLinkList***********************");
         LoopList<String> loopLinkList = new LoopLinkList<>();
         loopLinkList.add("a");
@@ -91,5 +107,7 @@ public class CollectionExample extends BaseExample {
         timeMap.put("c", 3);
         log.info("TimeMap: " + JsonHelper.toJson(timeMap));
         log.info("get(a): " + timeMap.get("a"));
+
+
     }
 }

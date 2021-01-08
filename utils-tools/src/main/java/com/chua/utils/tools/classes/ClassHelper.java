@@ -7,6 +7,7 @@ import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.converter.TypeConverter;
+import com.chua.utils.tools.util.ArrayUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,6 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -684,33 +684,13 @@ public class ClassHelper extends ClassLoaderHelper {
      * @param params     参数
      * @return
      */
-    public static Method getMethodByName(Object object, String methodName, Object[] params) {
-        List<Method> returnMethods = new ArrayList<>();
-        doWithMethods(object.getClass(), method -> {
-            String name = method.getName();
-            if (!name.equals(methodName)) {
-                return;
-            }
-            Class<?>[] types = method.getParameterTypes();
-            if (types.length != params.length) {
-                return;
-            }
-            AtomicBoolean isMatcher = new AtomicBoolean(true);
-            for (int i = 0; i < types.length; i++) {
-                Class<?> type = types[i];
-                if (!type.isAssignableFrom(params[i].getClass())) {
-                    isMatcher.set(false);
-                    return;
-                }
-            }
-
-            if (!isMatcher.get()) {
-                return;
-            }
-            returnMethods.add(method);
-        });
-
-        return returnMethods.size() != 1 ? null : returnMethods.get(0);
+    public static Method getMethodByName(Object object, String methodName, Class[] params) {
+        Class<?> aClass = getClass(object);
+        try {
+            return aClass.getDeclaredMethod(methodName, params);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
     }
 
     /**
@@ -719,29 +699,12 @@ public class ClassHelper extends ClassLoaderHelper {
      * @param object 对象
      * @param method 方法
      * @param params 参数
+     * @param <T>    类型
      * @return 值
      */
-    public static Object getMethodValue(Object object, Method method, Object[] params) {
-        return getMethodValue(object, method, params, Object.class);
-    }
-
-    /**
-     * 获取方法值
-     *
-     * @param object     对象
-     * @param method     方法
-     * @param params     参数
-     * @param returnType 返回类型
-     * @param <T>        类型
-     * @return 值
-     */
-    public static <T> T getMethodValue(Object object, Method method, Object[] params, Class<T> returnType) {
+    public static <T> T getMethodValue(Object object, Method method, Object[] params) {
         if (null == method) {
             return null;
-        }
-
-        if (null == returnType) {
-            returnType = (Class<T>) Object.class;
         }
 
         method.setAccessible(true);
@@ -762,7 +725,7 @@ public class ClassHelper extends ClassLoaderHelper {
      * @return 值
      */
     public static Object getMethodValue(Object object, String methodName, Object[] params) {
-        return getMethodValue(object, methodName, params, Object.class);
+        return getMethodValue(object, methodName, ArrayUtils.toClass(params), params);
     }
 
     /**
@@ -770,14 +733,14 @@ public class ClassHelper extends ClassLoaderHelper {
      *
      * @param object     对象
      * @param methodName 方法名
-     * @param params     参数
-     * @param returnType 返回类型
+     * @param paramTypes 参数类型
+     * @param paramTypes 参数
      * @param <T>        类型
      * @return 值
      */
-    public static <T> T getMethodValue(Object object, String methodName, Object[] params, Class<T> returnType) {
-        Method method = getMethodByName(object, methodName, params);
-        return getMethodValue(object, method, params, returnType);
+    public static <T> T getMethodValue(Object object, String methodName, Class<?>[] paramTypes, Object[] params) {
+        Method method = getMethodByName(object, methodName, paramTypes);
+        return getMethodValue(object, method, params);
     }
 
     /**

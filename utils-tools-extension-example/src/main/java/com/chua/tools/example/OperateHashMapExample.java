@@ -2,6 +2,7 @@ package com.chua.tools.example;
 
 import com.chua.tools.example.entity.TDemoInfo;
 import com.chua.utils.tools.collects.OperateHashMap;
+import com.chua.utils.tools.logger.LogUtils;
 
 import java.util.Date;
 import java.util.Map;
@@ -29,14 +30,13 @@ public class OperateHashMapExample extends BaseExample {
         log.info("当前存储的数据: " + operateHashMap);
 
         log.info("keySet:" + operateHashMap.keySet());
-        log.info("time:" + operateHashMap.get("time"));
-        log.info("time:" + operateHashMap.getLong("time"));
+        LogUtils.printInvoke(operateHashMap, "get(time)");
+        LogUtils.printInvoke(operateHashMap, "getLong(time)");
+        LogUtils.printInvoke(operateHashMap, "getDate(time)");
 
-        log.info("date:" + operateHashMap.get("date"));
-        log.info("date:" + operateHashMap.getDate("date"));
-        log.info("time:" + operateHashMap.getDate("time"));
-        log.info("date:" + operateHashMap.getDate("date", "yyyy-MM-dd HH:mm:ss"));
-
+        log.info("get(date):" + operateHashMap.get("date"));
+        LogUtils.printInvoke(operateHashMap, "getDate(date)");
+        LogUtils.printInvoke(operateHashMap, "getDate(date, yyyy-MM-dd HH:mm:ss)");
 
         log.info("text To List: " + operateHashMap.splitToList("text", ","));
         log.info("text To IntList: " + operateHashMap.splitToList("text", ",", Integer.class));

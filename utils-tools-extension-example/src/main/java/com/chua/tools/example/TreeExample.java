@@ -3,6 +3,8 @@ package com.chua.tools.example;
 import com.chua.tools.example.entity.TDemoInfo;
 import com.chua.utils.tools.tree.AvlTree;
 import com.chua.utils.tools.tree.BPlusTree;
+import com.chua.utils.tools.tree.BinaryTree;
+import com.chua.utils.tools.tree.printer.LevelOrderPrinter;
 
 /**
  * @author CH
@@ -13,8 +15,23 @@ public class TreeExample {
     public static void main(String[] args) {
         //测试Avl树
         testAvlTree();
+        //测试B树
+        testBTree();
         //测试B+树
         testBPlusTree();
+    }
+
+    /**
+     * B树
+     */
+    private static void testBTree() {
+        System.out.println("===================================测试B树===============================");
+        BinaryTree binaryTree = new BinaryTree();
+        binaryTree.put(1);
+        binaryTree.put(3);
+        binaryTree.put(2);
+
+        new LevelOrderPrinter(binaryTree).printString();
     }
 
     private static void testBPlusTree() {
@@ -56,9 +73,11 @@ public class TreeExample {
         }
         //打印树
         tree.print();
-
         // 旋转根节点
         tree.reBalance(tree.root);
+        //打印树
+        tree.print();
+
         // 可以递归旋转其他节点
 
         // 2、查找节点

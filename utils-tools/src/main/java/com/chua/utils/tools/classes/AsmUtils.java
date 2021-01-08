@@ -65,8 +65,10 @@ public class AsmUtils {
         // CREDIT: http://hg.openjdk.java.net/jdk8/jdk8/langtools/file/30db5e0aaf83/src/share/classes/com/sun/tools/javac/jvm/Gen.java#l1153
         // Determine whether to issue a tableswitch or a lookupswitch
         // instruction.
-        long table_space_cost = 4 + ((long) hi - lo + 1); // words
-        long table_time_cost = 3; // comparisons
+        // words
+        long table_space_cost = 4 + ((long) hi - lo + 1);
+        // comparisons
+        long table_time_cost = 3;
         long lookup_space_cost = 3 + 2 * (long) nlabels;
         long lookup_time_cost = nlabels;
         return

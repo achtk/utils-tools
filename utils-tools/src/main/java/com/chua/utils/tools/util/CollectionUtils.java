@@ -19,11 +19,10 @@ public class CollectionUtils extends CollectionHelper {
      * 获取索引对应的数据
      *
      * @param source 数据
-     * @param index  索引
      * @param <T>    类型
      * @return 数据
      */
-    public static <T> T findFirst(final Collection<T> source, final int index) {
+    public static <T> T findFirst(final Collection<T> source) {
         return find(source, 0);
     }
 
@@ -31,11 +30,10 @@ public class CollectionUtils extends CollectionHelper {
      * 获取索引对应的数据
      *
      * @param source 数据
-     * @param index  索引
      * @param <T>    类型
      * @return 数据
      */
-    public static <T> T findLast(final Collection<T> source, final int index) {
+    public static <T> T findLast(final Collection<T> source) {
         return findReverse(source, -1);
     }
 
@@ -89,12 +87,24 @@ public class CollectionUtils extends CollectionHelper {
      * @return 数据
      */
     public static <T> T find(final Collection<T> source, final int index) {
+        return find(source, index, null);
+    }
+
+    /**
+     * 获取索引对应的数据
+     *
+     * @param source 数据
+     * @param index  索引
+     * @param <T>    类型
+     * @return 数据
+     */
+    public static <T> T find(final Collection<T> source, final int index, final T defaultValue) {
         if (null == source || index < 0) {
-            return null;
+            return defaultValue;
         }
         int length = source.size();
         if (index > length) {
-            return null;
+            return defaultValue;
         }
         int count = 0;
         for (T t : source) {
@@ -102,7 +112,7 @@ public class CollectionUtils extends CollectionHelper {
                 return t;
             }
         }
-        return null;
+        return defaultValue;
     }
 
     /**

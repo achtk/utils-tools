@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Map可操作
@@ -773,8 +774,41 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
      * @param defaultValue 默认值
      * @return Map中的值，如果Map输入为空，则为<code> null </ code>
      */
-    default Object getObject(final K key, final ScheduleJob defaultValue) {
+    default Object getObject(final K key, final Object defaultValue) {
         return MapOperableHelper.getObject(getMap(), key, defaultValue);
     }
 
+    /**
+     * 获取枚举类型
+     *
+     * @param key      索引
+     * @param enumType 枚举类型
+     * @param <E>      枚举
+     * @return 枚举
+     */
+    default <E> E getEnum(K key, Class<E> enumType) {
+        if (null == key || null == enumType) {
+            return null;
+        }
+        Object object = getObject(key);
+        if (null == object) {
+            return null;
+        }
+
+        if (enumType.isAssignableFrom(object.getClass())) {
+            return (E) object;
+        }
+
+        if(object instanceof String) {
+            Optional<E> any = Arrays.stream(enumType.getEnumConstants()).filter(new Predicate<E>() {
+                @Override
+                public boolean test(E e) {
+                    return e.toString().toUpperCase().equals(object.toString().toUpperCase());
+                }
+            }).findAny();
+            return any.isPresent() ? null : any.get();
+        }
+
+        return null;
+    }
 }

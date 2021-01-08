@@ -15,7 +15,7 @@ public class HttpExample {
 
     public static void main(String[] args) {
         ExtensionLoader<HttpClientFactory> extensionLoader = ExtensionFactory.getExtensionLoader(HttpClientFactory.class);
-        HttpClientFactory httpClientFactory = extensionLoader.getExtension("url");
+        HttpClientFactory httpClientFactory = extensionLoader.getExtension("flux");
         HttpClientStream httpClientStream = httpClientFactory.newGet();
         HttpClientBuilder httpClientBuilder = httpClientStream.url("http://127.0.0.1:7200/v2/api-docs").build();
         //ResponseEntity responseEntity = httpClientBuilder.execute();

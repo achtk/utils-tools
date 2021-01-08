@@ -8,6 +8,8 @@ import com.chua.utils.tools.function.BiAppendable;
 import com.chua.utils.tools.function.MapOperable;
 import com.chua.utils.tools.function.converter.ClassTypeConverter;
 import com.chua.utils.tools.function.converter.TypeConverter;
+import com.chua.utils.tools.util.ClassUtils;
+import com.chua.utils.tools.util.CollectionUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -31,19 +33,28 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
 
     private final static OperateHashMap INSTANCE = OperateHashMap.create();
 
+    private Class<?> valueClass = Object.class;
+
+    public OperateHashMap() {
+    }
+
+    public OperateHashMap(Class<?> valueClass) {
+        this.valueClass = valueClass;
+    }
+
     /**
-     * 创建 HashOperateMap
+     * 创建 OperateHashMap
      *
-     * @return HashOperateMap
+     * @return OperateHashMap
      */
     public static OperateHashMap create() {
         return new OperateHashMap();
     }
 
     /**
-     * 创建 HashOperateMap
+     * 创建 OperateHashMap
      *
-     * @return HashOperateMap
+     * @return OperateHashMap
      */
     public static OperateHashMap create(Consumer<OperateHashMap> consumer) {
         OperateHashMap operateMap = new OperateHashMap();
@@ -52,49 +63,58 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
     }
 
     /**
-     * 创建 HashOperateMap
+     * 创建 OperateHashMap
      *
-     * @return HashOperateMap
+     * @return OperateHashMap
      */
     public static OperateHashMap emptyMap() {
         return INSTANCE;
     }
 
     /**
-     * 创建 HashOperateMap
+     * 创建 OperateHashMap
      *
-     * @return HashOperateMap
+     * @return OperateHashMap
+     */
+    public static OperateHashMap create(Class<?> valueClass) {
+        return new OperateHashMap(valueClass);
+    }
+
+    /**
+     * 创建 OperateHashMap
+     *
+     * @return OperateHashMap
      */
     public static OperateHashMap create(String key, Object value) {
         return new OperateHashMap().append(key, value);
     }
 
     /**
-     * 创建 HashOperateMap
+     * 创建 OperateHashMap
      *
-     * @return HashOperateMap
+     * @return OperateHashMap
      */
     public static OperateHashMap create(Map<String, Object> params) {
         return new OperateHashMap().append(params);
     }
 
     /**
-     * 创建 HashOperateMap
+     * 创建 OperateHashMap
      *
      * @param params 数据
-     * @return HashOperateMap
+     * @return OperateHashMap
      */
     public static OperateHashMap create(String params) {
         return create(params, ",", ":");
     }
 
     /**
-     * 创建 HashOperateMap
+     * 创建 OperateHashMap
      *
      * @param params            数据
      * @param lineSeparator     数据分隔符
      * @param keyValueSeparator 键值对分隔符
-     * @return HashOperateMap
+     * @return OperateHashMap
      */
     public static OperateHashMap create(String params, String lineSeparator, String keyValueSeparator) {
         OperateHashMap operateHashMap = new OperateHashMap();
@@ -117,6 +137,9 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
     @Override
     public Object put(String key, Object value) {
         this.setKeyValue(key, value);
+        if (null != value && !valueClass.isAssignableFrom(value.getClass())) {
+            return null;
+        }
         return super.put(key, value);
     }
 
@@ -167,16 +190,19 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
 
     @Override
     public void putAll(Map<? extends String, ?> m) {
+        if (CollectionUtils.isEmpty(m)) {
+            return;
+        }
         for (Entry<? extends String, ?> entry : m.entrySet()) {
             this.setKeyValue(entry.getKey(), entry.getValue());
+            this.put(entry.getKey(), entry.getValue());
         }
-        super.putAll(m);
     }
 
     @Override
     public OperateHashMap append(String v1, Object v2) {
-        this.put(v1, v2);
         this.setKeyValue(v1, v2);
+        this.put(v1, v2);
         return this;
     }
 
@@ -207,6 +233,20 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
             interpreter.set(key, value);
         } catch (EvalError ignored) {
         }
+    }
+
+    /**
+     * 设置对象
+     *
+     * @param key       索引
+     * @param className 类名称
+     */
+    public Object putObject(String key, String className) {
+        Object forObject = ClassUtils.forObject(className);
+        if (null == forObject) {
+            return null;
+        }
+        return put(key, forObject);
     }
 
     /**
@@ -333,7 +373,7 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
      * @param keys 索引
      * @return 有效返回true
      */
-    public boolean isValids(String... keys) {
+    public boolean isAllValid(String... keys) {
         if (null == keys) {
             return false;
         }

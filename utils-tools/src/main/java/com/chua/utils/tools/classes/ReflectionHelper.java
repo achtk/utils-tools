@@ -587,6 +587,24 @@ public class ReflectionHelper extends JavassistHelper {
                     result.addAll(Arrays.asList(methods));
                     newClass = newClass.getSuperclass();
                 }
+
+                Class<?>[] interfaces = aClass.getInterfaces();
+                Set<Class<?>> allInterfaces = new HashSet<>();
+                for (Class<?> anInterface : interfaces) {
+                    Class<?>[] newInterface1 = anInterface.getInterfaces();
+                    allInterfaces.add(anInterface);
+                    allInterfaces.addAll(Arrays.asList(newInterface1));
+                }
+
+                for (Class<?> allInterface : allInterfaces) {
+                    Method[] methods = allInterface.getDeclaredMethods();
+                    for (Method method : methods) {
+                        if(method.isDefault()) {
+                            result.add(method);
+                        }
+                    }
+                }
+
                 return result;
             }, aClass, CLASS_METHOD);
         }
@@ -958,5 +976,126 @@ public class ReflectionHelper extends JavassistHelper {
             }
         }
         return null;
+    }
+
+    /**
+     * 过滤满足{@link #doWithMethods(Class, MethodCallback)}
+     *
+     * @param source     类
+     * @param annotation 注解
+     * @param callback   回调
+     */
+    public static void doWithMethodAnnotation(Class<?> source, Class<? extends Annotation> annotation, final MethodCallback callback) {
+        doWithMethods(source, method -> {
+            Annotation declaredAnnotation = method.getDeclaredAnnotation(annotation);
+            if (null != declaredAnnotation) {
+                callback.doWith(method);
+            }
+        });
+    }
+
+    /**
+     * 过滤满足{@link #doWithLocalMethods(Class, MethodCallback)}
+     *
+     * @param source     类
+     * @param annotation 注解
+     * @param callback   回调
+     */
+    public static void doWithLocalMethodAnnotation(Class<?> source, Class<? extends Annotation> annotation, final MethodCallback callback) {
+        doWithLocalMethods(source, method -> {
+            Annotation declaredAnnotation = method.getDeclaredAnnotation(annotation);
+            if (null != declaredAnnotation) {
+                callback.doWith(method);
+            }
+        });
+    }
+
+    /**
+     * 过滤满足{@link #doWithLocalMethodAnnotation(Class, Class, MethodCallback)}
+     *
+     * @param source     类
+     * @param annotation 注解
+     */
+    public static List<Method> findLocalMethodAnnotation(Class<?> source, Class<? extends Annotation> annotation) {
+        List<Method> result = new ArrayList<>();
+        doWithLocalMethodAnnotation(source, annotation, method -> {
+            result.add(method);
+        });
+        return result;
+    }
+
+    /**
+     * 过滤满足{@link #doWithMethodAnnotation(Class, Class, MethodCallback)}
+     *
+     * @param source     类
+     * @param annotation 注解
+     */
+    public static List<Method> findMethodAnnotation(Class<?> source, Class<? extends Annotation> annotation) {
+        List<Method> result = new ArrayList<>();
+        doWithMethodAnnotation(source, annotation, method -> {
+            result.add(method);
+        });
+        return result;
+    }
+
+    /**
+     * 过滤满足{@link #doWithFields(Class, FieldCallback)}
+     *
+     * @param source     类
+     * @param annotation 注解
+     * @param callback   回调
+     */
+    public static void doWithFieldAnnotation(Class<?> source, Class<? extends Annotation> annotation, final FieldCallback callback) {
+        doWithFields(source, field -> {
+            Annotation declaredAnnotation = field.getDeclaredAnnotation(annotation);
+            if (null != declaredAnnotation) {
+                callback.doWith(field);
+            }
+        });
+    }
+
+    /**
+     * 过滤满足{@link #doWithLocalFields(Class, FieldCallback)}
+     *
+     * @param source     类
+     * @param annotation 注解
+     * @param callback   回调
+     */
+    public static void doWithLocalFieldAnnotation(Class<?> source, Class<? extends Annotation> annotation, final FieldCallback callback) {
+        doWithLocalFields(source, field -> {
+            Annotation declaredAnnotation = field.getDeclaredAnnotation(annotation);
+            if (null != declaredAnnotation) {
+                callback.doWith(field);
+            }
+        });
+    }
+
+
+    /**
+     * 过滤满足{@link #doWithFieldAnnotation(Class, Class, FieldCallback)}
+     *
+     * @param source     类
+     * @param annotation 注解
+     */
+    public static List<Field> findFieldAnnotation(Class<?> source, Class<? extends Annotation> annotation) {
+        List<Field> result = new ArrayList<>();
+        doWithFieldAnnotation(source, annotation, field -> {
+            result.add(field);
+        });
+        return result;
+    }
+
+    /**
+     * 过滤满足{@link #doWithLocalFieldAnnotation(Class, Class, FieldCallback)}
+     *
+     * @param source     类
+     * @param annotation 注解
+     */
+    public static List<Field> findLocalFieldAnnotation(Class<?> source, Class<? extends Annotation> annotation) {
+        List<Field> result = new ArrayList<>();
+        doWithLocalFieldAnnotation(source, annotation, field -> {
+            result.add(field);
+        });
+        return result;
     }
 }
