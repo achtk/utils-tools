@@ -174,6 +174,16 @@ public class ArraysHelper {
         T[] ts = (T[]) Array.newInstance(tClass);
         return list.toArray(ts);
     }
+    /**
+     * 把Set转换成T数组
+     *
+     * @param list TList
+     * @return T数组
+     */
+    public static <T> T[] toArray(Set<T> list, Class<T> tClass) {
+        T[] ts = (T[]) Array.newInstance(tClass);
+        return list.toArray(ts);
+    }
 
     /**
      * 把Set转换成字符串数组

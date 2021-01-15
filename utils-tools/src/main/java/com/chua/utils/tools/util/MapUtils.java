@@ -33,4 +33,32 @@ public class MapUtils extends MapOperableHelper {
         }
         return result;
     }
+
+    /**
+     * 如果索引不存在则设置值
+     *
+     * @param source 集合
+     * @param key    索引
+     * @param value  值
+     */
+    public static <K, V> V putIfNotExist(Map<K, V> source, K key, V value) {
+        if (null == source || source.containsKey(key)) {
+            return null;
+        }
+        return source.put(key, value);
+    }
+
+    /**
+     * 如果索引存在则设置值
+     *
+     * @param source 集合
+     * @param key    索引
+     * @param value  值
+     */
+    public static <K, V> V putIfExist(Map<K, V> source, K key, V value) {
+        if (null == source || !source.containsKey(key)) {
+            return null;
+        }
+        return source.put(key, value);
+    }
 }

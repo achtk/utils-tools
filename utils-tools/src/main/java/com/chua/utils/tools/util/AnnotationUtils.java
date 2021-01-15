@@ -10,7 +10,10 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * 注解工具类
@@ -141,4 +144,83 @@ public class AnnotationUtils {
         Map<String, Object> stringObjectMap = asAnnotationMap(annotation);
         return MapUtils.merge(memberValues, stringObjectMap);
     }
+
+    /**
+     * 是否包含注解
+     *
+     * @param compiler       类
+     * @param componentClass 注解类
+     * @return 包含返回true
+     */
+    public static boolean isAnnotationPresent(Class<?> compiler, Class<? extends Annotation> componentClass) {
+        if (null != compiler.getDeclaredAnnotation(componentClass)) {
+            return true;
+        }
+        Set<Annotation> allAnnotation = findAllAnnotation(compiler, annotation -> annotation.getClass().getName().equals(componentClass.getName()));
+        return !allAnnotation.isEmpty();
+    }
+
+
+    /**
+     * 获取注解
+     *
+     * @param source         类
+     * @param componentClass 注解类
+     * @param <A>            类型
+     * @return 注解
+     */
+    public static <A> A get(Class<?> source, Class<? extends A> componentClass) {
+        A annotation = (A) source.getDeclaredAnnotation((Class<? extends Annotation>) componentClass);
+        if (null != annotation) {
+            return annotation;
+        }
+        Set<Annotation> allAnnotation = findAllAnnotation(source, annotation1 -> componentClass.isAssignableFrom(annotation1.annotationType()));
+        return (A) CollectionUtils.findOnly(allAnnotation);
+    }
+
+    /**
+     * 获取所有注解
+     *
+     * @param source    类
+     * @param predicate 拦截器
+     * @return 注解
+     */
+    public static Set<Annotation> findAllAnnotation(final Class<?> source, final Predicate<Annotation> predicate) {
+        //获取所有注解
+        Set<Annotation> annotations = new HashSet<>();
+        for (Annotation declaredAnnotation : source.getDeclaredAnnotations()) {
+            if (predicate.test(declaredAnnotation)) {
+                annotations.add(declaredAnnotation);
+            }
+            findAllAnnotation(declaredAnnotation, annotations, predicate);
+        }
+        return annotations;
+    }
+
+    /**
+     * 获取所有注解
+     *
+     * @param annotation 注解
+     * @param result     结果集
+     */
+    private static void findAllAnnotation(final Annotation annotation, final Set<Annotation> result, final Predicate<Annotation> predicate) {
+        Class<? extends Annotation> aClass = annotation.annotationType();
+        Annotation[] declaredAnnotations = aClass.getDeclaredAnnotations();
+        for (Annotation declaredAnnotation : declaredAnnotations) {
+            if (ArrayUtils.contains(IGNORED, declaredAnnotation.annotationType())) {
+                continue;
+            }
+            if (result.contains(declaredAnnotation)) {
+                continue;
+            }
+
+            if (predicate.test(declaredAnnotation)) {
+                result.add(declaredAnnotation);
+            }
+            findAllAnnotation(declaredAnnotation, result, predicate);
+        }
+
+    }
+
+
 }

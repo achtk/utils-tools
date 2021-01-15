@@ -399,5 +399,29 @@ public class ClassUtils extends ClassHelper {
         return convertedClass;
     }
 
+    /**
+     * 获取所有接口
+     *
+     * @param type 类
+     * @return 所有接口
+     */
+    public static Set<Class<?>> getAllInterfaces(Class<?> type) {
+        Set<Class<?>> result = new HashSet<>();
+        loopInterfaces(type, result);
+        return result;
+    }
 
+    /**
+     * 获取所有接口
+     *
+     * @param type   类
+     * @param result 结果
+     */
+    private static void loopInterfaces(Class<?> type, Set<Class<?>> result) {
+        Class<?>[] interfaces = type.getInterfaces();
+        for (Class<?> anInterface : interfaces) {
+            result.add(anInterface);
+            loopInterfaces(anInterface, result);
+        }
+    }
 }

@@ -19,7 +19,7 @@ public interface ResourceFactory {
      * @param classLoader 类加载器
      * @return
      */
-    public ResourceFactory classLoader(ClassLoader classLoader);
+    ResourceFactory classLoader(ClassLoader classLoader);
 
     /**
      * 设置类加载器
@@ -27,7 +27,7 @@ public interface ResourceFactory {
      * @param matcher 匹配器
      * @return IResourceFactory
      */
-    public ResourceFactory matcher(Matcher<Resource> matcher);
+    ResourceFactory matcher(Matcher<Resource> matcher);
 
     /**
      * 是否缓存数据
@@ -35,14 +35,14 @@ public interface ResourceFactory {
      * @param cache 是否缓存
      * @return IResourceFactory
      */
-    public ResourceFactory cache(boolean cache);
+    ResourceFactory cache(boolean cache);
 
     /**
      * 是否计数
      *
      * @return
      */
-    public ResourceFactory count();
+    ResourceFactory count();
 
     /**
      * 获取资源
@@ -51,5 +51,5 @@ public interface ResourceFactory {
      * @param excludes 文件夹|文件, 支持通配符
      * @return
      */
-    public Set<Resource> getResources(String name, String... excludes);
+    Set<Resource> getResources(String name, String... excludes);
 }

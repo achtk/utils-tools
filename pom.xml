@@ -272,6 +272,7 @@
         <module>utils-tools-extension-everything</module>
         <module>utils-tools-extension-example</module>
         <module>utils-tools-extension-springstarter</module>
+        <module>utils-groovy</module>
     </modules>
 
     <build>

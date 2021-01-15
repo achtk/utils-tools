@@ -467,7 +467,7 @@ public class CollectionHelper {
      */
     @SuppressWarnings("all")
     public static <T> void add(final Collection<T> firstCollection, final T... items) {
-        if (isEmpty(firstCollection) || ArraysHelper.isEmpty(items)) {
+        if (null == firstCollection || ArraysHelper.isEmpty(items)) {
             return;
         }
         for (T item : items) {

@@ -1,6 +1,7 @@
 package com.chua.utils.tools.common;
 
 import com.google.common.base.Splitter;
+import com.google.common.io.Files;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -511,6 +512,17 @@ public class IoHelper {
     }
 
     /**
+     * 流转字符串
+     *
+     * @param file 流
+     * @return String
+     * @throws IOException IOException
+     */
+    public static String toString(final File file) throws IOException {
+        return Files.toString(file, StandardCharsets.UTF_8);
+    }
+
+    /**
      * URI 转字符串
      *
      * @param uri URI
@@ -860,8 +872,28 @@ public class IoHelper {
      * @param inputStream 流
      * @return InputStreamReader
      */
-    public static InputStreamReader toUtf8InputStreamReader(InputStream inputStream) {
+    public static InputStreamReader toUtf8InputStreamReader(InputStream inputStream) throws IOException {
         return new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * URL 转 reader
+     *
+     * @param url URL
+     * @return InputStreamReader
+     */
+    public static InputStreamReader toUtf8InputStreamReader(URL url) throws IOException {
+        return new InputStreamReader(url.openStream(), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * URL 转 reader
+     *
+     * @param file URL
+     * @return InputStreamReader
+     */
+    public static InputStreamReader toUtf8InputStreamReader(File file) throws IOException {
+        return new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
     }
 
     /**

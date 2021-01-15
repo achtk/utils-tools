@@ -62,6 +62,10 @@ public @interface BinderScript {
          */
         JAVA,
         /**
+         * groovy文件
+         */
+        GROOVY,
+        /**
          * 值
          */
         VALUE,

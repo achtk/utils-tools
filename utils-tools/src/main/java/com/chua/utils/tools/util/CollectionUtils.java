@@ -2,6 +2,7 @@ package com.chua.utils.tools.util;
 
 import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.google.common.base.Strings;
+import com.google.common.base.Supplier;
 
 import java.util.Collection;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class CollectionUtils extends CollectionHelper {
         }
         int count = 0;
         for (T t : source) {
-            if (count == realIndex) {
+            if (count ++ == realIndex) {
                 return t;
             }
         }
@@ -108,7 +109,7 @@ public class CollectionUtils extends CollectionHelper {
         }
         int count = 0;
         for (T t : source) {
-            if (count == index) {
+            if (count++ == index) {
                 return t;
             }
         }
@@ -177,6 +178,31 @@ public class CollectionUtils extends CollectionHelper {
 
         V v = ClassUtils.forObject(objectName, valueClass);
         map.put(key, v);
+        return v;
+    }
+
+    /**
+     * 判断集合中是否存在索引, 不存在初始化并赋值并返回初始化数据
+     *
+     * @param key      索引
+     * @param supplier 回调(用于处理索引不存在的数据初始化)
+     * @param params   集合
+     * @param <K>      索引类型
+     * @param <V>      值类型
+     * @return 值
+     */
+    public static <K, V> V get(K key, Supplier<V> supplier, Map<K, V> params) {
+        if (null == params) {
+            return supplier.get();
+        }
+
+        V v = null;
+        if (!params.containsKey(key)) {
+            v = supplier.get();
+            params.put(key, v);
+        } else {
+            v = params.get(key);
+        }
         return v;
     }
 }
