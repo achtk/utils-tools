@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -72,7 +73,7 @@ public class CollectionUtils extends CollectionHelper {
         }
         int count = 0;
         for (T t : source) {
-            if (count ++ == realIndex) {
+            if (count++ == realIndex) {
                 return t;
             }
         }
@@ -204,5 +205,24 @@ public class CollectionUtils extends CollectionHelper {
             v = params.get(key);
         }
         return v;
+    }
+
+    /**
+     * 是否集合开头的字符串
+     *
+     * @param data 数据
+     * @param list 集合
+     * @return
+     */
+    public static boolean startWith(String data, List<String> list) {
+        if (Strings.isNullOrEmpty(data) || isEmpty(list)) {
+            return false;
+        }
+        for (String s : list) {
+            if (data.toUpperCase().startsWith(s.toUpperCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

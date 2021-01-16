@@ -6,6 +6,8 @@ import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
+import com.chua.utils.tools.util.CollectionUtils;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import net.sf.cglib.beans.BeanMap;
 
@@ -1183,6 +1185,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
         }
         return false;
     }
+
     /**
      * 是否存索引并且有效
      *
@@ -1240,6 +1243,36 @@ public class MapOperableHelper extends MultiMapOperableHelper {
      * @param <V>   value类型
      * @return 集合第一个数据, 集合为空或者无数据返回null
      */
+    public static <K, V> V getOnlyValue(final Map<K, V> kvMap) {
+        if (isEmpty(kvMap)) {
+            return null;
+        }
+        return kvMap.size() == 1 ? CollectionUtils.findFirst(kvMap.values()) : null;
+    }
+
+    /**
+     * 获取第一个数据
+     *
+     * @param kvMap 集合
+     * @param <K>   key类型
+     * @param <V>   value类型
+     * @return 集合第一个数据, 集合为空或者无数据返回null
+     */
+    public static <K, V> K getOnlyKey(final Map<K, V> kvMap) {
+        if (isEmpty(kvMap)) {
+            return null;
+        }
+        return kvMap.size() == 1 ? CollectionUtils.findFirst(kvMap.keySet()) : null;
+    }
+
+    /**
+     * 获取第一个数据
+     *
+     * @param kvMap 集合
+     * @param <K>   key类型
+     * @param <V>   value类型
+     * @return 集合第一个数据, 集合为空或者无数据返回null
+     */
     public static <K, V> Map.Entry<K, V> getFirst(final Map<K, V> kvMap) {
         if (isEmpty(kvMap)) {
             return null;
@@ -1263,5 +1296,25 @@ public class MapOperableHelper extends MultiMapOperableHelper {
         }
 
         return result;
+    }
+
+    /**
+     * properties转 Map
+     *
+     * @param source    数据
+     * @param delimiter 分割符
+     * @return Map
+     */
+    public static Map<String, String> toMap(String source, String delimiter) {
+        if (source == null || source.length() == 0) {
+            return Collections.emptyMap();
+        }
+        List<String> strings = Splitter.on(delimiter).trimResults().omitEmptyStrings().limit(2).splitToList(source);
+        if (strings.size() != 2) {
+            return Collections.emptyMap();
+        }
+        Map<String, String> stringObjectMap = new HashMap<>();
+        stringObjectMap.put(strings.get(0), strings.get(1));
+        return stringObjectMap;
     }
 }

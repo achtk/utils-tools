@@ -1,5 +1,6 @@
 package com.chua.utils.tools.example.groovy
 
+
 import com.chua.utils.tools.example.interfaces.ITestInterface
 import com.chua.utils.tools.text.IdHelper
 
@@ -7,12 +8,25 @@ import com.chua.utils.tools.text.IdHelper
  * @author CH* @since 2021/1/11
  * @version 1.0.0
  */
-class Demo implements ITestInterface{
+class Demo implements ITestInterface, GroovyInterceptable {
 
-    def a = 1;
+    def a = 1
 
-    def add(a=1, b) {
+    def arr = [1, 2, 3]
+
+    enum AP {
+        A, B, C
+    }
+
+    def demo(a = 1, b) {
         a + b;
+    }
+
+    def demo() {
+        def demo = new Demo();
+        (1..10).collect() {
+            it + 1
+        }
     }
 
     static void main(args) {
@@ -23,5 +37,10 @@ class Demo implements ITestInterface{
     @Override
     String getName() {
         IdHelper.createUuid();
+    }
+
+    @Override
+    Object invokeMethod(String name, Object args) {
+        return 1
     }
 }

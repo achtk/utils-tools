@@ -9,6 +9,7 @@ import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -270,6 +271,20 @@ public class CollectionHelper {
         }
 
         return result;
+    }
+
+    /**
+     * 数组转集合
+     *
+     * @param source 数据源
+     * @param <T>    类型
+     * @return 集合
+     */
+    public static <T> Set<T> toSet(final Collection<T> source) {
+        if (null == source) {
+            return Collections.unmodifiableSet(Collections.emptySet());
+        }
+        return Collections.unmodifiableSet(Sets.newHashSet(source));
     }
 
     /**
