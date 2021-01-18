@@ -26,6 +26,7 @@ public class ClassUtils extends ClassHelper {
     private static final CharSequence DUPLICATE = "duplicate";
 
     private static final CtClass[] EMPTY = new CtClass[0];
+    private static final Class<?>[] EMPTY_CLASS = new Class[0];
     private static final Map<String, Class<?>> NAME_PRIMITIVE_MAP = new HashMap<>();
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP;
     private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP;
@@ -354,6 +355,27 @@ public class ClassUtils extends ClassHelper {
             }
         }
         return ctClassList.toArray(EMPTY);
+    }
+
+    /**
+     * 类转Class类
+     *
+     * @param objects 类
+     * @return ct类
+     */
+    public static Class<?>[] toClass(Object[] objects) {
+        if (BooleanUtils.isEmpty(objects)) {
+            return EMPTY_CLASS;
+        }
+        List<Class<?>> ctClassList = new ArrayList<>(objects.length);
+        for (Object obj : objects) {
+            try {
+                ctClassList.add(obj.getClass());
+            } catch (Exception e) {
+                return EMPTY_CLASS;
+            }
+        }
+        return ctClassList.toArray(EMPTY_CLASS);
     }
 
     /**
