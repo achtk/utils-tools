@@ -23,6 +23,14 @@ public interface DataFactory {
      * @param dataTable 数据表
      */
     void addSchema(String schema, DataTable dataTable);
+    /**
+     * 添加架图
+     *
+     * @param dataTable 数据表
+     */
+    default void addSchema(DataTable dataTable) {
+        addSchema("system", dataTable);
+    }
 
     /**
      * 获取连接
@@ -31,6 +39,7 @@ public interface DataFactory {
      * @throws SQLException SQLException
      */
     Connection getConnection() throws SQLException;
+
 
     /**
      * schema信息

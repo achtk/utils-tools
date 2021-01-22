@@ -2,8 +2,8 @@ package com.chua.utils.tools.data.parser;
 
 import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.common.ArraysHelper;
+import com.chua.utils.tools.util.ResourcesUtils;
 import com.google.common.base.Strings;
-import com.google.common.io.Resources;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,7 +38,7 @@ public class CsvFileDataParser implements DataParser {
     @Override
     public void setSource(Object source) {
         this.source = source;
-        this.url = Resources.getResource(source.toString());
+        this.url = ResourcesUtils.getResource(source.toString());
         this.delimiter = null == operate ? delimiter : operate.getString("delimiter", delimiter);
         this.createHeader();
     }

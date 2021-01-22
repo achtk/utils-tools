@@ -18,7 +18,7 @@ import java.util.Date;
 public class TDemoInfo {
     @Id
     @GeneratedValue
-    public Integer id;
+    public String id;
 
     public Date time;
 
@@ -33,7 +33,4 @@ public class TDemoInfo {
 
     private String uuid = "1";
 
-    public Integer getId() {
-        return id;
-    }
 }

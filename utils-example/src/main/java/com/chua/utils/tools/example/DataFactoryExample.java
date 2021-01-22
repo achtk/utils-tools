@@ -136,7 +136,7 @@ public class DataFactoryExample {
             String uuid = IdHelper.createUuid();
             TDemoInfo tDemoInfo = new TDemoInfo();
             tDemoInfo.setUuid(uuid);
-            tDemoInfo.setId(i);
+            tDemoInfo.setId(i + "");
             tDemoInfo.setName("demo" + i);
 
             result.add(tDemoInfo);

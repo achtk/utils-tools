@@ -1,0 +1,2 @@
+GET http://fssam.xx-test.com/api/bidMerchants/v/queryFsBids?pageSize=20&page=1
+token: token-02f6dd927f014db14abf0f6ffae53649-20210121155555-eab222

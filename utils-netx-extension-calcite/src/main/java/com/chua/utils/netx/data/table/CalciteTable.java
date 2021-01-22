@@ -2,7 +2,7 @@ package com.chua.utils.netx.data.table;
 
 import com.chua.utils.tools.data.parser.DataParser;
 import com.chua.utils.tools.data.table.DataTable;
-import com.chua.utils.tools.data.wrapper.Wrapper;
+import com.chua.utils.tools.data.table.FilterDataTable;
 import lombok.AllArgsConstructor;
 import org.apache.calcite.schema.Table;
 
@@ -36,8 +36,11 @@ public class CalciteTable {
      * @return 表
      */
     private Table create() {
-        Wrapper wrapper = dataTable.getWrapper();
-        return new CusScannerTable(dataParser, dataTable);
+        if (dataTable instanceof FilterDataTable) {
+            return new CusFilterTable(dataParser, (FilterDataTable) dataTable);
+        } else {
+            return new CusScannerTable(dataParser, dataTable);
+        }
     }
 
 

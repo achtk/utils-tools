@@ -66,6 +66,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-netx-extension-redis-jedis</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-jdbc_2.12</artifactId>
             <version>1.10.2</version>
@@ -75,6 +81,12 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-elasticsearch7_2.11</artifactId>
             <version>1.12.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-groovy</artifactId>
+            <version>1.0</version>
         </dependency>
 
     </dependencies>

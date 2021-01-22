@@ -22,16 +22,16 @@
             <version>1.0</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-netx-extension-flink</artifactId>
+            <version>1.0</version>
+        </dependency>
         <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-tools-extension-springstarter</artifactId>
             <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-            <version>2.3.4.RELEASE</version>
         </dependency>
 
         <dependency>
@@ -120,21 +120,9 @@
 
 
         <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-http-extension-httpclient</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.github.javalbert</groupId>
             <artifactId>faster-than-reflection</artifactId>
             <version>1.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-http-extension-okhttp</artifactId>
-            <version>1.0</version>
         </dependency>
 
         <dependency>
@@ -167,12 +155,6 @@
             <version>6.14.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-netx-extension-zookeeper</artifactId>
-            <version>1.0</version>
-        </dependency>
-
 
         <dependency>
             <groupId>com.chua</groupId>
@@ -188,19 +170,6 @@
 
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-tools-extension-feign</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-netx-extension-lucene</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
             <artifactId>utils-tools-extension-operator</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
@@ -210,48 +179,6 @@
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
             <version>1.0.9</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-netx-extension-kafka</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-netx-extension-rabbitmq</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-tools-extension-pcap</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-tools-extension-office</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-netx-extension-datasource-sqlite</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-netx-extension-datasource-hsqldb</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-netx-extension-datasource-h2</artifactId>
-            <version>1.0</version>
         </dependency>
 
         <dependency>
@@ -309,11 +236,6 @@
 
         </dependency>
 
-        <dependency>
-            <groupId>com.github.bluejoe2008</groupId>
-            <artifactId>solr-sql</artifactId>
-            <version>0.9.1</version>
-        </dependency>
         <dependency>
             <groupId>org.zbus</groupId>
             <artifactId>zbus</artifactId>

@@ -7,8 +7,9 @@ import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.data.factory.DataFactory;
 import com.chua.utils.tools.data.factory.StandardDataFactory;
 import com.chua.utils.tools.data.table.wrapper.TableWrapper;
-import com.chua.utils.tools.random.RandomUtil;
 import com.chua.utils.tools.text.IdHelper;
+import com.github.jsonzou.jmockdata.JMockData;
+import com.github.jsonzou.jmockdata.TypeReference;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
@@ -21,7 +22,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,13 +40,13 @@ public class DataFactoryExample extends BaseExample {
         //测试内存数据
         // testMemorySchema();
         //测试Csv数据
-        //testFileSchema("TEMP.csv");
+      //  testFileSchema("TEMP.csv");
         //测试Bcp数据
         // testFileSchema("TEMP.bcp");
         //测试redis数据
-        testRedisSchema();
+       // testRedisSchema();
         //测试Csv和共享和数据库数据
-        //testCsvAndShareAndDbSchema();
+        testCsvAndShareAndDbSchema();
     }
 
     private static void testRedisSchema() throws Exception {
@@ -59,19 +59,21 @@ public class DataFactoryExample extends BaseExample {
     private static void testMemorySchema() throws Exception {
         log.info("===================================测试内存数据=====================================");
         DataFactory dataFactory = new StandardDataFactory();
-        dataFactory.addSchema("DUAL", TableWrapper.createMemTable("test").source(createTDemoInfos()).create());
+        dataFactory.addSchema("DUAL", TableWrapper.createMemTable("test").source(createRandomTDemoInfos()).create());
         printData(dataFactory.getConnection(), "SELECT * from \"DUAL\".\"test\"");
     }
 
     private static void testFileSchema(String name) throws Exception {
         log.info("===================================测试文件" + name + "数据=====================================");
         DataFactory dataFactory = new StandardDataFactory();
-        dataFactory.addSchema("DUAL", TableWrapper.createFileTable("DUAL").source(name).create());
+        dataFactory.addSchema("DUAL", TableWrapper.createFileTable("test").source("TEMP.bcp").create());
+        dataFactory.addSchema("DUAL", TableWrapper.createMemTable("test1").source(createRandomTDemoInfos()).create());
 
-        log.info(dataFactory.schema());
-        printData(dataFactory.getConnection(), "SELECT * from \"DUAL\".\"test\"");
-        increament(name);
-        printData(dataFactory.getConnection(), "SELECT * from \"DUAL\".\"test\"");
+       // printData(dataFactory.getConnection(), "SELECT * from \"DUAL\".\"test\"");
+      //  printData(dataFactory.getConnection(), "SELECT * from \"DUAL\".\"test1\"");
+        printData(dataFactory.getConnection(),
+                "SELECT dt1.* from \"DUAL\".\"test1\" dt1 " +
+                "LEFT JOIN \"DUAL\".\"test1\" dt ON dt.ID = dt1.ID ");
     }
 
     private static void increament(String name) throws IOException {
@@ -97,7 +99,7 @@ public class DataFactoryExample extends BaseExample {
         //添加bcp数据
         dataFactory.addSchema("DUAL1", TableWrapper.createFileTable("test").source("TEMP.bcp").create());
         //添加内存数据
-        dataFactory.addSchema("DUAL2", TableWrapper.createMemTable("test").source(createTDemoInfos()).create());
+        dataFactory.addSchema("DUAL2", TableWrapper.createMemTable("test").source(createRandomTDemoInfos()).create());
 
         printData(dataFactory.getConnection(), "" +
                 "select xx.*,dt1.*,dt2.* from \"xxl_job\".\"xxl_job_log_report\" xx " +
@@ -108,20 +110,15 @@ public class DataFactoryExample extends BaseExample {
     }
 
 
-    public static List<TDemoInfo> createTDemoInfos() {
-        int num = RandomUtil.randomInt(100);
-        List<TDemoInfo> result = new ArrayList<>(num);
-        for (int i = 0; i < num; i++) {
-            String uuid = IdHelper.createUuid();
-            TDemoInfo tDemoInfo = new TDemoInfo();
-            tDemoInfo.setUuid(uuid);
-            tDemoInfo.setId(i);
-            tDemoInfo.setName("demo" + i);
+    public static List<TDemoInfo> createRandomTDemoInfos() {
+        List<TDemoInfo> mock = JMockData.mock(new TypeReference<List<TDemoInfo>>() {
+        });
+        TDemoInfo tDemoInfo = new TDemoInfo();
+        tDemoInfo.setId(1);
+        tDemoInfo.setName("demo");
+        mock.add(tDemoInfo);
 
-            result.add(tDemoInfo);
-        }
-
-        return result;
+        return mock;
     }
 
     public static List<Map<String, Object>> getData(ResultSet resultSet) throws Exception {

@@ -2,7 +2,7 @@ package com.chua.utils.netx.data.table;
 
 import com.chua.utils.netx.data.table.common.ColumnResolver;
 import com.chua.utils.tools.data.parser.DataParser;
-import com.chua.utils.tools.data.table.DataTable;
+import com.chua.utils.tools.data.table.FilterDataTable;
 import lombok.AllArgsConstructor;
 import org.apache.calcite.DataContext;
 import org.apache.calcite.linq4j.AbstractEnumerable;
@@ -26,7 +26,7 @@ import java.util.List;
 public class CusFilterTable extends AbstractTable implements ColumnResolver, FilterableTable {
 
     private final DataParser dataParser;
-    private final DataTable dataTable;
+    private final FilterDataTable dataTable;
 
     @Override
     public RelDataType getRowType(RelDataTypeFactory typeFactory) {
@@ -35,6 +35,7 @@ public class CusFilterTable extends AbstractTable implements ColumnResolver, Fil
 
     @Override
     public Enumerable<Object[]> scan(DataContext root, List<RexNode> filters) {
+        dataTable.setFilters(filters);
         return new CusEnumerable(root, filters);
     }
 
@@ -64,6 +65,11 @@ public class CusFilterTable extends AbstractTable implements ColumnResolver, Fil
 
         @Override
         public Object[] current() {
+            List<RexNode> filters = dataTable.getFilters();
+            if(null != filters) {
+                for (RexNode rexNode : filters) {
+                }
+            }
             return dataParser.getCurrent();
         }
 

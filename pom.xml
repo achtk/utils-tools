@@ -109,7 +109,7 @@
         <jooq.version>3.13.1</jooq.version>
         <mybatis.version>3.5.4</mybatis.version>
 
-        <httpclient.version>4.5.12</httpclient.version>
+        <httpclient.version>5.0.3</httpclient.version>
         <httpasyncclient.version>4.1.4</httpasyncclient.version>
 
         <solr.version>8.5.1</solr.version>
@@ -273,6 +273,7 @@
         <module>utils-tools-extension-example</module>
         <module>utils-tools-extension-springstarter</module>
         <module>utils-groovy</module>
+        <module>utils-netx-extension-flink</module>
     </modules>
 
     <build>
