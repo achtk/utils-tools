@@ -1,5 +1,6 @@
 package com.chua.utils.tools.util;
 
+import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 
 import java.util.Collections;
@@ -60,5 +61,27 @@ public class MapUtils extends MapOperableHelper {
             return null;
         }
         return source.put(key, value);
+    }
+
+    /**
+     * 装配
+     *
+     * @param source 集合
+     * @param tClass 装配类
+     * @param mapper 字段映射
+     * @param <K>    索引
+     * @param <V>    值
+     * @param <T>    类型
+     * @return
+     */
+    public static <K, V, T> T assemblage(final Map<K, V> source, Class<T> tClass, final String... mapper) {
+        if (null == tClass) {
+            return null;
+        }
+
+        if (isEmpty(source)) {
+            return ClassUtils.forObject(tClass);
+        }
+        return BeanCopy.of(tClass).with(source).create(mapper);
     }
 }

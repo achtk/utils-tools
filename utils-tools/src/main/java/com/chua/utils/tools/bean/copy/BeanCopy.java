@@ -4,6 +4,7 @@ import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.function.Converter;
+import com.chua.utils.tools.util.ClassUtils;
 import net.sf.cglib.beans.BeanCopier;
 
 import java.util.Map;
@@ -31,7 +32,24 @@ public interface BeanCopy<T> {
      */
     @SuppressWarnings("all")
     static <T> BeanCopy<T> of(T t) {
+        Object entity = t;
+        if (t instanceof Class) {
+            entity = ClassUtils.forObject((Class) t);
+        }
         return StandardBeanCopy.<T>of(t);
+    }
+
+    /**
+     * 初始化
+     *
+     * @param className 类名
+     * @param tClass    类型
+     * @param <T>       对象类型
+     * @return this
+     */
+    @SuppressWarnings("all")
+    static <T> BeanCopy<T> of(String className, Class<T> tClass) {
+        return ClassBeanCopy.<T>of(className, tClass);
     }
 
     /**
@@ -59,7 +77,7 @@ public interface BeanCopy<T> {
      * @return this
      */
     static <T> BeanCopy<T> of(Class<T> t) {
-        return StandardBeanCopy.of(t);
+        return StandardBeanCopy.<T>of(t);
     }
 
     /**
@@ -150,6 +168,14 @@ public interface BeanCopy<T> {
      * @return 实体
      */
     T create();
+
+    /**
+     * 构建实体
+     *
+     * @param mapper 映射
+     * @return 实体
+     */
+    T create(String... mapper);
 
     /**
      * 获取所有字段

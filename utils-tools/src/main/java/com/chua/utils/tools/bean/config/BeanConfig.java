@@ -1,5 +1,6 @@
 package com.chua.utils.tools.bean.config;
 
+import com.chua.utils.tools.bean.interpreter.MapperInterpreter;
 import com.chua.utils.tools.bean.interpreter.NameInterpreter;
 import com.chua.utils.tools.bean.interpreter.NamedInterpreter;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class BeanConfig {
             add(new NamedInterpreter());
         }
     };
+    private Set<MapperInterpreter> mapperInterpreters = new HashSet<>();
 
     /**
      * 添加命名解释器
@@ -31,6 +33,17 @@ public class BeanConfig {
      */
     public BeanConfig interpreter(NameInterpreter nameInterpreter) {
         interpreters.add(nameInterpreter);
+        return this;
+    }
+
+    /**
+     * 添加映射解释器
+     *
+     * @param mapperInterpreter 映射解释器
+     * @return this
+     */
+    public BeanConfig mapper(MapperInterpreter mapperInterpreter) {
+        mapperInterpreters.add(mapperInterpreter);
         return this;
     }
 }

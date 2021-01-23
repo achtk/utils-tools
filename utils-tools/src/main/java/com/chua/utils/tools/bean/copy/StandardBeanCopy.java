@@ -1,18 +1,23 @@
 package com.chua.utils.tools.bean.copy;
 
+import com.chua.utils.tools.annotations.BinderMapper;
 import com.chua.utils.tools.bean.config.BeanConfig;
 import com.chua.utils.tools.bean.interpreter.NameInterpreter;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.function.Converter;
+import com.chua.utils.tools.function.converter.TypeConverter;
 import com.chua.utils.tools.manager.parser.description.FieldDescription;
+import com.chua.utils.tools.manager.parser.description.MethodDescription;
+import com.chua.utils.tools.util.AnnotationUtils;
+import com.chua.utils.tools.util.ClassUtils;
+import com.google.common.base.Splitter;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import net.sf.cglib.beans.BeanMap;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -24,13 +29,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class StandardBeanCopy<T> implements BeanCopy<T> {
     /**
+     * 字段信息
+     */
+    private Map<String, Class<?>> fieldInfo;
+    /**
+     * 字段映射
+     */
+    private Multimap<String, String> mapper = HashMultimap.create();
+    /**
      * 基础配置
      */
-    private BeanConfig beanConfig;
+    private BeanConfig beanConfig = new BeanConfig();
     /**
      * 类属性
      */
-    private BeanMap beanMap;
+    protected BeanMap beanMap;
     /**
      * 待处理类
      */
@@ -42,7 +55,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     /**
      * 待处理的数据缓存
      */
-    private final Map<String, Object> withParams = new HashMap<>();
+    protected Map<String, Object> withParams = new HashMap<>();
 
     private StandardBeanCopy() {
     }
@@ -58,13 +71,33 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     @SuppressWarnings("all")
     private StandardBeanCopy(T entity, BeanConfig beanConfig) {
         if (null == entity) {
-            this.tClass = (Class<T>) Object.class;
+            this.tClass = null;
         } else {
             this.tClass = (Class<T>) entity.getClass();
+            this.beanMap = BeanMap.create(entity);
         }
+        this.analyse();
         this.entity = entity;
         this.beanConfig = beanConfig;
-        this.beanMap = BeanMap.create(tClass);
+    }
+
+    /**
+     * 解析字段信息
+     *
+     * @return 字段信息
+     */
+    private void analyse() {
+        if (null == tClass) {
+            return;
+        }
+        this.fieldInfo = new HashMap<>();
+        ClassUtils.doWithFields(tClass, field -> {
+            fieldInfo.put(field.getName(), field.getType());
+            BinderMapper binderMapper = field.getDeclaredAnnotation(BinderMapper.class);
+            if (null != binderMapper) {
+                mapper.put(binderMapper.value(), field.getName());
+            }
+        });
     }
 
     /**
@@ -87,7 +120,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
      */
     public static <T> BeanCopy of(T entity) {
         if (null != entity && entity instanceof String) {
-            return new ClassBeanCopy(entity.toString());
+            return null;
         }
         return new StandardBeanCopy<>(entity);
     }
@@ -95,9 +128,50 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     @Override
     public BeanCopy with(String name, Object value) {
         name = transTo(name);
-        beanMap.put(name, value);
-        withParams.put(name, value);
+        this.mapper(name, value);
         return this;
+    }
+
+    /**
+     * 名称映射
+     *
+     * @param name  名称
+     * @param value 值
+     */
+    protected void mapper(String name, Object value) {
+        value = transform(name, value);
+
+        if (null != beanMap) {
+            beanMap.put(name, value);
+        }
+        withParams.put(name, value);
+        if (mapper.containsKey(name)) {
+            Collection<String> realNames = mapper.get(name);
+            for (String realName : realNames) {
+                if (null != beanMap) {
+                    beanMap.put(realName, value);
+                }
+                withParams.put(realName, value);
+            }
+        }
+    }
+
+    /**
+     * 转化
+     *
+     * @param name  索引
+     * @param value 值
+     * @return 值
+     */
+    private Object transform(String name, Object value) {
+        if (null != fieldInfo && fieldInfo.containsKey(name)) {
+            Class<?> aClass = fieldInfo.get(name);
+            TypeConverter typeConverter = com.chua.utils.tools.function.converter.Converter.getTypeConverter(aClass);
+            if (null != typeConverter) {
+                value = typeConverter.convert(value);
+            }
+        }
+        return value;
     }
 
     @Override
@@ -139,11 +213,20 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
             return this;
         }
 
-        if(entity instanceof Map) {
+        if (entity instanceof Map) {
             with((Map<String, Object>) entity);
             return this;
         }
-        return with(BeanMap.create(entity));
+        BeanMap beanMap = BeanMap.create(entity);
+        ClassUtils.doWithFields(entity.getClass(), fields -> {
+            String name = fields.getName();
+            BinderMapper binderMapper = AnnotationUtils.get(fields.getClass(), BinderMapper.class);
+            this.with(name, beanMap.get(name));
+            if (null != binderMapper) {
+                this.with(binderMapper.value(), beanMap.get(name));
+            }
+        });
+        return this;
     }
 
     @Override
@@ -160,13 +243,31 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
         if (MapOperableHelper.isEmpty(withParams) || null == entity) {
             return entity;
         }
-        ObjectCreate<T> objectCreate;
+        ObjectCreate<T> objectCreate = null;
         if (isCglibable()) {
             objectCreate = new CglibObjectCreate<>();
         } else {
             objectCreate = new ReflectionObjectCreate<>();
         }
         return objectCreate.create();
+    }
+
+    @Override
+    public T create(String... mapper) {
+        if (null == mapper) {
+            return create();
+        }
+        for (String s : mapper) {
+            List<String> strings = Splitter.on("->").trimResults().omitEmptyStrings().splitToList(s);
+            if (null == strings || strings.size() != 2) {
+                continue;
+            }
+            String mapperName = strings.get(0);
+            String realName = strings.get(1);
+            this.mapper.put(mapperName, realName);
+        }
+        this.with(withParams);
+        return create();
     }
 
     @Override
@@ -206,7 +307,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
      * @param name 命名
      * @return 转化后的命名
      */
-    private String transTo(String name) {
+    protected String transTo(String name) {
         Set<NameInterpreter> interpreters = beanConfig.getInterpreters();
         for (NameInterpreter interpreter : interpreters) {
             if (interpreter.isMatcher(name)) {
@@ -255,18 +356,22 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
 
         @Override
         public T create() {
-            ClassHelper.doWithFields(tClass, item -> {
-                FieldDescription fieldDescription = new FieldDescription();
-                fieldDescription.setEntity(entity);
-                fieldDescription.setField(item);
+            ClassHelper.doWithFields(tClass, field -> {
+                MethodDescription methodDescription = new MethodDescription(entity, field.getType());
+                methodDescription.setSetName(field.getName());
 
-                String name = fieldDescription.getName();
+                if(!methodDescription.existMethod()) {
+                    FieldDescription fieldDescription = new FieldDescription(entity, field);
+                    String name = fieldDescription.getName();
+                    if (!withParams.containsKey(name)) {
+                        return;
+                    }
 
-                if (!withParams.containsKey(name)) {
+                    fieldDescription.set(withParams.get(name));
                     return;
                 }
+                methodDescription.invoke(withParams.get(field.getName()));
 
-                fieldDescription.set(withParams.get(name));
             });
             return (T) entity;
         }

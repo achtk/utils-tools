@@ -3,7 +3,9 @@ package com.chua.utils.tools.manager.parser.description;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.converter.TypeConverter;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -19,6 +21,8 @@ import java.lang.reflect.Field;
 @Setter
 @NoArgsConstructor
 public class FieldDescription<T> {
+
+
     /**
      * 解析类
      */

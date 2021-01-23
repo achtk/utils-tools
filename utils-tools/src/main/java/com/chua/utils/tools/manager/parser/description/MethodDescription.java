@@ -1,7 +1,9 @@
 package com.chua.utils.tools.manager.parser.description;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.named.NamedHelper;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.lang.annotation.Annotation;
@@ -16,6 +18,7 @@ import java.lang.reflect.Method;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public class MethodDescription<T> {
     /**
      * 类
@@ -54,6 +57,11 @@ public class MethodDescription<T> {
      */
     private Class<?>[] exceptionTypes;
 
+    public MethodDescription(T entity, Class<?>... paramTypes) {
+        this.entity = entity;
+        this.paramTypes = paramTypes;
+    }
+
     /**
      * 设置方法
      *
@@ -75,7 +83,7 @@ public class MethodDescription<T> {
      * @param params 参数
      * @return Object
      */
-    public Object invoke(Object[] params) {
+    public Object invoke(Object... params) {
         return invoke(params, Object.class);
     }
 
@@ -97,7 +105,7 @@ public class MethodDescription<T> {
             return null;
         }
 
-        if(null == params) {
+        if (null == params) {
             params = new Object[0];
         }
 
@@ -114,6 +122,77 @@ public class MethodDescription<T> {
             return null != invoke && returnType.isAssignableFrom(invoke.getClass()) ? (R) invoke : null;
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /**
+     * set方法
+     *
+     * @param name
+     */
+    public void setSetName(String name) {
+        String name1 = "set" + NamedHelper.firstUpperCase(name);
+        this.setName(name1);
+    }
+
+    /**
+     * get方法
+     *
+     * @param name
+     */
+    public void setGetName(String name) {
+        String name1 = "get" + NamedHelper.firstUpperCase(name);
+        this.setName(name1);
+    }
+
+    /**
+     * 存在方法
+     *
+     * @param name
+     * @return
+     */
+    public boolean existSetMethod(String name) {
+        setSetName(name);
+        return existMethod(this.name);
+    }
+
+    /**
+     * 存在方法
+     *
+     * @param name
+     * @return
+     */
+    public boolean existGetMethod(String name) {
+        setGetName(name);
+        return existMethod(this.name);
+    }
+
+    /**
+     * 存在方法
+     *
+     * @return
+     */
+    public boolean existMethod() {
+        return existMethod(this.name);
+    }
+
+    /**
+     * 存在方法
+     *
+     * @param name
+     * @return
+     */
+    public boolean existMethod(String name) {
+        if (null != method && method.getName().equals(name)) {
+            return true;
+        }
+        Class<?> aClass = entity.getClass();
+        try {
+            Method method = aClass.getDeclaredMethod(this.name, this.paramTypes);
+            setMethod(method);
+            return null != method;
+        } catch (NoSuchMethodException e) {
+            return false;
         }
     }
 }

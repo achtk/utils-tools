@@ -628,11 +628,13 @@ public class ClassHelper extends ClassLoaderHelper {
         for (int i = 0; i < dataLength; i++) {
             Class<?> paramType = paramTypes[i];
             Object data = newParams[i];
-            if (!paramType.isAssignableFrom(data.getClass())) {
-                break;
-            }
             atomicInteger.decrementAndGet();
-            result[i] = data;
+            TypeConverter typeConverter = getTypeConverter(paramType);
+            if(null == typeConverter) {
+                result[i] = data;
+                continue;
+            }
+            result[i]  = typeConverter.convert(data);
         }
         return atomicInteger.get() == 0 ? result : null;
     }
