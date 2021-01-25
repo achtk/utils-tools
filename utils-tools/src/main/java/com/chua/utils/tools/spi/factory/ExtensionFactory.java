@@ -190,7 +190,7 @@ public class ExtensionFactory implements Runnable {
      * @see FactoriesExtensionProcessor
      * @see ServiceLoaderProcessor
      */
-    public static synchronized <T> ExtensionLoader<T> getExtensionLoader(Class<T> clazz, final ExtensionProcessor extensionProcessor) {
+    public static synchronized <T> ExtensionLoader<T> getExtensionLoader(Class<T> clazz, final ExtensionProcessor... extensionProcessor) {
         ExtensionLoader<T> loader = LOADER_MAP.get(clazz);
         if (null == loader) {
             loader = new ExtensionLoader<>(clazz, extensionProcessor);

@@ -2,10 +2,10 @@ package com.chua.utils.tools.util;
 
 import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
+import com.google.common.base.Strings;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * map工具类
@@ -83,5 +83,29 @@ public class MapUtils extends MapOperableHelper {
             return ClassUtils.forObject(tClass);
         }
         return BeanCopy.of(tClass).with(source).create(mapper);
+    }
+
+    /**
+     * 匹配Key
+     *
+     * @param source 集合
+     * @param key    索引
+     * @param <K>    索引类型
+     * @param <V>    值类型
+     * @return
+     */
+    public static <K, V> List<V> find(final Map<K, V> source, String key) {
+        if (isEmpty(source) || Strings.isNullOrEmpty(key)) {
+            return Collections.emptyList();
+        }
+        key = key.replace("#", "*");
+        String finalKey = key;
+        return source.entrySet().stream().map(kvEntry -> {
+            K key1 = kvEntry.getKey();
+            if (StringUtils.wildcardMatch(key1.toString(), finalKey)) {
+                return kvEntry.getValue();
+            }
+            return null;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 }

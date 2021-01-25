@@ -1,1 +1,1 @@
-com.chua.utils.netx.flink.connector.RedisTableSourceSinkFactory
+com.chua.utils.netx.flink.connector.factory.RedisFlinkTableFactory

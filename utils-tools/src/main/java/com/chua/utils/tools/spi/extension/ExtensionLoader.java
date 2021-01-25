@@ -12,6 +12,7 @@ import com.chua.utils.tools.spi.entity.SpiConfig;
 import com.chua.utils.tools.spi.processor.AbstractSimpleExtensionProcessor;
 import com.chua.utils.tools.spi.processor.CustomExtensionProcessor;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
+import com.chua.utils.tools.spi.processor.ServiceLoaderProcessor;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Ordering;
@@ -52,9 +53,16 @@ public class ExtensionLoader<T> {
      */
     private SpiConfig spiConfig;
     /**
+     * 默认
+     */
+    private static final ExtensionProcessor[] DEFAULT_PROCESSOR = new ExtensionProcessor[]{
+            new CustomExtensionProcessor(),
+            new ServiceLoaderProcessor()
+    };
+    /**
      * 处理器
      */
-    private ExtensionProcessor extensionProcessor = new CustomExtensionProcessor();
+    private ExtensionProcessor[] extensionProcessor = DEFAULT_PROCESSOR;
 
     private final Comparator<ExtensionClass<T>> comparator = new Comparator<ExtensionClass<T>>() {
         @Override
@@ -74,11 +82,11 @@ public class ExtensionLoader<T> {
         this.service = service;
     }
 
-    public ExtensionLoader(ExtensionProcessor extensionProcessor) {
+    public ExtensionLoader(ExtensionProcessor... extensionProcessor) {
         this.extensionProcessor = extensionProcessor;
     }
 
-    public ExtensionLoader(Class<T> service, ExtensionProcessor extensionProcessor) {
+    public ExtensionLoader(Class<T> service, ExtensionProcessor... extensionProcessor) {
         this.service = service;
         this.extensionProcessor = extensionProcessor;
     }
@@ -88,7 +96,7 @@ public class ExtensionLoader<T> {
         this.classLoader = classLoader;
     }
 
-    public ExtensionLoader(Class<T> service, ClassLoader classLoader, ExtensionProcessor extensionProcessor) {
+    public ExtensionLoader(Class<T> service, ClassLoader classLoader, ExtensionProcessor... extensionProcessor) {
         this.service = service;
         this.classLoader = classLoader;
         this.extensionProcessor = extensionProcessor;
@@ -109,12 +117,13 @@ public class ExtensionLoader<T> {
 
         if (!extensionClassMultimap.containsKey(service.getName())) {
             if (null == extensionProcessor) {
-                extensionProcessor = new CustomExtensionProcessor();
+                extensionProcessor = DEFAULT_PROCESSOR;
             }
-
-            extensionProcessor.init(spiConfig);
-            Collection<ExtensionClass<T>> collection = extensionProcessor.analyze(service, classLoader);
-            cache(collection);
+            for (ExtensionProcessor processor : extensionProcessor) {
+                processor.init(spiConfig);
+                Collection<ExtensionClass<T>> collection = processor.analyze(service, classLoader);
+                cache(collection);
+            }
         }
         if (log.isDebugEnabled()) {
             log.debug("[{}]共检索类/接口[{}: {}], 耗时: {}ms", extensionProcessor.getClass().getSimpleName(), service.getName(), extensionClassMultimap.size(), (System.currentTimeMillis() - startTime));
@@ -193,7 +202,7 @@ public class ExtensionLoader<T> {
             extensionClasses = getExtensionClasses(name);
         }
 
-        if(null == extensionClasses) {
+        if (null == extensionClasses) {
             return null;
         }
 
@@ -416,12 +425,14 @@ public class ExtensionLoader<T> {
      */
     public synchronized void refresh() {
         if (null != extensionProcessor) {
-            extensionProcessor.removeAll();
-            if (extensionProcessor instanceof AbstractSimpleExtensionProcessor) {
-                AbstractSimpleExtensionProcessor abstractSimpleExtensionProcessor = (AbstractSimpleExtensionProcessor) extensionProcessor;
-                Collection<ExtensionClass<T>> analyze = extensionProcessor.analyze(abstractSimpleExtensionProcessor.getInterfaceClass(), abstractSimpleExtensionProcessor.getClassLoader());
-                extensionClassMultimap.clear();
-                cache(analyze);
+            for (ExtensionProcessor processor : extensionProcessor) {
+                processor.removeAll();
+                if (processor instanceof AbstractSimpleExtensionProcessor) {
+                    AbstractSimpleExtensionProcessor abstractSimpleExtensionProcessor = (AbstractSimpleExtensionProcessor) processor;
+                    Collection<ExtensionClass<T>> analyze = processor.analyze(abstractSimpleExtensionProcessor.getInterfaceClass(), abstractSimpleExtensionProcessor.getClassLoader());
+                    extensionClassMultimap.clear();
+                    cache(analyze);
+                }
             }
         }
     }

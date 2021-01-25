@@ -38,16 +38,17 @@ class FlinkExample {
 
         tableEnvironment.executeSql("""
                 CREATE TABLE redis1 (
-                   userId STRING,
-                   itemId STRING,
-                   categoryId STRING
+                   userId VARCHAR,
+                   itemId VARCHAR,
+                   categoryId VARCHAR
                 ) WITH (
-                  'connector.type' = 'redis')
-              """  )
+                  'connector.type' = 'redis',
+                  'redis.index' = 'demo1')
+              """)
 
         println tableEnvironment.listTables()
+        //  tableEnvironment.executeSql("insert into redis1 values('1', '1', '1')")
         Table fileTable1 = tableEnvironment.sqlQuery("SELECT * FROM redis1")
-        //tableEnvironment.executeSql("insert into file1 values('1', '1', '1')")
         fileTable1.collect()
         def fileRow1 = tableEnvironment.toDataSet(fileTable1, Row.class)
         println fileRow1.collect()
