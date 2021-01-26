@@ -1,7 +1,5 @@
 package com.chua.utils.tools.function.converter;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -20,14 +18,6 @@ public class LongTypeConverter implements TypeConverter<Long> {
 
         if (value instanceof Number) {
             return ((Number) value).longValue();
-        }
-
-        if (value instanceof BigInteger) {
-            return ((BigInteger) value).longValue();
-        }
-
-        if (value instanceof BigDecimal) {
-            return ((BigDecimal) value).longValue();
         }
 
         if (value instanceof String) {

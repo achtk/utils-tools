@@ -1,8 +1,5 @@
 package com.chua.utils.tools.function.converter;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 /**
  * Double类型转化
  *
@@ -21,13 +18,6 @@ public class ByteTypeConverter implements TypeConverter<Byte> {
             return ((Number) value).byteValue();
         }
 
-        if (value instanceof BigInteger) {
-            return ((BigInteger) value).byteValue();
-        }
-
-        if (value instanceof BigDecimal) {
-            return ((BigDecimal) value).byteValue();
-        }
 
         if (value instanceof String) {
             try {

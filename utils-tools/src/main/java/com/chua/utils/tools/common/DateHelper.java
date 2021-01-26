@@ -348,4 +348,21 @@ public class DateHelper {
         Instant instant = zonedDateTime.toInstant();
         return Date.from(instant);
     }
+
+
+    /**
+     * instant转Date
+     *
+     * @param instant instant
+     * @return Date
+     * @see java.time.LocalDate
+     * @see java.util.Date
+     * @see java.time.Instant
+     */
+    public static Date toDate(Instant instant) {
+        if (null == instant) {
+            return null;
+        }
+        return Date.from(instant);
+    }
 }

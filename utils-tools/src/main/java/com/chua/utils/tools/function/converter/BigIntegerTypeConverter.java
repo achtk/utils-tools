@@ -1,6 +1,7 @@
 package com.chua.utils.tools.function.converter;
 
-import java.math.BigDecimal;
+import com.chua.utils.tools.util.NumberUtils;
+
 import java.math.BigInteger;
 
 /**
@@ -21,8 +22,8 @@ public class BigIntegerTypeConverter implements TypeConverter<BigInteger> {
             return (BigInteger) value;
         }
 
-        if (value instanceof Long) {
-            return BigInteger.valueOf((Long) value);
+        if (value instanceof Number) {
+            return BigInteger.valueOf(NumberUtils.parseNumber(value, Long.class));
         }
 
         if (value instanceof String) {

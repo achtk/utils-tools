@@ -20,6 +20,87 @@ import static com.chua.utils.tools.constant.ClassConstant.*;
  */
 @SuppressWarnings("all")
 public class EmptyOrBase extends InitializingCacheable {
+
+    /**
+     * 默认除法运算精度
+     */
+    public static final int DEFAUT_DIV_SCALE = 10;
+    /**
+     * Reusable Long constant for zero.
+     */
+    public static final Long LONG_ZERO = 0L;
+    /**
+     * Reusable Long constant for one.
+     */
+    public static final Long LONG_ONE = 1L;
+    /**
+     * Reusable Long constant for minus one.
+     */
+    public static final Long LONG_MINUS_ONE = -1L;
+    /**
+     * Reusable Integer constant for zero.
+     */
+    public static final Integer INTEGER_ZERO = 0;
+    /**
+     * Reusable Integer constant for one.
+     */
+    public static final Integer INTEGER_ONE = 1;
+    /**
+     * Reusable Integer constant for two
+     */
+    public static final Integer INTEGER_TWO = 2;
+    /**
+     * Reusable Integer constant for minus one.
+     */
+    public static final Integer INTEGER_MINUS_ONE = -1;
+    /**
+     * Reusable Short constant for zero.
+     */
+    public static final Short SHORT_ZERO = (short) 0;
+    /**
+     * Reusable Short constant for one.
+     */
+    public static final Short SHORT_ONE = (short) 1;
+    /**
+     * Reusable Short constant for minus one.
+     */
+    public static final Short SHORT_MINUS_ONE = (short) -1;
+    /**
+     * Reusable Byte constant for zero.
+     */
+    public static final Byte BYTE_ZERO = (byte) 0;
+    /**
+     * Reusable Byte constant for one.
+     */
+    public static final Byte BYTE_ONE = (byte) 1;
+    /**
+     * Reusable Byte constant for minus one.
+     */
+    public static final Byte BYTE_MINUS_ONE = (byte) -1;
+    /**
+     * Reusable Double constant for zero.
+     */
+    public static final Double DOUBLE_ZERO = 0.0d;
+    /**
+     * Reusable Double constant for one.
+     */
+    public static final Double DOUBLE_ONE = 1.0d;
+    /**
+     * Reusable Double constant for minus one.
+     */
+    public static final Double DOUBLE_MINUS_ONE = -1.0d;
+    /**
+     * Reusable Float constant for zero.
+     */
+    public static final Float FLOAT_ZERO = 0.0f;
+    /**
+     * Reusable Float constant for one.
+     */
+    public static final Float FLOAT_ONE = 1.0f;
+    /**
+     * Reusable Float constant for minus one.
+     */
+    public static final Float FLOAT_MINUS_ONE = -1.0f;
     /**
      * 空List
      */

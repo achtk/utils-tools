@@ -8,12 +8,16 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 import static com.chua.utils.tools.constant.StringConstant.HEX_16_UPPER;
 import static com.chua.utils.tools.constant.StringConstant.ZERO;
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_MINS;
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_WELL;
+import static com.chua.utils.tools.empty.EmptyOrBase.DEFAUT_DIV_SCALE;
+import static com.chua.utils.tools.empty.EmptyOrBase.INTEGER_TWO;
 
 /**
  * 数字处理
@@ -21,86 +25,7 @@ import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_WELL;
  * @author Administrator
  */
 public class NumberHelper {
-    /**
-     * 默认除法运算精度
-     */
-    private static final int DEFAUT_DIV_SCALE = 10;
-    /**
-     * Reusable Long constant for zero.
-     */
-    public static final Long LONG_ZERO = Long.valueOf(0L);
-    /**
-     * Reusable Long constant for one.
-     */
-    public static final Long LONG_ONE = Long.valueOf(1L);
-    /**
-     * Reusable Long constant for minus one.
-     */
-    public static final Long LONG_MINUS_ONE = Long.valueOf(-1L);
-    /**
-     * Reusable Integer constant for zero.
-     */
-    public static final Integer INTEGER_ZERO = Integer.valueOf(0);
-    /**
-     * Reusable Integer constant for one.
-     */
-    public static final Integer INTEGER_ONE = Integer.valueOf(1);
-    /**
-     * Reusable Integer constant for two
-     */
-    public static final Integer INTEGER_TWO = Integer.valueOf(2);
-    /**
-     * Reusable Integer constant for minus one.
-     */
-    public static final Integer INTEGER_MINUS_ONE = Integer.valueOf(-1);
-    /**
-     * Reusable Short constant for zero.
-     */
-    public static final Short SHORT_ZERO = Short.valueOf((short) 0);
-    /**
-     * Reusable Short constant for one.
-     */
-    public static final Short SHORT_ONE = Short.valueOf((short) 1);
-    /**
-     * Reusable Short constant for minus one.
-     */
-    public static final Short SHORT_MINUS_ONE = Short.valueOf((short) -1);
-    /**
-     * Reusable Byte constant for zero.
-     */
-    public static final Byte BYTE_ZERO = Byte.valueOf((byte) 0);
-    /**
-     * Reusable Byte constant for one.
-     */
-    public static final Byte BYTE_ONE = Byte.valueOf((byte) 1);
-    /**
-     * Reusable Byte constant for minus one.
-     */
-    public static final Byte BYTE_MINUS_ONE = Byte.valueOf((byte) -1);
-    /**
-     * Reusable Double constant for zero.
-     */
-    public static final Double DOUBLE_ZERO = Double.valueOf(0.0d);
-    /**
-     * Reusable Double constant for one.
-     */
-    public static final Double DOUBLE_ONE = Double.valueOf(1.0d);
-    /**
-     * Reusable Double constant for minus one.
-     */
-    public static final Double DOUBLE_MINUS_ONE = Double.valueOf(-1.0d);
-    /**
-     * Reusable Float constant for zero.
-     */
-    public static final Float FLOAT_ZERO = Float.valueOf(0.0f);
-    /**
-     * Reusable Float constant for one.
-     */
-    public static final Float FLOAT_ONE = Float.valueOf(1.0f);
-    /**
-     * Reusable Float constant for minus one.
-     */
-    public static final Float FLOAT_MINUS_ONE = Float.valueOf(-1.0f);
+
 
     private static final Pattern INT_PATTERN = Pattern.compile("^\\d+$");
 
@@ -1183,13 +1108,99 @@ public class NumberHelper {
     }
 
     /**
+     * Number转化为Number
+     *
+     * @param text        数据
+     * @param targetClass 目标类型
+     * @param <T>         类型
+     * @return Number
+     */
+    @SuppressWarnings("all")
+    public static <T extends Number> T parseNumber(Number text, Class<T> targetClass) {
+        if (null == text || null == targetClass) {
+            return null;
+        }
+        if (Integer.class.isAssignableFrom(targetClass)) {
+            return (T) Integer.valueOf(text.intValue());
+        }
+
+        if (Long.class.isAssignableFrom(targetClass)) {
+            return (T) Long.valueOf(text.longValue());
+        }
+
+        if (Double.class.isAssignableFrom(targetClass)) {
+            return (T) Double.valueOf(text.doubleValue());
+        }
+
+        if (Float.class.isAssignableFrom(targetClass)) {
+            return (T) Float.valueOf(text.floatValue());
+        }
+
+        if (Short.class.isAssignableFrom(targetClass)) {
+            return (T) Short.valueOf(text.shortValue());
+        }
+
+        if (Byte.class.isAssignableFrom(targetClass)) {
+            return (T) Byte.valueOf(text.byteValue());
+        }
+
+        if (BigDecimal.class.isAssignableFrom(targetClass)) {
+            return (T) BigDecimal.valueOf(text.doubleValue());
+        }
+
+        if (BigInteger.class.isAssignableFrom(targetClass)) {
+            return (T) BigInteger.valueOf(text.longValue());
+        }
+
+        if (AtomicInteger.class.isAssignableFrom(targetClass)) {
+            return (T) new AtomicInteger(text.intValue());
+        }
+
+        if (AtomicLong.class.isAssignableFrom(targetClass)) {
+            return (T) new AtomicLong(text.longValue());
+        }
+
+        return null;
+    }
+
+    /**
+     * Object转化为Number
+     *
+     * @param text        数据
+     * @param targetClass 目标类型
+     * @param <T>         类型
+     * @return Number
+     */
+    @SuppressWarnings("all")
+    public static <T extends Number> T parseNumber(Object text, Class<T> targetClass) {
+        if (null == text || null == targetClass) {
+            return null;
+        }
+
+        if (targetClass.isAssignableFrom(text.getClass())) {
+            return (T) text;
+        }
+
+        if (text instanceof Number) {
+            Number number = (Number) text;
+            return parseNumber(number, targetClass);
+        }
+
+        if (text instanceof String) {
+            return parseNumber(text.toString(), targetClass);
+        }
+        return null;
+    }
+
+    /**
      * 字符串转化为Number
      *
-     * @param text
-     * @param targetClass
-     * @param <T>
-     * @return
+     * @param text        数据
+     * @param targetClass 目标类型
+     * @param <T>         类型
+     * @return Number
      */
+    @SuppressWarnings("all")
     public static <T extends Number> T parseNumber(String text, Class<T> targetClass) {
         Assert.notNull(text, "Text must not be null");
         Assert.notNull(targetClass, "Target class must not be null");
@@ -1403,6 +1414,7 @@ public class NumberHelper {
             return defaultValue;
         }
     }
+
     /**
      * <p>Convert a <code>String</code> to a <code>double</code>, returning
      * <code>0.0d</code> if the conversion fails.</p>
@@ -1454,6 +1466,7 @@ public class NumberHelper {
             return defaultValue;
         }
     }
+
     /**
      * <p>Convert a <code>BigDecimal</code> to a <code>double</code>.</p>
      *
@@ -1608,14 +1621,14 @@ public class NumberHelper {
         if (value == null) {
             return BigDecimal.ZERO;
         }
-        return value.setScale(
-                scale,
-                (roundingMode == null) ? RoundingMode.HALF_EVEN : roundingMode
-        );
+        return value.setScale(scale, (roundingMode == null) ? RoundingMode.HALF_EVEN : roundingMode);
     }
 
     /**
+     * toScaledBigDecimal
+     *
      * @param value 原始数据
+     * @return BigDecimal
      * @since 3.8
      */
     public static BigDecimal toScaledBigDecimal(final Float value) {
@@ -1623,9 +1636,12 @@ public class NumberHelper {
     }
 
     /**
+     * toScaledBigDecimal
+     *
      * @param value        原始数据
      * @param scale        数据缩放
-     * @param roundingMode
+     * @param roundingMode roundingMode
+     * @return BigDecimal
      * @since 3.8
      */
     public static BigDecimal toScaledBigDecimal(final Float value, final int scale, final RoundingMode roundingMode) {
@@ -1640,7 +1656,10 @@ public class NumberHelper {
     }
 
     /**
+     * toScaledBigDecimal
+     *
      * @param value 原始数据
+     * @return BigDecimal
      * @since 3.8
      */
     public static BigDecimal toScaledBigDecimal(final Double value) {
@@ -1648,9 +1667,12 @@ public class NumberHelper {
     }
 
     /**
+     * toScaledBigDecimal
+     *
      * @param value        原始数据
      * @param scale        数据缩放
-     * @param roundingMode
+     * @param roundingMode roundingMode
+     * @return BigDecimal
      * @since 3.8
      */
     public static BigDecimal toScaledBigDecimal(final Double value, final int scale, final RoundingMode roundingMode) {
@@ -1668,7 +1690,7 @@ public class NumberHelper {
     /**
      * is integer string.
      *
-     * @param str
+     * @param str 字符串
      * @return is integer
      */
     public static boolean isInteger(String str) {
@@ -1682,19 +1704,16 @@ public class NumberHelper {
      * 是否是数字
      *
      * @param str 原始数据
-     * @return
+     * @return boolean
      */
     public static boolean isNumber(final String str) {
         if (Strings.isNullOrEmpty(str)) {
             return false;
         }
 
-        if (str == null) {
-            return false;
-        }
         int sz = str.length();
         for (int i = 0; i < sz; i++) {
-            if (Character.isDigit(str.charAt(i)) == false) {
+            if (!Character.isDigit(str.charAt(i))) {
                 return false;
             }
         }
@@ -1706,7 +1725,7 @@ public class NumberHelper {
      *
      * @param max 总大小
      * @param min 每块大小
-     * @return
+     * @return int
      */
     public static int fences(long max, long min) {
         final Long before = max / min;

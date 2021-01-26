@@ -1,8 +1,5 @@
 package com.chua.utils.tools.function.converter;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 /**
  * Double类型转化
  *
@@ -19,14 +16,6 @@ public class DoubleTypeConverter implements TypeConverter<Double> {
 
         if (value instanceof Number) {
             return ((Number) value).doubleValue();
-        }
-
-        if (value instanceof BigInteger) {
-            return ((BigInteger) value).doubleValue();
-        }
-
-        if (value instanceof BigDecimal) {
-            return ((BigDecimal) value).doubleValue();
         }
 
         if (value instanceof String) {

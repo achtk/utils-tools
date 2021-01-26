@@ -7,7 +7,9 @@ import com.chua.utils.tools.util.DateUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -41,8 +43,20 @@ public class DateTypeConverter implements TypeConverter<Date> {
             return (Date) value;
         }
 
+        if (value instanceof LocalDate) {
+            return DateUtils.toDate((LocalDate) value);
+        }
+
+        if (value instanceof Instant) {
+            return DateUtils.toDate((Instant) value);
+        }
+
+        if (value instanceof ZonedDateTime) {
+            return DateUtils.parserDate((ZonedDateTime) value);
+        }
+
         if (value instanceof Long) {
-            return DateUtils.parseDate((Long)value);
+            return DateUtils.parseDate((Long) value);
         }
 
         if (value instanceof String) {

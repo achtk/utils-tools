@@ -1,8 +1,5 @@
 package com.chua.utils.tools.function.converter;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 /**
  * Float类型转化
  *
@@ -19,14 +16,6 @@ public class FloatTypeConverter implements TypeConverter<Float> {
 
         if (value instanceof Number) {
             return ((Number) value).floatValue();
-        }
-
-        if (value instanceof BigInteger) {
-            return ((BigInteger) value).floatValue();
-        }
-
-        if (value instanceof BigDecimal) {
-            return ((BigDecimal) value).floatValue();
         }
 
         if (value instanceof String) {

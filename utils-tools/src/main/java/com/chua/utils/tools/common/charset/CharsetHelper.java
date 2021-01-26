@@ -58,7 +58,7 @@ public class CharsetHelper {
     public static final String GB2312 = "GB2312";
 
     /**
-     * 系统字符集编码，如果是Windows，则默认为GBK编码，否则取 {@link CharsetUtil#defaultCharsetName()}
+     * 系统字符集编码，如果是Windows，则默认为GBK编码，否则取 {@link Charset#defaultCharset()}
      *
      * @return 系统字符集编码
      * @see {@link Charset#defaultCharset()}
