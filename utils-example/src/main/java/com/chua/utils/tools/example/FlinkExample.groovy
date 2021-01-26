@@ -27,7 +27,13 @@ class FlinkExample {
                         .source(JMockData.mock(new TypeReference<List<TDemoInfo>>() {}))
                         .columns(new String[]{"id", "name", "title"} , "VARCHAR").build() as Table)
 
-        def query = tables.sqlQuery("SELECT * FROM mem1", Map.class)
+        tables.register(
+                TableFactory.ofMem()
+                        .table("mem2")
+                        .source(JMockData.mock(new TypeReference<List<TDemoInfo>>() {}))
+                        .columns(new String[]{"id", "name", "title"} , "VARCHAR").build() as Table)
+
+        def query = tables.sqlQuery("SELECT * FROM mem1 left join mem2 on mem1.id = mem2.id ", Map.class)
         query.collect() {
             println it.toString()
         }
