@@ -11,6 +11,6 @@ public class CmdExample extends BaseExample {
 
     public static void main(String[] args) {
         String cmd = "ipconfig";
-        log.info(cmd, ProcessHelper.exec(cmd));
+        log.info("{}: \r\n{}", cmd, ProcessHelper.exec(cmd));
     }
 }

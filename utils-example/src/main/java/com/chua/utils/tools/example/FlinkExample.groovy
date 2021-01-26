@@ -1,9 +1,9 @@
 package com.chua.utils.tools.example
 
-import com.chua.utils.netx.flink.table.Table
 import com.chua.utils.netx.flink.table.TableFactory
 import com.chua.utils.netx.flink.table.Tables
 import com.chua.utils.tools.example.entity.TDemoInfo
+import com.chua.utils.tools.table.Table
 import com.github.jsonzou.jmockdata.JMockData
 import com.github.jsonzou.jmockdata.TypeReference
 
@@ -33,7 +33,7 @@ class FlinkExample {
                         .source(JMockData.mock(new TypeReference<List<TDemoInfo>>() {}))
                         .columns(new String[]{"id", "name", "title"} , "VARCHAR").build() as Table)
 
-        def query = tables.sqlQuery("SELECT * FROM mem1 left join mem2 on mem1.id = mem2.id ", Map.class)
+        def query = tables.sqlQuery("SELECT * FROM mem1 left join mem2 on mem1.id = mem2.id ", TDemoInfo.class)
         query.collect() {
             println it.toString()
         }

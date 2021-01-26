@@ -2,6 +2,8 @@ package com.chua.utils.netx.flink.table;
 
 import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.empty.EmptyOrBase;
+import com.chua.utils.tools.table.Table;
+import com.chua.utils.tools.table.TableFactory;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
  *
  * @author CH* @version 1.0.0* @since 2021/1/25
  */
-public class Tables {
+public class Tables implements TableFactory {
 
     private ExecutionEnvironment environment = ExecutionEnvironment.getExecutionEnvironment();
     private BatchTableEnvironment tableEnvironment = BatchTableEnvironment.create(environment);
@@ -40,6 +42,7 @@ public class Tables {
      * @param table 表
      * @return
      */
+    @Override
     public Tables register(Table table) {
         try {
             tableEnvironment.executeSql(table.create());
@@ -54,6 +57,7 @@ public class Tables {
      *
      * @return 数据表
      */
+    @Override
     public String[] listTables() {
         return tableEnvironment.listTables();
     }
@@ -63,11 +67,12 @@ public class Tables {
      *
      * @return
      */
+    @Override
     public <T> List<T> sqlQuery(String sql, Class<T> tClass) throws Exception {
         org.apache.flink.table.api.Table newTable = tableEnvironment.sqlQuery(sql);
         DataSet dataSet = tableEnvironment.toDataSet(newTable, Row.class);
         List<Row> collect = dataSet.collect();
-        if(Row.class.isAssignableFrom(tClass)) {
+        if (Row.class.isAssignableFrom(tClass)) {
             return (List<T>) collect;
         }
         RowTypeInfo rowTypeInfo = (RowTypeInfo) dataSet.getType();
@@ -88,6 +93,7 @@ public class Tables {
      *
      * @return
      */
+    @Override
     public Integer sqlUpdate(String sql) throws Exception {
         TableResult tableResult = tableEnvironment.executeSql(sql);
         return tableResult.getJobClient().get().getJobStatus().get().ordinal();
