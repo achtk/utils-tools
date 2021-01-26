@@ -6,7 +6,7 @@ import com.chua.utils.netx.flink.format.MemInputFormat;
 import com.chua.utils.netx.flink.format.MemOutputFormat;
 
 /**
- * 内存
+ * 内存表
  *
  * @author CH
  * @version 1.0.0
