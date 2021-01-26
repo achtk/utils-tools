@@ -3,6 +3,7 @@ package com.chua.utils.tools.function.converter;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 转换器
@@ -27,7 +28,7 @@ public class Converter {
      * @since 1.0.0
      */
     public static TypeConverter getTypeConverter(Class<?> type) {
-        return null == type ? VOID_TYPE_CONVERTER : TYPE_CONVERTER.get(type);
+        return null == type ? VOID_TYPE_CONVERTER : Optional.ofNullable(TYPE_CONVERTER.get(type)).orElse(VOID_TYPE_CONVERTER);
     }
 
 

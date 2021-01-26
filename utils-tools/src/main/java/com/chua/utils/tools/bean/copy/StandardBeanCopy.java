@@ -62,6 +62,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
 
     protected StandardBeanCopy(Class<T> tClass) {
         this(ClassHelper.safeForObject(tClass), new BeanConfig());
+        this.tClass = tClass;
     }
 
     private StandardBeanCopy(T entity) {
@@ -70,9 +71,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
 
     @SuppressWarnings("all")
     private StandardBeanCopy(T entity, BeanConfig beanConfig) {
-        if (null == entity) {
-            this.tClass = null;
-        } else {
+        if (null != entity) {
             this.tClass = (Class<T>) entity.getClass();
             this.beanMap = BeanMap.create(entity);
         }
@@ -241,6 +240,9 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     @Override
     public T create() {
         if (MapOperableHelper.isEmpty(withParams) || null == entity) {
+            if (Map.class.isAssignableFrom(tClass)) {
+                return (T) withParams;
+            }
             return entity;
         }
         ObjectCreate<T> objectCreate = null;
@@ -360,7 +362,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
                 MethodDescription methodDescription = new MethodDescription(entity, field.getType());
                 methodDescription.setSetName(field.getName());
 
-                if(!methodDescription.existMethod()) {
+                if (!methodDescription.existMethod()) {
                     FieldDescription fieldDescription = new FieldDescription(entity, field);
                     String name = fieldDescription.getName();
                     if (!withParams.containsKey(name)) {

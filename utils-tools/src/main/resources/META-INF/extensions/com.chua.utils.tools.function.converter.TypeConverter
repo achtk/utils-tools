@@ -23,3 +23,4 @@ character-type=com.chua.utils.tools.function.converter.CharacterTypeConverter
 currency-type=com.chua.utils.tools.function.converter.CurrencyTypeConverter
 calendar-type=com.chua.utils.tools.function.converter.CalendarTypeConverter
 object-type=com.chua.utils.tools.function.converter.ObjectTypeConverter
+local-date-type=com.chua.utils.tools.function.converter.LocalDateTypeConverter

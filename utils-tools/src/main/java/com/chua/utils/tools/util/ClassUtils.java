@@ -7,6 +7,10 @@ import javassist.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
@@ -445,5 +449,63 @@ public class ClassUtils extends ClassHelper {
             result.add(anInterface);
             loopInterfaces(anInterface, result);
         }
+    }
+
+    /**
+     * java类型 -> jdbc
+     *
+     * @param source 对象
+     * @return
+     */
+    public static String java2JdbcType(Object source) {
+        if (source instanceof String) {
+            return "VARCHAR";
+        }
+
+        if (source instanceof Byte) {
+            return "TINYINT";
+        }
+
+        if (source instanceof Short) {
+            return "SMALLINT";
+        }
+
+        if (source instanceof Integer) {
+            return "INT";
+        }
+
+        if (source instanceof Float) {
+            return "FLOAT";
+        }
+
+        if (source instanceof BigDecimal) {
+            return "DECIMAL";
+        }
+
+        if (source instanceof Long) {
+            return "BIGINT";
+        }
+
+        if (source instanceof Double) {
+            return "DOUBLE";
+        }
+
+        if (source instanceof Date || source instanceof java.util.Date) {
+            return "DATE";
+        }
+
+        if (source instanceof Time) {
+            return "TIME";
+        }
+
+        if (source instanceof Timestamp) {
+            return "TIMESTAMP";
+        }
+
+        if (source instanceof byte[]) {
+            return "VARBINARY";
+        }
+
+        return "VARCHAR";
     }
 }

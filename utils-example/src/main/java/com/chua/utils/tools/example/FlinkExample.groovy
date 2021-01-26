@@ -6,7 +6,6 @@ import com.chua.utils.netx.flink.table.Tables
 import com.chua.utils.tools.example.entity.TDemoInfo
 import com.github.jsonzou.jmockdata.JMockData
 import com.github.jsonzou.jmockdata.TypeReference
-import org.apache.flink.types.Row
 
 /**
  * @author CH* @since 2021/1/19
@@ -28,16 +27,10 @@ class FlinkExample {
                         .source(JMockData.mock(new TypeReference<List<TDemoInfo>>() {}))
                         .columns(new String[]{"id", "name", "title"} , "VARCHAR").build() as Table)
 
-        def query = tables.sqlQuery("SELECT * FROM mem1", Row.class)
+        def query = tables.sqlQuery("SELECT * FROM mem1", Map.class)
         query.collect() {
             println it.toString()
         }
 
-        tables.sqlUpdate("insert into mem1 values('1', '2', '3')");
-
-        query = tables.sqlQuery("SELECT * FROM mem1", Row.class)
-        query.collect() {
-            println it.toString()
-        }
     }
 }
