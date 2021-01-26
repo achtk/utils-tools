@@ -1,9 +1,14 @@
 package com.chua.utils.netx.flink.format;
 
+import com.chua.utils.tools.util.CollectionUtils;
+import com.chua.utils.tools.util.MapUtils;
 import lombok.Data;
 import org.apache.flink.table.api.TableSchema;
 import org.apache.flink.table.descriptors.DescriptorProperties;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FormatConnector {
     private static final Map<String, Format> CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, List<Object>> DATA = new ConcurrentHashMap<>();
 
     /**
      * 包含信号
@@ -40,6 +46,84 @@ public class FormatConnector {
         }
         format.setIndex(index);
         CACHE.put(sign, format);
+    }
+
+    /**
+     * 设置属性
+     *
+     * @param sign  标识
+     * @param key   索引
+     * @param value 值
+     */
+    public static void setProperties(String sign, String key, Object value) {
+        Format format = CACHE.get(sign);
+        if (null == format) {
+            format = new Format();
+        }
+        Map<String, Object> properties = format.getProperties();
+        if (null == properties) {
+            properties = new HashMap<>();
+        }
+        properties.put(key, value);
+        format.setProperties(properties);
+        CACHE.put(sign, format);
+    }
+
+    /**
+     * 获取属性
+     *
+     * @param sign         标识
+     * @param key          索引
+     * @param defaultValue 默认值
+     */
+    public static int getIntValue(String sign, String key, int defaultValue) {
+        Format format = CACHE.get(sign);
+        if (null == format) {
+            return defaultValue;
+        }
+        Map<String, Object> properties = format.getProperties();
+        if (null == properties) {
+            return defaultValue;
+        }
+        return MapUtils.getIntValue(properties, key, defaultValue);
+    }
+
+    /**
+     * 获取属性
+     *
+     * @param sign         标识
+     * @param key          索引
+     * @param defaultValue 默认值
+     */
+    public static String getStringValue(String sign, String key, String defaultValue) {
+        Format format = CACHE.get(sign);
+        if (null == format) {
+            return defaultValue;
+        }
+        Map<String, Object> properties = format.getProperties();
+        if (null == properties) {
+            return defaultValue;
+        }
+        return MapUtils.getString(properties, key, defaultValue);
+    }
+
+    /**
+     * 获取属性
+     *
+     * @param sign         标识
+     * @param key          索引
+     * @param defaultValue 默认值
+     */
+    public static Long getLongValue(String sign, String key, long defaultValue) {
+        Format format = CACHE.get(sign);
+        if (null == format) {
+            return defaultValue;
+        }
+        Map<String, Object> properties = format.getProperties();
+        if (null == properties) {
+            return defaultValue;
+        }
+        return MapUtils.getLongValue(properties, key, defaultValue);
     }
 
     /**
@@ -83,8 +167,15 @@ public class FormatConnector {
         if (null == format) {
             format = new Format();
         }
+        String tableName = descriptorProperties.getString("schema.table");
         format.setDescriptorProperties(descriptorProperties);
+        format.setTableName(tableName);
+        if (DATA.containsKey(tableName)) {
+            format.setData(DATA.get(tableName));
+        }
         CACHE.put(sign, format);
+
+
     }
 
     /**
@@ -196,6 +287,78 @@ public class FormatConnector {
     }
 
     /**
+     * 通过表名设置值
+     *
+     * @param tableName 表名
+     * @param data      值
+     */
+    public static void setPropertiesByTable(String tableName, List<Object> data) {
+        DATA.put(tableName, data);
+    }
+
+    /**
+     * 获取数据
+     *
+     * @param sign   信号
+     * @param tClass 类型
+     * @param <T>    类型
+     * @return 数据
+     */
+    public static <T> T getData(String sign, Class<T> tClass) {
+        Format format = getFormat(sign);
+        if (null == format || null == tClass) {
+            return null;
+        }
+        Object data = format.getData();
+        if (null == data) {
+            return null;
+        }
+        if (tClass.isAssignableFrom(data.getClass())) {
+            return (T) data;
+        }
+        return null;
+    }
+
+    /**
+     * 数据的数据类型
+     *
+     * @param sign 标识
+     * @return 类型
+     */
+    public static Class<?> getDataType(String sign) {
+        Object data = getData(sign, Object.class);
+        if (data instanceof Collection) {
+            Object first = CollectionUtils.findFirst((Collection) data);
+            return null == first ? null : first.getClass();
+        }
+
+        return null == data ? null : data.getClass();
+    }
+
+    /**
+     * 追加数据
+     *
+     * @param sign 标识
+     * @param item 数据
+     * @return
+     */
+    public static boolean addData(String sign, Object item) {
+        Format format = getFormat(sign);
+        if (null == format) {
+            return false;
+        }
+        List<Object> dataList = format.getData();
+        if (null != dataList && !dataList.isEmpty()) {
+            Object o = dataList.get(0);
+            if (o.getClass().isAssignableFrom(item.getClass())) {
+                dataList.add(item);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * format
      *
      * @param <T>
@@ -208,5 +371,8 @@ public class FormatConnector {
         private String index;
         private String kvDelimiter;
         private String dataDelimiter;
+        private Map<String, Object> properties;
+        private String tableName;
+        private List<Object> data;
     }
 }

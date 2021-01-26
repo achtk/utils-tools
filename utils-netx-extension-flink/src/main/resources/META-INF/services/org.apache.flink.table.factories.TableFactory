@@ -1,1 +1,2 @@
 com.chua.utils.netx.flink.connector.factory.RedisFlinkTableFactory
+com.chua.utils.netx.flink.connector.factory.MemFlinkTableFactory

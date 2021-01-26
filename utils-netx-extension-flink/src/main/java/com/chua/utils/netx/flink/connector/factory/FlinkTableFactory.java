@@ -6,6 +6,7 @@ import com.chua.utils.netx.flink.connector.StandardTableSource;
 import com.chua.utils.netx.flink.format.FlinkInputFormat;
 import com.chua.utils.netx.flink.format.FlinkOutputFormat;
 import com.chua.utils.tools.text.IdHelper;
+import com.google.common.collect.Lists;
 import org.apache.flink.table.api.TableSchema;
 import org.apache.flink.table.descriptors.DescriptorProperties;
 import org.apache.flink.table.factories.StreamTableSinkFactory;
@@ -15,7 +16,10 @@ import org.apache.flink.table.sources.TableSource;
 import org.apache.flink.table.utils.TableSchemaUtils;
 import org.apache.flink.types.Row;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * flink table factory
@@ -128,7 +132,13 @@ public interface FlinkTableFactory extends FactorySourceConnector, StreamTableSo
 
     @Override
     default List<String> supportedProperties() {
+        List<String> columns = Lists.newArrayList("schema.#.name", "schema.#.data-type", "schema.table");
         String[] strings = supportedConfig();
-        return null == strings ? Collections.emptyList() : Arrays.asList(strings);
+        if (null == strings || strings.length == 0) {
+            return columns;
+        }
+        List<String> strings1 = Arrays.asList(strings);
+        strings1.addAll(columns);
+        return strings1;
     }
 }

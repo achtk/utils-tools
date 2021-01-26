@@ -5,7 +5,6 @@ import com.chua.utils.tools.util.CollectionUtils;
 import com.chua.utils.tools.util.JsonUtils;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.flink.configuration.Configuration;
 import org.apache.flink.types.Row;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
@@ -22,15 +21,6 @@ import java.util.Map;
  */
 @Slf4j
 public class RedisOutputFormat extends FlinkOutputFormat implements RedisFormat {
-
-    @Override
-    public void flush() throws IOException {
-    }
-
-    @Override
-    public void configure(Configuration parameters) {
-    }
-
 
     @Override
     public void open(int taskNumber, int numTasks) throws IOException {

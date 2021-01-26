@@ -32,9 +32,7 @@ public class RedisFlinkTableFactory implements FlinkTableFactory {
                 "redis.minIdle",
                 "redis.maxTotal",
                 "redis.data.delimiter",
-                "redis.kv.delimiter",
-                "schema.#.name",
-                "schema.#.data-type"
+                "redis.kv.delimiter"
         };
     }
 

@@ -1,9 +1,11 @@
 package com.chua.utils.netx.flink.format;
 
 import org.apache.flink.api.common.io.RichOutputFormat;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.types.Row;
 
 import java.io.Flushable;
+import java.io.IOException;
 
 /**
  * link input format
@@ -28,4 +30,13 @@ public abstract class FlinkOutputFormat extends RichOutputFormat<Row> implements
     public FlinkOutputFormat(String sign) {
         this.sign = sign;
     }
+
+    @Override
+    public void flush() throws IOException {
+    }
+
+    @Override
+    public void configure(Configuration parameters) {
+    }
+
 }

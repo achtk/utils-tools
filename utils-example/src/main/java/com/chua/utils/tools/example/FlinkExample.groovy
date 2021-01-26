@@ -1,9 +1,11 @@
 package com.chua.utils.tools.example
 
-
-import org.apache.flink.api.java.ExecutionEnvironment
-import org.apache.flink.table.api.Table
-import org.apache.flink.table.api.bridge.java.BatchTableEnvironment
+import com.chua.utils.netx.flink.table.Table
+import com.chua.utils.netx.flink.table.TableFactory
+import com.chua.utils.netx.flink.table.Tables
+import com.chua.utils.tools.example.entity.TDemoInfo
+import com.github.jsonzou.jmockdata.JMockData
+import com.github.jsonzou.jmockdata.TypeReference
 import org.apache.flink.types.Row
 
 /**
@@ -13,67 +15,29 @@ import org.apache.flink.types.Row
 class FlinkExample {
 
     static void main(String[] args) {
-//        StreamExecutionEnvironment environment = StreamExecutionEnvironment.getExecutionEnvironment();
-//        EnvironmentSettings settings = EnvironmentSettings.newInstance().useBlinkPlanner().inStreamingMode().build();
-//        StreamTableEnvironment tableEnvironment = StreamTableEnvironment.create(environment, settings);
-        ExecutionEnvironment environment = ExecutionEnvironment.getExecutionEnvironment()
-        BatchTableEnvironment tableEnvironment = BatchTableEnvironment.create(environment)
+        Tables tables = Tables.newInstance()
+        tables.register(
+                TableFactory.ofRedis()
+                        .table("redis1")
+                        .source("demo1")
+                        .columns(new String[]{"userId", "itemId", "categoryId"} , "VARCHAR").build() as Table)
 
-//        tableEnvironment.executeSql("""
-//                CREATE TABLE file1 (
-//                   userId VARCHAR,
-//                   itemId VARCHAR,
-//                   categoryId VARCHAR
-//                ) WITH (
-//                  'connector.type' = 'filesystem',
-//                  'connector.path' = 'file:///E:/TEMP.csv',
-//                  'format.type' = 'csv',
-//                  'format.fields.0.name' = 'userId',
-//                  'format.fields.0.type' = 'VARCHAR',
-//                  'format.fields.1.name' = 'itemId',
-//                  'format.fields.1.type' = 'VARCHAR',
-//                  'format.fields.2.name' = 'categoryId',
-//                  'format.fields.2.type' = 'VARCHAR')
-//              """  )
+        tables.register(
+                TableFactory.ofMem()
+                        .table("mem1")
+                        .source(JMockData.mock(new TypeReference<List<TDemoInfo>>() {}))
+                        .columns(new String[]{"id", "name", "title"} , "VARCHAR").build() as Table)
 
-        tableEnvironment.executeSql("""
-                CREATE TABLE redis1 (
-                   userId VARCHAR,
-                   itemId VARCHAR,
-                   categoryId VARCHAR
-                ) WITH (
-                  'connector.type' = 'redis',
-                  'redis.index' = 'demo1')
-              """)
-
-        println tableEnvironment.listTables()
-        //  tableEnvironment.executeSql("insert into redis1 values('1', '1', '1')")
-        Table fileTable1 = tableEnvironment.sqlQuery("SELECT * FROM redis1")
-        fileTable1.collect()
-        def fileRow1 = tableEnvironment.toDataSet(fileTable1, Row.class)
-        println fileRow1.collect()
-    }
-
-    static class WC {
-        String word; //hello
-        long frequency;
-
-        //创建构造方法，让flink进行实例化
-        WC() {}
-
-        static WC of(String word, long frequency) {
-            WC wc = new WC();
-            wc.word = word;
-            wc.frequency = frequency;
-            return wc;
+        def query = tables.sqlQuery("SELECT * FROM mem1", Row.class)
+        query.collect() {
+            println it.toString()
         }
 
-    }
+        tables.sqlUpdate("insert into mem1 values('1', '2', '3')");
 
-    static class WC1 {
-        String word; //hello
-        String frequency;
-        String frequency1;
-
+        query = tables.sqlQuery("SELECT * FROM mem1", Row.class)
+        query.collect() {
+            println it.toString()
+        }
     }
 }

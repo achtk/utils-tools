@@ -4,17 +4,9 @@ import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.converter.TypeConverter;
 import com.chua.utils.tools.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.flink.api.common.io.DefaultInputSplitAssigner;
-import org.apache.flink.api.common.io.statistics.BaseStatistics;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.api.java.typeutils.RowTypeInfo;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.core.io.GenericInputSplit;
 import org.apache.flink.core.io.InputSplit;
-import org.apache.flink.core.io.InputSplitAssigner;
 import org.apache.flink.table.api.TableColumn;
 import org.apache.flink.table.api.TableSchema;
-import org.apache.flink.table.types.utils.TypeConversions;
 import org.apache.flink.types.Row;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
@@ -35,35 +27,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RedisInputFormat extends FlinkInputFormat implements RedisFormat {
 
     private transient boolean hasNext;
-    private Object[][] parameterValues;
     private String value;
     private AtomicInteger atomicInteger = new AtomicInteger();
-
-    @Override
-    public void configure(Configuration configuration) {
-    }
-
-    @Override
-    public BaseStatistics getStatistics(BaseStatistics baseStatistics) throws IOException {
-        return null;
-    }
-
-    @Override
-    public InputSplit[] createInputSplits(int minNumSplits) throws IOException {
-        if (parameterValues == null) {
-            return new GenericInputSplit[]{new GenericInputSplit(0, 1)};
-        }
-        GenericInputSplit[] ret = new GenericInputSplit[parameterValues.length];
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = new GenericInputSplit(i, ret.length);
-        }
-        return ret;
-    }
-
-    @Override
-    public InputSplitAssigner getInputSplitAssigner(InputSplit[] inputSplits) {
-        return new DefaultInputSplitAssigner(inputSplits);
-    }
 
     @Override
     public void openInputFormat() throws IOException {
@@ -187,10 +152,5 @@ public class RedisInputFormat extends FlinkInputFormat implements RedisFormat {
         initial();
     }
 
-    @Override
-    public TypeInformation<Row> getProducedType() {
-        TableSchema schema = FormatConnector.getSchema(sign);
-        return new RowTypeInfo(TypeConversions.fromDataTypeToLegacyInfo(schema.getFieldDataTypes()), schema.getFieldNames());
-    }
 
 }
