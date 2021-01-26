@@ -10,7 +10,7 @@ package com.chua.utils.tools.function.converter;
 public class StringTypeConverter implements TypeConverter<String> {
     @Override
     public String convert(Object value) {
-        return null == value ? null : value + "";
+        return null == value ? null : value.toString();
     }
 
     @Override

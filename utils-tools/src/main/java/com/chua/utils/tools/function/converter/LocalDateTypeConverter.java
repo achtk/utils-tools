@@ -6,7 +6,6 @@ import com.chua.utils.tools.util.NumberUtils;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
@@ -45,16 +44,13 @@ public class LocalDateTypeConverter implements TypeConverter<LocalDate> {
                 return DateUtils.toLocalDate((TemporalAccessor) value);
             }
 
-            if (value instanceof ZonedDateTime) {
-                return DateUtils.toLocalDate((ZonedDateTime) value);
-            }
-        } catch (Exception e) {
+        } catch (Exception ignore) {
         }
 
         if (value instanceof String && NumberUtils.isNumber(value.toString())) {
             try {
                 return DateUtils.toLocalDate(Long.parseLong(value.toString()));
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignore) {
             }
         }
 

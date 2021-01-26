@@ -21,8 +21,7 @@ public class IntegerTypeConverter implements TypeConverter<Integer> {
         if (value instanceof String) {
             try {
                 return Integer.valueOf(value.toString());
-            } catch (NumberFormatException e) {
-                return null;
+            } catch (NumberFormatException ignore) {
             }
         }
 

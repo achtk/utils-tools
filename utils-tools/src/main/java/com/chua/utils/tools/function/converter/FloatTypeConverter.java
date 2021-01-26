@@ -21,8 +21,7 @@ public class FloatTypeConverter implements TypeConverter<Float> {
         if (value instanceof String) {
             try {
                 return Float.valueOf(value.toString());
-            } catch (NumberFormatException e) {
-                return null;
+            } catch (NumberFormatException ignore) {
             }
         }
 

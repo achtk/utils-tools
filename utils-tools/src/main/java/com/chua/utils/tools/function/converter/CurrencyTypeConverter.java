@@ -22,9 +22,13 @@ public class CurrencyTypeConverter implements TypeConverter<Currency> {
         }
 
         if (Locale.class.isAssignableFrom(value.getClass())) {
-            return Currency.getInstance((String) value);
+            return Currency.getInstance((Locale) value);
         }
-        return Currency.getInstance(value.toString());
+        try {
+            return Currency.getInstance(value.toString());
+        } catch (Exception ignore) {
+        }
+        return null;
     }
 
     @Override

@@ -12,9 +12,9 @@ import java.util.Set;
  */
 public class BooleanTypeConverter implements TypeConverter<Boolean> {
 
-    private static final Set<String> TRUE_VALUES = new HashSet<String>(4);
+    private static final Set<String> TRUE_VALUES = new HashSet<>(4);
 
-    private static final Set<String> FALSE_VALUES = new HashSet<String>(4);
+    private static final Set<String> FALSE_VALUES = new HashSet<>(4);
 
     static {
         TRUE_VALUES.add("true");
@@ -52,7 +52,7 @@ public class BooleanTypeConverter implements TypeConverter<Boolean> {
 
             try {
                 return Boolean.valueOf(value);
-            } catch (Exception e) {
+            } catch (Exception ignore) {
             }
         }
         return null;

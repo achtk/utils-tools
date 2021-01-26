@@ -1,8 +1,5 @@
 package com.chua.utils.tools.function.converter;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 /**
  * Float类型转化
  *
@@ -20,15 +17,6 @@ public class ShortTypeConverter implements TypeConverter<Short> {
         if (value instanceof Number) {
             return ((Number) value).shortValue();
         }
-
-        if (value instanceof BigInteger) {
-            return ((BigInteger) value).shortValue();
-        }
-
-        if (value instanceof BigDecimal) {
-            return ((BigDecimal) value).shortValue();
-        }
-
 
         if (value instanceof String) {
             try {

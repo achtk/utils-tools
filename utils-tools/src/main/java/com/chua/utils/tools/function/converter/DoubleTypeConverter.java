@@ -21,8 +21,7 @@ public class DoubleTypeConverter implements TypeConverter<Double> {
         if (value instanceof String) {
             try {
                 return Double.valueOf(value.toString());
-            } catch (NumberFormatException e) {
-                return null;
+            } catch (NumberFormatException ignore) {
             }
         }
 

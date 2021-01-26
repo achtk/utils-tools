@@ -29,7 +29,7 @@ public class BigIntegerTypeConverter implements TypeConverter<BigInteger> {
         if (value instanceof String) {
             try {
                 return new BigInteger((String) value);
-            } catch (Exception e) {
+            } catch (Exception ignore) {
             }
         }
 
