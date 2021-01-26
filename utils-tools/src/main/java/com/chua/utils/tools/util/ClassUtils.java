@@ -31,8 +31,8 @@ public class ClassUtils extends ClassHelper {
 
     private static final CtClass[] EMPTY = new CtClass[0];
     private static final Class<?>[] EMPTY_CLASS = new Class[0];
-    private static final Map<String, Class<?>> NAME_PRIMITIVE_MAP = new HashMap<>();
-    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP;
+    public static final Map<String, Class<?>> NAME_PRIMITIVE_MAP = new HashMap<>();
+    public static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP;
     private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP;
     private static final Map<String, String> ABBREVIATION_MAP;
     private static final Map<String, String> REVERSE_ABBREVIATION_MAP;

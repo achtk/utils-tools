@@ -7,6 +7,7 @@ import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.StringHelper;
 import com.chua.utils.tools.function.Filter;
 import com.chua.utils.tools.function.Matcher;
+import com.chua.utils.tools.util.CollectionUtils;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -423,13 +424,13 @@ public class CollectionHelper {
      * @param <T>    类型
      * @return 元素
      */
-    public static <T> T getRandom(final List<T> source) {
+    public static <T> T getRandom(final Collection<T> source) {
         if (isEmpty(source)) {
             return null;
         }
         Random random = new Random();
         int i = random.nextInt(source.size());
-        return source.get(i);
+        return CollectionUtils.find(source, i);
     }
 
     /**
