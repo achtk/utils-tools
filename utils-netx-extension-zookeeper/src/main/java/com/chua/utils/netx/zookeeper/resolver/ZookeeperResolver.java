@@ -7,7 +7,7 @@ import com.chua.utils.netx.resolver.node.NetNode;
 import com.chua.utils.netx.zookeeper.context.ZookeeperContext;
 import com.chua.utils.tools.common.ByteHelper;
 import com.chua.utils.tools.empty.EmptyOrBase;
-import com.chua.utils.tools.function.IConsumer;
+import com.chua.utils.tools.function.ToolsConsumer;
 import com.chua.utils.tools.properties.NetProperties;
 import lombok.NoArgsConstructor;
 import org.apache.curator.framework.CuratorFramework;
@@ -79,7 +79,7 @@ public class ZookeeperResolver extends NetResolver<CuratorFramework> implements 
 
     @Override
     public void monitor(NetNodeConf netNodeConf, Consumer<TreeCacheEvent> consumer) throws IOException {
-        zookeeperContext.addListener(netNodeConf.getNode(), new IConsumer<TreeCacheEvent>() {
+        zookeeperContext.addListener(netNodeConf.getNode(), new ToolsConsumer<TreeCacheEvent>() {
             @Override
             public void next(TreeCacheEvent item) {
                 consumer.accept(item);

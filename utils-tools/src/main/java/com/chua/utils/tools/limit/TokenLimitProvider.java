@@ -9,18 +9,18 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author CH
  */
-public class TokenLimitProvider implements ILimiterProvider {
+public class TokenLimitProvider implements LimiterProvider {
 
     private static final ConcurrentHashMap<String, RateLimiter> RATE_LIMITER_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
     private static final int DEFAULT_SIZE = 10;
     @Override
-    public ILimiterProvider newLimiter(String name, int size) {
+    public LimiterProvider newLimiter(String name, int size) {
         RATE_LIMITER_CONCURRENT_HASH_MAP.put(name, RateLimiter.create(size));
         return this;
     }
 
     @Override
-    public ILimiterProvider newLimiter(Map<String, Integer> config) {
+    public LimiterProvider newLimiter(Map<String, Integer> config) {
         for (Map.Entry<String, Integer> entry : config.entrySet()) {
             RATE_LIMITER_CONCURRENT_HASH_MAP.put(entry.getKey(), RateLimiter.create(entry.getValue()));
         }

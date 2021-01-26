@@ -1,6 +1,6 @@
 package com.chua.utils.tools.fegin;
 
-import com.chua.utils.tools.interfaces.IRemoteCallFactory;
+import com.chua.utils.tools.interfaces.RemoteCallFactory;
 import com.chua.utils.tools.properties.ServerConfig;
 import feign.Feign;
 import feign.Request;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
  * @author CH
  */
 @NoArgsConstructor
-public class FeginRemoteCallFactory implements IRemoteCallFactory {
+public class FeginRemoteCallFactory implements RemoteCallFactory {
 
     private String serverUrl;
     private static final ServerConfig DEFAULT_SERVER_CONFIG = new ServerConfig();

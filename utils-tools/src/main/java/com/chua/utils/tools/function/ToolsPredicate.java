@@ -5,7 +5,7 @@ package com.chua.utils.tools.function;
  * @author CH
  */
 @FunctionalInterface
-public interface IPredicate<I> {
+public interface ToolsPredicate<I> {
     /**
      * 处理下一个
      * @param item 元素

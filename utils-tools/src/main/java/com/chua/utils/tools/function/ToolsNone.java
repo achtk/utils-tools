@@ -6,7 +6,7 @@ package com.chua.utils.tools.function;
  * @since 1.0
  */
 @FunctionalInterface
-public interface INone {
+public interface ToolsNone {
     /**
      * 下一个
      */

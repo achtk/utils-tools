@@ -1,16 +1,17 @@
 package com.chua.utils.tools.function;
 
+import java.util.regex.Matcher;
+
 /**
- * 消费者
+ * 回调
  * @author CH
  */
 @FunctionalInterface
-public interface IBiConsumer<I, U> {
+public interface PreMatcher<I> {
     /**
      * 处理下一个
-     * @param item 元素
-     * @param uItem 元素
+     * @param item
      * @return
      */
-    void next(I item, U uItem);
+    I matcher(Matcher item);
 }

@@ -5,7 +5,7 @@ package com.chua.utils.tools.function;
  * @author CH
  * @date 2020-09-30
  */
-public interface IDataTransform<Out, In> {
+public interface DataTransform<Out, In> {
     /**
      * 数据转化
      * @param in

@@ -24,12 +24,11 @@ public class FileDecorator {
 
     /**
      * fileMapper -> fileDataMapper
-     * @param fileMapper
-     * @return
+     * @param fileMapper fileMapper
      */
     private void converter2FileDataMapper(FileMapper fileMapper) {
-        HashMultimap result = HashMultimap.create();
-        HashMultimap hashMultimap = fileMapper.getHashMultimap();
+        HashMultimap<String, Object> result = HashMultimap.create();
+        HashMultimap<String, Object> hashMultimap = fileMapper.getHashMultimap();
         Set<Map.Entry<String, Object>> entries = hashMultimap.entries();
         for (Map.Entry<String, Object> entry : entries) {
             if(entry.getValue() instanceof  Map) {
@@ -52,7 +51,7 @@ public class FileDecorator {
      * @param value 值
      * @param result 存储引用
      */
-    private void converter2NoMap(String key, Map<String, Object> value, HashMultimap result) {
+    private void converter2NoMap(String key, Map<String, Object> value, HashMultimap<String, Object> result) {
         String newKey;
         for (Map.Entry<String, Object> entry : value.entrySet()) {
             newKey = key + "." + entry.getKey();

@@ -3,7 +3,7 @@ package com.chua.utils.netx.zookeeper.context;
 import com.chua.utils.netx.factory.INetFactory;
 import com.chua.utils.netx.zookeeper.factory.ZookeeperFactory;
 import com.chua.utils.tools.common.ByteHelper;
-import com.chua.utils.tools.function.IConsumer;
+import com.chua.utils.tools.function.ToolsConsumer;
 import com.chua.utils.tools.properties.NetProperties;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
@@ -166,7 +166,7 @@ public class ZookeeperContext implements AutoCloseable {
      * @param node     节点
      * @param consumer 监听
      */
-    public void addListener(String node, IConsumer<TreeCacheEvent> consumer) {
+    public void addListener(String node, ToolsConsumer<TreeCacheEvent> consumer) {
         TreeCache treeCache = new TreeCache(this.curatorFramework, node);
         treeCache.getListenable().addListener((client, event) -> childEventWork(event, node, consumer));
 
@@ -183,7 +183,7 @@ public class ZookeeperContext implements AutoCloseable {
      * @param node     节点
      * @param consumer 监听
      */
-    public void removeListener(String node, IConsumer<TreeCacheEvent> consumer) {
+    public void removeListener(String node, ToolsConsumer<TreeCacheEvent> consumer) {
         TreeCache treeCache = new TreeCache(this.curatorFramework, node);
         treeCache.getListenable().removeListener((client, event) -> childEventWork(event, node, consumer));
 
@@ -201,7 +201,7 @@ public class ZookeeperContext implements AutoCloseable {
      * @param node     节点
      * @param consumer 回调
      */
-    private void childEventWork(TreeCacheEvent event, String node, IConsumer<TreeCacheEvent> consumer) {
+    private void childEventWork(TreeCacheEvent event, String node, ToolsConsumer<TreeCacheEvent> consumer) {
         ChildData eventData = event.getData();
         if (null != consumer) {
             consumer.next(event);

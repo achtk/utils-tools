@@ -8,7 +8,7 @@ import com.chua.utils.tools.properties.ServerConfig;
  *
  * @author CH
  */
-public interface IRemoteCallFactory {
+public interface RemoteCallFactory {
     /**
      * 远程调用
      *

@@ -8,13 +8,13 @@ import java.util.concurrent.TimeUnit;
  *
  * @author CH
  */
-public interface ILimiterProvider {
+public interface LimiterProvider {
     /**
      * 默认限流器配置
      *
      * @return
      */
-    default ILimiterProvider defaultLimiterProvider() {
+    default LimiterProvider defaultLimiterProvider() {
         return this.newLimiter("default", 10);
     }
 
@@ -25,7 +25,7 @@ public interface ILimiterProvider {
      * @param name
      * @return
      */
-    ILimiterProvider newLimiter(String name, int size);
+    LimiterProvider newLimiter(String name, int size);
 
     /**
      * 带大小的限流器
@@ -33,7 +33,7 @@ public interface ILimiterProvider {
      * @param config 最大限制
      * @return
      */
-    ILimiterProvider newLimiter(Map<String, Integer> config);
+    LimiterProvider newLimiter(Map<String, Integer> config);
 
     /**
      * 尝试获取

@@ -4,7 +4,7 @@ import com.chua.utils.tools.collects.collections.ListHelper;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.charset.CharsetHelper;
 import com.chua.utils.tools.empty.EmptyOrBase;
-import com.chua.utils.tools.function.IPreMatcher;
+import com.chua.utils.tools.function.PreMatcher;
 import com.chua.utils.tools.guid.GUID;
 import com.chua.utils.tools.named.NamedHelper;
 import com.chua.utils.tools.text.IdHelper;
@@ -1248,7 +1248,7 @@ public class StringHelper {
      * @return
      */
     public static List<String> pattern(final String srcValue, final String patternValue, final int limit) {
-        return pattern(srcValue, patternValue, limit, new IPreMatcher<String>() {
+        return pattern(srcValue, patternValue, limit, new PreMatcher<String>() {
 
             @Override
             public String matcher(Matcher matcher) {
@@ -1264,7 +1264,7 @@ public class StringHelper {
      * @param patternValue 正则表达式
      * @return
      */
-    public static List<String> pattern(final String srcValue, final String patternValue, final int limit, IPreMatcher<String> patternHandler) {
+    public static List<String> pattern(final String srcValue, final String patternValue, final int limit, PreMatcher<String> patternHandler) {
         Pattern pattern = Pattern.compile(patternValue);
         Matcher matcher = pattern.matcher(srcValue);
 

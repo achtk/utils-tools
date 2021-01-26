@@ -1,15 +1,16 @@
 package com.chua.utils.tools.function;
 
 /**
- * 消费者
+ * 方法
  * @author CH
  */
 @FunctionalInterface
-public interface IConsumer<I> {
+public interface ToolsFunction<I, O> {
+
     /**
-     * 处理下一个
+     * 消费
      * @param item
      * @return
      */
-    void next(I item);
+    O accept(I item);
 }

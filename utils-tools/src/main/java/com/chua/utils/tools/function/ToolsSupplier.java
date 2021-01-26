@@ -5,7 +5,7 @@ package com.chua.utils.tools.function;
  * @author CH
  */
 @FunctionalInterface
-public interface ISupplier<O> {
+public interface ToolsSupplier<O> {
 
     /**
      * 获取节点

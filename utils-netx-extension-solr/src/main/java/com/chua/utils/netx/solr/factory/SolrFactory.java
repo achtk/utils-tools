@@ -1,8 +1,8 @@
 package com.chua.utils.netx.solr.factory;
 
-import com.chua.utils.tools.function.IFunction;
-import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.factory.INetFactory;
+import com.chua.utils.tools.function.ToolsFunction;
+import com.chua.utils.tools.properties.NetProperties;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.SolrClient;
@@ -71,7 +71,7 @@ public abstract class SolrFactory implements INetFactory<SolrClient> {
     /**
      *
      */
-    public static class MapListFunction implements IFunction<QueryResponse, List<Map<String, Object>>> {
+    public static class MapListFunction implements ToolsFunction<QueryResponse, List<Map<String, Object>>> {
 
         @Override
         public List<Map<String, Object>> accept(QueryResponse response) {

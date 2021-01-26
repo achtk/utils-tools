@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_COMMA;
+import static com.chua.utils.tools.util.JsonUtils.MAP_STRING_OBJECT;
 
 /**
  * json解析为properties数据加载器
@@ -34,7 +35,7 @@ public class JsonProfileLoader implements ProfileLoader, NamedAware {
             return PropertiesHelper.emptyProperties();
         }
         try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charsets.UTF_8)) {
-            Map properties1 = JsonHelper.fromJson(inputStreamReader, Map.class);
+            Map<String, Object> properties1 = JsonHelper.fromJson(inputStreamReader, MAP_STRING_OBJECT);
             return MapOperableHelper.toProfile(properties1);
         } catch (IOException e) {
             return PropertiesHelper.emptyProperties();

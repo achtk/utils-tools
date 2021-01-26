@@ -7,7 +7,7 @@ import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.ArraysHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.StringHelper;
-import com.chua.utils.tools.function.IFunction;
+import com.chua.utils.tools.function.ToolsFunction;
 import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.tools.properties.QueryProperties;
 import com.google.common.base.Splitter;
@@ -140,7 +140,7 @@ public class SolrContext implements AutoCloseable {
         }
     }
 
-    public <I, O> O query(QueryProperties queryProperties, IFunction<I, O> functionO) {
+    public <I, O> O query(QueryProperties queryProperties, ToolsFunction<I, O> functionO) {
         //使用这个对象做查询
         SolrQuery query = new SolrQuery();
         //查询所有数据

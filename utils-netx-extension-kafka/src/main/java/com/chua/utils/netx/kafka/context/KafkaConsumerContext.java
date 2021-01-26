@@ -1,9 +1,9 @@
 package com.chua.utils.netx.kafka.context;
 
-import com.chua.utils.tools.function.IConsumer;
-import com.chua.utils.tools.properties.NetProperties;
 import com.chua.utils.netx.kafka.factory.KafkaConsumerFactory;
 import com.chua.utils.tools.common.ThreadHelper;
+import com.chua.utils.tools.function.ToolsConsumer;
+import com.chua.utils.tools.properties.NetProperties;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
@@ -43,7 +43,7 @@ public class KafkaConsumerContext implements AutoCloseable {
      * @param timeout 超时时间
      * @param consumer 回调
      */
-    public synchronized void asyncSubscribe(Collection<String> topics, final int timeout, IConsumer consumer) {
+    public synchronized void asyncSubscribe(Collection<String> topics, final int timeout, ToolsConsumer consumer) {
         this.executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -61,7 +61,7 @@ public class KafkaConsumerContext implements AutoCloseable {
      * @param timeout 超时时间
      * @param consumer 回调
      */
-    public synchronized void subscribe(Collection<String> topics, final int timeout, IConsumer consumer) {
+    public synchronized void subscribe(Collection<String> topics, final int timeout, ToolsConsumer consumer) {
         this.kafkaConsumer.subscribe(topics);
         while (true) {
             ConsumerRecords records = this.kafkaConsumer.poll(Duration.ofMillis(timeout));
