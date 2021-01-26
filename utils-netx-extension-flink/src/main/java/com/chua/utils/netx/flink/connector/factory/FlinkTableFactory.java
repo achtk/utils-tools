@@ -32,7 +32,7 @@ public interface FlinkTableFactory extends FactorySourceConnector, StreamTableSo
     /**
      * 标识
      */
-    String sign = IdHelper.createUuid();
+    String SIGN = IdHelper.createUuid();
 
     /**
      * 连接类型
@@ -85,9 +85,9 @@ public interface FlinkTableFactory extends FactorySourceConnector, StreamTableSo
         DescriptorProperties descriptorProperties = new DescriptorProperties(true);
         descriptorProperties.putProperties(properties);
         TableSchema schema = TableSchemaUtils.getPhysicalSchema(descriptorProperties.getTableSchema("schema"));
-        this.createConnector(sign, schema, descriptorProperties);
+        this.createConnector(SIGN, schema, descriptorProperties);
 
-        return new StandardTableSink(sign, schema, createOutputFormat());
+        return new StandardTableSink(SIGN, schema, createOutputFormat());
     }
 
     /**
@@ -102,9 +102,9 @@ public interface FlinkTableFactory extends FactorySourceConnector, StreamTableSo
         descriptorProperties.putProperties(properties);
         TableSchema schema = TableSchemaUtils.getPhysicalSchema(descriptorProperties.getTableSchema("schema"));
 
-        this.createConnector(sign, schema, descriptorProperties);
+        this.createConnector(SIGN, schema, descriptorProperties);
 
-        return new StandardTableSource(sign, schema, createInputFormat());
+        return new StandardTableSource(SIGN, schema, createInputFormat());
     }
 
     /**
@@ -119,6 +119,10 @@ public interface FlinkTableFactory extends FactorySourceConnector, StreamTableSo
         FactorySourceConnector.super.createConnector(sign, schema, descriptorProperties);
     }
 
+    /**
+     * 必填参数
+     * @return 必填参数
+     */
     @Override
     default Map<String, String> requiredContext() {
         Map<String, String> context = new HashMap<>();
@@ -130,6 +134,10 @@ public interface FlinkTableFactory extends FactorySourceConnector, StreamTableSo
         return context;
     }
 
+    /**
+     * 选填参数
+     * @return 选填参数
+     */
     @Override
     default List<String> supportedProperties() {
         List<String> columns = Lists.newArrayList("schema.#.name", "schema.#.data-type", "schema.table");
