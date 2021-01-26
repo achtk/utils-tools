@@ -1,5 +1,6 @@
 package com.chua.utils.netx.flink.table
 
+import com.chua.utils.tools.table.Table
 import com.google.common.base.Joiner
 
 /**

@@ -1,6 +1,7 @@
 package com.chua.utils.netx.flink.table
 
 import com.chua.utils.netx.flink.format.FormatConnector
+import com.chua.utils.tools.table.Table
 import com.chua.utils.tools.util.ClassUtils
 import com.chua.utils.tools.util.CollectionUtils
 import com.google.common.base.Joiner
