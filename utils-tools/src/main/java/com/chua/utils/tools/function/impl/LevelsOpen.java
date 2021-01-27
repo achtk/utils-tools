@@ -3,6 +3,7 @@ package com.chua.utils.tools.function.impl;
 import com.chua.utils.tools.function.Levels;
 import com.chua.utils.tools.util.CollectionUtils;
 import com.chua.utils.tools.util.MapUtils;
+import com.google.common.base.Strings;
 
 import java.util.*;
 
@@ -42,7 +43,17 @@ public class LevelsOpen implements Levels {
                 }
             }
             if (newIndex == -1) {
-                map.put(key.substring(0, index), levelOpenMap(key.substring(index + 1), value));
+                String newKey = key;
+                String splitKey = "";
+                if (index != -1) {
+                    newKey = key.substring(0, index);
+                    splitKey = key.substring(index + 1);
+                }
+                if(!Strings.isNullOrEmpty(splitKey)) {
+                    map.put(newKey, levelOpenMap(splitKey, value));
+                } else {
+                    map.put(newKey, value);
+                }
             } else {
                 map.put(key.substring(0, index), levelOpenListMap(key.substring(index + 1), value));
             }
@@ -169,6 +180,13 @@ public class LevelsOpen implements Levels {
         return isAll;
     }
 
+    /**
+     * map
+     *
+     * @param key   key
+     * @param value value
+     * @return map
+     */
     private Map<String, Object> levelOpenMap(String key, Object value) {
         String tempKey = key;
         int index = tempKey.indexOf(".");
