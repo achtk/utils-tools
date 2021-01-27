@@ -15,7 +15,7 @@ import java.nio.Buffer;
  */
 public interface Everything extends Library {
 
-    Everything instanceDll = Native.loadLibrary("Everything64", Everything.class);
+    Everything EVERYTHING_64 = Native.load("Everything64", Everything.class);
 
     static final int EVERYTHING_ERROR_MEMORY = 1;
     static final int EVERYTHING_ERROR_IPC = 2;

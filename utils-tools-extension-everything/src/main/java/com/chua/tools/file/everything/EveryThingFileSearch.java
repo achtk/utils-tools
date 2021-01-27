@@ -61,12 +61,12 @@ public class EveryThingFileSearch implements FileSearch, OrderAware, NamedFactor
     public List<File> locale(String index) {
         long startTime = System.currentTimeMillis();
 
-        Everything.instanceDll.Everything_SetSearchW(new WString(index));
-        Everything.instanceDll.Everything_QueryW(true);
+        Everything.EVERYTHING_64.Everything_SetSearchW(new WString(index));
+        Everything.EVERYTHING_64.Everything_QueryW(true);
         Buffer p = CharBuffer.allocate(260);
         List<File> result = new ArrayList<>();
-        for (int i = 0; i < Everything.instanceDll.Everything_GetNumResults(); i++) {
-            Everything.instanceDll.Everything_GetResultFullPathNameW(i, p, 260);
+        for (int i = 0; i < Everything.EVERYTHING_64.Everything_GetNumResults(); i++) {
+            Everything.EVERYTHING_64.Everything_GetResultFullPathNameW(i, p, 260);
             char[] buf = (char[]) p.array();
             result.add(new File(new String(buf).trim()));
         }
