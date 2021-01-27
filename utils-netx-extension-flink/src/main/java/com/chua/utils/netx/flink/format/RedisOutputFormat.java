@@ -14,12 +14,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
+ * redis 输出
  * @author CH
  * @version 1.0.0
  * @since 2021/1/25
  */
 @Slf4j
+@SuppressWarnings("ALL")
 public class RedisOutputFormat extends FlinkOutputFormat implements RedisFormat {
 
     @Override
@@ -50,7 +54,7 @@ public class RedisOutputFormat extends FlinkOutputFormat implements RedisFormat 
             } else if (s.startsWith("{")) {
                 Map<String, Object> stringObjectMap = JsonUtils.fromJson2Map(s);
                 if (null == stringObjectMap) {
-                    stringObjectMap = new HashMap<>();
+                    stringObjectMap = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
                 }
                 stringObjectMap.putAll(RowUtils.toMap(record, FormatConnector.getSchema(sign)));
                 jedis.set(index, JsonUtils.toJson(stringObjectMap));

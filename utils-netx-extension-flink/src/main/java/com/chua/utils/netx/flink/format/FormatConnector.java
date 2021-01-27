@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * 连接器
  *
@@ -62,7 +64,7 @@ public class FormatConnector {
         }
         Map<String, Object> properties = format.getProperties();
         if (null == properties) {
-            properties = new HashMap<>();
+            properties = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         }
         properties.put(key, value);
         format.setProperties(properties);

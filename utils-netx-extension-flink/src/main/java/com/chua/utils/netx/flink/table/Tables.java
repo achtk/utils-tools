@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * tables
  *
@@ -80,7 +82,7 @@ public class Tables implements TableFactory {
         TypeInformation<?>[] fieldTypes = rowTypeInfo.getFieldTypes();
         return collect.stream().map(item -> {
             int arity = item.getArity();
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
             for (int i = 0; i < arity; i++) {
                 map.put(fieldNames[i], EmptyOrBase.getTypeConverter(fieldTypes[i].getTypeClass()).convert(item.getField(i)));
             }

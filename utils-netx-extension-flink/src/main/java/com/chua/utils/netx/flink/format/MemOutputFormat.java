@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * mem Output
  *
@@ -74,7 +76,7 @@ public class MemOutputFormat extends FlinkOutputFormat {
         TableSchema schema = FormatConnector.getSchema(sign);
         int arity = record.getArity();
         List<TableColumn> tableColumns = schema.getTableColumns();
-        Map<String, Object> item = new HashMap<>();
+        Map<String, Object> item = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         if (tableColumns.size() >= arity) {
             for (int i = 0; i < arity; i++) {
                 TableColumn tableColumn = schema.getTableColumn(i).get();

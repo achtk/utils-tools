@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * flink table factory
  *
@@ -125,7 +127,7 @@ public interface FlinkTableFactory extends FactorySourceConnector, StreamTableSo
      */
     @Override
     default Map<String, String> requiredContext() {
-        Map<String, String> context = new HashMap<>();
+        Map<String, String> context = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         context.put("connector.type", connectorType());
         Map<String, String> requiredConfig = requiredConfig();
         if (null != requiredConfig) {

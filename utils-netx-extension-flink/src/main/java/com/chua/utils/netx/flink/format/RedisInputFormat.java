@@ -19,11 +19,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
+ * redis输入
  * @author CH
  * @version 1.0.0
  * @since 2021/1/25
  */
 @Slf4j
+@SuppressWarnings("ALL")
 public class RedisInputFormat extends FlinkInputFormat implements RedisFormat {
 
     private transient boolean hasNext;

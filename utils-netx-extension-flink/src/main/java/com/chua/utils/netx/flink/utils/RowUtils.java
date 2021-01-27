@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * row工具
  *
@@ -34,7 +36,7 @@ public class RowUtils {
         List<TableColumn> tableColumns = schema.getTableColumns();
         int index = 0;
         int arity = record.getArity();
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         for (TableColumn tableColumn : tableColumns) {
             Class<?> aClass = tableColumn.getType().getConversionClass();
             TypeConverter converter = EmptyOrBase.getTypeConverter(aClass);
