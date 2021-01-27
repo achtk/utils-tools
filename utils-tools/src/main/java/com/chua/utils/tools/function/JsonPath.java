@@ -7,6 +7,7 @@ import java.util.Map;
 
 /**
  * json path
+ * <p>通过路径查询数据</p>
  *
  * @author CH
  * @version 1.0.0
