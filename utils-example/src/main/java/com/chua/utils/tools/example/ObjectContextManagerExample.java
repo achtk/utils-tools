@@ -201,14 +201,14 @@ public class ObjectContextManagerExample {
         System.out.println("==================================测试重试策略=============================");
         RetryStrategyBuilder retryStrategyBuilder = strategyContextManager.createRetryStrategyBuilder();
         TDemoInfo tDemoInfo = (TDemoInfo) retryStrategyBuilder.retry(TruePredicate.INSTANCE).create(tDemoInfo1);
-        System.out.println(tDemoInfo.getUuid());
+        System.out.println(tDemoInfo.uuid());
     }
 
     private static void testLimitStrategy() {
         System.out.println("==================================测试限流策略=============================");
         LimitStrategyBuilder limitStrategy = strategyContextManager.createLimitStrategy();
         TDemoInfo tDemoInfo = (TDemoInfo) limitStrategy.limit(1).create(tDemoInfo1);
-        System.out.println(tDemoInfo.getUuid());
+        System.out.println(tDemoInfo.uuid());
     }
 
     private static void testProxyStrategy() {
@@ -216,16 +216,16 @@ public class ObjectContextManagerExample {
         System.out.println("******************************代理类******************************");
         ProxyStrategyBuilder proxyStrategyBuilder = strategyContextManager.createProxyStrategy();
         TDemoInfo tDemoInfo = (TDemoInfo) proxyStrategyBuilder.proxy((obj, method, args, proxy) -> "1").create(TDemoInfo.class);
-        System.out.println(tDemoInfo.getUuid());
+        System.out.println(tDemoInfo.uuid());
     }
 
     private static void testCacheStrategy() {
         System.out.println("==================================测试缓存策略=============================");
-        System.out.println(tDemoInfo1.getUuid());
-        System.out.println(tDemoInfo1.getUuid());
+        System.out.println(tDemoInfo1.uuid());
+        System.out.println(tDemoInfo1.uuid());
         CacheStrategyBuilder strategyBuilder = strategyContextManager.createCacheStrategy();
         TDemoInfo tDemoInfo = (TDemoInfo) strategyBuilder.create(tDemoInfo1);
-        System.out.println(tDemoInfo.getUuid());
-        System.out.println(tDemoInfo.getUuid());
+        System.out.println(tDemoInfo.uuid());
+        System.out.println(tDemoInfo.uuid());
     }
 }

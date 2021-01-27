@@ -1,13 +1,12 @@
 package com.chua.utils.tools.example;
 
 import com.chua.utils.tools.example.entity.TDemoInfo;
-import com.chua.utils.tools.strategy.*;
-import com.google.common.base.Preconditions;
+import com.chua.utils.tools.strategy.CycleStrategy;
+import com.chua.utils.tools.strategy.Strategy;
 import com.google.common.base.Predicate;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 
 /**
  * @author CH
@@ -26,14 +25,14 @@ public class StrategyExample {
             }
         };
         TDemoInfo tDemoInfo1 = new TDemoInfo();
-        tDemoInfo1.setName(UUID.randomUUID().toString());
+        tDemoInfo1.name(UUID.randomUUID().toString());
 
         //Strategy<TDemoInfo> strategy = new RetryStrategy<>(predicate);
         // Strategy<TDemoInfo> strategy = new CacheStrategy<>();
         // Strategy<TDemoInfo> strategy = new TokenLimitStrategy<>(2.0);
         Strategy<TDemoInfo> strategy = new CycleStrategy<>();
         TDemoInfo tDemoInfo = strategy.create(tDemoInfo1);
-        System.out.println(tDemoInfo.getName());
+        System.out.println(tDemoInfo.name());
         /*try (AsyncStrategy<TDemoInfo> strategy = new AsyncStrategy<>(new Consumer() {
             @Override
             public void accept(Object o) {

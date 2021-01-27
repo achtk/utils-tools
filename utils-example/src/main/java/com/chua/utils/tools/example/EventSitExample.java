@@ -4,7 +4,6 @@ import com.chua.utils.tools.example.entity.TDemoInfo;
 import com.chua.utils.tools.manager.eventsit.EventSit;
 import com.chua.utils.tools.text.IdHelper;
 import com.google.common.eventbus.Subscribe;
-import lombok.AllArgsConstructor;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
@@ -50,7 +49,7 @@ public class EventSitExample {
 
         @Subscribe
         public void subscribe(TDemoInfo o) {
-            System.out.println(name + "@" + atomicInteger.incrementAndGet() + ":" + o.getUuid());
+            System.out.println(name + "@" + atomicInteger.incrementAndGet() + ":" + o.uuid());
         }
     }
 }

@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @Entity
-@Accessors(chain = true)
+@Accessors(chain = true, fluent = true)
 @Table(name = "t_demo_info")
 public class TDemoInfo {
     @Id

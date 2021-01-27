@@ -1,6 +1,7 @@
 package com.chua.utils.tools.example.groovy
 
 
+import com.chua.utils.tools.example.entity.TDemoInfo
 import com.chua.utils.tools.example.interfaces.ITestInterface
 import com.chua.utils.tools.text.IdHelper
 
@@ -10,9 +11,9 @@ import com.chua.utils.tools.text.IdHelper
  */
 class Demo implements ITestInterface, GroovyInterceptable {
 
-    def a = 1
+    def a = 1I
 
-    def arr = [1, 2, 3]
+    def arr = [1, 2, 3] as int[]
 
     enum AP {
         A, B, C
@@ -22,16 +23,11 @@ class Demo implements ITestInterface, GroovyInterceptable {
         a + b;
     }
 
-    def demo() {
-        def demo = new Demo();
-        (1..10).collect() {
-            it + 1
-        }
-    }
 
     static void main(args) {
-        Demo demo = new Demo();
-        print demo.add(10, 2);
+        def tDemoInfo = new TDemoInfo()
+        tDemoInfo.id '1'
+        println tDemoInfo
     }
 
     @Override

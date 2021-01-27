@@ -17,7 +17,6 @@ public class GroovyUtilsExample {
 
     public static void main(String[] args) throws Exception {
         Demo demo = new Demo();
-        System.out.println(demo.demo());
         //测试脚本
        // testGroovyScript();
     }

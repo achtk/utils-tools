@@ -64,11 +64,11 @@ public class CollectionExample {
         System.out.println("get(a): " + multiValueMap.get("a"));
         System.out.println("***********************测试 MultiSortValueMap***********************");
         MultiSortValueMap<String, TDemoInfo> sortValueMap = MultiValueSortMap.create("id");
-        sortValueMap.put("a", new TDemoInfo().setId(3 + ""));
-        sortValueMap.put("a", new TDemoInfo().setId(1 + ""));
-        sortValueMap.put("a", new TDemoInfo().setId(33 + ""));
-        sortValueMap.put("b", new TDemoInfo().setId(3 + ""));
-        sortValueMap.put("c", new TDemoInfo().setId(3 + ""));
+        sortValueMap.put("a", new TDemoInfo().id(3 + ""));
+        sortValueMap.put("a", new TDemoInfo().id(1 + ""));
+        sortValueMap.put("a", new TDemoInfo().id(33 + ""));
+        sortValueMap.put("b", new TDemoInfo().id(3 + ""));
+        sortValueMap.put("c", new TDemoInfo().id(3 + ""));
         System.out.println("MultiSortValueMap: " + JsonHelper.toJson(sortValueMap));
         System.out.println("get(a): " + sortValueMap.get("a"));
 
