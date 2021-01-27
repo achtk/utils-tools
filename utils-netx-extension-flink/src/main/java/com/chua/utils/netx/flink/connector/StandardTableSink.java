@@ -18,6 +18,7 @@ import org.apache.flink.types.Row;
  * @version 1.0.0
  * @since 2021/1/25
  */
+@SuppressWarnings("ALL")
 public class StandardTableSink extends OutputFormatTableSink<Row> {
 
     private String sign;

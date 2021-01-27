@@ -13,6 +13,7 @@ import java.nio.Buffer;
  * @version 1.0.0
  * @since 2020/12/25
  */
+@SuppressWarnings("ALL")
 public interface Everything extends Library {
 
     Everything EVERYTHING_64 = Native.load("Everything64", Everything.class);

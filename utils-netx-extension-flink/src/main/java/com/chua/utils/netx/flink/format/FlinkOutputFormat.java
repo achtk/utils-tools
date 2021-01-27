@@ -14,6 +14,7 @@ import java.io.IOException;
  * @version 1.0.0
  * @since 2021/1/25
  */
+@SuppressWarnings("ALL")
 public abstract class FlinkOutputFormat extends RichOutputFormat<Row> implements Flushable {
     /**
      * 标识符

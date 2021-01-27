@@ -584,6 +584,7 @@ public class HttpClientHandler {
      *
      * @return
      */
+    @SuppressWarnings("ALL")
     public static Registry<SchemeIOSessionStrategy> registry() throws Exception {
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, getTrustManager(), null);

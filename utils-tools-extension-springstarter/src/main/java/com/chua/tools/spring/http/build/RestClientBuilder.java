@@ -34,6 +34,7 @@ import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPAC
  * @version 1.0.0
  * @since 2021/1/5
  */
+@SuppressWarnings("ALL")
 @AllArgsConstructor
 public class RestClientBuilder implements HttpClientBuilder {
 

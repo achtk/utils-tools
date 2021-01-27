@@ -175,6 +175,7 @@ import static com.chua.utils.tools.constant.SymbolConstant.*;
  * <p>
  * Borrowed from quartz v2.3.2
  */
+@SuppressWarnings("ALL")
 public final class CronExpression implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 12423409423L;
