@@ -3,6 +3,7 @@ package com.chua.utils.tools.collects;
 import com.chua.utils.tools.prop.placeholder.EnvPropertyPropertyPlaceholder;
 import com.chua.utils.tools.prop.placeholder.PropertiesPropertyPlaceholder;
 import com.chua.utils.tools.prop.placeholder.PropertyPlaceholder;
+import lombok.EqualsAndHashCode;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 2021/1/7
  */
+@EqualsAndHashCode
 final class BasicProfile implements Profile {
 
     private Map<String, Properties> propertiesMap = new LinkedHashMap<>();

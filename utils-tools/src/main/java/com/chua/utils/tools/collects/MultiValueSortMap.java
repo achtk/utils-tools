@@ -133,8 +133,8 @@ public class MultiValueSortMap<K, V> implements MultiSortValueMap<K, V> {
 
     @Override
     public Map<K, V> getAllFirst() {
-        Map<K, V> result = new HashMap<>();
         Set<K> kSet = temporary.keySet();
+        Map<K, V> result = new HashMap<>(kSet.size());
         for (K k : kSet) {
             SortedSet<V> sortedSet = temporary.get(k);
             result.put(k, sortedSet.first());

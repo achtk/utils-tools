@@ -352,19 +352,6 @@ public class ClassHelper extends ClassLoaderHelper {
                 return tClass.newInstance();
             } catch (Throwable e) {
                 return null;
-//                try {
-//                    if (ReflectionHelper.hasNoArgsConstructor(tClass)) {
-//                        return null;
-//                    }
-//                } catch (Exception exception) {
-//                    return null;
-//                }
-//                Class<? extends T> newClass = JavassistHelper.addNoParamConstructor(tClass);
-//                try {
-//                    return newClass.newInstance();
-//                } catch (Exception illegalAccessException) {
-//                    return null;
-//                }
             }
         }
 

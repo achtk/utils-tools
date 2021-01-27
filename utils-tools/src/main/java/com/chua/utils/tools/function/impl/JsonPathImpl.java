@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * json path implement
  *
@@ -43,7 +45,7 @@ public class JsonPathImpl implements JsonPath {
 
     @Override
     public Map<String, Object> findMap(String path) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         for (String key : profile.keySet()) {
             if (StringUtils.wildcardMatch(key, path)) {
                 result.put(key, profile.get(key));
@@ -58,7 +60,7 @@ public class JsonPathImpl implements JsonPath {
 
     @Override
     public FlatMap flatMap(String path) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         for (String key : profile.keySet()) {
             if (StringUtils.wildcardMatch(key, path)) {
                 result.put(key, profile.get(key));
@@ -72,7 +74,7 @@ public class JsonPathImpl implements JsonPath {
 
     @Override
     public void set(String path, Object value) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         for (String key : profile.keySet()) {
             if (StringUtils.wildcardMatch(key, path)) {
                 result.put(key, value);

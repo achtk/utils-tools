@@ -34,6 +34,10 @@ public class NumberConstant {
      */
     public static final int FIRST = ONE;
     /**
+     * -2
+     */
+    public static final int NEGATIVE_TWE = -2;
+    /**
      * 2
      */
     public static final int TWE = 2;
@@ -94,6 +98,34 @@ public class NumberConstant {
      */
     public static final int NIGHT = 9;
     /**
+     * 10
+     */
+    public static final int TEN = 10;
+    /**
+     * 11
+     */
+    public static final int ELEVEN = 11;
+    /**
+     * 12
+     */
+    public static final int TWELVE = 12;
+    /**
+     * 23
+     */
+    public static final int TWENTY_THREE = 23;
+    /**
+     * 24
+     */
+    public static final int TWENTY_FOUR = 24;
+    /**
+     * 30
+     */
+    public static final int THIRTY = 30;
+    /**
+     * 31
+     */
+    public static final int THIRTY_ONE = 31;
+    /**
      * 9
      */
     public static final int NINTH = NIGHT;
@@ -109,4 +141,25 @@ public class NumberConstant {
      * 0x01
      */
     public static final int HEX_0X01 = 0x01;
+    /**
+     * byte -> 1
+     */
+    public static final int BYTE_LENGTH = ONE;
+    /**
+     * shore -> 2
+     */
+    public static final int SHORE_LENGTH = TWE;
+    /**
+     * integer -> 4
+     */
+    public static final int INTEGER_LENGTH = FOURTH;
+    /**
+     * long -> 8
+     */
+    public static final int LONG_LENGTH = EIGHT;
+    /**
+     * 1000
+     */
+    public static final int ONE_THOUSAND = 1000;
+
 }

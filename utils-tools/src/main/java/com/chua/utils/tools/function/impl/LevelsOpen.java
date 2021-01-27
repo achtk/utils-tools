@@ -7,6 +7,8 @@ import com.google.common.base.Strings;
 
 import java.util.*;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * 层级展开
  *
@@ -26,7 +28,7 @@ public class LevelsOpen implements Levels {
         List<String> list = new ArrayList<>(keySet);
         Collections.sort(list);
         for (String key : list) {
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
             String tempKey = key;
             int index = tempKey.indexOf(".");
             if (index > -1) {
@@ -70,7 +72,7 @@ public class LevelsOpen implements Levels {
      * @return 单集合
      */
     private Map<String, Object> merge(List<Map<String, Object>> toArray) {
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         for (Map<String, Object> objectMap : toArray) {
             merge(result, objectMap);
         }
@@ -195,7 +197,7 @@ public class LevelsOpen implements Levels {
             tempKey = tempKey.substring(0, index);
         }
         int newIndex = tempKey.indexOf("[");
-        Map<String, Object> item = new HashMap<>();
+        Map<String, Object> item = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
 
         if (index == -1) {
             if (newIndex == -1) {
@@ -221,7 +223,7 @@ public class LevelsOpen implements Levels {
         }
         int newIndex = tempKey.indexOf("[");
         List<Map<String, Object>> result = new ArrayList<>();
-        Map<String, Object> item = new HashMap<>();
+        Map<String, Object> item = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
 
         if (index == -1) {
             if (newIndex == -1) {

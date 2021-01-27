@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * jdkcron调度任务
@@ -22,7 +21,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 public class JdkCronScheduleTemplate implements CronScheduleOperations<Runtime>, Runnable {
 
     private final Map<String, CronTime> groupCache = new ConcurrentHashMap<>();
-    private final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors());
     private final int processor = Runtime.getRuntime().availableProcessors();
     private final ExecutorService scheduledExecutorService = ThreadHelper.newSingleThreadExecutor("jdk-cron-thread-pools");
 

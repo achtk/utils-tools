@@ -9,6 +9,8 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.BitSet;
 
+import static com.chua.utils.tools.constant.SymbolConstant.*;
+
 /**
  * URL解码器
  *
@@ -47,13 +49,13 @@ public class UrlEncoder implements StringEncoder {
     public UrlEncoder() {
         this(new BitSet(256));
 
-        for (char i = 'a'; i <= 'z'; i++) {
+        for (char i = LETTER_LOWERCASE_A; i <= LETTER_LOWERCASE_Z; i++) {
             addSafeCharacter(i);
         }
-        for (char i = 'A'; i <= 'Z'; i++) {
+        for (char i = LETTER_UPPERCASE_A; i <= LETTER_UPPERCASE_Z; i++) {
             addSafeCharacter(i);
         }
-        for (char i = '0'; i <= '9'; i++) {
+        for (char i = CHARACTER_0; i <= CHARACTER_9; i++) {
             addSafeCharacter(i);
         }
     }

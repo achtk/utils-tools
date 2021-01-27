@@ -14,6 +14,8 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.SymbolConstant.*;
+
 /**
  * json工具类
  *
@@ -202,17 +204,17 @@ public class JsonUtils extends JsonHelper {
         List<String> strings = Splitter.on(delimiter).trimResults().omitEmptyStrings().limit(2).splitToList(source);
         String value = strings.get(0);
 
-        if(null != value && value.startsWith("\"")) {
+        if(null != value && value.startsWith(QUOTATION_MARKS)) {
             value = value.substring(1);
         }
 
         if(null != value ) {
-            value = value.replace("\\", "");
+            value = value.replace(SYMBOL_RIGHT_SLASH, SYMBOL_EMPTY);
         }
 
         String type = strings.get(1);
 
-        if(null != type && type.endsWith("\"")) {
+        if(null != type && type.endsWith(QUOTATION_MARKS)) {
             type = type.substring(0, type.length() - 1);
         }
         return fromJson(value, ClassUtils.forName(type));

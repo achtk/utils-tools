@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * 层级压缩
  *
@@ -16,7 +18,7 @@ import java.util.Map;
 public class LevelsClose implements Levels {
     @Override
     public Map<String, Object> apply(Map<String, Object> stringObjectMap) {
-        Map<String, Object> properties1 = new HashMap<>();
+        Map<String, Object> properties1 = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         analysisHierarchicalAnalysis(stringObjectMap, properties1);
         return properties1;
     }

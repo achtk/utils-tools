@@ -36,6 +36,14 @@ public class SymbolConstant {
      * []
      */
     public static final String SYMBOL_ARRAY_SUFFIX = "[]";
+    /**
+     * "
+     */
+    public static final String QUOTATION_MARKS = "\"";
+    /**
+     *  " "
+     */
+    public static final String SYMBOL_BLANK = " ";
 
     /**
      * [L
@@ -89,6 +97,10 @@ public class SymbolConstant {
      * :
      */
     public static final String SYMBOL_COLON = ":";
+    /**
+     * -
+     */
+    public static final String SYMBOL_MINUS = "-";
     /**
      * _
      */
@@ -179,7 +191,11 @@ public class SymbolConstant {
      */
     public static final char SYMBOL_DOLLAR_CHAR = '$';
     /**
-     * ?
+     * '#'
+     */
+    public static final char SYMBOL_WELL_CHAR = '#';
+    /**
+     * '?'
      */
     public static final char SYMBOL_QUESTION_CHAR = '?';
 
@@ -200,6 +216,10 @@ public class SymbolConstant {
      */
     public static final char SYMBOL_COLON_CHAR = ':';
     /**
+     * '-'
+     */
+    public static final char SYMBOL_MINUS_CHAR = '-';
+    /**
      * ~
      */
     public static final char SYMBOL_WAVY_LINE_CHAR = '~';
@@ -207,5 +227,45 @@ public class SymbolConstant {
      * *
      */
     public static final char SYMBOL_ASTERISK_CHAR = '*';
+    /**
+     * '0'
+     */
+    public static final char CHARACTER_0 = '0';
+    /**
+     * '9'
+     */
+    public static final char CHARACTER_9 = '9';
+    /**
+     *  ' '
+     */
+    public static final char SYMBOL_BLANK_CHAR = ' ';
+    /**
+     * '\t'
+     */
+    public static final char SYMBOL_T_CHAR = '\t';
+    /**
+     * 'A'
+     */
+    public static final char LETTER_UPPERCASE_A = 'A';
+    /**
+     * 'Z'
+     */
+    public static final char LETTER_UPPERCASE_Z = 'Z';
+    /**
+     * 'L'
+     */
+    public static final char LETTER_UPPERCASE_L = 'L';
+    /**
+     * 'W'
+     */
+    public static final char LETTER_UPPERCASE_W = 'W';
+    /**
+     * 'a'
+     */
+    public static final char LETTER_LOWERCASE_A = 'a';
+    /**
+     * 'z'
+     */
+    public static final char LETTER_LOWERCASE_Z = 'z';
 
 }

@@ -4,6 +4,9 @@ import com.google.common.base.Joiner;
 
 import java.util.*;
 
+import static com.chua.utils.tools.constant.NumberConstant.NEGATIVE_TWE;
+import static com.chua.utils.tools.constant.NumberConstant.TWE;
+
 /**
  * the circle link list
  *
@@ -71,7 +74,7 @@ public class LoopLinkList<E> implements LoopList<E> {
     public LoopList.Node<E> getNode(int index) {
         LoopList.Node<E> node = first;
         LoopList.Node<E> newNode = first;
-        for (int i = -2; i < index; i++) {
+        for (int i = NEGATIVE_TWE; i < index; i++) {
             node = node.after;
             if (node == first) {
                 break;
@@ -210,7 +213,7 @@ public class LoopLinkList<E> implements LoopList<E> {
      */
     public List<E> toList() {
         List<E> list = new ArrayList<>(size);
-        for (int i = -2; i < size - 2; i++) {
+        for (int i = NEGATIVE_TWE; i < size - TWE; i++) {
             LoopList.Node<E> node = getNode(i);
             list.add(node.data);
         }

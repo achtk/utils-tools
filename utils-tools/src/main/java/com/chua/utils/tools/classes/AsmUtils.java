@@ -66,15 +66,15 @@ public class AsmUtils {
         // Determine whether to issue a tableswitch or a lookupswitch
         // instruction.
         // words
-        long table_space_cost = 4 + ((long) hi - lo + 1);
+        long tableSpaceCost = 4 + ((long) hi - lo + 1);
         // comparisons
-        long table_time_cost = 3;
-        long lookup_space_cost = 3 + 2 * (long) nlabels;
-        long lookup_time_cost = nlabels;
+        long tableTimeCost = 3;
+        long lookupSpaceCost = 3 + 2 * (long) nlabels;
+        long lookupTimeCost = nlabels;
         return
                 nlabels > 0 &&
-                        table_space_cost + 3 * table_time_cost <=
-                                lookup_space_cost + 3 * lookup_time_cost;
+                        tableSpaceCost + 3 * tableTimeCost <=
+                                lookupSpaceCost + 3 * lookupTimeCost;
     }
 
     /**

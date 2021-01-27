@@ -7,7 +7,10 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import static com.chua.utils.tools.constant.NumberConstant.INDEX_NOT_FOUND;
+import static com.chua.utils.tools.constant.NumberConstant.TWE;
+import static com.chua.utils.tools.constant.StringConstant.GMT;
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_EMPTY;
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_UNDERLINE;
 
 /**
  * 字符串工具类<br />
@@ -266,7 +269,7 @@ public class StringUtils extends StringHelper {
      */
     public static TimeZone parseTimeZoneString(String timeZoneString) {
         TimeZone timeZone = TimeZone.getTimeZone(timeZoneString);
-        if ("GMT".equals(timeZone.getID()) && !timeZoneString.startsWith("GMT")) {
+        if (GMT.equals(timeZone.getID()) && !timeZoneString.startsWith(GMT)) {
             // We don't want that GMT fallback...
             throw new IllegalArgumentException("Invalid time zone specification '" + timeZoneString + "'");
         }
@@ -289,13 +292,13 @@ public class StringUtils extends StringHelper {
         validateLocalePart(country);
 
         String variant = "";
-        if (parts.length > 2) {
+        if (parts.length > TWE) {
             // There is definitely a variant, and it is everything after the country
             // code sans the separator between the country code and the variant.
             int endIndexOfCountryCode = localeString.indexOf(country, language.length()) + country.length();
             // Strip off any leading '_' and whitespace, what's left is the variant.
             variant = trimLeadingWhitespace(localeString.substring(endIndexOfCountryCode));
-            if (variant.startsWith("_")) {
+            if (variant.startsWith(SYMBOL_UNDERLINE)) {
                 variant = trimLeadingCharacter(variant, '_');
             }
         }

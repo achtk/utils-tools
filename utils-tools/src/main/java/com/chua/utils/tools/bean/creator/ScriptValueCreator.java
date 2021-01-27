@@ -3,6 +3,7 @@ package com.chua.utils.tools.bean.creator;
 import com.chua.utils.tools.annotations.BinderScript;
 import com.chua.utils.tools.bean.script.ValueScript;
 import com.chua.utils.tools.classes.JavassistHelper;
+import com.chua.utils.tools.constant.StringConstant;
 import com.chua.utils.tools.util.StringUtils;
 import com.chua.utils.tools.util.UrlUtils;
 import com.google.common.base.Joiner;
@@ -182,7 +183,7 @@ public class ScriptValueCreator implements ValueCreator {
         try {
             return JavassistHelper.toEntity(ctClassImpl, classPool);
         } catch (Exception e) {
-            if (e.getMessage().contains("duplicate")) {
+            if (e.getMessage().contains(StringConstant.DUPLICATE)) {
                 return tryToRemoveDuplicate(ctClassImpl, classPool);
             }
             return null;

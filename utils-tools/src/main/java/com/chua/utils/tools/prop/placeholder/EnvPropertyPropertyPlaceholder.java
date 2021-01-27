@@ -1,11 +1,14 @@
 package com.chua.utils.tools.prop.placeholder;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * 环境变量
  * @author CH
  * @version 1.0
  * @since 2020/10/28 18:45
  */
+@EqualsAndHashCode
 public class EnvPropertyPropertyPlaceholder extends PropertiesPropertyPlaceholder {
 
     @Override

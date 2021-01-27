@@ -4,6 +4,8 @@ import com.chua.utils.tools.tree.PrintTree;
 
 import java.util.*;
 
+import static com.chua.utils.tools.constant.NumberConstant.TWE;
+
 /**
  * 水平打印器
  *
@@ -136,7 +138,7 @@ public final class LevelOrderPrinter implements Printer {
      */
     private void cleanNodes() {
         int rowCount = nodes.size();
-        if (rowCount < 2) {
+        if (rowCount < TWE) {
             return;
         }
 
@@ -189,11 +191,11 @@ public final class LevelOrderPrinter implements Printer {
      */
     private void compressNodes() {
         int rowCount = nodes.size();
-        if (rowCount < 2) {
+        if (rowCount < TWE) {
             return;
         }
 
-        for (int i = rowCount - 2; i >= 0; i--) {
+        for (int i = rowCount - TWE; i >= 0; i--) {
             List<Node> rowNodes = nodes.get(i);
             for (Node node : rowNodes) {
                 Node left = node.left;
@@ -248,7 +250,7 @@ public final class LevelOrderPrinter implements Printer {
         }
     }
 
-    private void addXLineNode(List<Node> curRow, Node parent, int x) {
+    private void addXlineNode(List<Node> curRow, Node parent, int x) {
         Node line = new Node("─");
         line.x = x;
         line.y = parent.y;
@@ -256,7 +258,9 @@ public final class LevelOrderPrinter implements Printer {
     }
 
     private Node addLineNode(List<Node> curRow, List<Node> nextRow, Node parent, Node child) {
-        if (child == null) return null;
+        if (child == null) {
+            return null;
+        }
 
         Node top = null;
         int topX = child.topLineX();
@@ -265,11 +269,11 @@ public final class LevelOrderPrinter implements Printer {
             curRow.add(top);
 
             for (int x = topX + 1; x < parent.x; x++) {
-                addXLineNode(curRow, parent, x);
+                addXlineNode(curRow, parent, x);
             }
         } else {
             for (int x = parent.rightX(); x < topX; x++) {
-                addXLineNode(curRow, parent, x);
+                addXlineNode(curRow, parent, x);
             }
 
             top = new Node("┐");
@@ -295,7 +299,7 @@ public final class LevelOrderPrinter implements Printer {
         List<List<Node>> newNodes = new ArrayList<>();
 
         int rowCount = nodes.size();
-        if (rowCount < 2) {
+        if (rowCount < TWE) {
             return;
         }
 
@@ -369,7 +373,7 @@ public final class LevelOrderPrinter implements Printer {
         private int topLineX() {
             // 宽度的一半
             int delta = width;
-            if (delta % 2 == 0) {
+            if (delta % TWE == 0) {
                 delta--;
             }
             delta >>= 1;
@@ -527,7 +531,9 @@ public final class LevelOrderPrinter implements Printer {
         }
 
         public void translateX(int deltaX) {
-            if (deltaX == 0) return;
+            if (deltaX == 0) {
+                return;
+            }
             x += deltaX;
 
             // 如果是LineNode

@@ -19,6 +19,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+import static com.chua.utils.tools.constant.StringConstant.CLASS;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.objectweb.asm.Opcodes.*;
@@ -35,22 +37,22 @@ public class ClassAccessFactory<T> {
     private final Class<T> clazz;
     private final ClassWriter cw;
 
-    private final List<ClassPropertyInfo> accessorInfoList = new ArrayList<>();
+    private final List<ClassPropertyInfoAbstractAbstract> accessorInfoList = new ArrayList<>();
     private String classAccessInternalName;
     private String classAccessTypeDescriptor;
     private String classTypeDescriptor;
     private static final String MEMBER_TYPE_FIELD = "field";
     private static final String MEMBER_TYPE_PROPERTY = "property";
-    private final List<ClassFieldInfo> fieldInfoList = new ArrayList<>();
+    private final List<ClassFieldInfoAbstractAbstract> fieldInfoList = new ArrayList<>();
     private String internalName;
-    private final List<ClassMethodInfo> methodInfoList = new ArrayList<>();
-    private final List<ClassPropertyInfo> mutatorInfoList = new ArrayList<>();
+    private final List<ClassMethodInfoAbstract> methodInfoList = new ArrayList<>();
+    private final List<ClassPropertyInfoAbstractAbstract> mutatorInfoList = new ArrayList<>();
     private MethodVisitor mv;
-    private final Map<Integer, List<ClassMethodInfo>> paramCountMethodsMap = new HashMap<>();
-    private final List<ClassPropertyInfo> propertyInfoList = new ArrayList<>();
-    private final Map<String, List<ClassPropertyInfo>> typeToAccessorsMap = new HashMap<>();
-    private final Map<String, List<ClassFieldInfo>> typeToFieldsMap = new HashMap<>();
-    private final Map<String, List<ClassPropertyInfo>> typeToMutatorsMap = new HashMap<>();
+    private final Map<Integer, List<ClassMethodInfoAbstract>> paramCountMethodsMap = new HashMap<>();
+    private final List<ClassPropertyInfoAbstractAbstract> propertyInfoList = new ArrayList<>();
+    private final Map<String, List<ClassPropertyInfoAbstractAbstract>> typeToAccessorsMap = new HashMap<>();
+    private final Map<String, List<ClassFieldInfoAbstractAbstract>> typeToFieldsMap = new HashMap<>();
+    private final Map<String, List<ClassPropertyInfoAbstractAbstract>> typeToMutatorsMap = new HashMap<>();
     private static final int MAX_METHOD_ACCESS_PARAMETER_COUNT = 22;
 
     public ClassAccessFactory(Class<T> clazz) {
@@ -92,6 +94,7 @@ public class ClassAccessFactory<T> {
 
     /**
      * visitMethodAccessBridge
+     *
      * @param parameterCount parameterCount
      */
     private void visitMethodAccessBridge(int parameterCount) {
@@ -111,13 +114,14 @@ public class ClassAccessFactory<T> {
         mv.visitMaxs(3 + parameterCount, 3 + parameterCount);
         mv.visitEnd();
     }
+
     /**
      * visitMethodAccessMethod
      *
      * @param parameterCount parameterCount
      */
     private void visitMethodAccessMethod(int parameterCount) {
-        List<ClassMethodInfo> methodsWithParamCount = paramCountMethodsMap.get(parameterCount);
+        List<ClassMethodInfoAbstract> methodsWithParamCount = paramCountMethodsMap.get(parameterCount);
         mv = cw.visitMethod(ACC_PUBLIC, "call", getMethodAccessMethodDescriptor(parameterCount), null, null);
         mv.visitCode();
         Label firstLabel = new Label();
@@ -138,7 +142,7 @@ public class ClassAccessFactory<T> {
             mv.visitLookupSwitchInsn(defaultCaseLabel, methodsWithParamCount.stream().mapToInt(f -> f.memberIndex).toArray(), labels);
         }
         for (int i = 0; i < methodsWithParamCount.size(); i++) {
-            ClassMethodInfo methodInfo = methodsWithParamCount.get(i);
+            ClassMethodInfoAbstract methodInfo = methodsWithParamCount.get(i);
             mv.visitLabel(labels[i]);
             mv.visitFrame(F_SAME, 0, null, 0, null);
             mv.visitVarInsn(ALOAD, 1);
@@ -221,10 +225,11 @@ public class ClassAccessFactory<T> {
             visitMethodAccessInvokeMethodLastPart(firstLabel);
             return;
         }
-        Label[] labels = getTableSwitchLabelsForAccess(defaultCaseLabel, methodInfoList); /* Always use a table switch because there are no gaps between method indices*/
+        // Always use a table switch because there are no gaps between method indices
+        Label[] labels = getTableSwitchLabelsForAccess(defaultCaseLabel, methodInfoList);
         mv.visitTableSwitchInsn(methodInfoList.get(0).memberIndex, methodInfoList.get(methodInfoList.size() - 1).memberIndex, defaultCaseLabel, labels);
         for (int i = 0; i < methodInfoList.size(); i++) {
-            ClassMethodInfo methodInfo = methodInfoList.get(i);
+            ClassMethodInfoAbstract methodInfo = methodInfoList.get(i);
             mv.visitLabel(labels[i]);
             mv.visitFrame(F_SAME, 0, null, 0, null);
             mv.visitVarInsn(ALOAD, 1);
@@ -409,9 +414,9 @@ public class ClassAccessFactory<T> {
      */
     private void visitMethodIndexReturnStatements(MethodNameReturnIndex methodIndex, Label defaultCaseLabel) {
         Label jumpLabel = methodIndex.returnIndexLabel;
-        List<ClassMethodInfo> methods = methodIndex.methods;
+        List<ClassMethodInfoAbstract> methods = methodIndex.methods;
         for (int i = 0; i < methods.size(); i++) {
-            ClassMethodInfo methodInfo = methods.get(i);
+            ClassMethodInfoAbstract methodInfo = methods.get(i);
             Class<?>[] parameterTypes = methodInfo.method.getParameterTypes();
             mv.visitLabel(jumpLabel);
             mv.visitFrame(F_SAME, 0, null, 0, null);
@@ -445,12 +450,12 @@ public class ClassAccessFactory<T> {
      */
     private List<MethodNameReturnIndex> getMethodIndexSwitchCases() {
         List<MethodNameReturnIndex> methodIndices = new ArrayList<>();
-        Map<String, List<ClassMethodInfo>> overloadedMap = new HashMap<>();
+        Map<String, List<ClassMethodInfoAbstract>> overloadedMap = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
 
         for (int i = 0; i < methodInfoList.size(); i++) {
-            ClassMethodInfo methodInfo = methodInfoList.get(i);
+            ClassMethodInfoAbstract methodInfo = methodInfoList.get(i);
 
-            List<ClassMethodInfo> overloadedMethods = overloadedMap.get(methodInfo.name);
+            List<ClassMethodInfoAbstract> overloadedMethods = overloadedMap.get(methodInfo.name);
             if (overloadedMethods == null) {
                 overloadedMethods = new ArrayList<>();
                 overloadedMap.put(methodInfo.name, overloadedMethods);
@@ -554,7 +559,7 @@ public class ClassAccessFactory<T> {
 
         for (int i = 0; i < fieldAccessInfoList.size(); i++) {
             AccessInfo fieldAccessInfo = fieldAccessInfoList.get(i);
-            List<ClassFieldInfo> fieldInfoList = typeToFieldsMap.get(fieldAccessInfo.className);
+            List<ClassFieldInfoAbstractAbstract> fieldInfoList = typeToFieldsMap.get(fieldAccessInfo.className);
 
             visitAccessGetter(fieldInfoList, fieldAccessInfo);
             visitAccessGetterBridge(fieldAccessInfo);
@@ -575,7 +580,7 @@ public class ClassAccessFactory<T> {
      * @param memberType     memberType
      * @param memberInfoList memberInfoList
      */
-    private void visitGeneralAccessSetter(String methodName, String memberType, List<? extends AssignableInfo> memberInfoList) {
+    private void visitGeneralAccessSetter(String methodName, String memberType, List<? extends AbstractAssignableInfoAbstract> memberInfoList) {
         //public void setField/setProperty
         mv = cw.visitMethod(ACC_PUBLIC, methodName, "(" + classTypeDescriptor + "ILjava/lang/Object;)V", null, null);
         mv.visitCode();
@@ -589,11 +594,11 @@ public class ClassAccessFactory<T> {
             visitAccessSetterLastPart(memberType, "Ljava/lang/Object;", firstLabel, null);
             return;
         }
-        Label[] labels = getTableSwitchLabelsForAccess(defaultCaseLabel, memberInfoList); /* Always use a table switch because there are no gaps between member indices*/
+        Label[] labels = getTableSwitchLabelsForAccess(defaultCaseLabel, memberInfoList);
         mv.visitTableSwitchInsn(memberInfoList.get(0).memberIndex, memberInfoList.get(memberInfoList.size() - 1).memberIndex, defaultCaseLabel, labels);
         Label breakLabel = new Label();
         for (int i = 0; i < memberInfoList.size(); i++) {
-            AssignableInfo member = memberInfoList.get(i);
+            AbstractAssignableInfoAbstract member = memberInfoList.get(i);
             mv.visitLabel(labels[i]);
             mv.visitFrame(F_SAME, 0, null, 0, null);
             mv.visitVarInsn(ALOAD, 1);
@@ -601,11 +606,12 @@ public class ClassAccessFactory<T> {
             checkCast(member);
             switch (memberType) {
                 case MEMBER_TYPE_FIELD:
-                    mv.visitFieldInsn(((ClassFieldInfo) member).setFieldOpcode, internalName, member.name, member.descriptor);
+                    mv.visitFieldInsn(((ClassFieldInfoAbstractAbstract) member).setFieldOpcode, internalName, member.name, member.descriptor);
                     break;
                 case MEMBER_TYPE_PROPERTY:
-                    mv.visitMethodInsn(INVOKEVIRTUAL, internalName, ((ClassPropertyInfo) member).writeMethodName, "(" + member.descriptor + ")V", false);
+                    mv.visitMethodInsn(INVOKEVIRTUAL, internalName, ((ClassPropertyInfoAbstractAbstract) member).writeMethodName, "(" + member.descriptor + ")V", false);
                     break;
+                default:
             }
             mv.visitLabel(new Label());
             mv.visitJumpInsn(GOTO, breakLabel);
@@ -640,7 +646,7 @@ public class ClassAccessFactory<T> {
      * @param memberType     memberType
      * @param memberInfoList memberInfoList
      */
-    private void visitGeneralAccessGetter(String methodName, String memberType, List<? extends AssignableInfo> memberInfoList) {
+    private void visitGeneralAccessGetter(String methodName, String memberType, List<? extends AbstractAssignableInfoAbstract> memberInfoList) {
         // public Field getField/getProperty()
         mv = cw.visitMethod(ACC_PUBLIC, methodName, "(" + classTypeDescriptor + "I)Ljava/lang/Object;", null, null);
         mv.visitCode();
@@ -654,20 +660,21 @@ public class ClassAccessFactory<T> {
             visitAccessGetterLastPart(memberType, firstLabel);
             return;
         }
-        Label[] labels = getTableSwitchLabelsForAccess(defaultCaseLabel, memberInfoList); /* Always use a table switch because there are no gaps between member indices*/
+        Label[] labels = getTableSwitchLabelsForAccess(defaultCaseLabel, memberInfoList);
         mv.visitTableSwitchInsn(memberInfoList.get(0).memberIndex, memberInfoList.get(memberInfoList.size() - 1).memberIndex, defaultCaseLabel, labels);
         for (int i = 0; i < memberInfoList.size(); i++) {
-            AssignableInfo member = memberInfoList.get(i);
+            AbstractAssignableInfoAbstract member = memberInfoList.get(i);
             mv.visitLabel(labels[i]);
             mv.visitFrame(F_SAME, 0, null, 0, null);
             mv.visitVarInsn(ALOAD, 1);
             switch (memberType) {
                 case MEMBER_TYPE_FIELD:
-                    mv.visitFieldInsn(((ClassFieldInfo) member).getFieldOpcode, internalName, member.name, member.descriptor);
+                    mv.visitFieldInsn(((ClassFieldInfoAbstractAbstract) member).getFieldOpcode, internalName, member.name, member.descriptor);
                     break;
                 case MEMBER_TYPE_PROPERTY:
-                    mv.visitMethodInsn(INVOKEVIRTUAL, internalName, ((ClassPropertyInfo) member).readMethodName, "()" + member.descriptor, false);
+                    mv.visitMethodInsn(INVOKEVIRTUAL, internalName, ((ClassPropertyInfoAbstractAbstract) member).readMethodName, "()" + member.descriptor, false);
                     break;
+                default:
             }
             if (member.type.isPrimitive()) {
                 Class<?> wrapperType = ClassUtils.primitiveToWrapper(member.type);
@@ -686,7 +693,7 @@ public class ClassAccessFactory<T> {
      * @param memberInfoList memberInfoList
      * @param accessInfo     accessInfo
      */
-    private void visitAccessSetter(List<? extends AssignableInfo> memberInfoList, AccessInfo accessInfo) {
+    private void visitAccessSetter(List<? extends AbstractAssignableInfoAbstract> memberInfoList, AccessInfo accessInfo) {
         //public void <setMethodName>: void
         mv = cw.visitMethod(ACC_PUBLIC, accessInfo.setMethodName, "(" + classTypeDescriptor + "I" + accessInfo.descriptor + ")V", null, null);
         mv.visitCode();
@@ -709,18 +716,19 @@ public class ClassAccessFactory<T> {
         }
         Label breakLabel = new Label();
         for (int i = 0; i < memberInfoList.size(); i++) {
-            MemberInfo memberInfo = memberInfoList.get(i);
+            AbstractMemberInfo abstractMemberInfo = memberInfoList.get(i);
             mv.visitLabel(labels[i]);
             mv.visitFrame(F_SAME, 0, null, 0, null);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(accessInfo.loadOpcode, 3);
             switch (accessInfo.memberType) {
                 case MEMBER_TYPE_FIELD:
-                    mv.visitFieldInsn(((ClassFieldInfo) memberInfo).setFieldOpcode, internalName, memberInfo.name, accessInfo.descriptor);
+                    mv.visitFieldInsn(((ClassFieldInfoAbstractAbstract) abstractMemberInfo).setFieldOpcode, internalName, abstractMemberInfo.name, accessInfo.descriptor);
                     break;
                 case MEMBER_TYPE_PROPERTY:
-                    mv.visitMethodInsn(INVOKEVIRTUAL, internalName, ((ClassPropertyInfo) memberInfo).writeMethodName, "(" + accessInfo.descriptor + ")V", false);
+                    mv.visitMethodInsn(INVOKEVIRTUAL, internalName, ((ClassPropertyInfoAbstractAbstract) abstractMemberInfo).writeMethodName, "(" + accessInfo.descriptor + ")V", false);
                     break;
+                default:
             }
             mv.visitLabel(new Label());
             mv.visitJumpInsn(GOTO, breakLabel);
@@ -849,7 +857,7 @@ public class ClassAccessFactory<T> {
      * @param memberInfoList memberInfoList
      * @param accessInfo     accessInfo
      */
-    private void visitAccessGetter(List<? extends AssignableInfo> memberInfoList, AccessInfo accessInfo) {
+    private void visitAccessGetter(List<? extends AbstractAssignableInfoAbstract> memberInfoList, AccessInfo accessInfo) {
         mv = cw.visitMethod(ACC_PUBLIC, accessInfo.getMethodName, "(" + classTypeDescriptor + "I)" + accessInfo.descriptor, null, null);
         mv.visitCode();
         Label firstLabel = new Label();
@@ -882,7 +890,7 @@ public class ClassAccessFactory<T> {
         }
 
         for (int i = 0; i < memberInfoList.size(); i++) {
-            MemberInfo memberInfo = memberInfoList.get(i);
+            AbstractMemberInfo abstractMemberInfo = memberInfoList.get(i);
 
             mv.visitLabel(labels[i]);
             mv.visitFrame(F_SAME, 0, null, 0, null);
@@ -890,10 +898,10 @@ public class ClassAccessFactory<T> {
 
             switch (accessInfo.memberType) {
                 case MEMBER_TYPE_FIELD:
-                    mv.visitFieldInsn(((ClassFieldInfo) memberInfo).getFieldOpcode, internalName, memberInfo.name, accessInfo.descriptor);
+                    mv.visitFieldInsn(((ClassFieldInfoAbstractAbstract) abstractMemberInfo).getFieldOpcode, internalName, abstractMemberInfo.name, accessInfo.descriptor);
                     break;
                 case MEMBER_TYPE_PROPERTY:
-                    mv.visitMethodInsn(INVOKEVIRTUAL, internalName, ((ClassPropertyInfo) memberInfo).readMethodName, "()" + accessInfo.descriptor, false);
+                    mv.visitMethodInsn(INVOKEVIRTUAL, internalName, ((ClassPropertyInfoAbstractAbstract) abstractMemberInfo).readMethodName, "()" + accessInfo.descriptor, false);
                     break;
                 default:
             }
@@ -914,7 +922,7 @@ public class ClassAccessFactory<T> {
      * @param members          members
      * @return Label[]
      */
-    private static Label[] getTableSwitchLabelsForAccess(Label defaultCaseLabel, List<? extends MemberInfo> members) {
+    private static Label[] getTableSwitchLabelsForAccess(Label defaultCaseLabel, List<? extends AbstractMemberInfo> members) {
         return AsmUtils.getTableSwitchLabels(defaultCaseLabel, members.stream().mapToInt(m -> m.memberIndex).toArray());
     }
 
@@ -1061,7 +1069,7 @@ public class ClassAccessFactory<T> {
      * @param memberInfoList Member列表
      * @return
      */
-    private List<StringCaseReturnIndex> getMemberIndexSwitchCases(List<? extends MemberInfo> memberInfoList) {
+    private List<StringCaseReturnIndex> getMemberIndexSwitchCases(List<? extends AbstractMemberInfo> memberInfoList) {
         List<StringCaseReturnIndex> memberIndexSwitchCases = new ArrayList<>();
         for (int i = 0; i < memberInfoList.size(); i++) {
             memberIndexSwitchCases.add(new StringCaseReturnIndex(memberInfoList.get(i).name, i));
@@ -1126,12 +1134,12 @@ public class ClassAccessFactory<T> {
         List<PropertyDescriptor> propertyDescriptors;
         try {
             BeanInfo info = Introspector.getBeanInfo(clazz);
-            propertyDescriptors = Collections.unmodifiableList(Arrays.stream(info.getPropertyDescriptors()).filter(prop -> !prop.getName().equals("class")).collect(toList()));
+            propertyDescriptors = Collections.unmodifiableList(Arrays.stream(info.getPropertyDescriptors()).filter(prop -> !CLASS.equals(prop.getName())).collect(toList()));
         } catch (IntrospectionException e) {
             throw new RuntimeException(e);
         }
         for (int i = 0; i < propertyDescriptors.size(); i++) {
-            addPropertyInfo(new ClassPropertyInfo(propertyDescriptors.get(i), i));
+            addPropertyInfo(new ClassPropertyInfoAbstractAbstract(propertyDescriptors.get(i), i));
         }
     }
 
@@ -1146,7 +1154,7 @@ public class ClassAccessFactory<T> {
         for (int i = 0; i < fields.size(); i++) {
             Field field = fields.get(i);
             ClassUtils.setAccessible(field);
-            addFieldInfo(new ClassFieldInfo(field, i));
+            addFieldInfo(new ClassFieldInfoAbstractAbstract(field, i));
         }
     }
 
@@ -1177,7 +1185,7 @@ public class ClassAccessFactory<T> {
         for (int i = 0; i < methods.size(); i++) {
             Method method = methods.get(i);
             ClassUtils.setAccessible(method);
-            addMethodInfo(new ClassMethodInfo(method, i));
+            addMethodInfo(new ClassMethodInfoAbstract(method, i));
         }
     }
 
@@ -1186,8 +1194,8 @@ public class ClassAccessFactory<T> {
      *
      * @param methodInfo 方法
      */
-    private void addMethodInfo(ClassMethodInfo methodInfo) {
-        List<ClassMethodInfo> methodsWithParamCount = paramCountMethodsMap.get(methodInfo.parameterCount);
+    private void addMethodInfo(ClassMethodInfoAbstract methodInfo) {
+        List<ClassMethodInfoAbstract> methodsWithParamCount = paramCountMethodsMap.get(methodInfo.parameterCount);
         if (methodsWithParamCount == null) {
             methodsWithParamCount = new ArrayList<>();
             paramCountMethodsMap.put(methodInfo.parameterCount, methodsWithParamCount);
@@ -1202,10 +1210,10 @@ public class ClassAccessFactory<T> {
      *
      * @param fieldInfo 字段
      */
-    private void addFieldInfo(ClassFieldInfo fieldInfo) {
+    private void addFieldInfo(ClassFieldInfoAbstractAbstract fieldInfo) {
         String key = fieldInfo.type.getName();
 
-        List<ClassFieldInfo> fieldsOfType = typeToFieldsMap.get(key);
+        List<ClassFieldInfoAbstractAbstract> fieldsOfType = typeToFieldsMap.get(key);
         if (fieldsOfType == null) {
             fieldsOfType = new ArrayList<>();
             typeToFieldsMap.put(key, fieldsOfType);
@@ -1220,11 +1228,11 @@ public class ClassAccessFactory<T> {
      *
      * @param propertyInfo
      */
-    private void addPropertyInfo(ClassPropertyInfo propertyInfo) {
+    private void addPropertyInfo(ClassPropertyInfoAbstractAbstract propertyInfo) {
         String key = propertyInfo.type.getName();
 
         if (propertyInfo.readMethodName != null) {
-            List<ClassPropertyInfo> accessorsOfType = typeToAccessorsMap.get(key);
+            List<ClassPropertyInfoAbstractAbstract> accessorsOfType = typeToAccessorsMap.get(key);
             if (accessorsOfType == null) {
                 accessorsOfType = new ArrayList<>();
                 typeToAccessorsMap.put(key, accessorsOfType);
@@ -1235,7 +1243,7 @@ public class ClassAccessFactory<T> {
         }
 
         if (propertyInfo.writeMethodName != null) {
-            List<ClassPropertyInfo> mutatorsOfType = typeToMutatorsMap.get(key);
+            List<ClassPropertyInfoAbstractAbstract> mutatorsOfType = typeToMutatorsMap.get(key);
             if (mutatorsOfType == null) {
                 mutatorsOfType = new ArrayList<>();
                 typeToMutatorsMap.put(key, mutatorsOfType);
@@ -1250,14 +1258,16 @@ public class ClassAccessFactory<T> {
 
     /**
      * useTableSwitch
+     *
      * @param members members
      * @return boolean
      */
-    private static boolean useTableSwitch(List<? extends MemberInfo> members) {
+    private static boolean useTableSwitch(List<? extends AbstractMemberInfo> members) {
         return AsmUtils.useTableSwitch(members.stream()
                 .mapToInt(m -> m.memberIndex)
                 .toArray());
     }
+
     /**
      * 返回值与索引
      */
@@ -1329,11 +1339,11 @@ public class ClassAccessFactory<T> {
     /**
      * ClassPropertyInfo
      */
-    private static class ClassPropertyInfo extends AssignableInfo {
+    private static class ClassPropertyInfoAbstractAbstract extends AbstractAssignableInfoAbstract {
         private final String readMethodName;
         private final String writeMethodName;
 
-        private ClassPropertyInfo(PropertyDescriptor propertyDescriptor, int propertyIndex) {
+        private ClassPropertyInfoAbstractAbstract(PropertyDescriptor propertyDescriptor, int propertyIndex) {
             super(propertyDescriptor.getName(), propertyIndex, propertyDescriptor.getPropertyType());
             readMethodName = Optional.ofNullable(propertyDescriptor.getReadMethod()).map(prop -> prop.getName()).orElse(null);
             writeMethodName = Optional.ofNullable(propertyDescriptor.getWriteMethod()).map(prop -> prop.getName()).orElse(null);
@@ -1343,11 +1353,11 @@ public class ClassAccessFactory<T> {
     /**
      * 字段
      */
-    private static class ClassFieldInfo extends AssignableInfo {
+    private static class ClassFieldInfoAbstractAbstract extends AbstractAssignableInfoAbstract {
         private final int getFieldOpcode;
         private final int setFieldOpcode;
 
-        private ClassFieldInfo(Field field, int fieldIndex) {
+        private ClassFieldInfoAbstractAbstract(Field field, int fieldIndex) {
             super(field.getName(), fieldIndex, field.getType());
             getFieldOpcode = Modifier.isStatic(field.getModifiers()) ? GETSTATIC : GETFIELD;
             setFieldOpcode = Modifier.isStatic(field.getModifiers()) ? PUTSTATIC : PUTFIELD;
@@ -1357,7 +1367,7 @@ public class ClassAccessFactory<T> {
     /**
      * AssignableInfo
      */
-    private static abstract class AssignableInfo extends MemberInfo implements Castable {
+    private static abstract class AbstractAssignableInfoAbstract extends AbstractMemberInfo implements Castable {
         protected final String internalName;
         protected final Class<?> type;
 
@@ -1377,7 +1387,7 @@ public class ClassAccessFactory<T> {
             return type;
         }
 
-        private AssignableInfo(String name, int memberIndex, Class<?> type) {
+        private AbstractAssignableInfoAbstract(String name, int memberIndex, Class<?> type) {
             super(name, memberIndex, Type.getDescriptor(type));
             this.internalName = Type.getInternalName(type);
             this.type = type;
@@ -1388,9 +1398,9 @@ public class ClassAccessFactory<T> {
      * 方法索引
      */
     private static class MethodNameReturnIndex extends StringCaseReturnIndex {
-        private final List<ClassMethodInfo> methods;
+        private final List<ClassMethodInfoAbstract> methods;
 
-        private MethodNameReturnIndex(List<ClassMethodInfo> methods) {
+        private MethodNameReturnIndex(List<ClassMethodInfoAbstract> methods) {
             super(methods.get(0).name, methods.get(0).memberIndex);
             this.methods = methods;
         }
@@ -1399,13 +1409,13 @@ public class ClassAccessFactory<T> {
     /**
      * 方法
      */
-    private static class ClassMethodInfo extends MemberInfo {
+    private static class ClassMethodInfoAbstract extends AbstractMemberInfo {
         private final int invokeOpcode;
         private final Method method;
         private final int parameterCount;
         private final List<ParameterInfo> parameters;
 
-        private ClassMethodInfo(Method method, int index) {
+        private ClassMethodInfoAbstract(Method method, int index) {
             super(method.getName(), index, Type.getMethodDescriptor(method));
             invokeOpcode = method.getDeclaringClass().isInterface() ? INVOKEINTERFACE : Modifier.isStatic(method.getModifiers()) ? INVOKESTATIC : INVOKEVIRTUAL;
             this.method = method;
@@ -1414,12 +1424,12 @@ public class ClassAccessFactory<T> {
         }
     }
 
-    private static abstract class MemberInfo {
+    private static abstract class AbstractMemberInfo {
         protected final String descriptor;
         protected final int memberIndex;
         protected final String name;
 
-        private MemberInfo(String name, int memberIndex, String descriptor) {
+        private AbstractMemberInfo(String name, int memberIndex, String descriptor) {
             this.descriptor = descriptor;
             this.name = name;
             this.memberIndex = memberIndex;
@@ -1458,14 +1468,28 @@ public class ClassAccessFactory<T> {
     }
 
     /**
-     *
+     *可铸
      */
     private static interface Castable {
+        /**
+         * 获取描述
+         *
+         * @return 描述
+         */
         String getDescriptor();
 
+        /**
+         * 获取名称
+         *
+         * @return 名称
+         */
         String getInternalName();
 
         @SuppressWarnings("rawtypes")
+        /**
+         * 获取类型
+         * @return 类型
+         */
         Class getType();
     }
 

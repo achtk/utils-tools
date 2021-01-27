@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+import static com.chua.utils.tools.constant.NumberConstant.TWE;
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_COMMA;
 
 /**
@@ -1313,10 +1314,10 @@ public class MapOperableHelper extends MultiMapOperableHelper {
             return Collections.emptyMap();
         }
         List<String> strings = Splitter.on(delimiter).trimResults().omitEmptyStrings().limit(2).splitToList(source);
-        if (strings.size() != 2) {
+        if (strings.size() != TWE) {
             return Collections.emptyMap();
         }
-        Map<String, String> stringObjectMap = new HashMap<>();
+        Map<String, String> stringObjectMap = new HashMap<>(1);
         stringObjectMap.put(strings.get(0), strings.get(1));
         return stringObjectMap;
     }

@@ -94,6 +94,7 @@ public interface Script {
      * @param methodName 方法名称
      * @param params     参数
      * @return 方法值
+     * @throws Exception Exception
      */
     default Object invokeMethod(String script, String methodName, Object[] params) throws Exception {
         Class<?> compiler = compiler(script);

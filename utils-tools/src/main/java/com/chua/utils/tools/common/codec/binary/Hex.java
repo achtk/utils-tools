@@ -411,9 +411,10 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
      */
     public static void appendHex(StringBuilder builder, byte b, boolean toLowerCase) {
         final char[] toDigits = toLowerCase ? DIGITS_LOWER : DIGITS_UPPER;
-
-        int high = (b & 0xf0) >>> 4;//高位
-        int low = b & 0x0f;//低位
+        //高位
+        int high = (b & 0xf0) >>> 4;
+        //低位
+        int low = b & 0x0f;
         builder.append(toDigits[high]);
         builder.append(toDigits[low]);
     }

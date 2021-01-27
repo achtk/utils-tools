@@ -252,10 +252,7 @@ public class AvlTree<E extends Comparable<E>> implements PrintTree<AvlTree.Node>
         if (root == null || root.value.compareTo(e) == 0) {
             return null;
         } else {// 当前节点的左子节点或右子节点值等于e，返回当前节点
-            if (node.left != null
-                    && node.left.value.compareTo(e) == 0
-                    || node.right != null
-                    && node.right.value.compareTo(e) == 0) {
+            if (isMatcher(node, e)) {
                 return node;
             }
             // 递归继续从左边查找
@@ -273,6 +270,20 @@ public class AvlTree<E extends Comparable<E>> implements PrintTree<AvlTree.Node>
     }
 
     /**
+     * 结果匹配
+     *
+     * @param node 节点
+     * @param e    元素
+     * @return 匹配返回true
+     */
+    private boolean isMatcher(Node<E> node, E e) {
+        return node.left != null
+                && node.left.value.compareTo(e) == 0
+                || node.right != null
+                && node.right.value.compareTo(e) == 0;
+    }
+
+    /**
      * 5.1、删除节点
      *
      * @return
@@ -283,96 +294,44 @@ public class AvlTree<E extends Comparable<E>> implements PrintTree<AvlTree.Node>
             return false;
         }
         Node<E> node = findNode(e);
-        // a、先查找此节点是否存在
         if (node == null) {
             return false;
-        }
-        // b、节点存在，则需要找到它的父节点
-        else {
+        } else {
             Node<E> parentNode = findParentNode(root, e);
-            System.out.println(e + "的父亲节点是:"
-                    + parentNode.value + "(在删除方法中)");
             if (parentNode != null) {
-                // c、如果需要删除的节点恰好是叶子节点（没有左右子节点了）
-                if (node.left == null
-                        && node.right == null) {
-                    // d、如果要删除的节点是他父亲节点的左边子节点
-                    if (parentNode.left != null
-                            && parentNode.left.value.
-                            compareTo(node.value) == 0) {
+                if (node.left == null && node.right == null) {
+                    if (parentNode.left != null && parentNode.left.value.compareTo(node.value) == 0) {
                         parentNode.left = null;
-
                         return true;
-                    }
-                    // e、如果要删除的节点是他父亲节点的右边子节点
-                    else {
+                    } else {
                         parentNode.right = null;
                     }
-
-                    // 删除一次节点，做一次平衡操作
-
                     return true;
                 }
-
-                // f、如果需要删除的节点有一个左子节点
-                if (node.left != null
-                        && node.right == null) {
-                    // 如果需要删除的节点是一个左节点
-                    // 则让父亲节点左边指向他的左子节点
+                int size = 2;
+                if (node.left != null && node.right == null) {
                     if (parentNode.isLeftRight == 1) {
                         parentNode.left = node.left;
-                        // 删除一次节点，做一次平衡操作
-
                         return true;
-                    }
-                    // 如果需要删除的节点是一个右节点
-                    // 则让父亲节点右边指向他的左子节点
-                    else if (parentNode.isLeftRight == 2) {
+                    } else if (parentNode.isLeftRight == size) {
                         parentNode.right = node.left;
-
-                        // 删除一次节点，做一次平衡操作
-
                         return true;
                     }
                 }
-
-                // g、如果需要删除的节点有一个右子节点
-                if (node.right != null
-                        && node.left == null) {
-                    // 如果需要删除的节点是一个左节点
-                    // 则让父亲节点左边指向他的右子节点
+                if (node.right != null && node.left == null) {
                     if (parentNode.isLeftRight == 1) {
                         parentNode.left = node.right;
-                        // 删除一次节点，做一次平衡操作
                         return true;
-                    }
-                    // 如果需要删除的节点是一个右节点
-                    // 则让父亲节点右边指向他的右子节点
-                    else if (parentNode.isLeftRight == 2) {
+                    } else if (parentNode.isLeftRight == size) {
                         parentNode.right = node.right;
-
-                        // 删除一次节点，做一次平衡操作
-
                         return true;
                     }
                 }
 
-                // h、如果需要删除的节点有两个子节点
-                // （删除根节点时也适用）
-                if (node.left != null
-                        && node.right != null) {
-                    // 删除右子树中最小节点，获取到最小节点的值;
-                    // 把最小节点的值，赋值给要删除节点的值;
-                    // （实际上并不是删除该节点，只是改变赋值）;
-                    // 一般右边最小节点值，位于右子节点
-                    // 下面的最左的子节点;
-
-                    Node<E> minNode = deleteGetMin(
-                            node.right);
+                if (node.left != null && node.right != null) {
+                    Node<E> minNode = deleteGetMin(node.right);
                     // 找到该最小节点的父节点
-                    Node<E> minNodeParent =
-                            findParentNode(minNode.value);
-                    // 找到了最小的左节点，不可能再有左子节点
+                    Node<E> minNodeParent = findParentNode(minNode.value);
                     if (minNode.right != null) {
                         // 然后把找到的最小值minNode.value
                         // 赋值给要删除的节点
@@ -380,7 +339,7 @@ public class AvlTree<E extends Comparable<E>> implements PrintTree<AvlTree.Node>
                         node.value = minNode.value;
                         // 如果左最小节点minNode是一个右节点
                         // （右边全是右节点）
-                        if (minNode.isLeftRight == 2) {
+                        if (minNode.isLeftRight == size) {
                             minNodeParent.right =
                                     minNode.right;
                             // 删除一次节点，做一次平衡操作
@@ -401,7 +360,7 @@ public class AvlTree<E extends Comparable<E>> implements PrintTree<AvlTree.Node>
                     else {
                         // 如果左最小节点minNode是一个右节点
                         // （右边全是右节点）
-                        if (minNode.isLeftRight == 2) {
+                        if (minNode.isLeftRight == size) {
                             node.value = minNode.value;
                             // 最小节点的父节点,的右子节点
                             // 则指向空

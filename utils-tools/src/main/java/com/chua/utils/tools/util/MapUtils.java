@@ -27,7 +27,7 @@ public class MapUtils extends MapOperableHelper {
         if (null == source) {
             return Collections.emptyMap();
         }
-        Map<K, V> result = new HashMap<>();
+        Map<K, V> result = new HashMap<>(source.length);
         for (Map<K, V> map : source) {
             if (isEmpty(map)) {
                 continue;

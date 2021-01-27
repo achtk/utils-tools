@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import static com.chua.utils.tools.constant.NumberConstant.*;
+
 /**
  * 字节工具类
  *
@@ -31,13 +33,13 @@ public class ByteUtils extends ByteHelper {
         buffer.order(ByteOrder.BIG_ENDIAN);
         buffer.put(target);
         buffer.flip();
-        if (length == 1) {
+        if (length == BYTE_LENGTH) {
             return BigDecimal.valueOf(target[0]);
-        } else if (length == 2) {
+        } else if (length == SHORE_LENGTH) {
             return BigDecimal.valueOf(buffer.getShort());
-        } else if (length == 4) {
+        } else if (length == INTEGER_LENGTH) {
             return BigDecimal.valueOf(buffer.getFloat());
-        } else if (length == 8) {
+        } else if (length == LONG_LENGTH) {
             return BigDecimal.valueOf(buffer.getDouble());
         }
         return BigDecimal.ZERO;

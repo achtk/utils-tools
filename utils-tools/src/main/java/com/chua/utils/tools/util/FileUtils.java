@@ -308,13 +308,24 @@ public class FileUtils extends FileHelper {
         createIfNotExist(targetPath);
         Path path = Paths.get(targetPath, sourceFile.getName());
         boolean exists = Files.exists(path);
-        if (!exists || (exists && overlay)) {
+        if (isExistAndOver(exists, overlay)) {
             CopyOption[] copyOptions = new CopyOption[0];
             if (exists) {
                 copyOptions = new CopyOption[]{StandardCopyOption.REPLACE_EXISTING};
             }
             Files.copy(sourceFile.toPath(), path, copyOptions);
         }
+    }
+
+    /**
+     * 检测所在/覆盖
+     *
+     * @param exists  存在
+     * @param overlay 覆盖
+     * @return 不存在返回true
+     */
+    private static boolean isExistAndOver(boolean exists, boolean overlay) {
+        return !exists || (exists && overlay);
     }
 
     /**

@@ -52,6 +52,7 @@ public interface ClassAccess<T> extends FieldAccess<T>, PropertyAccess<T>, Metho
      *
      * @param tClass 类
      * @return ClassAccess类
+     * @throws ClassNotFoundException ClassNotFoundException
      */
     static <T> Class<? extends ClassAccess> createClassAccessClass(Class<T> tClass) throws ClassNotFoundException {
         String className = ClassAccessFactory.getClassNameOfClassAccessFor(tClass);

@@ -67,8 +67,9 @@ public final class InorderPrinter implements Printer {
         Object right = tree.right(node);
         String string = tree.string(node).toString();
 
+        int size = 2;
         int length = string.length();
-        if (length % 2 == 0) {
+        if (length % size == 0) {
             length--;
         }
         length >>= 1;

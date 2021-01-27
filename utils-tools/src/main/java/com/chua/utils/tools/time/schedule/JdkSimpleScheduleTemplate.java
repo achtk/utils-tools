@@ -1,12 +1,13 @@
 package com.chua.utils.tools.time.schedule;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.function.ScheduleJob;
 import lombok.Data;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -19,7 +20,8 @@ import java.util.concurrent.TimeUnit;
 public class JdkSimpleScheduleTemplate implements SimpleScheduleOperations<Runnable> {
 
     private final Map<String, JobTime> groupCache = new ConcurrentHashMap<>();
-    private final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors());
+    private static final String THREAD_NAME = "schedule-group-job";
+    private final ScheduledExecutorService scheduledThreadPoolExecutor = ThreadHelper.newScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), THREAD_NAME);
 
     @Override
     public void addSimpleJob(String jobName, int time, TimeUnit timeUnit, Class<Runnable> job) throws Exception {

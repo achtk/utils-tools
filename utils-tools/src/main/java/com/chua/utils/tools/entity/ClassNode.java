@@ -151,7 +151,8 @@ public class ClassNode extends ClassVisitor {
     }
 
     public void check(int i) {
-        if (i == 262144) {
+        int type = 262144;
+        if (i == type) {
             if (this.visibleTypeAnnotations != null && this.visibleTypeAnnotations.size() > 0) {
                 throw new RuntimeException();
             }

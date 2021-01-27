@@ -519,7 +519,7 @@ public class IoHelper {
      * @throws IOException IOException
      */
     public static String toString(final File file) throws IOException {
-        return Files.toString(file, StandardCharsets.UTF_8);
+        return Files.asCharSource(file, StandardCharsets.UTF_8).read();
     }
 
     /**

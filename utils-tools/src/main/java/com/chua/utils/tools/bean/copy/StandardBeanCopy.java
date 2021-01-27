@@ -20,6 +20,8 @@ import net.sf.cglib.beans.BeanMap;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
+
 /**
  * 标准的bean拷贝
  *
@@ -89,7 +91,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
         if (null == tClass) {
             return;
         }
-        this.fieldInfo = new HashMap<>();
+        this.fieldInfo = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         ClassUtils.doWithFields(tClass, field -> {
             fieldInfo.put(field.getName(), field.getType());
             BinderMapper binderMapper = field.getDeclaredAnnotation(BinderMapper.class);

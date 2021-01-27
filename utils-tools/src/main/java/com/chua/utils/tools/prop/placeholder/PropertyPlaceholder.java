@@ -67,8 +67,8 @@ public interface PropertyPlaceholder {
      *
      * @param properties 配置
      */
-    default void addPropertySource(Map<String, Properties> propertieses) {
-        for (Map.Entry<String, Properties> entry : propertieses.entrySet()) {
+    default void addPropertySource(Map<String, Properties> properties) {
+        for (Map.Entry<String, Properties> entry : properties.entrySet()) {
             addPropertySource(entry.getKey(), entry.getValue());
         }
     }

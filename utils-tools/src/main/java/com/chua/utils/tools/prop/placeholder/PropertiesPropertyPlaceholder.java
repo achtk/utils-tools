@@ -2,6 +2,7 @@ package com.chua.utils.tools.prop.placeholder;
 
 import com.chua.utils.tools.constant.PatternConstant;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.regex.Pattern;
  * @version 1.0
  * @since 2020/10/28 18:20
  */
+@EqualsAndHashCode
 public class PropertiesPropertyPlaceholder implements PropertyPlaceholder {
 
     private static final String DEFAULT_BEFORE = "\\$\\{";

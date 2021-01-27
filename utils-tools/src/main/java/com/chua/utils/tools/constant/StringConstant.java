@@ -1,8 +1,6 @@
 package com.chua.utils.tools.constant;
 
-import java.io.File;
 import java.text.DecimalFormat;
-import java.util.regex.Pattern;
 
 /**
  * 字符串常量
@@ -209,6 +207,14 @@ public class StringConstant {
      * class
      */
     public static final String CLASS = "class";
+    /**
+     * duplicate
+     */
+    public static final CharSequence DUPLICATE = "duplicate";
+    /**
+     * GMT
+     */
+    public static final String GMT = "GMT";
     /**
      *
      */
