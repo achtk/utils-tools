@@ -6,6 +6,9 @@ import java.lang.annotation.*;
  * @author CHTK
  * @see java.lang.annotation.Annotation
  * @see com.chua.utils.tools.spi.entity.ExtensionClass
+ * @see com.chua.utils.tools.spi.factory.ExtensionFactory
+ * @see com.chua.utils.tools.aware.NamedAware
+ * @see com.chua.utils.tools.aware.OrderAware
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
