@@ -36,7 +36,7 @@ public class GroovyValueCreator implements ValueCreator {
         }
         Script script = new GroovyScript();
         try {
-            Class<?> compiler = script.compiler(Files.toString(new File(url.getFile()), StandardCharsets.UTF_8));
+            Class<?> compiler = script.compiler(Files.asCharSource(new File(url.getFile()), StandardCharsets.UTF_8).read());
             return ClassHelper.forObject(compiler);
         } catch (Exception e) {
             return null;
