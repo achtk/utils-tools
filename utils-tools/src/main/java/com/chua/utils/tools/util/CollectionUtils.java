@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.base.Supplier;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -224,5 +225,25 @@ public class CollectionUtils extends CollectionHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * 是否是集合
+     *
+     * @param source 数据
+     * @return 集合返回true
+     */
+    public static boolean isList(Object source) {
+        return source instanceof List;
+    }
+
+    /**
+     * 返回List集合
+     *
+     * @param source 数据
+     * @return 是List返回List, 反之返回空集合
+     */
+    public static List<Object> asList(Object source) {
+        return isList(source) ? (List<Object>) source : Collections.emptyList();
     }
 }

@@ -1126,6 +1126,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
         return properties1;
     }
 
+
     /**
      * 解析map
      *
@@ -1155,6 +1156,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
         }
     }
 
+
     /**
      * 循环解析 Map
      *
@@ -1169,6 +1171,7 @@ public class MapOperableHelper extends MultiMapOperableHelper {
             dataFormatProfile(parentName + "." + key, value, result);
         }
     }
+
 
     /**
      * 是否存索引

@@ -1,6 +1,8 @@
 package com.chua.utils.tools.util;
 
 import com.chua.utils.tools.common.JsonHelper;
+import com.chua.utils.tools.function.JsonPath;
+import com.chua.utils.tools.function.impl.JsonPathImpl;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -214,5 +216,14 @@ public class JsonUtils extends JsonHelper {
             type = type.substring(0, type.length() - 1);
         }
         return fromJson(value, ClassUtils.forName(type));
+    }
+
+    /**
+     * 获取JsonPath
+     * @param json json串
+     * @return JsonPath
+     */
+    public static JsonPath parser(String json) {
+        return new JsonPathImpl(json);
     }
 }

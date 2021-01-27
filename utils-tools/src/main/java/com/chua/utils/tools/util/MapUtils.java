@@ -2,6 +2,8 @@ package com.chua.utils.tools.util;
 
 import com.chua.utils.tools.bean.copy.BeanCopy;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
+import com.chua.utils.tools.function.impl.LevelsClose;
+import com.chua.utils.tools.function.impl.LevelsOpen;
 import com.google.common.base.Strings;
 
 import java.util.*;
@@ -107,5 +109,45 @@ public class MapUtils extends MapOperableHelper {
             }
             return null;
         }).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    /**
+     * 层级压缩
+     *
+     * @param fromJson2Map Map
+     * @return 单层Map
+     */
+    public static Map<String, Object> levelsMapClose(Map<String, Object> fromJson2Map) {
+        return new LevelsClose().apply(fromJson2Map);
+    }
+
+    /**
+     * 层级展开
+     *
+     * @param fromJson2Map Map
+     * @return 多层Map
+     */
+    public static Map<String, Object> levelsMapOpen(Map<String, Object> fromJson2Map) {
+        return new LevelsOpen().apply(fromJson2Map);
+    }
+
+    /**
+     * 转化为Map
+     *
+     * @param source 数据
+     * @return 是Map返回Map, 反之返回null
+     */
+    public static Map<String, Object> asMap(Object source) {
+        return source instanceof Map ? (Map<String, Object>) source : null;
+    }
+
+    /**
+     * 是否是Map
+     *
+     * @param source 数据
+     * @return 是Map返回true
+     */
+    public static boolean isMap(Object source) {
+        return source instanceof Map;
     }
 }
