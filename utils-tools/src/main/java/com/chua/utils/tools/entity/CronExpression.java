@@ -525,9 +525,7 @@ public final class CronExpression implements Serializable, Cloneable {
         if (i >= s.length()) {
             return i;
         }
-        String l = "L";
-        String lw = "LW";
-        String pattern = "^L-[0-9]*[W]?";
+        String l = "L", lw = "LW", pattern = "^L-[0-9]*[W]?";
         char c = s.charAt(i);
         if ((c >= LETTER_UPPERCASE_A) && (c <= LETTER_UPPERCASE_Z) && (!l.equals(s)) && (!lw.equals(s)) && (!s.matches(pattern))) {
             String sub = s.substring(i, i + 3);
@@ -558,20 +556,15 @@ public final class CronExpression implements Serializable, Cloneable {
         if (c == SYMBOL_QUESTION_CHAR) {
             i++;
             if (isMatcherOne(i, s)) {
-                throw new ParseException("Illegal character after '?': "
-                        + s.charAt(i), i);
+                throw new ParseException("Illegal character after '?': " + s.charAt(i), i);
             }
             if (type != DAY_OF_WEEK && type != DAY_OF_MONTH) {
-                throw new ParseException(
-                        "'?' can only be specified for Day-of-Month or Day-of-Week.",
-                        i);
+                throw new ParseException("'?' can only be specified for Day-of-Month or Day-of-Week.", i);
             }
             if (type == DAY_OF_WEEK && !lastdayOfMonth) {
                 int val = daysOfMonth.last();
                 if (val == NO_SPEC_INT) {
-                    throw new ParseException(
-                            "'?' can only be specified for Day-of-Month -OR- Day-of-Week.",
-                            i);
+                    throw new ParseException("'?' can only be specified for Day-of-Month -OR- Day-of-Week.", i);
                 }
             }
 
@@ -579,6 +572,26 @@ public final class CronExpression implements Serializable, Cloneable {
             return i;
         }
 
+        try {
+            return checkToSet(c, i, s, incr, type);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * 检测参数
+     *
+     * @param c    char
+     * @param i    索引
+     * @param s    值
+     * @param incr 标识
+     * @param type 类型
+     * @return int
+     * @throws Exception Exception
+     */
+    private int checkToSet(char c, int i, String s, int incr, int type) throws Exception {
         if (c == SYMBOL_ASTERISK_CHAR || c == SYMBOL_LEFT_SLASH_CHAR) {
             if (c == SYMBOL_ASTERISK_CHAR && (i + 1) >= s.length()) {
                 addToSet(ALL_SPEC_INT, -1, incr, type);
@@ -653,7 +666,6 @@ public final class CronExpression implements Serializable, Cloneable {
         } else {
             throw new ParseException("Unexpected character: " + c, i);
         }
-
         return i;
     }
 
@@ -795,8 +807,7 @@ public final class CronExpression implements Serializable, Cloneable {
      * @return int
      * @throws ParseException ParseException
      */
-    protected int checkNext(int pos, String s, int val, int type)
-            throws ParseException {
+    protected int checkNext(int pos, String s, int val, int type) throws ParseException {
 
         int end = -1;
         int i = pos;
@@ -809,6 +820,48 @@ public final class CronExpression implements Serializable, Cloneable {
         char c = s.charAt(pos);
 
         if (c == SYMBOL_MINUS_CHAR) {
+            this.checkNextValid(c, type, val, i, s, end);
+            return i;
+        }
+
+        if (c == LETTER_UPPERCASE_W) {
+            this.checkNextValid(c, type, val, i, s, end);
+            return i;
+        }
+
+        if (c == SYMBOL_WELL_CHAR) {
+            this.checkNextValid(c, type, val, i, s, end);
+            return i;
+        }
+
+        if (c == SYMBOL_MINUS_CHAR) {
+            this.checkNextValid(c, type, val, i, s, end);
+            return i;
+        }
+
+        if (c == SYMBOL_LEFT_SLASH_CHAR) {
+            this.checkNextValid(c, type, val, i, s, end);
+            return i;
+        }
+
+        addToSet(val, end, 0, type);
+        i++;
+        return i;
+    }
+
+    /**
+     * 检测有效性
+     *
+     * @param c    char
+     * @param type 类型
+     * @param val  值
+     * @param i    索引
+     * @param s    值
+     * @param end  结尾
+     * @throws ParseException ParseException
+     */
+    private void checkNextValid(char c, int type, int val, int i, String s, int end) throws ParseException {
+        if (c == SYMBOL_MINUS_CHAR) {
             if (type == DAY_OF_WEEK) {
                 if (val < 1 || val > SEVEN) {
                     throw new ParseException("Day-of-Week values must be between 1 and 7", -1);
@@ -820,22 +873,12 @@ public final class CronExpression implements Serializable, Cloneable {
             TreeSet<Integer> set = getSet(type);
             set.add(val);
             i++;
-            return i;
+            return;
         }
 
         if (c == LETTER_UPPERCASE_W) {
-            if (type == DAY_OF_MONTH) {
-                nearestWeekday = true;
-            } else {
-                throw new ParseException("'W' option is not valid here. (pos=" + i + ")", i);
-            }
-            if (val > THIRTY_ONE) {
-                throw new ParseException("The 'W' option does not make sense with values larger than 31 (max number of days in a month)", i);
-            }
-            TreeSet<Integer> set = getSet(type);
-            set.add(val);
-            i++;
-            return i;
+            checkNextWellValid(c, type, val, i, s, end);
+            return;
         }
 
         if (c == SYMBOL_WELL_CHAR) {
@@ -849,57 +892,18 @@ public final class CronExpression implements Serializable, Cloneable {
                     throw new Exception();
                 }
             } catch (Exception e) {
-                throw new ParseException(
-                        "A numeric value between 1 and 5 must follow the '#' option",
-                        i);
+                throw new ParseException("A numeric value between 1 and 5 must follow the '#' option", i);
             }
 
             TreeSet<Integer> set = getSet(type);
             set.add(val);
             i++;
-            return i;
+            return;
         }
 
         if (c == SYMBOL_MINUS_CHAR) {
-            i++;
-            c = s.charAt(i);
-            int v = Integer.parseInt(String.valueOf(c));
-            end = v;
-            i++;
-            if (i >= s.length()) {
-                addToSet(val, end, 1, type);
-                return i;
-            }
-            c = s.charAt(i);
-            if (c >= CHARACTER_0 && c <= CHARACTER_9) {
-                ValueSet vs = getValue(v, s, i);
-                end = vs.value;
-                i = vs.pos;
-            }
-            if (i < s.length() && ((c = s.charAt(i)) == SYMBOL_LEFT_SLASH_CHAR)) {
-                i++;
-                c = s.charAt(i);
-                int v2 = Integer.parseInt(String.valueOf(c));
-                i++;
-                if (i >= s.length()) {
-                    addToSet(val, end, v2, type);
-                    return i;
-                }
-                c = s.charAt(i);
-                if (c >= CHARACTER_0 && c <= CHARACTER_9) {
-                    ValueSet vs = getValue(v2, s, i);
-                    int v3 = vs.value;
-                    addToSet(val, end, v3, type);
-                    i = vs.pos;
-                    return i;
-                } else {
-                    addToSet(val, end, v2, type);
-                    return i;
-                }
-            } else {
-                addToSet(val, end, 1, type);
-                return i;
-            }
+            checkNextMinValid(c, type, val, i, s, end);
+            return;
         }
 
         if (c == SYMBOL_LEFT_SLASH_CHAR) {
@@ -914,7 +918,7 @@ public final class CronExpression implements Serializable, Cloneable {
             if (i >= s.length()) {
                 checkIncrementRange(v2, type, i);
                 addToSet(val, end, v2, type);
-                return i;
+                return;
             }
             c = s.charAt(i);
             if (c >= CHARACTER_0 && c <= CHARACTER_9) {
@@ -923,21 +927,105 @@ public final class CronExpression implements Serializable, Cloneable {
                 checkIncrementRange(v3, type, i);
                 addToSet(val, end, v3, type);
                 i = vs.pos;
-                return i;
+                return;
             } else {
                 throw new ParseException("Unexpected character '" + c + "' after '/'", i);
             }
         }
-
-        addToSet(val, end, 0, type);
-        i++;
-        return i;
     }
 
+    /**
+     * 检测有效性
+     *
+     * @param c    char
+     * @param type 类型
+     * @param val  值
+     * @param i    索引
+     * @param s    值
+     * @param end  结尾
+     * @throws ParseException ParseException
+     */
+    private void checkNextWellValid(char c, int type, int val, int i, String s, int end) throws ParseException {
+        if (type == DAY_OF_MONTH) {
+            nearestWeekday = true;
+        } else {
+            throw new ParseException("'W' option is not valid here. (pos=" + i + ")", i);
+        }
+        if (val > THIRTY_ONE) {
+            throw new ParseException("The 'W' option does not make sense with values larger than 31 (max number of days in a month)", i);
+        }
+        TreeSet<Integer> set = getSet(type);
+        set.add(val);
+        i++;
+    }
+
+    /**
+     * 检测有效性
+     *
+     * @param c    char
+     * @param type 类型
+     * @param val  值
+     * @param i    索引
+     * @param s    值
+     * @param end  结尾
+     * @throws ParseException ParseException
+     */
+    private void checkNextMinValid(char c, int type, int val, int i, String s, int end) throws ParseException {
+        i++;
+        c = s.charAt(i);
+        int v = Integer.parseInt(String.valueOf(c));
+        end = v;
+        i++;
+        if (i >= s.length()) {
+            addToSet(val, end, 1, type);
+            return;
+        }
+        c = s.charAt(i);
+        if (c >= CHARACTER_0 && c <= CHARACTER_9) {
+            ValueSet vs = getValue(v, s, i);
+            end = vs.value;
+            i = vs.pos;
+        }
+        if (i < s.length() && ((c = s.charAt(i)) == SYMBOL_LEFT_SLASH_CHAR)) {
+            i++;
+            c = s.charAt(i);
+            int v2 = Integer.parseInt(String.valueOf(c));
+            i++;
+            if (i >= s.length()) {
+                addToSet(val, end, v2, type);
+                return;
+            }
+            c = s.charAt(i);
+            if (c >= CHARACTER_0 && c <= CHARACTER_9) {
+                ValueSet vs = getValue(v2, s, i);
+                int v3 = vs.value;
+                addToSet(val, end, v3, type);
+                i = vs.pos;
+                return;
+            } else {
+                addToSet(val, end, v2, type);
+                return;
+            }
+        } else {
+            addToSet(val, end, 1, type);
+            return;
+        }
+    }
+
+    /**
+     * 表达式
+     *
+     * @return String
+     */
     public String getCronExpression() {
         return cronExpression;
     }
 
+    /**
+     * summary
+     *
+     * @return
+     */
     public String getExpressionSummary() {
         StringBuilder buf = new StringBuilder();
 
@@ -1046,37 +1134,14 @@ public final class CronExpression implements Serializable, Cloneable {
         return i;
     }
 
-    protected void addToSet(int val, int end, int incr, int type)
-            throws ParseException {
+    protected void addToSet(int val, int end, int incr, int type) throws ParseException {
 
         TreeSet<Integer> set = getSet(type);
 
-        if (type == SECOND || type == MINUTE) {
-            if (isSecondValid(val, end)) {
-                throw new ParseException(
-                        "Minute and Second values must be between 0 and 59",
-                        -1);
-            }
-        } else if (type == HOUR) {
-            if (isHourValid(val, end)) {
-                throw new ParseException(
-                        "Hour values must be between 0 and 23", -1);
-            }
-        } else if (type == DAY_OF_MONTH) {
-            if (isDayMonthValid(val, end)) {
-                throw new ParseException(
-                        "Day of month values must be between 1 and 31", -1);
-            }
-        } else if (type == MONTH) {
-            if (isMonthValid(val, end)) {
-                throw new ParseException(
-                        "Month values must be between 1 and 12", -1);
-            }
-        } else if (type == DAY_OF_WEEK) {
-            if (isWeekValid(val, end)) {
-                throw new ParseException(
-                        "Day-of-Week values must be between 1 and 7", -1);
-            }
+        try {
+            this.checkType(type, val, end);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         boolean isValid = (incr == 0 || incr == -1);
@@ -1086,61 +1151,13 @@ public final class CronExpression implements Serializable, Cloneable {
             } else {
                 set.add(NO_SPEC);
             }
-
             return;
         }
 
         int startAt = val;
         int stopAt = end;
 
-        if (val == ALL_SPEC_INT && incr <= 0) {
-            incr = 1;
-            set.add(ALL_SPEC);
-        }
-
-        if (type == SECOND || type == MINUTE) {
-            if (stopAt == -1) {
-                stopAt = 59;
-            }
-            if (startAt == -1 || startAt == ALL_SPEC_INT) {
-                startAt = 0;
-            }
-        } else if (type == HOUR) {
-            if (stopAt == -1) {
-                stopAt = 23;
-            }
-            if (startAt == -1 || startAt == ALL_SPEC_INT) {
-                startAt = 0;
-            }
-        } else if (type == DAY_OF_MONTH) {
-            if (stopAt == -1) {
-                stopAt = 31;
-            }
-            if (startAt == -1 || startAt == ALL_SPEC_INT) {
-                startAt = 1;
-            }
-        } else if (type == MONTH) {
-            if (stopAt == -1) {
-                stopAt = 12;
-            }
-            if (startAt == -1 || startAt == ALL_SPEC_INT) {
-                startAt = 1;
-            }
-        } else if (type == DAY_OF_WEEK) {
-            if (stopAt == -1) {
-                stopAt = 7;
-            }
-            if (startAt == -1 || startAt == ALL_SPEC_INT) {
-                startAt = 1;
-            }
-        } else if (type == YEAR) {
-            if (stopAt == -1) {
-                stopAt = MAX_YEAR;
-            }
-            if (startAt == -1 || startAt == ALL_SPEC_INT) {
-                startAt = 1970;
-            }
-        }
+        checkStartStop(startAt, stopAt, val, incr, type, set);
 
         // if the end of the range is before the start, then we need to overflow into
         // the next day, month etc. This is done by adding the maximum amount for that
@@ -1189,6 +1206,99 @@ public final class CronExpression implements Serializable, Cloneable {
                 }
 
                 set.add(i2);
+            }
+        }
+    }
+
+    /**
+     * 检测类型
+     *
+     * @param type 类型
+     * @param val  值
+     * @param end  结束符
+     * @throws ParseException ParseException
+     */
+    private void checkType(int type, int val, int end) throws ParseException {
+        if (type == SECOND || type == MINUTE) {
+            if (isSecondValid(val, end)) {
+                throw new ParseException("Minute and Second values must be between 0 and 59", -1);
+            }
+        } else if (type == HOUR) {
+            if (isHourValid(val, end)) {
+                throw new ParseException("Hour values must be between 0 and 23", -1);
+            }
+        } else if (type == DAY_OF_MONTH) {
+            if (isDayMonthValid(val, end)) {
+                throw new ParseException("Day of month values must be between 1 and 31", -1);
+            }
+        } else if (type == MONTH) {
+            if (isMonthValid(val, end)) {
+                throw new ParseException("Month values must be between 1 and 12", -1);
+            }
+        } else if (type == DAY_OF_WEEK) {
+            if (isWeekValid(val, end)) {
+                throw new ParseException("Day-of-Week values must be between 1 and 7", -1);
+            }
+        }
+    }
+
+    /**
+     * 检测开始结束
+     *
+     * @param startAt 开始
+     * @param stopAt  结束
+     * @param val     值
+     * @param incr    标识
+     * @param type    类型
+     * @param set     集合
+     */
+    private void checkStartStop(int startAt, int stopAt, int val, int incr, int type, TreeSet<Integer> set) {
+        if (val == ALL_SPEC_INT && incr <= 0) {
+            incr = 1;
+            set.add(ALL_SPEC);
+        }
+
+        if (type == SECOND || type == MINUTE) {
+            if (stopAt == -1) {
+                stopAt = 59;
+            }
+            if (startAt == -1 || startAt == ALL_SPEC_INT) {
+                startAt = 0;
+            }
+        } else if (type == HOUR) {
+            if (stopAt == -1) {
+                stopAt = 23;
+            }
+            if (startAt == -1 || startAt == ALL_SPEC_INT) {
+                startAt = 0;
+            }
+        } else if (type == DAY_OF_MONTH) {
+            if (stopAt == -1) {
+                stopAt = 31;
+            }
+            if (startAt == -1 || startAt == ALL_SPEC_INT) {
+                startAt = 1;
+            }
+        } else if (type == MONTH) {
+            if (stopAt == -1) {
+                stopAt = 12;
+            }
+            if (startAt == -1 || startAt == ALL_SPEC_INT) {
+                startAt = 1;
+            }
+        } else if (type == DAY_OF_WEEK) {
+            if (stopAt == -1) {
+                stopAt = 7;
+            }
+            if (startAt == -1 || startAt == ALL_SPEC_INT) {
+                startAt = 1;
+            }
+        } else if (type == YEAR) {
+            if (stopAt == -1) {
+                stopAt = MAX_YEAR;
+            }
+            if (startAt == -1 || startAt == ALL_SPEC_INT) {
+                startAt = 1970;
             }
         }
     }
@@ -1668,6 +1778,7 @@ public final class CronExpression implements Serializable, Cloneable {
 
         return cl.getTime();
     }
+
     /**
      * 非近一天
      *
