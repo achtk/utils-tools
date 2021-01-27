@@ -1,6 +1,7 @@
 package com.chua.utils.tools.example;
 
 
+import com.chua.utils.tools.collects.FlatMap;
 import com.chua.utils.tools.function.JsonPath;
 import com.chua.utils.tools.util.JsonUtils;
 
@@ -52,10 +53,14 @@ public class JsonPathExample {
                 "                        }"
         );
 
-        List<Object> objects = jsonPath.find("store.*.*");
-        Map<String, Object> map = jsonPath.findMap("store.*.*");
+        jsonPath.set("store.demo.t", 1);
+
+        List<Object> objects = jsonPath.find("store.*.price");
+        Map<String, Object> map = jsonPath.findMap("store.*.price");
+        FlatMap flatMap = jsonPath.flatMap("store.*.*");
 
         System.out.println(objects);
         System.out.println(map);
+        System.out.println(flatMap);
     }
 }

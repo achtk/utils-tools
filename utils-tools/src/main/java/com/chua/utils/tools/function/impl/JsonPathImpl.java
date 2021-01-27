@@ -1,5 +1,7 @@
 package com.chua.utils.tools.function.impl;
 
+import com.chua.utils.tools.collects.FlatHashMap;
+import com.chua.utils.tools.collects.FlatMap;
 import com.chua.utils.tools.function.JsonPath;
 import com.chua.utils.tools.util.JsonUtils;
 import com.chua.utils.tools.util.MapUtils;
@@ -48,5 +50,32 @@ public class JsonPathImpl implements JsonPath {
             }
         }
         return MapUtils.levelsMapOpen(result);
+    }
+
+
+    @Override
+    public FlatMap flatMap(String path) {
+        Map<String, Object> result = new HashMap<>();
+        for (String key : profile.keySet()) {
+            if (StringUtils.wildcardMatch(key, path)) {
+                result.put(key, profile.get(key));
+            }
+        }
+        return new FlatHashMap(MapUtils.levelsMapOpen(result));
+    }
+
+    @Override
+    public void set(String path, Object value) {
+        Map<String, Object> result = new HashMap<>();
+        for (String key : profile.keySet()) {
+            if (StringUtils.wildcardMatch(key, path)) {
+                result.put(key, value);
+            }
+        }
+        if (result.isEmpty()) {
+            profile.put(path, value);
+        } else {
+            profile.putAll(result);
+        }
     }
 }
