@@ -2,10 +2,8 @@ package com.chua.utils.tools.spider.config.scheduler;
 
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.assertj.core.util.Lists;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Task;
@@ -13,12 +11,15 @@ import us.codecraft.webmagic.scheduler.DuplicateRemovedScheduler;
 import us.codecraft.webmagic.scheduler.MonitorableScheduler;
 import us.codecraft.webmagic.scheduler.component.DuplicateRemover;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * 增加去重的校验，对需要重复爬取的网址进行正则过滤
@@ -57,7 +58,6 @@ public class SpikeFileCacheQueueScheduler extends DuplicateRemovedScheduler impl
         Collections.sort(strings);
         this.file = new File(filePath, DigestUtils.md5Hex(strings.toString()) + fileUrlAllName);
         if(!file.exists()) {
-            //file.deleteOnExit();
             try {
                 file.createNewFile();
             } catch (IOException e) {
