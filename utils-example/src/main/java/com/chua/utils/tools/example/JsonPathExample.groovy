@@ -11,8 +11,20 @@ import com.chua.utils.tools.util.JsonUtils
 class JsonPathExample {
 
     static void main(String[] args) {
-        JsonPath jsonPath = JsonUtils.parser(
-                """
+        JsonPath jsonPath = JsonUtils.parser(getDemo1())
+
+        def text = '*.*.price' as String
+        List<Object> objects = jsonPath.find(text)
+        Map<String, Object> map = jsonPath.findMap(text)
+        FlatMap flatMap = jsonPath.flatMap(text)
+
+        System.out.println(objects)
+        System.out.println(map)
+        System.out.println(flatMap)
+    }
+
+    static String getDemo1() {
+        """
                     { 
                     "store": { 
                         "book": [ 
@@ -48,14 +60,109 @@ class JsonPathExample {
                      "expensive": 10 
                     }
                 """
-        )
+    }
 
-        List<Object> objects = jsonPath.find("store.*.price")
-        Map<String, Object> map = jsonPath.findMap("store.*.price")
-        FlatMap flatMap = jsonPath.flatMap("*")
-
-        System.out.println(objects)
-        System.out.println(map)
-        System.out.println(flatMap)
+    static String getDemo() {
+        """
+                    {
+                       "min_position": 7,
+                       "has_more_items": true,
+                       "items_html": "Car",
+                       "new_latent_count": 2,
+                       "data": {
+                          "length": 20,
+                          "text": "QQE2.com",
+                          "datas": [
+                             {
+                                "min_position": 4,
+                                "category": false,
+                                "items_html": "Car",
+                                "price": 1
+                             },
+                             {
+                                "min_position": 9,
+                                "category": true,
+                                "items_html": "Bike",
+                                "price": 1
+                             },
+                             {
+                                "min_position": 7,
+                                "category": false,
+                                "items_html": "Car",
+                                "price": 1
+                             },
+                             {
+                                "min_position": 7,
+                                "category": true,
+                                "items_html": "Bike",
+                                "price": 8
+                             },
+                             {
+                                "min_position": 6,
+                                "category": true,
+                                "items_html": "Car",
+                                "price": 4
+                             }
+                          ]
+                       },
+                       "numericalArray": [
+                          24,
+                          24,
+                          32,
+                          24,
+                          33
+                       ],
+                       "StringArray": [
+                          "Oxygen",
+                          "Nitrogen",
+                          "Carbon",
+                          "Carbon",
+                          "Carbon"
+                       ],
+                       "multipleTypesArray": 3,
+                       "objArray": [
+                          {
+                             "class": "middle",
+                             "age": 5
+                          },
+                          {
+                             "class": "lower",
+                             "age": 5
+                          },
+                          {
+                             "class": "lower",
+                             "age": 1
+                          },
+                          {
+                             "class": "middle",
+                             "age": 7
+                          },
+                          {
+                             "class": "upper",
+                             "age": 4
+                          },
+                          {
+                             "class": "middle",
+                             "age": 1
+                          },
+                          {
+                             "class": "middle",
+                             "age": 3
+                          },
+                          {
+                             "class": "middle",
+                             "age": 3
+                          },
+                          {
+                             "class": "lower",
+                             "age": 6
+                          },
+                          {
+                             "class": "middle",
+                             "age": 1
+                          }
+                       ]
+                    }
+                """
     }
 }

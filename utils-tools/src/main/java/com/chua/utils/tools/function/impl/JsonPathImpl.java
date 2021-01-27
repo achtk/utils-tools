@@ -49,6 +49,9 @@ public class JsonPathImpl implements JsonPath {
                 result.put(key, profile.get(key));
             }
         }
+        if(result.isEmpty()) {
+            return result;
+        }
         return MapUtils.levelsMapOpen(result);
     }
 
@@ -60,6 +63,9 @@ public class JsonPathImpl implements JsonPath {
             if (StringUtils.wildcardMatch(key, path)) {
                 result.put(key, profile.get(key));
             }
+        }
+        if(result.isEmpty()) {
+            return new FlatHashMap();
         }
         return new FlatHashMap(MapUtils.levelsMapOpen(result));
     }

@@ -29,6 +29,9 @@ public class LevelsClose implements Levels {
      * @param result 返回结果集
      */
     private static void analysisHierarchicalAnalysis(Map<String, Object> map, final Map<String, Object> result) {
+        if(null == map) {
+            return;
+        }
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();

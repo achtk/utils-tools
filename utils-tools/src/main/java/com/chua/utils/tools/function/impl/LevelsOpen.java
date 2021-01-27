@@ -33,13 +33,14 @@ public class LevelsOpen implements Levels {
                 tempKey = tempKey.substring(0, index);
             }
             int newIndex = tempKey.indexOf("[");
+            int newEndIndex = tempKey.indexOf("]");
             Object value = stringObjectMap.get(key);
 
             if (index == -1) {
                 if (newIndex == -1) {
                     map.put(key, value);
                 } else {
-                    map.put(key.substring(0, newIndex), levelOpenList(key.substring(newIndex + 1), value));
+                    map.put(key.substring(0, newIndex), levelOpenList(key.substring(newEndIndex + 2), value));
                 }
             }
             if (newIndex == -1) {
@@ -55,7 +56,7 @@ public class LevelsOpen implements Levels {
                     map.put(newKey, value);
                 }
             } else {
-                map.put(key.substring(0, index), levelOpenListMap(key.substring(index + 1), value));
+                map.put(key.substring(0, newIndex), levelOpenListMap(key.substring(newEndIndex + 2), value));
             }
             result.add(map);
         }

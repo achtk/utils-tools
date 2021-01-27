@@ -32,7 +32,7 @@ public class FlatHashMap implements FlatMap {
 
     @Override
     public boolean isEmpty() {
-        return source.isEmpty();
+        return null == source ? true : source.isEmpty();
     }
 
     @Override
