@@ -1321,4 +1321,15 @@ public class MapOperableHelper extends MultiMapOperableHelper {
         stringObjectMap.put(strings.get(0), strings.get(1));
         return stringObjectMap;
     }
+
+    /**
+     * 获取{index}数据
+     *
+     * @param source 数据
+     * @param index  索引
+     * @return 索引对应数据, 不存在返回null
+     */
+    public static Map.Entry<String, Object> getIndex(Map<String, Object> source, int index) {
+        return CollectionUtils.find(source.entrySet(), index);
+    }
 }
