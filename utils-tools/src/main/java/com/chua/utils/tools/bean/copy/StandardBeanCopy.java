@@ -8,8 +8,6 @@ import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.function.Converter;
 import com.chua.utils.tools.function.converter.TypeConverter;
-import com.chua.utils.tools.manager.parser.description.FieldDescription;
-import com.chua.utils.tools.manager.parser.description.MethodDescription;
 import com.chua.utils.tools.util.AnnotationUtils;
 import com.chua.utils.tools.util.ClassUtils;
 import com.google.common.base.Splitter;
@@ -302,6 +300,11 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
             this.beanMap.put(entry.getKey(), entry.getValue());
             return entry.getValue().equals(this.beanMap.get(entry.getKey()));
         }
+        entry = MapOperableHelper.getIndex(this.withParams, 1);
+        if (null != entry && this.beanMap.containsKey(entry.getKey())) {
+            this.beanMap.put(entry.getKey(), entry.getValue());
+            return entry.getValue().equals(this.beanMap.get(entry.getKey()));
+        }
         return false;
     }
 
@@ -360,23 +363,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
 
         @Override
         public T create() {
-            ClassHelper.doWithFields(tClass, field -> {
-                MethodDescription methodDescription = new MethodDescription(entity, field.getType());
-                methodDescription.setSetName(field.getName());
-
-                if (!methodDescription.existMethod()) {
-                    FieldDescription fieldDescription = new FieldDescription(entity, field);
-                    String name = fieldDescription.getName();
-                    if (!withParams.containsKey(name)) {
-                        return;
-                    }
-
-                    fieldDescription.set(withParams.get(name));
-                    return;
-                }
-                methodDescription.invoke(withParams.get(field.getName()));
-
-            });
+            ClassUtils.doWithSetFieldValue(entity, withParams);
             return (T) entity;
         }
     }
