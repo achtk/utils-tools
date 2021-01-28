@@ -1,6 +1,8 @@
 package com.chua.utils.tools.util;
 
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.manager.parser.description.FieldDescription;
+import com.chua.utils.tools.manager.parser.description.MethodDescription;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import javassist.*;
@@ -507,5 +509,40 @@ public class ClassUtils extends ClassHelper {
         }
 
         return "VARCHAR";
+    }
+
+    /**
+     * 设置实体字段值
+     *
+     * @param entity 实体
+     * @param params 参数
+     */
+    public static void doWithSetFieldValue(Object entity, final Map<String, Object> params) {
+        if (entity instanceof Class) {
+            return;
+        }
+        Class<?> aClass = entity.getClass();
+        if (aClass.isPrimitive()) {
+            return;
+        }
+
+        doWithFields(aClass, field -> {
+            //1.先检测方法,防止Set方法逻辑处理
+            MethodDescription<Object> methodDescription = new MethodDescription<>(entity, field.getType());
+            methodDescription.setSetName(field.getName());
+
+            if (!methodDescription.existMethod()) {
+                //2.方法不存在,进行字段赋值
+                FieldDescription<Object> fieldDescription = new FieldDescription<>(entity, field);
+                String name = fieldDescription.getName();
+                if (!params.containsKey(name)) {
+                    return;
+                }
+
+                fieldDescription.set(params.get(name));
+                return;
+            }
+            methodDescription.invoke(params.get(field.getName()));
+        });
     }
 }
