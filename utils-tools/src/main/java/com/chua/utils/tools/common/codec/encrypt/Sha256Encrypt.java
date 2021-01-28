@@ -1,9 +1,7 @@
 package com.chua.utils.tools.common.codec.encrypt;
 
-import com.chua.utils.tools.common.codec.digest.DigestHelper;
-import com.chua.utils.tools.constant.EncryptConstant;
-
-import java.security.MessageDigest;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
 
 /**
  * Sha256
@@ -14,7 +12,11 @@ public class Sha256Encrypt extends AbstractStandardEncrypt {
 
     @Override
     public byte[] encode(byte[] bytes) {
-        return DigestHelper.sha256(bytes);
+        Digest digest = new SHA256Digest();
+        digest.update(bytes, 0, bytes.length);
+        byte[] result = new byte[digest.getDigestSize()];
+        digest.doFinal(result, 0);
+        return result;
     }
 
     @Override

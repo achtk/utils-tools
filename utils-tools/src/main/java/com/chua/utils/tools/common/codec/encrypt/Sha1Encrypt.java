@@ -1,18 +1,18 @@
 package com.chua.utils.tools.common.codec.encrypt;
 
 import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.digests.SHA1Digest;
 
 /**
- * Sha512 加密
+ * Sha1
  *
  * @author CH
  */
-public class Sha512Encrypt extends AbstractStandardEncrypt {
+public class Sha1Encrypt extends AbstractStandardEncrypt {
 
     @Override
     public byte[] encode(byte[] bytes) {
-        Digest digest = new SHA512Digest();
+        Digest digest = new SHA1Digest();
         digest.update(bytes, 0, bytes.length);
         byte[] result = new byte[digest.getDigestSize()];
         digest.doFinal(result, 0);
@@ -23,4 +23,6 @@ public class Sha512Encrypt extends AbstractStandardEncrypt {
     public byte[] decode(byte[] bytes) {
         return null;
     }
+
+
 }
