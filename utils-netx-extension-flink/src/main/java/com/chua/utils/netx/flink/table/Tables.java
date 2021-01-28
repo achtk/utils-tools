@@ -1,7 +1,7 @@
 package com.chua.utils.netx.flink.table;
 
 import com.chua.utils.tools.bean.copy.BeanCopy;
-import com.chua.utils.tools.empty.EmptyOrBase;
+import com.chua.utils.tools.function.converter.Converter;
 import com.chua.utils.tools.table.Table;
 import com.chua.utils.tools.table.TableFactory;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -84,7 +84,7 @@ public class Tables implements TableFactory {
             int arity = item.getArity();
             Map<String, Object> map = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
             for (int i = 0; i < arity; i++) {
-                map.put(fieldNames[i], EmptyOrBase.getTypeConverter(fieldTypes[i].getTypeClass()).convert(item.getField(i)));
+                map.put(fieldNames[i], Converter.convertIfNecessary(item.getField(i), fieldTypes[i].getTypeClass()));
             }
             return BeanCopy.of(tClass).with(map).create();
         }).collect(Collectors.toList());

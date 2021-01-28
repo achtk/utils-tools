@@ -18,7 +18,6 @@ public class JsonUtilsExample {
         //测试Json字符串转Json对象
         testJsonString2Object(getDemo1());
         //测试JsonPath
-
         testJsonPath(getDemo1());
     }
 

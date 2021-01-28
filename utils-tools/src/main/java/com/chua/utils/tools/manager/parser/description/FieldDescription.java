@@ -60,6 +60,7 @@ public class FieldDescription<T> {
     public FieldDescription(T entity, Field field) {
         this.entity = entity;
         this.field = field;
+        this.setField(field);
     }
 
     /**

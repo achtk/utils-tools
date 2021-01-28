@@ -1,10 +1,8 @@
 package com.chua.utils.tools.example
 
-
 import com.chua.utils.tools.collects.FlatMap
 import com.chua.utils.tools.function.JsonPath
 import com.chua.utils.tools.util.JsonUtils
-import org.springframework.web.reactive.function.client.WebClient
 
 /**
  * @author CH* @version 1.0.0* @since 2021/1/26
@@ -23,7 +21,6 @@ class JsonPathExample {
         System.out.println(map)
         System.out.println(flatMap)
 
-        WebClient
     }
 
     static String getDemo1() {
