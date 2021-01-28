@@ -37,7 +37,7 @@ public class JsonUtilsExample {
      * @param demo1
      */
     private static void testJsonString2Object(String demo1) {
-        LogUtils.println("{}", JsonUtils.fromJson2Map(demo1));
+        LogUtils.info("{}", JsonUtils.fromJson2Map(demo1));
     }
 
     public static String getDemo1() {

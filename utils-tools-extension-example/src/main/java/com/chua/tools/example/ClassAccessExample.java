@@ -39,10 +39,10 @@ public class ClassAccessExample {
         for (TDemoInfo tDemoInfo : result) {
             Object getUuid = ClassUtils.getMethodValue(tDemoInfo, "getUuid", new Object[0]);
             //Object getUuid = classAccess.invoke(tDemoInfo, "getUuid", new Class[0]);
-            LogUtils.println("{}: {}", atomicInteger.incrementAndGet(), getUuid);
+            LogUtils.info("{}: {}", atomicInteger.incrementAndGet(), getUuid);
         }
         long stop = cost.stop();
         int length = result.size();
-        LogUtils.println("测试数量: {}, 耗时: {} ms, 平均: {}ms", length, stop, stop/ length);
+        LogUtils.info("测试数量: {}, 耗时: {} ms, 平均: {}ms", length, stop, stop/ length);
     }
 }

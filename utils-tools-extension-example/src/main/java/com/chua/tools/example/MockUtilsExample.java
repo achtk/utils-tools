@@ -25,10 +25,10 @@ public class MockUtilsExample extends BaseExample {
     }
 
     private static <T> void testEntityListData(Class<T> tClass) {
-        LogUtils.println("{}", MockUtils.createForList(tClass));
+        LogUtils.info("{}", MockUtils.createForList(tClass));
     }
 
     private static <T> void testEntityData(Class<T> tClass) {
-        LogUtils.println("{}", MockUtils.create(tClass));
+        LogUtils.info("{}", MockUtils.create(tClass));
     }
 }
