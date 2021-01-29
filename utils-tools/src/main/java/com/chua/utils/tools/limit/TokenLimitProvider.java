@@ -13,8 +13,13 @@ public class TokenLimitProvider implements LimiterProvider {
 
     private static final ConcurrentHashMap<String, RateLimiter> RATE_LIMITER_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
     private static final int DEFAULT_SIZE = 10;
+
+    public TokenLimitProvider(double token) {
+        newLimiter(token);
+    }
+
     @Override
-    public LimiterProvider newLimiter(String name, int size) {
+    public LimiterProvider newLimiter(String name, double size) {
         RATE_LIMITER_CONCURRENT_HASH_MAP.put(name, RateLimiter.create(size));
         return this;
     }
@@ -28,7 +33,7 @@ public class TokenLimitProvider implements LimiterProvider {
     }
 
     @Override
-    public boolean tryAcquire(String name) {
+    public synchronized boolean tryAcquire(String name) {
         RateLimiter rateLimiter = RATE_LIMITER_CONCURRENT_HASH_MAP.get(name);
         if(null == rateLimiter) {
             newLimiter(name, DEFAULT_SIZE);
@@ -38,7 +43,7 @@ public class TokenLimitProvider implements LimiterProvider {
     }
 
     @Override
-    public boolean tryAcquire(String name, long time) {
+    public synchronized boolean tryAcquire(String name, long time) {
         RateLimiter rateLimiter = RATE_LIMITER_CONCURRENT_HASH_MAP.get(name);
         if(null == rateLimiter) {
             newLimiter(name, DEFAULT_SIZE);
@@ -48,7 +53,7 @@ public class TokenLimitProvider implements LimiterProvider {
     }
 
     @Override
-    public boolean tryAcquire(String name, long time, TimeUnit timeUnit) {
+    public synchronized boolean tryAcquire(String name, long time, TimeUnit timeUnit) {
         RateLimiter rateLimiter = RATE_LIMITER_CONCURRENT_HASH_MAP.get(name);
         if(null == rateLimiter) {
             newLimiter(name, DEFAULT_SIZE);
@@ -58,12 +63,12 @@ public class TokenLimitProvider implements LimiterProvider {
     }
 
     @Override
-    public boolean tryGet() {
+    public synchronized boolean tryGet() {
         return false;
     }
 
     @Override
-    public boolean containGroup(String group) {
+    public synchronized boolean containGroup(String group) {
         return RATE_LIMITER_CONCURRENT_HASH_MAP.containsKey(group);
     }
 }

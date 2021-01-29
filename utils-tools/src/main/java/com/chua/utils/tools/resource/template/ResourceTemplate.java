@@ -88,7 +88,7 @@ public class ResourceTemplate {
                 resourceFactory.classLoader(classLoader);
             }
             resourceFactory.matcher(matcher);
-            return CacheStorage.doWith(() -> resourceFactory.getResources(name.trim(), excludes.toArray(EmptyOrBase.EMPTY_STRING)), name + SYMBOL_DOLLAR + resourceFactory.getClass().getName(), RESOURCE);
+            return CacheStorage.run(() -> resourceFactory.getResources(name.trim(), excludes.toArray(EmptyOrBase.EMPTY_STRING)), name + SYMBOL_DOLLAR + resourceFactory.getClass().getName(), RESOURCE);
         }
     }
 
@@ -99,7 +99,7 @@ public class ResourceTemplate {
      * @return 子类
      */
     public List<Class<?>> getSubOfType(Class<?> encryptClass) {
-        return CacheStorage.doWith(() -> {
+        return CacheStorage.run(() -> {
             long startTime = System.currentTimeMillis();
             Set<Resource> resources = getResources(ANY);
             List<Class<?>> subType = new ArrayList<>();

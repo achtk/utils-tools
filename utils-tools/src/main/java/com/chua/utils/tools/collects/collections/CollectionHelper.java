@@ -238,6 +238,29 @@ public class CollectionHelper {
     }
 
     /**
+     * 创建循环
+     *
+     * @param end      结束位置
+     * @param consumer 回调
+     */
+    public static void forEach(final int end, final Consumer<Integer> consumer) {
+        forEach(0, end, consumer);
+    }
+
+    /**
+     * 创建循环
+     *
+     * @param start    开始位置
+     * @param end      结束位置
+     * @param consumer 回调
+     */
+    public static void forEach(final int start, final int end, final Consumer<Integer> consumer) {
+        for (int i = start; i < end; i++) {
+            consumer.accept(i);
+        }
+    }
+
+    /**
      * 循环集合(自动判空)
      *
      * @param source   数据

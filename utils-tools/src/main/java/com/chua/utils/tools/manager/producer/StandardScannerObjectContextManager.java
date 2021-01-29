@@ -17,7 +17,6 @@ import com.chua.utils.tools.storage.CacheStorage;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -70,7 +69,7 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
 
     @Override
     public <T> Set<Class<? extends T>> getSubTypesOf(Class<T> tClass) {
-        return CacheStorage.doWith((Supplier<Set>) () -> reflectionsFactory.getSubTypesOf(tClass), tClass, SUB_CACHE);
+        return CacheStorage.run((Supplier<Set>) () -> reflectionsFactory.getSubTypesOf(tClass), tClass, SUB_CACHE);
     }
 
     @Override
@@ -80,7 +79,7 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
 
     @Override
     public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation) {
-        return CacheStorage.doWith(() -> {
+        return CacheStorage.run(() -> {
             return reflectionsFactory.getTypesAnnotatedWith(annotation);
         }, annotation, ANNOTATION_TYPE_CACHE);
     }
@@ -92,14 +91,14 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
 
     @Override
     public Set<Method> getMethodsAnnotatedWith(final Class<? extends Annotation> annotation) {
-        return CacheStorage.doWith(() -> {
+        return CacheStorage.run(() -> {
             return reflectionsFactory.getMethodsAnnotatedWith(annotation);
         }, annotation, ANNOTATION_METHOD_CACHE);
     }
 
     @Override
     public Set<Field> getFieldsAnnotatedWith(final Class<? extends Annotation> annotation) {
-        return CacheStorage.doWith(() -> {
+        return CacheStorage.run(() -> {
             return reflectionsFactory.getFieldsAnnotatedWith(annotation);
         }, annotation, ANNOTATION_FIELD_CACHE);
     }

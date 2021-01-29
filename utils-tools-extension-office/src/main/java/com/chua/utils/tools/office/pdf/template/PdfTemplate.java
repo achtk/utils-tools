@@ -97,12 +97,12 @@ public class PdfTemplate implements Template {
         for (int i = 0; i < textValue.size() - 1; i++) {
             String s = textValue.get(i);
             String s1 = textValue.get(i + 1);
-            if (s.equals("{") && s1.equals("{")) {
+            if ("{".equals(s) && "{".equals(s1)) {
                 oneItem.add(i);
                 continue;
             }
 
-            if (s.equals("}") && s1.equals("}")) {
+            if ("}".equals(s) && "}".equals(s1)) {
                 oneItem.add(i + 1);
                 continue;
             }

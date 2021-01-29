@@ -123,7 +123,7 @@ public class ReflectionHelper extends JavassistHelper {
         }
         final Class<?> aClass = ClassHelper.getClass(object);
 
-        return CacheStorage.doWith(() -> {
+        return CacheStorage.run(() -> {
             Constructor<?>[] constructors = aClass.getDeclaredConstructors();
             return Arrays.asList(constructors);
         }, aClass, CLASS_CONSTRUCTOR_LOCAL);
@@ -141,7 +141,7 @@ public class ReflectionHelper extends JavassistHelper {
         }
         final Class<?> aClass = ClassHelper.getClass(object);
 
-        return CacheStorage.doWith(() -> {
+        return CacheStorage.run(() -> {
             List<Constructor<?>> result = new ArrayList<>();
             Class<?> newClass = aClass;
             while (!ClassHelper.isObject(newClass)) {
@@ -448,7 +448,7 @@ public class ReflectionHelper extends JavassistHelper {
         final Class<?> aClass = ClassHelper.getClass(obj);
 
         if (!BooleanHelper.hasLength(annotationType)) {
-            return CacheStorage.doWith(() -> {
+            return CacheStorage.run(() -> {
                 List<Field> result = new ArrayList<>();
                 Class<?> newClass = aClass;
                 while (!ClassHelper.isObject(newClass)) {
@@ -501,7 +501,7 @@ public class ReflectionHelper extends JavassistHelper {
         }
         final Class<?> aClass = ClassHelper.getClass(obj);
 
-        return CacheStorage.doWith(() -> {
+        return CacheStorage.run(() -> {
             Field[] fields = aClass.getDeclaredFields();
             return Arrays.asList(fields);
         }, aClass, CLASS_FIELD);
@@ -579,7 +579,7 @@ public class ReflectionHelper extends JavassistHelper {
         final Class<?> aClass = ClassHelper.getClass(obj);
 
         if (!BooleanHelper.hasLength(annotationType)) {
-            return CacheStorage.doWith(() -> {
+            return CacheStorage.run(() -> {
                 List<Method> result = new ArrayList<>();
                 Class<?> newClass = aClass;
                 while (!ClassHelper.isObject(newClass)) {
@@ -639,7 +639,7 @@ public class ReflectionHelper extends JavassistHelper {
         }
         final Class<?> aClass = ClassHelper.getClass(obj);
 
-        return CacheStorage.doWith(() -> {
+        return CacheStorage.run(() -> {
             Method[] methods = aClass.getDeclaredMethods();
             return Arrays.asList(methods);
         }, aClass, CLASS_METHOD_LOCAL);
@@ -688,7 +688,7 @@ public class ReflectionHelper extends JavassistHelper {
         if (null == aClass) {
             return null;
         }
-        return CacheStorage.doWith(() -> {
+        return CacheStorage.run(() -> {
             List<Class<?>> result = new ArrayList<>();
             Class<?>[] interfaces = aClass.getInterfaces();
             Class<?> superClass = aClass.getSuperclass();
@@ -715,7 +715,7 @@ public class ReflectionHelper extends JavassistHelper {
         if (null == aClass) {
             return null;
         }
-        return CacheStorage.doWith(() -> {
+        return CacheStorage.run(() -> {
             List<Class<?>> result = new ArrayList<>();
             Class<?> superClass = aClass.getSuperclass();
 

@@ -1,5 +1,7 @@
 package com.chua.utils.tools.limit;
 
+import com.chua.utils.tools.constant.StringConstant;
+
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +27,17 @@ public interface LimiterProvider {
      * @param name
      * @return
      */
-    LimiterProvider newLimiter(String name, int size);
+    LimiterProvider newLimiter(String name, double size);
+
+    /**
+     * 带大小的限流器
+     *
+     * @param size 最大限制
+     * @return
+     */
+    default LimiterProvider newLimiter(double size) {
+        return newLimiter(StringConstant.DEFAULT, size);
+    }
 
     /**
      * 带大小的限流器
@@ -42,6 +54,15 @@ public interface LimiterProvider {
      * @return
      */
     boolean tryAcquire(String name);
+
+    /**
+     * 尝试获取
+     *
+     * @return
+     */
+    default boolean tryAcquire() {
+        return tryAcquire(StringConstant.DEFAULT);
+    }
 
     /**
      * 尝试获取
