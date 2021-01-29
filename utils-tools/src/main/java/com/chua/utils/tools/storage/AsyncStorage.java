@@ -20,7 +20,7 @@ public class AsyncStorage {
      * @return 结果
      */
     public synchronized static void run(final Supplier<?> supplier) {
-        CompletableFuture.runAsync(() -> {
+         CompletableFuture.runAsync(() -> {
             supplier.get();
         });
     }

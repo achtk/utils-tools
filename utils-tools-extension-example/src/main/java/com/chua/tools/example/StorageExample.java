@@ -35,8 +35,23 @@ public class StorageExample {
         testLimitStorage(2, 1);
         //测试调度
         testTimerStorage();
+        //测试异步
+        testAsyncStorage();
         //测试延迟
         testDelayStorage();
+
+    }
+
+    /**
+     * 测试异步
+     */
+    private static void testAsyncStorage() {
+        AsyncStorage.run(() -> {
+            ThreadUtils.sleepSecondsQuietly(1);
+            System.out.println("async: async");
+            return null;
+        });
+        System.out.println(2222);
     }
 
     /**
@@ -46,7 +61,7 @@ public class StorageExample {
         Cost cost = new MillisecondCost("delay");
         LogUtils.info("delay: {}",DelayStorage.run(() -> {
             return 1;
-        }, 10));
+        }, 1000));
 
         cost.stopAndPrint();
     }
