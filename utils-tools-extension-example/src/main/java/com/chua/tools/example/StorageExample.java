@@ -37,9 +37,18 @@ public class StorageExample {
         testTimerStorage();
         //测试异步
         testAsyncStorage();
+        //测试回调
+        testFailureStorage();
         //测试延迟
         testDelayStorage();
+    }
 
+    /**
+     * 测试回调
+     */
+    private static void testFailureStorage() {
+        Integer integer = CallbackStorage.run(() -> 2, e -> 1);
+        LogUtils.info("callback: {}", integer);
     }
 
     /**
@@ -59,7 +68,7 @@ public class StorageExample {
      */
     private static void testDelayStorage() {
         Cost cost = new MillisecondCost("delay");
-        LogUtils.info("delay: {}",DelayStorage.run(() -> {
+        LogUtils.info("delay: {}", DelayStorage.run(() -> {
             return 1;
         }, 1000));
 
@@ -70,7 +79,7 @@ public class StorageExample {
      * 测试调度
      */
     private static void testTimerStorage() {
- //        TimerStorage.doWith(item -> {
+        //        TimerStorage.doWith(item -> {
 //            LogUtils.info("{}: {}", DateUtils.currentString(), IdUtils.createUuid());
 //        }, "0/1 * * * * ?");
     }
