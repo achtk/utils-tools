@@ -355,7 +355,7 @@ public class ExtensionLoader<T> {
     public synchronized Set<T> getAllSpiService() {
         MultiSortValueMap<String, ExtensionClass<T>> multimap = extensionClassMultimap;
         if (null == multimap) {
-            return null;
+            return Collections.emptySet();
         }
 
         Set<T> result = new HashSet<>(multimap.size());

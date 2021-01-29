@@ -2,7 +2,6 @@ package com.chua.utils.netx.elasticsearch.spring.context;
 
 import com.chua.utils.netx.elasticsearch.spring.factory.ElasticSearchFactory;
 import com.chua.utils.netx.factory.INetFactory;
-import com.chua.utils.tools.function.Template;
 import com.chua.utils.tools.properties.NetProperties;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.suggest.SuggestBuilder;
@@ -19,7 +18,7 @@ import java.util.List;
  *
  * @author CH
  */
-public class ElasticSearchContext implements Template<AbstractElasticsearchTemplate>, ElasticsearchOperations, AutoCloseable {
+public class ElasticSearchContext implements ElasticsearchOperations, AutoCloseable {
 
     private NetProperties netProperties;
     private final INetFactory<AbstractElasticsearchTemplate> netxFactory;
@@ -265,7 +264,6 @@ public class ElasticSearchContext implements Template<AbstractElasticsearchTempl
         }
     }
 
-    @Override
     public AbstractElasticsearchTemplate getTemplate() {
         return elasticsearchTemplate;
     }

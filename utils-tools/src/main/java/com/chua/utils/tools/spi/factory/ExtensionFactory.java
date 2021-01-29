@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
 /**
  * 扩展工厂类
@@ -344,6 +345,20 @@ public class ExtensionFactory implements Runnable {
 
         remove(tClass);
         return getExtensionLoader(tClass);
+    }
+
+    /**
+     * 消费Spi实现方法
+     *
+     * @param tClass   接口/类
+     * @param consumer 实现消费
+     */
+    public static synchronized <T> void doWithInvoke(Class<T> tClass, Consumer<T> consumer) {
+        if (null == tClass || null == consumer) {
+            return;
+        }
+        ExtensionLoader<T> extensionLoader = getExtensionLoader(tClass);
+        extensionLoader.getAllSpiService().forEach(consumer);
     }
 
 

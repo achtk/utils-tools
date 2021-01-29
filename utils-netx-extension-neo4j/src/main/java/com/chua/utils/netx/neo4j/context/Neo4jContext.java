@@ -1,6 +1,5 @@
 package com.chua.utils.netx.neo4j.context;
 
-import com.chua.utils.tools.function.Template;
 import com.chua.utils.tools.properties.NetProperties;
 import org.neo4j.cypherdsl.core.Statement;
 import org.neo4j.driver.AuthTokens;
@@ -25,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0.0
  * @since 2020/12/17
  */
-public class Neo4jContext implements Template<Neo4jTemplate>, Neo4jOperations, AutoCloseable {
+public class Neo4jContext implements Neo4jOperations, AutoCloseable {
 
     private Neo4jTemplate neo4jTemplate;
     private NetProperties netProperties;
@@ -46,7 +45,6 @@ public class Neo4jContext implements Template<Neo4jTemplate>, Neo4jOperations, A
         return new Neo4jTemplate(Neo4jClient.create(driver));
     }
 
-    @Override
     public Neo4jTemplate getTemplate() {
         return neo4jTemplate;
     }

@@ -1,6 +1,8 @@
 package com.chua.tools.example;
 
+import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.common.codec.encrypt.Encrypt;
+import com.chua.utils.tools.logger.LogUtils;
 import com.chua.utils.tools.spi.extension.ExtensionLoader;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,16 @@ public class SpiExample extends BaseExample{
         log.info("获取唯一一个实现类: {}", extensionLoader.getExtension());
         log.info("获取所有实现类(Set): {}", extensionLoader.getAllSpiService());
         log.info("获取所有实现类(Map): {}", extensionLoader.getPriorityExtension());
+
+        ExtensionFactory.doWithInvoke(Encrypt.class, encrypt -> {
+            try {
+                LogUtils.info("====================================================");
+                LogUtils.info("{}", encrypt.getClass().getName());
+                LogUtils.script("encrypt.encode('1')", OperateHashMap.create("encrypt", encrypt));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
     }
 
