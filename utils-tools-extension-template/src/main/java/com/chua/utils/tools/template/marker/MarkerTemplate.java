@@ -11,8 +11,8 @@ import java.io.StringWriter;
 import java.util.Map;
 
 /**
- * 文本模板
- *
+ * 基于[freemarker]统一接口 - 文本模板
+ *  <p>参见 [freemarker]语法</p>
  * @author CH
  * @version 1.0.0
  * @since 2021/1/29

@@ -17,8 +17,7 @@ public class NetUtils extends NetHelper {
     /**
      * 连通性检测
      *
-     * @param ip   地址
-     * @param port 端口
+     * @param host 地址
      * @return 连通返回true
      */
     public static boolean isConnectable(String host) {
@@ -35,6 +34,7 @@ public class NetUtils extends NetHelper {
         }
         return true;
     }
+
     /**
      * 连通性检测
      *

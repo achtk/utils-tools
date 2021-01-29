@@ -545,4 +545,25 @@ public class ClassUtils extends ClassHelper {
             methodDescription.invoke(params.get(field.getName()));
         });
     }
+
+
+    /**
+     * 设置字段值
+     *
+     * @param fieldName 字段名称
+     * @param value     值
+     * @param bean      对象
+     */
+    public static void setFieldValue(String fieldName, Object value, Object bean) {
+        if (null == fieldName) {
+            return;
+        }
+        Class<?> aClass = bean.getClass();
+        Field field = null;
+        try {
+            field = aClass.getDeclaredField(fieldName);
+            setFieldValue(field, value, bean);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+        }
+    }
 }
