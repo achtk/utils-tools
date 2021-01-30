@@ -39,8 +39,22 @@ public class StorageExample {
         testAsyncStorage();
         //测试回调
         testFailureStorage();
+        //测试超时
+        testTimeoutStorage();
         //测试延迟
         testDelayStorage();
+    }
+
+    /**
+     * 测试超时
+     */
+    private static void testTimeoutStorage() {
+        Integer integer = TimeoutStorage.run(() -> {
+            ThreadUtils.sleepMillisecondsQuietly(200);
+            return 1;
+        }, 100);
+
+        LogUtils.info("timeout: {}", integer);
     }
 
     /**

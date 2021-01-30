@@ -20,7 +20,7 @@ public class DelayStorage {
      * 处理任务
      *
      * @param supplier 回调
-     * @param delay    延迟
+     * @param delay    延迟(ms)
      * @return 结果
      */
     public synchronized static Object run(final Supplier<?> supplier, final int delay) {
@@ -36,6 +36,9 @@ public class DelayStorage {
         return delayItem.getValue().get();
     }
 
+    /**
+     * 延迟对象
+     */
     static final class DelayItem implements Delayed {
         /* 触发时间*/
         private long time;
