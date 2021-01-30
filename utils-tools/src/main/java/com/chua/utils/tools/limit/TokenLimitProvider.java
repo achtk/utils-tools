@@ -1,14 +1,17 @@
 package com.chua.utils.tools.limit;
 
 import com.google.common.util.concurrent.RateLimiter;
+import lombok.NoArgsConstructor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 限流
  * @author CH
  */
+@NoArgsConstructor
 public class TokenLimitProvider implements LimiterProvider {
 
     private static final ConcurrentHashMap<String, RateLimiter> RATE_LIMITER_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
