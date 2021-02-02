@@ -1,6 +1,6 @@
 package com.chua.tools.example;
 
-import com.chua.tools.example.entity.TDemoInfo;
+import com.chua.tools.example.entity.TDemoInfoImpl;
 import com.chua.utils.netx.datasource.mem.MemSearch;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.chua.utils.tools.text.IdHelper;
@@ -22,11 +22,11 @@ public class MemSearchExample {
         MemSearch memSearch = ExtensionFactory.getExtensionLoader(MemSearch.class)
                 .getExtension("hsqldb");
         System.out.println("获取memSearch： " + memSearch.getClass().getName());
-        memSearch.create(TDemoInfo.class);
+        memSearch.create(TDemoInfoImpl.class);
 
-        List<TDemoInfo> demoInfos = new ArrayList<>();
+        List<TDemoInfoImpl> demoInfos = new ArrayList<>();
         IntStream.range(0, 10).forEach(index -> {
-            TDemoInfo demoInfo = new TDemoInfo();
+            TDemoInfoImpl demoInfo = new TDemoInfoImpl();
             demoInfo.setId(index);
             demoInfo.setUuid(IdHelper.createUuid());
             demoInfo.setDemoTitle("Demo" + index);

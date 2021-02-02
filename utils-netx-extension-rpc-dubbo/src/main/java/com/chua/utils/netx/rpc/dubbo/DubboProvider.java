@@ -5,24 +5,23 @@ import com.chua.utils.netx.rpc.resolver.RpcProvider;
 import com.google.common.base.Preconditions;
 import org.apache.dubbo.config.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * dubbo
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/5/30 14:30
  */
-public class DubboProvider implements RpcProvider {
+public class DubboProvider<T> implements RpcProvider<T> {
 
     @Override
-    public Object provider(final RpcProviderConfig rpcProviderConfig) {
+    public T provider(final RpcProviderConfig<T> rpcProviderConfig) {
         Preconditions.checkArgument(null != rpcProviderConfig);
         Preconditions.checkArgument(null != rpcProviderConfig.getRef());
 
-        ServiceConfig serviceConfig = createServiceConfig(rpcProviderConfig);
+        ServiceConfig<T> serviceConfig = createServiceConfig(rpcProviderConfig);
         //配置注册中心
         doConfigRegistryConfigure(rpcProviderConfig, serviceConfig);
         //配置协议
@@ -37,17 +36,23 @@ public class DubboProvider implements RpcProvider {
         return null;
     }
 
+    @Override
+    public int getDefaultPort() {
+        return 20880;
+    }
+
     /**
      * 创建服务端配置
-     * @param rpcProviderConfig
-     * @return
+     *
+     * @param rpcProviderConfig 生产者
+     * @return 服务配置
      */
-    private ServiceConfig createServiceConfig(final RpcProviderConfig rpcProviderConfig) {
-        ServiceConfig serviceConfig = new ServiceConfig();
+    private ServiceConfig<T> createServiceConfig(final RpcProviderConfig<T> rpcProviderConfig) {
+        ServiceConfig<T> serviceConfig = new ServiceConfig<>();
         serviceConfig.setRef(rpcProviderConfig.getRef());
         serviceConfig.setDelay(rpcProviderConfig.getDelay());
         serviceConfig.setId(rpcProviderConfig.getId());
-        serviceConfig.setGroup(rpcProviderConfig.getGroup());
+        serviceConfig.setGroup(Optional.ofNullable(rpcProviderConfig.getGroup()).orElse(rpcProviderConfig.getId()));
         serviceConfig.setTimeout(rpcProviderConfig.getTimeout());
         serviceConfig.setWeight(rpcProviderConfig.getWeight());
         serviceConfig.setInterface(rpcProviderConfig.getInterfaces());
@@ -57,10 +62,11 @@ public class DubboProvider implements RpcProvider {
 
     /**
      * 配置注册中心
-     * @param rpcProviderConfig
-     * @param serviceConfig
+     *
+     * @param rpcProviderConfig 生产者
+     * @param serviceConfig     服务
      */
-    private void doConfigRegistryConfigure(final RpcProviderConfig rpcProviderConfig, final ServiceConfig serviceConfig) {
+    private void doConfigRegistryConfigure(final RpcProviderConfig<T> rpcProviderConfig, final ServiceConfig<T> serviceConfig) {
         List<RpcRegistryConfig> configs = rpcProviderConfig.getRpcRegistryConfigs();
         if (null != configs) {
             List<RegistryConfig> registryConfigs = new ArrayList<>(configs.size());
@@ -73,17 +79,24 @@ public class DubboProvider implements RpcProvider {
             }
 
             serviceConfig.setRegistries(registryConfigs);
+            return;
         }
+        RegistryConfig registryConfig = new RegistryConfig();
+        registryConfig.setProtocol("multicast");
+        registryConfig.setAddress("224.8.8.8:1234");
+
+        serviceConfig.setRegistries(Collections.singletonList(registryConfig));
     }
 
     /**
      * 配置方法
-     * @param rpcProviderConfig
-     * @param serviceConfig
+     *
+     * @param rpcProviderConfig 生产者
+     * @param serviceConfig     服务
      */
-    private void doConfigMethodsConfigure(final RpcProviderConfig rpcProviderConfig, final ServiceConfig serviceConfig) {
+    private void doConfigMethodsConfigure(final RpcProviderConfig<T> rpcProviderConfig, final ServiceConfig<T> serviceConfig) {
         List<RpcMethodConfig> rpcMethodConfig = rpcProviderConfig.getRpcMethodConfigs();
-        if(null != rpcMethodConfig && rpcMethodConfig.size() > 0 ) {
+        if (null != rpcMethodConfig && rpcMethodConfig.size() > 0) {
             List<MethodConfig> methodConfigs = new ArrayList<>();
 
             for (RpcMethodConfig methodConfig : rpcMethodConfig) {
@@ -103,10 +116,10 @@ public class DubboProvider implements RpcProvider {
     /**
      * 配置应用
      *
-     * @param rpcProviderConfig
-     * @param serviceConfig
+     * @param rpcProviderConfig 生产者配置
+     * @param serviceConfig     服务配置
      */
-    private void doConfigApplicationConfigure(final RpcProviderConfig rpcProviderConfig, final ServiceConfig serviceConfig) {
+    private void doConfigApplicationConfigure(final RpcProviderConfig<T> rpcProviderConfig, final ServiceConfig<T> serviceConfig) {
         RpcApplicationConfig rpcApplicationConfig = rpcProviderConfig.getRpcApplicationConfig();
         ApplicationConfig applicationConfig = new ApplicationConfig();
         if (null != rpcApplicationConfig) {
@@ -126,12 +139,12 @@ public class DubboProvider implements RpcProvider {
     /**
      * 配置协议
      *
-     * @param rpcProviderConfig
-     * @param serviceConfig
+     * @param rpcProviderConfig 生产者配置
+     * @param serviceConfig     服务配置
      */
-    private void doConfigProtocolConfigure(final RpcProviderConfig rpcProviderConfig, final ServiceConfig serviceConfig) {
+    private void doConfigProtocolConfigure(final RpcProviderConfig<T> rpcProviderConfig, final ServiceConfig<T> serviceConfig) {
         List<RpcProtocolConfig> rpcProtocolConfigs = rpcProviderConfig.getRpcProtocolConfigs();
-        List<ProtocolConfig> protocolConfigs = new ArrayList<>(rpcProtocolConfigs.size());
+        List<ProtocolConfig> protocolConfigs = new ArrayList<>();
 
         if (null != rpcProtocolConfigs) {
             for (RpcProtocolConfig config : rpcProtocolConfigs) {

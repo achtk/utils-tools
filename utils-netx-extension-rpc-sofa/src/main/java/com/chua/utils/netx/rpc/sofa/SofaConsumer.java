@@ -132,4 +132,9 @@ public class SofaConsumer<T> implements RpcConsumer<T> {
 
         return consumerConfig;
     }
+
+    @Override
+    public int getDefaultPort() {
+        return 12200;
+    }
 }

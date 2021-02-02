@@ -9,9 +9,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import org.apache.dubbo.config.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author CH
@@ -26,7 +24,7 @@ public class DubboConsumer<T> implements RpcConsumer<T> {
         Preconditions.checkArgument(null != rpcConsumerConfig);
         Preconditions.checkArgument(null != rpcConsumerConfig.getInterfaces());
 
-        ReferenceConfig referenceConfig = createReferenceConfig(rpcConsumerConfig);
+        ReferenceConfig<T> referenceConfig = createReferenceConfig(rpcConsumerConfig);
         //配置注册中心
         doConfigRegistryConfigure(rpcConsumerConfig, referenceConfig);
         //配置应用
@@ -39,12 +37,18 @@ public class DubboConsumer<T> implements RpcConsumer<T> {
         return (T) referenceConfig.get();
     }
 
+    @Override
+    public int getDefaultPort() {
+        return 20880;
+    }
+
     /**
      * 配置消费者
-     * @param rpcConsumerConfig
-     * @param referenceConfig
+     *
+     * @param rpcConsumerConfig 消费者
+     * @param referenceConfig   基础配置
      */
-    private void doConfigConsumerConfigure(RpcConsumerConfig<T> rpcConsumerConfig, ReferenceConfig referenceConfig) {
+    private void doConfigConsumerConfigure(RpcConsumerConfig<T> rpcConsumerConfig, ReferenceConfig<T> referenceConfig) {
         ConsumerConfig consumerConfig = new ConsumerConfig();
         consumerConfig.setCheck(rpcConsumerConfig.isCheck());
         referenceConfig.setConsumer(consumerConfig);
@@ -52,12 +56,13 @@ public class DubboConsumer<T> implements RpcConsumer<T> {
 
     /**
      * 配置方法
-     * @param rpcConsumerConfig
-     * @param referenceConfig
+     *
+     * @param rpcConsumerConfig 消费者
+     * @param referenceConfig   基础配置
      */
-    private void doConfigMethodsConfigure(RpcConsumerConfig<T> rpcConsumerConfig, ReferenceConfig referenceConfig) {
+    private void doConfigMethodsConfigure(RpcConsumerConfig<T> rpcConsumerConfig, ReferenceConfig<T> referenceConfig) {
         List<RpcMethodConfig> rpcMethodConfig = rpcConsumerConfig.getRpcMethodConfigs();
-        if(null != rpcMethodConfig && rpcMethodConfig.size() > 0 ) {
+        if (null != rpcMethodConfig && rpcMethodConfig.size() > 0) {
 
             List<MethodConfig> methodConfigs = new ArrayList<>();
 
@@ -76,14 +81,15 @@ public class DubboConsumer<T> implements RpcConsumer<T> {
 
     /**
      * 配置应用
-     * @param rpcConsumerConfig
-     * @param referenceConfig
+     *
+     * @param rpcConsumerConfig 消费者
+     * @param referenceConfig   基础配置
      */
-    private void doConfigApplicationConfigure(RpcConsumerConfig<T> rpcConsumerConfig, ReferenceConfig referenceConfig) {
+    private void doConfigApplicationConfigure(RpcConsumerConfig<T> rpcConsumerConfig, ReferenceConfig<T> referenceConfig) {
         RpcApplicationConfig rpcApplicationConfig = rpcConsumerConfig.getRpcApplicationConfig();
         ApplicationConfig applicationConfig = new ApplicationConfig();
 
-        if(null != rpcApplicationConfig) {
+        if (null != rpcApplicationConfig) {
             applicationConfig.setId(rpcApplicationConfig.getAppId());
             applicationConfig.setName(rpcApplicationConfig.getAppName());
 
@@ -97,12 +103,13 @@ public class DubboConsumer<T> implements RpcConsumer<T> {
 
     /**
      * 配置注册中心
-     * @param rpcConsumerConfig
-     * @param referenceConfig
+     *
+     * @param rpcConsumerConfig 消费者
+     * @param referenceConfig   基础配置
      */
-    private void doConfigRegistryConfigure(RpcConsumerConfig<T> rpcConsumerConfig, ReferenceConfig referenceConfig) {
+    private void doConfigRegistryConfigure(RpcConsumerConfig<T> rpcConsumerConfig, ReferenceConfig<T> referenceConfig) {
         List<RpcRegistryConfig> configs = rpcConsumerConfig.getRpcRegistryConfigs();
-        if(null != configs) {
+        if (null != configs) {
             List<RegistryConfig> registryConfigs = new ArrayList<>(configs.size());
             for (RpcRegistryConfig config : configs) {
                 RegistryConfig registryConfig = new RegistryConfig();
@@ -113,21 +120,28 @@ public class DubboConsumer<T> implements RpcConsumer<T> {
             }
 
             referenceConfig.setRegistries(registryConfigs);
+            return;
         }
+        RegistryConfig registryConfig = new RegistryConfig();
+        registryConfig.setProtocol("multicast");
+        registryConfig.setAddress("224.8.8.8:1234");
+
+        referenceConfig.setRegistries(Collections.singletonList(registryConfig));
     }
 
     /**
      * 创建服务
-     * @param rpcConsumerConfig
+     *
+     * @param rpcConsumerConfig 消费者
      * @return
      */
-    private ReferenceConfig createReferenceConfig(RpcConsumerConfig<T> rpcConsumerConfig) {
-        ReferenceConfig referenceConfig = new ReferenceConfig();
+    private ReferenceConfig<T> createReferenceConfig(RpcConsumerConfig<T> rpcConsumerConfig) {
+        ReferenceConfig<T> referenceConfig = new ReferenceConfig<>();
         referenceConfig.setId(rpcConsumerConfig.getId());
-        referenceConfig.setGroup(rpcConsumerConfig.getGroup());
+        referenceConfig.setGroup(Optional.ofNullable(rpcConsumerConfig.getGroup()).orElse(rpcConsumerConfig.getId()));
         referenceConfig.setTimeout(rpcConsumerConfig.getTimeout());
         referenceConfig.setInterface(rpcConsumerConfig.getInterfaces());
-        if(!Strings.isNullOrEmpty(rpcConsumerConfig.getProtocol())) {
+        if (!Strings.isNullOrEmpty(rpcConsumerConfig.getProtocol())) {
             referenceConfig.setProtocol(rpcConsumerConfig.getProtocol());
         }
         return referenceConfig;

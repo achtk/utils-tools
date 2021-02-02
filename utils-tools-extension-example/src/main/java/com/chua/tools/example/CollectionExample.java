@@ -1,6 +1,6 @@
 package com.chua.tools.example;
 
-import com.chua.tools.example.entity.TDemoInfo;
+import com.chua.tools.example.entity.TDemoInfoImpl;
 import com.chua.utils.tools.collects.*;
 import com.chua.utils.tools.common.JsonHelper;
 
@@ -79,12 +79,12 @@ public class CollectionExample extends BaseExample {
         log.info("ListMultiValueMap: " + JsonHelper.toJson(multiValueMap));
         log.info("get(a): " + multiValueMap.get("a"));
         log.info("***********************测试 MultiSortValueMap***********************");
-        MultiSortValueMap<String, TDemoInfo> sortValueMap = MultiValueSortMap.create("id");
-        sortValueMap.put("a", new TDemoInfo().setId(3));
-        sortValueMap.put("a", new TDemoInfo().setId(1));
-        sortValueMap.put("a", new TDemoInfo().setId(33));
-        sortValueMap.put("b", new TDemoInfo().setId(3));
-        sortValueMap.put("c", new TDemoInfo().setId(3));
+        MultiSortValueMap<String, TDemoInfoImpl> sortValueMap = MultiValueSortMap.create("id");
+        sortValueMap.put("a", new TDemoInfoImpl().setId(3));
+        sortValueMap.put("a", new TDemoInfoImpl().setId(1));
+        sortValueMap.put("a", new TDemoInfoImpl().setId(33));
+        sortValueMap.put("b", new TDemoInfoImpl().setId(3));
+        sortValueMap.put("c", new TDemoInfoImpl().setId(3));
         log.info("MultiSortValueMap: " + JsonHelper.toJson(sortValueMap));
         log.info("get(a): " + sortValueMap.get("a"));
 

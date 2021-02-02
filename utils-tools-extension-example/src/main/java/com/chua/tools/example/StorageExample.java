@@ -1,6 +1,6 @@
 package com.chua.tools.example;
 
-import com.chua.tools.example.entity.TDemoInfo;
+import com.chua.tools.example.entity.TDemoInfoImpl;
 import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
 import com.chua.utils.tools.limit.LimiterProvider;
@@ -30,7 +30,7 @@ public class StorageExample {
         //测试重试
         testRetryStorage();
         //测试代理
-        testProxyStorage(TDemoInfo.class);
+        testProxyStorage(TDemoInfoImpl.class);
         //测试限流
         testLimitStorage(2, 1);
         //测试调度
@@ -103,8 +103,8 @@ public class StorageExample {
      *
      * @param tDemoInfoClass
      */
-    private static void testProxyStorage(Class<TDemoInfo> tDemoInfoClass) {
-        TDemoInfo with = ProxyStorage.run(tDemoInfoClass, (obj, method, args, proxy) -> {
+    private static void testProxyStorage(Class<TDemoInfoImpl> tDemoInfoClass) {
+        TDemoInfoImpl with = ProxyStorage.run(tDemoInfoClass, (obj, method, args, proxy) -> {
             method.setAccessible(true);
             return method.invoke(obj, args);
         });

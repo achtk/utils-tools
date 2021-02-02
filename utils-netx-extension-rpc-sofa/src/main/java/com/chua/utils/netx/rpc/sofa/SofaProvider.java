@@ -37,6 +37,11 @@ public class SofaProvider implements RpcProvider {
         return null;
     }
 
+    @Override
+    public int getDefaultPort() {
+        return 12200;
+    }
+
     /**
      * 配置方法
      * @param rpcProviderConfig

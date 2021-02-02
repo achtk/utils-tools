@@ -1,6 +1,6 @@
 package com.chua.tools.example;
 
-import com.chua.tools.example.entity.TDemoInfo;
+import com.chua.tools.example.entity.TDemoInfoImpl;
 import com.chua.tools.example.utils.MockUtils;
 import com.chua.utils.tools.logger.LogUtils;
 
@@ -17,11 +17,11 @@ public class MockUtilsExample extends BaseExample {
 
     public static void main(String[] args) {
         //生成对象数据
-        testEntityData(TDemoInfo.class);
+        testEntityData(TDemoInfoImpl.class);
         //生成对象数据
         testEntityData(Map.class);
         //生成对象集合数据
-        testEntityListData(TDemoInfo.class);
+        testEntityListData(TDemoInfoImpl.class);
     }
 
     private static <T> void testEntityListData(Class<T> tClass) {

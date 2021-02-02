@@ -1,6 +1,6 @@
 package com.chua.tools.example;
 
-import com.chua.tools.example.entity.TDemoInfo;
+import com.chua.tools.example.entity.TDemoInfoImpl;
 import com.chua.utils.tools.common.FileHelper;
 import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.common.JsonHelper;
@@ -110,13 +110,13 @@ public class DataFactoryExample extends BaseExample {
     }
 
 
-    public static List<TDemoInfo> createRandomTDemoInfos() {
-        List<TDemoInfo> mock = JMockData.mock(new TypeReference<List<TDemoInfo>>() {
+    public static List<TDemoInfoImpl> createRandomTDemoInfos() {
+        List<TDemoInfoImpl> mock = JMockData.mock(new TypeReference<List<TDemoInfoImpl>>() {
         });
-        TDemoInfo tDemoInfo = new TDemoInfo();
-        tDemoInfo.setId(1);
-        tDemoInfo.setName("demo");
-        mock.add(tDemoInfo);
+        TDemoInfoImpl tDemoInfoImpl = new TDemoInfoImpl();
+        tDemoInfoImpl.setId(1);
+        tDemoInfoImpl.setName("demo");
+        mock.add(tDemoInfoImpl);
 
         return mock;
     }

@@ -1,6 +1,6 @@
 package com.chua.tools.example;
 
-import com.chua.tools.example.entity.TDemoInfo;
+import com.chua.tools.example.entity.TDemoInfoImpl;
 import com.chua.utils.tools.classes.ClassAccess;
 import com.chua.utils.tools.logger.LogUtils;
 import com.chua.utils.tools.time.Cost;
@@ -22,11 +22,11 @@ public class ClassAccessExample {
 
     public static void main(String[] args) {
 
-        List<TDemoInfo> result = new ArrayList<>();
+        List<TDemoInfoImpl> result = new ArrayList<>();
         int size = 10000;
         for (int i = 0; i < size; i++) {
-            List<TDemoInfo> tDemoInfos = JMockData.mock(new TypeReference<List<TDemoInfo>>() {});
-            result.addAll(tDemoInfos);
+            List<TDemoInfoImpl> tDemoInfoImpls = JMockData.mock(new TypeReference<List<TDemoInfoImpl>>() {});
+            result.addAll(tDemoInfoImpls);
             if(result.size() > size) {
                 break;
             }
@@ -35,9 +35,9 @@ public class ClassAccessExample {
 
         Cost cost = Cost.mill();
         AtomicInteger atomicInteger = new AtomicInteger();
-        ClassAccess<TDemoInfo> classAccess = ClassAccess.build(TDemoInfo.class);
-        for (TDemoInfo tDemoInfo : result) {
-            Object getUuid = ClassUtils.getMethodValue(tDemoInfo, "getUuid", new Object[0]);
+        ClassAccess<TDemoInfoImpl> classAccess = ClassAccess.build(TDemoInfoImpl.class);
+        for (TDemoInfoImpl tDemoInfoImpl : result) {
+            Object getUuid = ClassUtils.getMethodValue(tDemoInfoImpl, "getUuid", new Object[0]);
             //Object getUuid = classAccess.invoke(tDemoInfo, "getUuid", new Class[0]);
             LogUtils.info("{}: {}", atomicInteger.incrementAndGet(), getUuid);
         }

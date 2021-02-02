@@ -1,6 +1,6 @@
 package com.chua.tools.example;
 
-import com.chua.tools.example.entity.TDemoInfo;
+import com.chua.tools.example.entity.TDemoInfoImpl;
 import com.chua.utils.tools.tree.AvlTree;
 import com.chua.utils.tools.tree.BPlusTree;
 import com.chua.utils.tools.tree.BinaryTree;
@@ -36,17 +36,17 @@ public class TreeExample {
 
     private static void testBPlusTree() {
         System.out.println("===================================测试B+树===============================");
-        BPlusTree<Integer, TDemoInfo> bPlusTree = new BPlusTree<>(4);
+        BPlusTree<Integer, TDemoInfoImpl> bPlusTree = new BPlusTree<>(4);
 
         long time1 = System.currentTimeMillis();
 
         for (int i = 0; i < 100000; i++) {
-            TDemoInfo p = new TDemoInfo();
+            TDemoInfoImpl p = new TDemoInfoImpl();
             p.setId(i);
             bPlusTree.insert(p.getId(), p);
         }
         long time2 = System.currentTimeMillis();
-        TDemoInfo p1 = bPlusTree.find(345);
+        TDemoInfoImpl p1 = bPlusTree.find(345);
         long time3 = System.currentTimeMillis();
 
         System.out.println("插入耗时: " + (time2 - time1) + "ms");

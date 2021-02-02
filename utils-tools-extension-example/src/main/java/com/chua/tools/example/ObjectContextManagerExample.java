@@ -1,6 +1,6 @@
 package com.chua.tools.example;
 
-import com.chua.tools.example.entity.TDemoInfo;
+import com.chua.tools.example.entity.TDemoInfoImpl;
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.codec.encrypt.Encrypt;
 import com.chua.utils.tools.data.factory.DataFactory;
@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class ObjectContextManagerExample extends BaseExample {
 
-    private static TDemoInfo tDemoInfo1 = new TDemoInfo();
+    private static TDemoInfoImpl tDemoInfoImpl1 = new TDemoInfoImpl();
     private static ContextManager contextManager = new StandardContextManager();
 
     private static StrategyContextManager strategyContextManager = contextManager.createStrategyContextManager();
@@ -113,7 +113,7 @@ public class ObjectContextManagerExample extends BaseExample {
     private static void testMBeanTemplate() throws Exception {
         log.info("==================================测试MBean=============================");
         MbeanTemplate mBeanTemplate = contextManager.createMbeanTemplate();
-        mBeanTemplate.register(new TDemoInfo());
+        mBeanTemplate.register(new TDemoInfoImpl());
         log.info("注册MBean");
     }
 
@@ -127,19 +127,19 @@ public class ObjectContextManagerExample extends BaseExample {
     private static void testClassDescriptionParser() throws Exception {
         log.info("==================================测试类描述解析器=============================");
 
-        ClassDescriptionParser<TDemoInfo> parser = contextManager.createClassDescriptionParser(TDemoInfo.class);
+        ClassDescriptionParser<TDemoInfoImpl> parser = contextManager.createClassDescriptionParser(TDemoInfoImpl.class);
         log.info("类的接口: " + parser.interfaceDescription().size());
         log.info("类的超类: " + parser.superDescription().size());
         log.info("类的字段: " + parser.fieldDescription().size());
         log.info("类的方法: " + parser.methodDescription().size());
 
-        ClassModifyDescriptionParser<TDemoInfo> modifyDescriptionParser = parser.modify();
+        ClassModifyDescriptionParser<TDemoInfoImpl> modifyDescriptionParser = parser.modify();
         modifyDescriptionParser.addField("text1", String.class);
         modifyDescriptionParser.addMethod("getText1", String.class, null, "return text1;", null);
         modifyDescriptionParser.addMethod("public String getText2() {return this.uuid;}");
 
-        Class<TDemoInfo> aClass = modifyDescriptionParser.toClass().toClass();
-        ClassDescriptionParser<TDemoInfo> classDescriptionParser = contextManager.createClassDescriptionParser(aClass);
+        Class<TDemoInfoImpl> aClass = modifyDescriptionParser.toClass().toClass();
+        ClassDescriptionParser<TDemoInfoImpl> classDescriptionParser = contextManager.createClassDescriptionParser(aClass);
         log.info("***************************修改后************************");
         log.info("类的接口: " + classDescriptionParser.interfaceDescription().size());
         log.info("类的超类: " + classDescriptionParser.superDescription().size());
@@ -199,32 +199,32 @@ public class ObjectContextManagerExample extends BaseExample {
     private static void testRetryStrategy() {
         log.info("==================================测试重试策略=============================");
         RetryStrategyBuilder retryStrategyBuilder = strategyContextManager.createRetryStrategyBuilder();
-        TDemoInfo tDemoInfo = (TDemoInfo) retryStrategyBuilder.retry(TruePredicate.INSTANCE).create(tDemoInfo1);
-        log.info(tDemoInfo.getUuid());
+        TDemoInfoImpl tDemoInfoImpl = (TDemoInfoImpl) retryStrategyBuilder.retry(TruePredicate.INSTANCE).create(tDemoInfoImpl1);
+        log.info(tDemoInfoImpl.getUuid());
     }
 
     private static void testLimitStrategy() {
         log.info("==================================测试限流策略=============================");
         LimitStrategyBuilder limitStrategy = strategyContextManager.createLimitStrategy();
-        TDemoInfo tDemoInfo = (TDemoInfo) limitStrategy.limit(1).create(tDemoInfo1);
-        log.info(tDemoInfo.getUuid());
+        TDemoInfoImpl tDemoInfoImpl = (TDemoInfoImpl) limitStrategy.limit(1).create(tDemoInfoImpl1);
+        log.info(tDemoInfoImpl.getUuid());
     }
 
     private static void testProxyStrategy() {
         log.info("==================================测试策略策略=============================");
         log.info("******************************代理类******************************");
         ProxyStrategyBuilder proxyStrategyBuilder = strategyContextManager.createProxyStrategy();
-        TDemoInfo tDemoInfo = (TDemoInfo) proxyStrategyBuilder.proxy((obj, method, args, proxy) -> "1").create(TDemoInfo.class);
-        log.info(tDemoInfo.getUuid());
+        TDemoInfoImpl tDemoInfoImpl = (TDemoInfoImpl) proxyStrategyBuilder.proxy((obj, method, args, proxy) -> "1").create(TDemoInfoImpl.class);
+        log.info(tDemoInfoImpl.getUuid());
     }
 
     private static void testCacheStrategy() {
         log.info("==================================测试缓存策略=============================");
-        log.info(tDemoInfo1.getUuid());
-        log.info(tDemoInfo1.getUuid());
+        log.info(tDemoInfoImpl1.getUuid());
+        log.info(tDemoInfoImpl1.getUuid());
         CacheStrategyBuilder strategyBuilder = strategyContextManager.createCacheStrategy();
-        TDemoInfo tDemoInfo = (TDemoInfo) strategyBuilder.create(tDemoInfo1);
-        log.info(tDemoInfo.getUuid());
-        log.info(tDemoInfo.getUuid());
+        TDemoInfoImpl tDemoInfoImpl = (TDemoInfoImpl) strategyBuilder.create(tDemoInfoImpl1);
+        log.info(tDemoInfoImpl.getUuid());
+        log.info(tDemoInfoImpl.getUuid());
     }
 }

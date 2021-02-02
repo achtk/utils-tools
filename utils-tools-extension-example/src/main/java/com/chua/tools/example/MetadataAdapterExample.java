@@ -1,6 +1,6 @@
 package com.chua.tools.example;
 
-import com.chua.tools.example.entity.TDemoInfo;
+import com.chua.tools.example.entity.TDemoInfoImpl;
 import com.chua.utils.tools.classes.adaptor.AsmAdaptor;
 import com.chua.utils.tools.classes.adaptor.MetadataAdapter;
 
@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
 public class MetadataAdapterExample extends BaseExample {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-        Class<?> aClass = TDemoInfo.class;
+        Class<?> aClass = TDemoInfoImpl.class;
         String externalForm = aClass.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
         File file = new File(new StringBuilder(externalForm.replace("file:/", "").replace("target/classes", "src/main/java")).append(aClass.getName().replace(".", "/")).append(".java").toString());
         InputStream inputStream = new FileInputStream(file);

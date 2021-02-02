@@ -1,6 +1,6 @@
 package com.chua.tools.example;
 
-import com.chua.tools.example.entity.TDemoInfo;
+import com.chua.tools.example.entity.TDemoInfoImpl;
 import com.chua.tools.example.utils.MockUtils;
 import com.chua.utils.tools.order.Ordered;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +18,8 @@ import java.util.List;
 public class OrderedExample extends BaseExample{
 
     public static void main(String[] args) {
-        List<TDemoInfo> list = MockUtils.createForList(TDemoInfo.class);
-        Ordered.asc(list, TDemoInfo::getId);
+        List<TDemoInfoImpl> list = MockUtils.createForList(TDemoInfoImpl.class);
+        Ordered.asc(list, TDemoInfoImpl::getId);
         System.out.println(list);
     }
 

@@ -1,6 +1,6 @@
 package com.chua.tools.example;
 
-import com.chua.tools.example.entity.TDemoInfo;
+import com.chua.tools.example.entity.TDemoInfoImpl;
 import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.logger.LogUtils;
 
@@ -41,7 +41,7 @@ public class OperateHashMapExample extends BaseExample {
         log.info("text To List: " + operateHashMap.splitToList("text", ","));
         log.info("text To IntList: " + operateHashMap.splitToList("text", ",", Integer.class));
         log.info("time + text = " + operateHashMap.expression("time + text"));
-        log.info("TDemoInfo: " + operateHashMap.getBean(TDemoInfo.class));
+        log.info("TDemoInfo: " + operateHashMap.getBean(TDemoInfoImpl.class));
     }
 
 }

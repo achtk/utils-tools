@@ -19,7 +19,13 @@
 
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-tools-extension-office</artifactId>
+            <artifactId>utils-netx</artifactId>
+            <version>${utils-netx.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.chua</groupId>
+            <artifactId>utils-netx-extension-rpc-dubbo</artifactId>
             <version>1.0</version>
         </dependency>
 
