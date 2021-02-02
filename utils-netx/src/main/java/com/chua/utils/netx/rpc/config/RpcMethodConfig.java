@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.util.Map;
 
 /**
+ * rpc-method
  * @author CH
  * @version 1.0.0
  * @since 2020/5/30 15:48
