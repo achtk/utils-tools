@@ -38,9 +38,9 @@ public class WordTemplate implements Template {
     }
 
     @Override
-    public void writeAndClose(String template, Map<String, Object> params, String path) {
+    public void writeAndClose(String template, String outPath, Map<String, Object>... params) {
         XWPFTemplate xwpfTemplate = XWPFTemplate.compile(template).render(params);
-        try (FileOutputStream stream = new FileOutputStream(path)) {
+        try (FileOutputStream stream = new FileOutputStream(outPath)) {
             xwpfTemplate.write(stream);
         } catch (IOException e) {
             e.printStackTrace();

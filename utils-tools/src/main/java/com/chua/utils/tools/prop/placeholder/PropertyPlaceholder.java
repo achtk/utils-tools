@@ -1,6 +1,7 @@
 package com.chua.utils.tools.prop.placeholder;
 
 import com.chua.utils.tools.text.IdHelper;
+import com.chua.utils.tools.util.MapUtils;
 
 import java.util.Map;
 import java.util.Properties;
@@ -67,6 +68,17 @@ public interface PropertyPlaceholder {
      *
      * @param properties 配置
      */
+    default void addPropertySource(Map<String, Object>... properties) {
+        for (Map<String, Object> property : properties) {
+            addPropertySource(IdHelper.createUuid(), MapUtils.toProp(property));
+        }
+    }
+
+    /**
+     * 添加配置
+     *
+     * @param properties 配置
+     */
     default void addPropertySource(Map<String, Properties> properties) {
         for (Map.Entry<String, Properties> entry : properties.entrySet()) {
             addPropertySource(entry.getKey(), entry.getValue());
@@ -86,10 +98,34 @@ public interface PropertyPlaceholder {
     /**
      * 添加配置
      *
+     * @param name         索引
+     * @param defaultValue 默认值
+     * @return Object
+     */
+    default String getValue(String name, String defaultValue) {
+        Object placeholder = placeholder(get(name));
+        return null == placeholder ? defaultValue : placeholder.toString();
+    }
+
+    /**
+     * 添加配置
+     *
      * @param value 数据
      * @return Object
      */
     Object placeholder(Object value);
+
+    /**
+     * 添加配置
+     *
+     * @param value        数据
+     * @param defaultValue 默认值
+     * @return Object
+     */
+    default String placeholder(Object value, String defaultValue) {
+        Object placeholder = placeholder(value);
+        return null == placeholder ? defaultValue : placeholder.toString();
+    }
 
 
     /**

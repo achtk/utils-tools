@@ -1,6 +1,7 @@
 package com.chua.utils.tools.office.pdf.template;
 
 import com.chua.utils.tools.function.Template;
+import com.chua.utils.tools.util.ArrayUtils;
 import com.chua.utils.tools.util.ClassUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.Range;
@@ -38,15 +39,15 @@ public class PdfTemplate implements Template {
     }
 
     @Override
-    public void writeAndClose(String template, Map<String, Object> params, String path) {
-        try (FileOutputStream fos = new FileOutputStream(path);
+    public void writeAndClose(String template, String outPath, Map<String, Object>... params) {
+        try (FileOutputStream fos = new FileOutputStream(outPath);
              ByteArrayOutputStream bos = new ByteArrayOutputStream();) {
             PdfReader pdfReader = new PdfReader(template);
             PdfStamper pdfStamper = new PdfStamper(pdfReader, bos);
             //替换内容域
-            this.renderContent(pdfReader, pdfStamper, params);
+            this.renderContent(pdfReader, pdfStamper, ArrayUtils.firstElement(params));
             //替换表单域
-            this.renderForm(pdfStamper, params);
+            this.renderForm(pdfStamper, ArrayUtils.firstElement(params));
 
             //如果为false那么生成的PDF文件还能编辑，一定要设为true
             pdfStamper.setFormFlattening(true);
@@ -63,6 +64,7 @@ public class PdfTemplate implements Template {
             e.printStackTrace();
         }
     }
+
 
     /**
      * 替换内容

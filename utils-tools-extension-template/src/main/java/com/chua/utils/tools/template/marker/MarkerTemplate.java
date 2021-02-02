@@ -1,6 +1,7 @@
 package com.chua.utils.tools.template.marker;
 
 import com.chua.utils.tools.function.Template;
+import com.chua.utils.tools.util.ArrayUtils;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 
@@ -12,7 +13,8 @@ import java.util.Map;
 
 /**
  * 基于[freemarker]统一接口 - 文本模板
- *  <p>参见 [freemarker]语法</p>
+ * <p>参见 [freemarker]语法</p>
+ *
  * @author CH
  * @version 1.0.0
  * @since 2021/1/29
@@ -38,10 +40,10 @@ public class MarkerTemplate implements Template {
     }
 
     @Override
-    public void writeAndClose(String template, Map<String, Object> params, String path) {
-        try (FileWriter fileWriter = new FileWriter(new File(path))) {
+    public void writeAndClose(String template, String outPath, Map<String, Object>... params) {
+        try (FileWriter fileWriter = new FileWriter(new File(outPath))) {
             freemarker.template.Template template1 = new freemarker.template.Template(DEFAULT, template, CONFIGURATION);
-            template1.process(params, fileWriter);
+            template1.process(ArrayUtils.firstElement(params), fileWriter);
         } catch (IOException | TemplateException e) {
             e.printStackTrace();
         }

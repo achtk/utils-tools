@@ -15,6 +15,6 @@ public class TemplateExample {
 
     public static void main(String[] args) {
         Template pdfTemplate = new PdfTemplate();
-        pdfTemplate.writeAndClose("E:/1/1.pdf", OperateHashMap.create("test", 2333), "E:/1/2.pdf");
+        pdfTemplate.writeAndClose("E:/1/1.pdf", "E:/1/2.pdf", OperateHashMap.create("test", 2333));
     }
 }

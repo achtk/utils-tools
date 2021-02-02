@@ -3,6 +3,7 @@ package com.chua.utils.tools.manager.parser.description;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.converter.TypeConverter;
+import com.google.common.base.Strings;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -56,6 +57,31 @@ public class FieldDescription<T> {
      */
     private Annotation[] annotations;
 
+    public FieldDescription(T entity, String fieldName) {
+        this.entity = entity;
+        this.field = calcField(entity, fieldName);
+        this.setField(field);
+    }
+
+    /**
+     * 计算字段
+     *
+     * @param entity    实体
+     * @param fieldName 字段名称
+     * @return 字段
+     */
+    private Field calcField(T entity, String fieldName) {
+        if (null == entity || Strings.isNullOrEmpty(fieldName)) {
+            return null;
+        }
+        Class<?> aClass = entity.getClass();
+        try {
+            return aClass.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
+
+    }
 
     public FieldDescription(T entity, Field field) {
         this.entity = entity;

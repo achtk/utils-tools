@@ -25,8 +25,8 @@ public interface Template {
      *
      * @param template 模板
      * @param params   参数
-     * @param path     路径
+     * @param outPath  输出路径
      */
-    void writeAndClose(String template, Map<String, Object> params, String path);
+    void writeAndClose(String template, String outPath, Map<String, Object>... params);
 
 }

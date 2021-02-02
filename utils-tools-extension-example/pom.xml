@@ -19,7 +19,7 @@
 
         <dependency>
             <groupId>com.chua</groupId>
-            <artifactId>utils-netx-extension-calcite</artifactId>
+            <artifactId>utils-tools-extension-office</artifactId>
             <version>1.0</version>
         </dependency>
 
@@ -39,12 +39,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.chua</groupId>
-            <artifactId>utils-tools-schedule</artifactId>
-            <version>1.0</version>
         </dependency>
 
         <dependency>
