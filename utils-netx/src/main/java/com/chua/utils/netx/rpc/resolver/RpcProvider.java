@@ -17,6 +17,12 @@ public interface RpcProvider<T> {
      * @param rpcProviderConfig 配置
      * @return T
      */
-    T provider(RpcProviderConfig rpcProviderConfig);
+    T provider(RpcProviderConfig<T> rpcProviderConfig);
 
+    /**
+     * 默认端口
+     *
+     * @return 默认端口
+     */
+    int getDefaultPort();
 }

@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 
 /**
  * 注册中心
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/5/30 13:52
@@ -35,7 +36,6 @@ public class RpcRegistryConfig {
     }
 
     /**
-     *
      * @return
      */
     public static RpcRegistryConfig newRegistry() {
@@ -43,21 +43,36 @@ public class RpcRegistryConfig {
     }
 
     /**
+     * 新建注册器
      *
-     * @param protocol
-     * @param address
-     * @return
+     * @param protocol 协议
+     * @param address  地址
+     * @return this
      */
     public static RpcRegistryConfig newRegistry(String protocol, String address) {
         return new RpcRegistryConfig(protocol, address);
     }
+
     /**
+     * zookeeper
      *
-     * @param address
-     * @return
+     * @param address 地址
+     * @return this
      */
     public static RpcRegistryConfig newZookeeper(String address) {
         RpcRegistryConfig rpcRegistryConfig = new RpcRegistryConfig("zookeeper");
+        rpcRegistryConfig.setAddress(address);
+        return rpcRegistryConfig;
+    }
+
+    /**
+     * multicast
+     *
+     * @param address 地址
+     * @return this
+     */
+    public static RpcRegistryConfig newMulticast(String address) {
+        RpcRegistryConfig rpcRegistryConfig = new RpcRegistryConfig("multicast");
         rpcRegistryConfig.setAddress(address);
         return rpcRegistryConfig;
     }

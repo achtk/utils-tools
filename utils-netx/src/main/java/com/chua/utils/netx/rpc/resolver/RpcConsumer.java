@@ -16,5 +16,12 @@ public interface RpcConsumer<T> {
      * @param rpcConsumerConfig 客户端配置
      * @return T
      */
-    public T consumer(RpcConsumerConfig<T> rpcConsumerConfig);
+    T consumer(RpcConsumerConfig<T> rpcConsumerConfig);
+
+    /**
+     * 默认端口
+     *
+     * @return 默认端口
+     */
+    int getDefaultPort();
 }

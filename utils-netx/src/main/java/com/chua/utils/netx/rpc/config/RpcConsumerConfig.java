@@ -17,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class RpcConsumerConfig<T> {
+public class RpcConsumerConfig<T> extends RpcCommonConfig<T> {
     /**
      * 分组
      */
@@ -44,10 +44,6 @@ public class RpcConsumerConfig<T> {
      * @see
      */
     private String protocol = "rmi";
-    /**
-     * 直连调用地址
-     */
-    private String directUrl;
 
     /**
      * 是否泛化调用
@@ -86,11 +82,18 @@ public class RpcConsumerConfig<T> {
      */
     private RpcApplicationConfig rpcApplicationConfig;
 
+    public static <T> RpcConsumerConfig<T> of(String id, Class<? super T> tClass) {
+        RpcConsumerConfig<T> rpcConsumerConfig = new RpcConsumerConfig<>();
+        rpcConsumerConfig.setInterfaces(tClass);
+        rpcConsumerConfig.setId(id);
+        return rpcConsumerConfig;
+    }
+
     /**
-     * @param rpcRegistryConfig
-     * @return
+     * @param rpcRegistryConfig 注册器
+     * @return this
      */
-    public RpcConsumerConfig addRegistry(RpcRegistryConfig rpcRegistryConfig) {
+    public RpcConsumerConfig<T> addRegistry(RpcRegistryConfig rpcRegistryConfig) {
         if (null == rpcRegistryConfig) {
             return this;
         }
@@ -103,10 +106,10 @@ public class RpcConsumerConfig<T> {
     }
 
     /**
-     * @param rpcProtocolConfig
-     * @return
+     * @param rpcProtocolConfig 协议
+     * @return this
      */
-    public RpcConsumerConfig addProtocol(RpcProtocolConfig rpcProtocolConfig) {
+    public RpcConsumerConfig<T> addProtocol(RpcProtocolConfig rpcProtocolConfig) {
         if (null == rpcProtocolConfig) {
             return this;
         }
@@ -119,9 +122,12 @@ public class RpcConsumerConfig<T> {
     }
 
     /**
-     * @return
+     * 新建
+     *
+     * @return this
      */
-    public static RpcConsumerConfig newConsumer() {
-        return new RpcConsumerConfig();
+    public static <T> RpcConsumerConfig<T> newConsumer() {
+        return new RpcConsumerConfig<>();
     }
+
 }

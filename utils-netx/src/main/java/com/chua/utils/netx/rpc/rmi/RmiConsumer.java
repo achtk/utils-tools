@@ -24,4 +24,9 @@ public class RmiConsumer<T> implements RpcConsumer<T> {
         }
         return null;
     }
+
+    @Override
+    public int getDefaultPort() {
+        return 1099;
+    }
 }
