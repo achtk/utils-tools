@@ -1,5 +1,6 @@
 package com.chua.tools.example.entity;
 
+
 /**
  * @author CH
  * @version 1.0.0

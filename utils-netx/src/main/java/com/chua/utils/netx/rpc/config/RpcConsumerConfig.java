@@ -82,10 +82,35 @@ public class RpcConsumerConfig<T> extends RpcCommonConfig<T> {
      */
     private RpcApplicationConfig rpcApplicationConfig;
 
+    /**
+     * 初始化
+     *
+     * @param id     id
+     * @param tClass 接口
+     * @param <T>    类型
+     * @return this
+     */
     public static <T> RpcConsumerConfig<T> of(String id, Class<? super T> tClass) {
         RpcConsumerConfig<T> rpcConsumerConfig = new RpcConsumerConfig<>();
         rpcConsumerConfig.setInterfaces(tClass);
         rpcConsumerConfig.setId(id);
+        return rpcConsumerConfig;
+    }
+
+    /**
+     * 初始化
+     *
+     * @param id       id
+     * @param protocol 协议
+     * @param tClass   接口
+     * @param <T>      类型
+     * @return this
+     */
+    public static <T> RpcConsumerConfig<T> of(String id, String protocol, Class<? super T> tClass) {
+        RpcConsumerConfig<T> rpcConsumerConfig = new RpcConsumerConfig<>();
+        rpcConsumerConfig.setInterfaces(tClass);
+        rpcConsumerConfig.setId(id);
+        rpcConsumerConfig.setProtocol(protocol);
         return rpcConsumerConfig;
     }
 

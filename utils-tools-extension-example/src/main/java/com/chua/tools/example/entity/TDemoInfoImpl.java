@@ -4,6 +4,10 @@ import com.chua.utils.tools.text.IdHelper;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 import java.util.Date;
 
 /**
@@ -12,6 +16,7 @@ import java.util.Date;
  * @since 2020/10/28
  */
 @Data
+@Path("users")
 @Accessors(chain = true)
 public class TDemoInfoImpl implements TDemoInfo {
     public Integer id;
@@ -22,6 +27,9 @@ public class TDemoInfoImpl implements TDemoInfo {
     public String test;
     private String uuid = IdHelper.createUuid();
     @Override
+    @POST
+    @Path("register")
+    @Consumes({MediaType.APPLICATION_JSON})
     public String getUuid() {
         return IdHelper.createUuid();
     }

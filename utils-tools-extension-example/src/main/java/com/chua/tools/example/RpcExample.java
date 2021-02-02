@@ -36,7 +36,7 @@ public class RpcExample {
      */
     private static void testConsumer() {
         RpcConsumer<TDemoInfoImpl> rpcConsumer = new DubboConsumer<>();
-        TDemoInfo consumer = rpcConsumer.consumer(RpcConsumerConfig.of("demo", TDemoInfo.class));
+        TDemoInfo consumer = rpcConsumer.consumer(RpcConsumerConfig.of("demo", "rest", TDemoInfo.class));
         System.out.println(consumer.getUuid());
     }
 
@@ -45,6 +45,6 @@ public class RpcExample {
      */
     private static void testProducer() {
         RpcProvider<TDemoInfoImpl> rpcProvider = new DubboProvider();
-        rpcProvider.provider(RpcProviderConfig.of("demo", TDemoInfo.class, new TDemoInfoImpl()));
+        rpcProvider.provider(RpcProviderConfig.of("demo", TDemoInfo.class, new TDemoInfoImpl()).addRpcServerConfig("rest", 9090));
     }
 }

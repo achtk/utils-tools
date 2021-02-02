@@ -73,6 +73,15 @@ public class RpcProviderConfig<T> extends RpcCommonConfig<T> {
      */
     private RpcApplicationConfig rpcApplicationConfig = new RpcApplicationConfig();
 
+    /**
+     * 初始化
+     *
+     * @param id         id
+     * @param interfaces 接口
+     * @param ref        实体
+     * @param <T>        类型
+     * @return this
+     */
     public static <T> RpcProviderConfig<T> of(String id, Class<? super T> interfaces, T ref) {
         RpcProviderConfig<T> rpcProviderConfig = new RpcProviderConfig<>();
         rpcProviderConfig.setRef(ref);
@@ -84,10 +93,10 @@ public class RpcProviderConfig<T> extends RpcCommonConfig<T> {
     /**
      * 添加注册中心
      *
-     * @param protocol
-     * @param address
+     * @param protocol 协议
+     * @param address  地址
      */
-    public void addRegisterConfig(final String protocol, final String address) {
+    public RpcProviderConfig<T> addRegisterConfig(final String protocol, final String address) {
         RpcRegistryConfig rpcRegistryConfig = new RpcRegistryConfig();
         rpcRegistryConfig.setProtocol(protocol);
         rpcRegistryConfig.setAddress(address);
@@ -95,6 +104,7 @@ public class RpcProviderConfig<T> extends RpcCommonConfig<T> {
             rpcRegistryConfigs = new ArrayList<>();
         }
         rpcRegistryConfigs.add(rpcRegistryConfig);
+        return this;
     }
 
     /**
@@ -165,8 +175,8 @@ public class RpcProviderConfig<T> extends RpcCommonConfig<T> {
      * @param protocol 协议
      * @param port     端口
      */
-    public void addRpcServerConfig(final String protocol, final int port) {
-        addRpcServerConfig(protocol, null, port);
+    public RpcProviderConfig<T> addRpcServerConfig(final String protocol, final int port) {
+        return addRpcServerConfig(protocol, null, port);
     }
 
     /**
@@ -176,7 +186,7 @@ public class RpcProviderConfig<T> extends RpcCommonConfig<T> {
      * @param host     地址
      * @param port     端口
      */
-    public void addRpcServerConfig(final String protocol, final String host, final int port) {
+    public RpcProviderConfig<T> addRpcServerConfig(final String protocol, final String host, final int port) {
         RpcProtocolConfig rpcProtocolConfig = new RpcProtocolConfig();
         rpcProtocolConfig.setProtocol(protocol);
         rpcProtocolConfig.setPort(port);
@@ -187,6 +197,7 @@ public class RpcProviderConfig<T> extends RpcCommonConfig<T> {
             rpcProtocolConfigs = new ArrayList<>();
         }
         rpcProtocolConfigs.add(rpcProtocolConfig);
+        return this;
     }
 
     /**
