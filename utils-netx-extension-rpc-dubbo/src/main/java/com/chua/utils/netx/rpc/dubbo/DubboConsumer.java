@@ -12,6 +12,7 @@ import org.apache.dubbo.config.*;
 import java.util.*;
 
 /**
+ * rpc-consumer
  * @author CH
  * @version 1.0.0
  * @since 2020/5/30 14:42

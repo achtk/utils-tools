@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
+ * rpc-consumer
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/5/30 15:26
@@ -23,7 +25,7 @@ import java.util.UUID;
 public class SofaConsumer<T> implements RpcConsumer<T> {
 
     @Override
-    public T consumer(RpcConsumerConfig rpcConsumerConfig) {
+    public T consumer(RpcConsumerConfig<T> rpcConsumerConfig) {
 
         ConsumerConfig<T> consumerConfig = createConsumerConfig(rpcConsumerConfig);
         //配置注册中心
@@ -39,10 +41,10 @@ public class SofaConsumer<T> implements RpcConsumer<T> {
     /**
      * 配置方法
      *
-     * @param rpcConsumerConfig
-     * @param consumerConfig
+     * @param consumerConfig    消费配置
+     * @param rpcConsumerConfig 消费配置
      */
-    private void doConfigMethodsConfigure(RpcConsumerConfig rpcConsumerConfig, ConsumerConfig consumerConfig) {
+    private void doConfigMethodsConfigure(RpcConsumerConfig<T> rpcConsumerConfig, ConsumerConfig<T> consumerConfig) {
         List<RpcMethodConfig> rpcMethodConfig = rpcConsumerConfig.getRpcMethodConfigs();
         if (null != rpcMethodConfig && rpcMethodConfig.size() > 0) {
 
@@ -70,10 +72,10 @@ public class SofaConsumer<T> implements RpcConsumer<T> {
     /**
      * 配置应用
      *
-     * @param rpcConsumerConfig
-     * @param consumerConfig
+     * @param consumerConfig    消费配置
+     * @param rpcConsumerConfig 消费配置
      */
-    private void doConfigApplicationConfigure(RpcConsumerConfig rpcConsumerConfig, ConsumerConfig consumerConfig) {
+    private void doConfigApplicationConfigure(RpcConsumerConfig<T> rpcConsumerConfig, ConsumerConfig<T> consumerConfig) {
         RpcApplicationConfig rpcApplicationConfig = rpcConsumerConfig.getRpcApplicationConfig();
         ApplicationConfig applicationConfig = new ApplicationConfig();
         if (null != rpcApplicationConfig) {
@@ -90,10 +92,10 @@ public class SofaConsumer<T> implements RpcConsumer<T> {
     /**
      * 创建注册中心
      *
-     * @param consumerConfig
-     * @param rpcConsumerConfig
+     * @param consumerConfig    消费配置
+     * @param rpcConsumerConfig 消费配置
      */
-    private void doConfigRegistryConfigure(RpcConsumerConfig rpcConsumerConfig, ConsumerConfig consumerConfig) {
+    private void doConfigRegistryConfigure(RpcConsumerConfig<T> rpcConsumerConfig, ConsumerConfig<T> consumerConfig) {
         List<RpcRegistryConfig> rpcRegistryConfigs = rpcConsumerConfig.getRpcRegistryConfigs();
         if (null != rpcRegistryConfigs) {
             List<RegistryConfig> registryConfigs = new ArrayList<>(rpcRegistryConfigs.size());
@@ -112,11 +114,11 @@ public class SofaConsumer<T> implements RpcConsumer<T> {
     /**
      * 创建服务
      *
-     * @param rpcConsumerConfig
-     * @return
+     * @param rpcConsumerConfig 消费配置
+     * @return this
      */
-    private ConsumerConfig createConsumerConfig(RpcConsumerConfig rpcConsumerConfig) {
-        ConsumerConfig consumerConfig = new ConsumerConfig();
+    private ConsumerConfig<T> createConsumerConfig(RpcConsumerConfig<T> rpcConsumerConfig) {
+        ConsumerConfig<T> consumerConfig = new ConsumerConfig<>();
         consumerConfig.setCheck(rpcConsumerConfig.isCheck());
         consumerConfig.setGeneric(rpcConsumerConfig.isGeneric());
         consumerConfig.setConnectTimeout(rpcConsumerConfig.getTimeout());
