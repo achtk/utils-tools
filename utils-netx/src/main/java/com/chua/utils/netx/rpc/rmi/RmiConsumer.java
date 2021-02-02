@@ -1,7 +1,7 @@
 package com.chua.utils.netx.rpc.rmi;
 
 import com.chua.utils.netx.rpc.config.RpcConsumerConfig;
-import com.chua.utils.netx.rpc.resolver.IRpcConsumer;
+import com.chua.utils.netx.rpc.resolver.RpcConsumer;
 
 import java.rmi.Naming;
 
@@ -12,7 +12,7 @@ import java.rmi.Naming;
  * @className RmiConsumer
  * @since 2020/8/1 1:57
  */
-public class RmiConsumer<T> implements IRpcConsumer<T> {
+public class RmiConsumer<T> implements RpcConsumer<T> {
 
     @Override
     public T consumer(RpcConsumerConfig<T> rpcConsumerConfig) {

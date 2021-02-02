@@ -4,7 +4,7 @@ import com.chua.utils.netx.rpc.config.RpcApplicationConfig;
 import com.chua.utils.netx.rpc.config.RpcConsumerConfig;
 import com.chua.utils.netx.rpc.config.RpcMethodConfig;
 import com.chua.utils.netx.rpc.config.RpcRegistryConfig;
-import com.chua.utils.netx.rpc.resolver.IRpcConsumer;
+import com.chua.utils.netx.rpc.resolver.RpcConsumer;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import org.apache.dubbo.config.*;
@@ -18,7 +18,7 @@ import java.util.UUID;
  * @version 1.0.0
  * @since 2020/5/30 14:42
  */
-public class DubboConsumer<T> implements IRpcConsumer<T> {
+public class DubboConsumer<T> implements RpcConsumer<T> {
 
     @Override
     public T consumer(RpcConsumerConfig<T> rpcConsumerConfig) {

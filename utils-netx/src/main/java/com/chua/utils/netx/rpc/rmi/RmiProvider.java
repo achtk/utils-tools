@@ -1,9 +1,9 @@
 package com.chua.utils.netx.rpc.rmi;
 
-import com.chua.utils.netx.rpc.adaptor.IAdaptor;
+import com.chua.utils.netx.rpc.adaptor.Adaptor;
 import com.chua.utils.netx.rpc.adaptor.RmiAdaptor;
 import com.chua.utils.netx.rpc.config.RpcProviderConfig;
-import com.chua.utils.netx.rpc.resolver.IRpcProvider;
+import com.chua.utils.netx.rpc.resolver.RpcProvider;
 
 import java.rmi.Naming;
 import java.rmi.Remote;
@@ -11,7 +11,6 @@ import java.rmi.registry.LocateRegistry;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_COLON;
-import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_DOT;
 
 /**
  * @author CH
@@ -19,9 +18,9 @@ import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_DOT;
  * @className RmiProvider
  * @since 2020/8/1 2:05
  */
-public class RmiProvider implements IRpcProvider {
+public class RmiProvider implements RpcProvider {
 
-    private static final IAdaptor ADAPTOR = new RmiAdaptor();
+    private static final Adaptor ADAPTOR = new RmiAdaptor();
 
     private static final AtomicBoolean RUNING = new AtomicBoolean(false);
 

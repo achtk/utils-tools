@@ -2,7 +2,7 @@ package com.chua.utils.netx.rpc.sofa;
 
 import com.alipay.sofa.rpc.config.*;
 import com.chua.utils.netx.rpc.config.*;
-import com.chua.utils.netx.rpc.resolver.IRpcProvider;
+import com.chua.utils.netx.rpc.resolver.RpcProvider;
 import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.UUID;
  * @version 1.0.0
  * @since 2020/5/30 14:24
  */
-public class SofaProvider implements IRpcProvider {
+public class SofaProvider implements RpcProvider {
 
 
     @Override

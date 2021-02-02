@@ -14,7 +14,7 @@ import java.rmi.server.UnicastRemoteObject;
  * @className RmiAdaptor
  * @since 2020/8/1 2:02
  */
-public class RmiAdaptor implements IAdaptor {
+public class RmiAdaptor implements Adaptor {
 
     private static final String SUFFIX = "$rmi";
 

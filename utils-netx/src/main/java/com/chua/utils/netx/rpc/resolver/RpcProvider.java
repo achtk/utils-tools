@@ -10,7 +10,7 @@ import com.chua.utils.netx.rpc.config.RpcProviderConfig;
  * @version 1.0.0
  * @since 2020/5/30 14:14
  */
-public interface IRpcProvider<T> {
+public interface RpcProvider<T> {
     /**
      * 暴露服务
      *

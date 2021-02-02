@@ -8,7 +8,7 @@ import com.chua.utils.netx.rpc.config.RpcApplicationConfig;
 import com.chua.utils.netx.rpc.config.RpcConsumerConfig;
 import com.chua.utils.netx.rpc.config.RpcMethodConfig;
 import com.chua.utils.netx.rpc.config.RpcRegistryConfig;
-import com.chua.utils.netx.rpc.resolver.IRpcConsumer;
+import com.chua.utils.netx.rpc.resolver.RpcConsumer;
 import com.google.common.base.Strings;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.UUID;
  * @version 1.0.0
  * @since 2020/5/30 15:26
  */
-public class SofaConsumer<T> implements IRpcConsumer<T> {
+public class SofaConsumer<T> implements RpcConsumer<T> {
 
     @Override
     public T consumer(RpcConsumerConfig rpcConsumerConfig) {

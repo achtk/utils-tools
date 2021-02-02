@@ -1,7 +1,7 @@
 package com.chua.utils.netx.rpc.dubbo;
 
 import com.chua.utils.netx.rpc.config.*;
-import com.chua.utils.netx.rpc.resolver.IRpcProvider;
+import com.chua.utils.netx.rpc.resolver.RpcProvider;
 import com.google.common.base.Preconditions;
 import org.apache.dubbo.config.*;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
  * @version 1.0.0
  * @since 2020/5/30 14:30
  */
-public class DubboProvider implements IRpcProvider {
+public class DubboProvider implements RpcProvider {
 
     @Override
     public Object provider(final RpcProviderConfig rpcProviderConfig) {

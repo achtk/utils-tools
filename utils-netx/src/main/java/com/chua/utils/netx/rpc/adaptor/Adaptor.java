@@ -8,7 +8,7 @@ package com.chua.utils.netx.rpc.adaptor;
  * @ClassName IAdaptor.java
  * @createTime 2020/08/01 02:01:00
  */
-public interface IAdaptor {
+public interface Adaptor {
     /**
      * 代理类
      *

@@ -2,8 +2,8 @@ package com.chua.utils.netx.rpc.sofa;
 
 import com.chua.utils.netx.rpc.config.RpcConsumerConfig;
 import com.chua.utils.netx.rpc.config.RpcProviderConfig;
-import com.chua.utils.netx.rpc.resolver.IRpcConsumer;
-import com.chua.utils.netx.rpc.resolver.IRpcProvider;
+import com.chua.utils.netx.rpc.resolver.RpcConsumer;
+import com.chua.utils.netx.rpc.resolver.RpcProvider;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,11 +18,11 @@ public class Rpc {
     /**
      * rpc服务消费者
      */
-    private IRpcConsumer rpcConsumer;
+    private RpcConsumer rpcConsumer;
     /**
      * rpc服务提供者
      */
-    private IRpcProvider rpcProvider;
+    private RpcProvider rpcProvider;
 
     /**
      * 提供服务

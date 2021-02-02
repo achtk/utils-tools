@@ -9,7 +9,7 @@ import com.chua.utils.netx.rpc.config.RpcConsumerConfig;
  * @version 1.0.0
  * @since 2020/5/30 14:14
  */
-public interface IRpcConsumer<T> {
+public interface RpcConsumer<T> {
 
     /**
      * 胜场服务
