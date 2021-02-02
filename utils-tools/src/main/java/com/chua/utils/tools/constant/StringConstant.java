@@ -216,6 +216,10 @@ public class StringConstant {
      */
     public static final String GMT = "GMT";
     /**
+     * 映射
+     */
+    public static final String MAPPER = "->";
+    /**
      *
      */
     private static final String SYMBOL_FILE = "file";

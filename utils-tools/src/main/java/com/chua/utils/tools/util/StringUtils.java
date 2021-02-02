@@ -1,8 +1,12 @@
 package com.chua.utils.tools.util;
 
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.tuple.ImmutablePair;
+import com.chua.utils.tools.tuple.Pair;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -357,5 +361,22 @@ public class StringUtils extends StringHelper {
                         "Locale part \"" + localePart + "\" contains invalid characters");
             }
         }
+    }
+
+    /**
+     * 解壳
+     *
+     * @param value  值
+     * @param mapper 映射
+     */
+    public static Pair<String, String> unpack(String value, String mapper) {
+        if (Strings.isNullOrEmpty(value) || Strings.isNullOrEmpty(mapper)) {
+            return ImmutablePair.of(value, null);
+        }
+        List<String> values = Splitter.on(mapper).trimResults().omitEmptyStrings().limit(2).splitToList(value);
+        if (null == values || values.size() < 2) {
+            return ImmutablePair.of(value, null);
+        }
+        return ImmutablePair.of(values.get(0), values.get(1));
     }
 }
