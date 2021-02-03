@@ -4,10 +4,9 @@ import com.github.rholder.retry.Retryer;
 import com.github.rholder.retry.RetryerBuilder;
 import com.github.rholder.retry.StopStrategies;
 import com.github.rholder.retry.WaitStrategies;
-import com.google.common.base.Predicate;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -20,7 +19,7 @@ import java.util.function.Supplier;
 public class RetryStorage {
     private static final int RETRY = 3;
     private static final TimeUnit UNIT = TimeUnit.MILLISECONDS;
-    private static final long TIMEOUT = 0_000L;
+    private static final long TIMEOUT = 0L;
 
     /**
      * 执行结果{固定等待时长策略}重试
@@ -57,12 +56,7 @@ public class RetryStorage {
      * @return 结果
      */
     public static <Result> Result run(Supplier<Result> supplier, int retry, Class<Throwable> exception) {
-        return run(supplier, retry, TIMEOUT, new Predicate<Throwable>() {
-            @Override
-            public boolean apply(@Nullable Throwable throwable) {
-                return exception.equals(throwable);
-            }
-        });
+        return run(supplier, retry, TIMEOUT, throwable -> exception.isAssignableFrom(throwable.getClass()));
     }
 
     /**
@@ -81,7 +75,7 @@ public class RetryStorage {
         builder.withWaitStrategy(WaitStrategies.fixedWait(timeout, UNIT));
 
         if (predicate != null) {
-            builder.retryIfException(predicate);
+            builder.retryIfException(predicate::test);
         }
         return build(supplier, builder);
     }
@@ -127,7 +121,7 @@ public class RetryStorage {
         builder.withWaitStrategy(WaitStrategies.fixedWait(timeout, UNIT));
 
         if (predicate != null) {
-            builder.retryIfResult(predicate);
+            builder.retryIfResult(predicate::test);
         }
         return build(supplier, builder);
     }
@@ -187,7 +181,7 @@ public class RetryStorage {
         builder.withWaitStrategy(WaitStrategies.incrementingWait(timeout, UNIT, increment, UNIT));
 
         if (predicate != null) {
-            builder.retryIfException(predicate);
+            builder.retryIfException(predicate::test);
         }
         return build(supplier, builder);
     }
@@ -248,7 +242,7 @@ public class RetryStorage {
         builder.withWaitStrategy(WaitStrategies.incrementingWait(timeout, UNIT, increment, UNIT));
 
         if (predicate != null) {
-            builder.retryIfResult(predicate);
+            builder.retryIfResult(predicate::test);
         }
         return build(supplier, builder);
     }
@@ -285,7 +279,7 @@ public class RetryStorage {
         builder.withWaitStrategy(WaitStrategies.randomWait(minimumTime, UNIT, maximumTime, UNIT));
 
         if (predicate != null) {
-            builder.retryIfException(predicate);
+            builder.retryIfException(predicate::test);
         }
         return build(supplier, builder);
     }
@@ -321,7 +315,7 @@ public class RetryStorage {
         builder.withWaitStrategy(WaitStrategies.randomWait(minimumTime, UNIT, maximumTime, UNIT));
 
         if (predicate != null) {
-            builder.retryIfResult(predicate);
+            builder.retryIfResult(predicate::test);
         }
         return build(supplier, builder);
     }
@@ -356,7 +350,7 @@ public class RetryStorage {
         builder.withWaitStrategy(WaitStrategies.exponentialWait(maximumTime, UNIT));
 
         if (predicate != null) {
-            builder.retryIfResult(predicate);
+            builder.retryIfResult(predicate::test);
         }
         return build(supplier, builder);
     }
@@ -390,7 +384,7 @@ public class RetryStorage {
         builder.withWaitStrategy(WaitStrategies.exponentialWait(maximumTime, UNIT));
 
         if (predicate != null) {
-            builder.retryIfException(predicate);
+            builder.retryIfException(predicate::test);
         }
         return build(supplier, builder);
     }
