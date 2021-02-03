@@ -1,6 +1,5 @@
 package com.chua.utils.tools.storage;
 
-import com.chua.utils.tools.function.ScheduleJob;
 import com.chua.utils.tools.time.schedule.CronScheduleOperations;
 import com.chua.utils.tools.time.schedule.JdkCronScheduleTemplate;
 import com.chua.utils.tools.time.schedule.JdkSimpleScheduleTemplate;
@@ -41,7 +40,7 @@ public class TimerStorage {
      * @param cron     cron
      */
     public static void run(final Consumer<String> consumer, final String group, final String cron) {
-        CronScheduleOperations cronScheduleTemplate;
+        CronScheduleOperations<?> cronScheduleTemplate;
         if (ClassUtils.isPresent(QUARTZ_CRON)) {
             cronScheduleTemplate = ClassUtils.forObject(QUARTZ_CRON);
         } else {
@@ -49,12 +48,7 @@ public class TimerStorage {
         }
 
         try {
-            cronScheduleTemplate.addCronJob(group, cron, new ScheduleJob() {
-                @Override
-                public void execute() throws Exception {
-                    consumer.accept(group);
-                }
-            });
+            cronScheduleTemplate.addCronJob(group, cron, () -> consumer.accept(group));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -78,7 +72,7 @@ public class TimerStorage {
      * @param time     time
      */
     public static void doWithSimple(final Consumer<String> consumer, final String group, final int time) {
-        SimpleScheduleOperations scheduleOperations;
+        SimpleScheduleOperations<?> scheduleOperations;
         if (ClassUtils.isPresent(QUARTZ_SIMPLE)) {
             scheduleOperations = ClassUtils.forObject(QUARTZ_SIMPLE);
         } else {
@@ -86,12 +80,7 @@ public class TimerStorage {
         }
 
         try {
-            scheduleOperations.addSimpleJob(group, time, TimeUnit.SECONDS, new ScheduleJob() {
-                @Override
-                public void execute() throws Exception {
-                    consumer.accept(group);
-                }
-            });
+            scheduleOperations.addSimpleJob(group, time, TimeUnit.SECONDS, () -> consumer.accept(group));
         } catch (Exception e) {
             e.printStackTrace();
         }

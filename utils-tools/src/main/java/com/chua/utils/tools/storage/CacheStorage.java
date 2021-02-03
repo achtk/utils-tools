@@ -24,6 +24,7 @@ public class CacheStorage {
      * @param <Result>      结果类型
      * @return 结果
      */
+    @SuppressWarnings("ALL")
     public static <Result> Result run(Supplier<Result> supplier, Object cacheKey, CacheProvider cacheProvider) {
         if (ObjectUtils.isAnyEmpty(cacheKey, cacheProvider, supplier)) {
             return null == supplier ? null : supplier.get();
@@ -46,6 +47,7 @@ public class CacheStorage {
      * @param <Result>      结果类型
      * @return 结果
      */
+    @SuppressWarnings("ALL")
     public static <Result> Result run(Supplier<Result> supplier, Object cacheKey, Map<? super Object, Object> cacheProvider) {
         if (ObjectUtils.isAnyEmpty(cacheKey, cacheProvider, supplier)) {
             return null == supplier ? null : supplier.get();
