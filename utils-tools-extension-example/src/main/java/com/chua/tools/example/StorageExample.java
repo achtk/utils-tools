@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class StorageExample {
 
-    private static CacheProvider<String, Object> CACHE_PROVIDER = new ConcurrentCacheProvider<>();
+    private static final CacheProvider<String, Object> CACHE_PROVIDER = new ConcurrentCacheProvider<>();
 
     public static void main(String[] args) {
         //测试缓存
@@ -50,7 +50,7 @@ public class StorageExample {
      */
     private static void testTimeoutStorage() {
         Integer integer = TimeoutStorage.run(() -> {
-            ThreadUtils.sleepMillisecondsQuietly(200);
+            ThreadUtils.sleepMillisecondsQuietly(100);
             return 1;
         }, 100);
 
@@ -84,7 +84,7 @@ public class StorageExample {
         Cost cost = new MillisecondCost("delay");
         LogUtils.info("delay: {}", DelayStorage.run(() -> {
             return 1;
-        }, 1000));
+        }, 3000));
 
         cost.stopAndPrint();
     }

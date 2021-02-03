@@ -41,7 +41,7 @@ public class HashOperateMapExample {
         System.out.println("text To List: " + operateHashMap.splitToList("text", ","));
         System.out.println("text To IntList: " + operateHashMap.splitToList("text", ",", Integer.class));
         System.out.println("time + text = " + operateHashMap.expression("time + text"));
-        System.out.println("TDemoInfo: " + operateHashMap.getBean(TDemoInfo.class));
+        System.out.println("TDemoInfo: " + operateHashMap.assemblyBean(TDemoInfo.class));
     }
 
 }

@@ -9,6 +9,8 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.function.Predicate;
 
+import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_COMMA;
+
 /**
  * Map可操作
  *
@@ -412,6 +414,20 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
     /**
      * 以null安全的方式从Map中分隔数据。
      * <p> 数据从{@link #splitToArray}的结果中获得的。
+     * <p>默认以,分隔</p>
+     *
+     * @param key    查找的关键
+     * @param <T>    类型
+     * @param tClass 基础原型封装类
+     * @return 如果输入的Map为空，则将Map中的值返回为 List，<code> null </ code>
+     */
+    default <T> List<T> splitToList(final K key, final Class<T> tClass) {
+        return splitToList(key, SYMBOL_COMMA, tClass);
+    }
+
+    /**
+     * 以null安全的方式从Map中分隔数据。
+     * <p> 数据从{@link #splitToArray}的结果中获得的。
      *
      * @param key    查找的关键
      * @param regex  分隔符
@@ -426,11 +442,6 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
             return null;
         }
         TypeConverter<T> typeConverter = Converter.getTypeConverter(tClass);
-
-        if (null == typeConverter) {
-            return null;
-        }
-
         List<T> result = new ArrayList<>(strings.length);
 
         for (String string : strings) {
@@ -463,6 +474,18 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
     /**
      * 以null安全的方式从Map中分隔数据。
      * <p> 数据从{@link #splitToArray}的结果中获得的。
+     * <p>默认以,分隔</p>
+     *
+     * @param key 查找的关键
+     * @return 如果输入的Map为空，则将Map中的值返回为 List，<code> null </ code>
+     */
+    default List<String> splitToList(final K key) {
+        return splitToList(key, SYMBOL_COMMA);
+    }
+
+    /**
+     * 以null安全的方式从Map中分隔数据。
+     * <p> 数据从{@link #splitToArray}的结果中获得的。
      *
      * @param key   查找的关键
      * @param regex 分隔符
@@ -474,6 +497,60 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
             return null;
         }
         return new HashSet<>(strings);
+    }
+
+    /**
+     * 以null安全的方式从Map中分隔数据。
+     * <p> 数据从{@link #splitToArray}的结果中获得的。
+     * <p>默认以,分隔</p>
+     *
+     * @param key    查找的关键
+     * @param <T>    类型
+     * @param tClass 基础原型封装类
+     * @return 如果输入的Map为空，则将Map中的值返回为 List，<code> null </ code>
+     */
+    default <T> Set<T> splitToSet(final K key, final Class<T> tClass) {
+        return splitToSet(key, SYMBOL_COMMA, tClass);
+    }
+
+    /**
+     * 以null安全的方式从Map中分隔数据。
+     * <p> 数据从{@link #splitToArray}的结果中获得的。
+     *
+     * @param key    查找的关键
+     * @param regex  分隔符
+     * @param <T>    类型
+     * @param tClass 基础原型封装类
+     * @return 如果输入的Map为空，则将Map中的值返回为 Set，<code> null </ code>
+     */
+    default <T> Set<T> splitToSet(final K key, final String regex, final Class<T> tClass) {
+        String[] strings = splitToArray(key, regex);
+        if (null == strings) {
+            return null;
+        }
+        TypeConverter<T> typeConverter = Converter.getTypeConverter(tClass);
+        Set<T> result = new HashSet<>(strings.length);
+        for (String string : strings) {
+            T convert = typeConverter.convert(string);
+            if (null == convert) {
+                continue;
+            }
+
+            result.add(convert);
+        }
+        return result;
+    }
+
+    /**
+     * 以null安全的方式从Map中分隔数据。
+     * <p> 数据从{@link #splitToArray}的结果中获得的。
+     * <p>默认以,分隔</p>
+     *
+     * @param key 查找的关键
+     * @return 如果输入的Map为空，则将Map中的值返回为 Set，<code> null </ code>
+     */
+    default Set<String> splitToSet(final K key) {
+        return splitToSet(key, SYMBOL_COMMA);
     }
 
     /**
@@ -799,7 +876,7 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
             return (E) object;
         }
 
-        if(object instanceof String) {
+        if (object instanceof String) {
             Optional<E> any = Arrays.stream(enumType.getEnumConstants()).filter(new Predicate<E>() {
                 @Override
                 public boolean test(E e) {
@@ -810,5 +887,28 @@ public interface MapOperable<K> extends Operable<K, Map<K, Object>> {
         }
 
         return null;
+    }
+
+    /**
+     * 索引重命名
+     *
+     * @param key    索引
+     * @param newKey 新索引
+     * @return 新索引对应的值
+     */
+    default Object rename(K key, K newKey) {
+        Map<K, Object> map = getMap();
+        if (null == map) {
+            return null;
+        }
+        if (null == key) {
+            if (null == newKey) {
+                return null;
+            }
+            return map.put(newKey, null);
+        }
+
+        Object o = map.get(key);
+        return map.put(newKey, o);
     }
 }

@@ -146,7 +146,7 @@ public class LogUtils {
 
         if (methods.size() == 1) {
             Object methodValue = ClassUtils.getMethodValue(object, CollectionUtils.findFirst(methods), ArrayUtils.toArray(realParams));
-            log.info("{}:{}", method, methodValue);
+            LogUtils.info("{}:{}", method, methodValue);
         }
     }
 

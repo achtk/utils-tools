@@ -3,12 +3,8 @@ package com.chua.utils.tools.collects;
 import bsh.EvalError;
 import bsh.Interpreter;
 import com.chua.utils.tools.bean.copy.BeanCopy;
-import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.function.BiAppendable;
-import com.chua.utils.tools.function.MapOperable;
 import com.chua.utils.tools.function.converter.ClassTypeConverter;
 import com.chua.utils.tools.function.converter.TypeConverter;
-import com.chua.utils.tools.util.ClassUtils;
 import com.chua.utils.tools.util.CollectionUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -27,7 +23,7 @@ import java.util.function.Predicate;
  * @version 1.0.0
  * @since 2020/10/31
  */
-public class OperateHashMap extends HashMap<String, Object> implements MapOperable<String>, BiAppendable<String, Object> {
+public class OperateHashMap extends HashMap<String, Object> implements OperateMap {
 
     private final Interpreter interpreter = new Interpreter();
 
@@ -137,7 +133,7 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
     @Override
     public Object put(String key, Object value) {
         this.setKeyValue(key, value);
-        if (null != value && !valueClass.isAssignableFrom(value.getClass())) {
+        if (null != value && null != valueClass && !valueClass.isAssignableFrom(value.getClass())) {
             return null;
         }
         return super.put(key, value);
@@ -178,9 +174,11 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
         if (null == key) {
             return null;
         }
+
         if (!containsKey(key)) {
             return put(key, newValue);
         }
+
         Object oldValue = get(key);
         if (filter.test(oldValue)) {
             return put(key, newValue);
@@ -236,25 +234,12 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
     }
 
     /**
-     * 设置对象
-     *
-     * @param key       索引
-     * @param className 类名称
-     */
-    public Object putObject(String key, String className) {
-        Object forObject = ClassUtils.forObject(className);
-        if (null == forObject) {
-            return null;
-        }
-        return put(key, forObject);
-    }
-
-    /**
      * 处理表达式
      *
      * @param expression 表达式
      * @return 表达式
      */
+    @Override
     public Object expression(String expression) {
         try {
             return interpreter.eval(expression);
@@ -267,44 +252,12 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
     /**
      * 装配对象
      *
-     * @param className 类称
-     * @return Object
-     */
-    public Object getBean(final String className) {
-        return getBean(ClassHelper.forName(className));
-    }
-
-    /**
-     * 装配对象
-     *
-     * @param className 类称
-     * @param tClass    类型
-     * @param <T>       类型
-     * @return Object
-     */
-    public <T> T getBean(final String className, final Class<T> tClass) {
-        return getBean(ClassHelper.forObject(className, tClass));
-    }
-
-    /**
-     * 装配对象
-     *
-     * @param tClass 类型
-     * @param <T>    类型
-     * @return T
-     */
-    public <T> T getBean(final Class<T> tClass) {
-        return getBean(ClassHelper.safeForObject(tClass));
-    }
-
-    /**
-     * 装配对象
-     *
      * @param t1  类型
      * @param <T> 类型
      * @return T
      */
-    public <T> T getBean(final T t1) {
+    @Override
+    public <T> T assemblyBean(final T t1) {
         if (null == t1) {
             return null;
         }
@@ -321,29 +274,15 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
      * @param <T>    类型
      * @return 实体
      */
+    @Override
     public <T> T getEntity(String key, Class<T> tClass) {
         Object object = getObject(key);
         return null == object || (null != tClass && tClass.isAssignableFrom(object.getClass())) ? (T) object : null;
     }
 
-    /**
-     * 获取类
-     *
-     * @param key 索引
-     * @return 类
-     */
-    public Class<?> getClass(final String key) {
-        return getClass(key, Object.class);
-    }
 
-    /**
-     * 获取类
-     *
-     * @param key    索引
-     * @param tClass 类型
-     * @param <T>    类型
-     * @return 类
-     */
+    @Override
+    @SuppressWarnings("ALL")
     public <T> Class<? extends T> getClass(String key, final Class<T> tClass) {
         TypeConverter<Class> typeConverter = new ClassTypeConverter();
         Object object = getObject(key);
@@ -387,5 +326,18 @@ public class OperateHashMap extends HashMap<String, Object> implements MapOperab
             }
         }
         return isAllValid;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer stringBuffer = new StringBuffer("{\r\n");
+        for (Entry<String, Object> entry : this.entrySet()) {
+            stringBuffer.append("\t").append(entry.getKey()).append(":").append(entry.getValue()).append("(").append(entry.getValue().getClass().getSimpleName()).append("),\r\n");
+        }
+        if (stringBuffer.length() > 3) {
+            stringBuffer.delete(stringBuffer.length() - 3, stringBuffer.length());
+        }
+        stringBuffer.append("\r\n}");
+        return stringBuffer.toString();
     }
 }
