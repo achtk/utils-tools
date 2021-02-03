@@ -33,7 +33,7 @@ public class DelayStorage {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return delayItem.getValue().get();
+        return null == delayItem ? null : delayItem.getValue().get();
     }
 
     /**
@@ -41,9 +41,9 @@ public class DelayStorage {
      */
     static final class DelayItem implements Delayed {
         /* 触发时间*/
-        private long time;
+        private final long time;
         @Getter
-        private Supplier<?> value;
+        private final Supplier<?> value;
 
         public DelayItem(long time, Supplier<?> value) {
             this.time = System.currentTimeMillis() + (time > 0 ? time : 0);
@@ -51,13 +51,13 @@ public class DelayStorage {
         }
 
         @Override
-        public long getDelay(TimeUnit unit) {
+        public long getDelay(TimeUnit timeUnit) {
             return time - System.currentTimeMillis();
         }
 
         @Override
-        public int compareTo(Delayed o) {
-            DelayItem item = (DelayItem) o;
+        public int compareTo(Delayed delayed) {
+            DelayItem item = (DelayItem) delayed;
             long diff = this.time - item.time;
             if (diff <= 0) {
                 return -1;
