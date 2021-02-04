@@ -1,7 +1,6 @@
 package com.chua.utils.tools.function.converter;
 
 import com.chua.utils.tools.function.Converter;
-import lombok.EqualsAndHashCode;
 
 /**
  * 类型转String
@@ -11,6 +10,7 @@ import lombok.EqualsAndHashCode;
  * @since 2020/10/30
  */
 public interface TypeConverter<O> extends Converter<Object, O> {
+
     /**
      * 类型转化
      *

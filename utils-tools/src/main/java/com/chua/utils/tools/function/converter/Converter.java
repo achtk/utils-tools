@@ -14,10 +14,10 @@ import java.util.Optional;
  */
 public class Converter {
 
-    private static final TypeConverter VOID_TYPE_CONVERTER = new VoidTypeConverter();
+    private static final TypeConverter<?> VOID_TYPE_CONVERTER = new VoidTypeConverter();
 
-
-    private static final Map<Class, TypeConverter> TYPE_CONVERTER = ExtensionFactory.getExtensionLoader(TypeConverter.class).toPriorityMap(typeConverterExtensionClass -> typeConverterExtensionClass.getObj().getType());
+    private static final Map<Class<?>, TypeConverter> TYPE_CONVERTER = ExtensionFactory.getExtensionLoader(TypeConverter.class).toPriorityMap(typeConverterExtensionClass -> typeConverterExtensionClass.getObj().getType());
+    private static final Map<Class<?>, TypeConverter> TYPE_DEFINITION_CONVERTER = ExtensionFactory.getExtensionLoader(TypeConverter.class).toPriorityMap(typeConverterExtensionClass -> typeConverterExtensionClass.getObj().getType());
 
     /**
      * 获取类型转换器
@@ -52,6 +52,6 @@ public class Converter {
      * @param typeConverter 类型转化器
      */
     public static void addTypeConverter(Class<?> type, final TypeConverter typeConverter) {
-        TYPE_CONVERTER.put(type, typeConverter);
+        TYPE_DEFINITION_CONVERTER.put(type, typeConverter);
     }
 }

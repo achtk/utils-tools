@@ -13,6 +13,14 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * 加解密
+ * <pre>
+ *              block       word        digest
+ * SHA-1        512         32          160
+ * SHA-224      512         32          224
+ * SHA-256      512         32          256
+ * SHA-384      1024        64          384
+ * SHA-512      1024        64          512
+ * </pre>
  *
  * @author CH
  */
@@ -44,6 +52,7 @@ public interface Encrypt extends Environment, BinaryEncoder, StringEncoder, Bina
         propertySource.setName("encrypt");
         propertySource.add(key, value);
     }
+
     /**
      * 追加秘钥
      *
