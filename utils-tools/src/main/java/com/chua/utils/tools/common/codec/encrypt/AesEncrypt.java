@@ -1,8 +1,7 @@
 package com.chua.utils.tools.common.codec.encrypt;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import java.util.Properties;
 
 /**
  * aes加解密

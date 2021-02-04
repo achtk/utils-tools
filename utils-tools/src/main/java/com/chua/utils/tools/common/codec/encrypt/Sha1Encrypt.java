@@ -1,7 +1,9 @@
 package com.chua.utils.tools.common.codec.encrypt;
 
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA1Digest;
+import com.chua.utils.tools.common.codec.encrypt.bouncy.BouncySha1;
+import com.chua.utils.tools.util.ClassUtils;
+
+import java.security.MessageDigest;
 
 /**
  * Sha1
@@ -10,13 +12,22 @@ import org.bouncycastle.crypto.digests.SHA1Digest;
  */
 public class Sha1Encrypt extends AbstractStandardEncrypt {
 
+    private static final String SHA1 = "org.bouncycastle.crypto.digests.SHA1Digest";
+
     @Override
     public byte[] encode(byte[] bytes) {
-        Digest digest = new SHA1Digest();
-        digest.update(bytes, 0, bytes.length);
-        byte[] result = new byte[digest.getDigestSize()];
-        digest.doFinal(result, 0);
-        return result;
+        try {
+            if (!ClassUtils.isPresent(SHA1)) {
+                MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+                sha1.update(bytes);
+                return sha1.digest();
+            }
+            Encrypt encrypt = new BouncySha1();
+            return encrypt.encode(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

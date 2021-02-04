@@ -1,7 +1,9 @@
 package com.chua.utils.tools.common.codec.encrypt;
 
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA256Digest;
+import com.chua.utils.tools.common.codec.encrypt.bouncy.BouncySha256;
+import com.chua.utils.tools.util.ClassUtils;
+
+import java.security.MessageDigest;
 
 /**
  * Sha256
@@ -9,14 +11,22 @@ import org.bouncycastle.crypto.digests.SHA256Digest;
  * @author CH
  */
 public class Sha256Encrypt extends AbstractStandardEncrypt {
+    private static final String SHA = "org.bouncycastle.crypto.digests.SHA256Digest";
 
     @Override
     public byte[] encode(byte[] bytes) {
-        Digest digest = new SHA256Digest();
-        digest.update(bytes, 0, bytes.length);
-        byte[] result = new byte[digest.getDigestSize()];
-        digest.doFinal(result, 0);
-        return result;
+        try {
+            if (!ClassUtils.isPresent(SHA)) {
+                MessageDigest sha1 = MessageDigest.getInstance("SHA-256");
+                sha1.update(bytes);
+                return sha1.digest();
+            }
+            Encrypt encrypt = new BouncySha256();
+            return encrypt.encode(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.chua.utils.tools.common.codec.encrypt;
 
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA384Digest;
+import com.chua.utils.tools.common.codec.encrypt.bouncy.BouncySha384;
+import com.chua.utils.tools.util.ClassUtils;
+
+import java.security.MessageDigest;
 
 /**
  * Sha384
@@ -10,13 +12,22 @@ import org.bouncycastle.crypto.digests.SHA384Digest;
  */
 public class Sha384Encrypt extends AbstractStandardEncrypt {
 
+    private static final String SHA = "org.bouncycastle.crypto.digests.SHA384Digest";
+
     @Override
     public byte[] encode(byte[] bytes) {
-        Digest digest = new SHA384Digest();
-        digest.update(bytes, 0, bytes.length);
-        byte[] result = new byte[digest.getDigestSize()];
-        digest.doFinal(result, 0);
-        return result;
+        try {
+            if (!ClassUtils.isPresent(SHA)) {
+                MessageDigest sha1 = MessageDigest.getInstance("SHA-384");
+                sha1.update(bytes);
+                return sha1.digest();
+            }
+            Encrypt encrypt = new BouncySha384();
+            return encrypt.encode(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

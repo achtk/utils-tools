@@ -1,7 +1,9 @@
 package com.chua.utils.tools.common.codec.encrypt;
 
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA512Digest;
+import com.chua.utils.tools.common.codec.encrypt.bouncy.BouncySha512;
+import com.chua.utils.tools.util.ClassUtils;
+
+import java.security.MessageDigest;
 
 /**
  * Sha512 加密
@@ -10,13 +12,22 @@ import org.bouncycastle.crypto.digests.SHA512Digest;
  */
 public class Sha512Encrypt extends AbstractStandardEncrypt {
 
+    private static final String SHA = "org.bouncycastle.crypto.digests.SHA512Digest";
+
     @Override
     public byte[] encode(byte[] bytes) {
-        Digest digest = new SHA512Digest();
-        digest.update(bytes, 0, bytes.length);
-        byte[] result = new byte[digest.getDigestSize()];
-        digest.doFinal(result, 0);
-        return result;
+        try {
+            if (!ClassUtils.isPresent(SHA)) {
+                MessageDigest sha1 = MessageDigest.getInstance("SHA-512");
+                sha1.update(bytes);
+                return sha1.digest();
+            }
+            Encrypt encrypt = new BouncySha512();
+            return encrypt.encode(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
