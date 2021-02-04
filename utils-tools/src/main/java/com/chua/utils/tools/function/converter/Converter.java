@@ -48,10 +48,22 @@ public class Converter {
     /**
      * 注入类型转化器
      *
+     * @param typeConverter 类型转化器
+     */
+    public static void addTypeConverter(final TypeConverter typeConverter) {
+        if (null == typeConverter) {
+            return;
+        }
+        TYPE_CONVERTER.put(typeConverter.getType(), typeConverter);
+    }
+
+    /**
+     * 注入类型转化器
+     *
      * @param type          类型
      * @param typeConverter 类型转化器
      */
     public static void addTypeConverter(Class<?> type, final TypeConverter typeConverter) {
-        TYPE_DEFINITION_CONVERTER.put(type, typeConverter);
+        TYPE_CONVERTER.put(type, typeConverter);
     }
 }

@@ -365,4 +365,21 @@ public class FileUtils extends FileHelper {
     private static File toFile(URL url) {
         return null != url ? new File(url.getFile()) : null;
     }
+
+    /**
+     * 最终修改时间
+     *
+     * @param absolutePath 有效文件
+     * @return 修改时间
+     */
+    public static long lastModified(String absolutePath) {
+        if (Strings.isNullOrEmpty(absolutePath)) {
+            return -1;
+        }
+        File temp = new File(absolutePath);
+        if (!temp.exists()) {
+            return -1;
+        }
+        return temp.lastModified();
+    }
 }

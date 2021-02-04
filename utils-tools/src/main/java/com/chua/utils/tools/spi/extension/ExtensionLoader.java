@@ -13,6 +13,7 @@ import com.chua.utils.tools.spi.processor.AbstractSimpleExtensionProcessor;
 import com.chua.utils.tools.spi.processor.CustomExtensionProcessor;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
 import com.chua.utils.tools.spi.processor.ServiceLoaderProcessor;
+import com.chua.utils.tools.util.ArrayUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Ordering;
@@ -116,7 +117,7 @@ public class ExtensionLoader<T> {
         }
 
         if (!extensionClassMultimap.containsKey(service.getName())) {
-            if (null == extensionProcessor) {
+            if (ArrayUtils.isNothing(extensionProcessor)) {
                 extensionProcessor = DEFAULT_PROCESSOR;
             }
             for (ExtensionProcessor processor : extensionProcessor) {

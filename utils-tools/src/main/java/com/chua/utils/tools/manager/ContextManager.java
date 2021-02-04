@@ -11,6 +11,8 @@ import com.chua.utils.tools.resource.factory.FastResourceFactory;
 import com.chua.utils.tools.resource.factory.ResourceFactory;
 import com.chua.utils.tools.resource.template.ResourceTemplate;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
+import com.chua.utils.tools.table.TableFactory;
+import com.chua.utils.tools.util.ClassUtils;
 
 import java.util.List;
 
@@ -150,5 +152,23 @@ public interface ContextManager {
      */
     default DataFactory createDataFactory() {
         return new StandardDataFactory();
+    }
+
+    /**
+     * 数据表
+     *
+     * @return 数据表
+     */
+    default TableFactory createTableFactory() {
+        String tableFactory = "com.chua.utils.netx.flink.table.Tables";
+        if (ClassUtils.isPresent(tableFactory)) {
+            return ClassUtils.forObject(tableFactory, TableFactory.class);
+        }
+        try {
+            throw new ClassNotFoundException(tableFactory);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

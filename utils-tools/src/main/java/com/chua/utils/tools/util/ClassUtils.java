@@ -9,6 +9,8 @@ import javassist.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
@@ -565,5 +567,20 @@ public class ClassUtils extends ClassHelper {
             setFieldValue(field, value, bean);
         } catch (NoSuchFieldException | IllegalAccessException e) {
         }
+    }
+
+    /**
+     * 获取泛型
+     *
+     * @param value 类
+     * @return 泛型类型
+     */
+    public static Type[] getActualTypeArguments(final Class<?> value) {
+        Type type = value.getGenericSuperclass();
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            return parameterizedType.getActualTypeArguments();
+        }
+        return new Type[0];
     }
 }

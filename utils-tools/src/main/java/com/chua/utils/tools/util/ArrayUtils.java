@@ -36,4 +36,23 @@ public class ArrayUtils extends ArraysHelper {
 
         return new Class[0];
     }
+
+    /**
+     * 判断元素是否全部无效{null, [], [null]}
+     *
+     * @param values 集合
+     * @return 全部无效返回true
+     */
+    public static boolean isNothing(Object[] values) {
+        if (null == values || values.length == 0) {
+            return true;
+        }
+        for (Object value : values) {
+            if (null != value) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

@@ -223,6 +223,26 @@ public class ReflectionHelper extends JavassistHelper {
      * 获取字段值
      *
      * @param obj       对象
+     * @param field     字段名称
+     * @param fieldType 字段类型
+     * @return 值
+     */
+    public static <T> T getFieldValue(final Object obj, final Field field, final Class<T> fieldType) {
+        Object fieldValue = getFieldValue(obj, field);
+        if (null == fieldValue || null == fieldType) {
+            return null;
+        }
+        if (fieldType.isAssignableFrom(fieldValue.getClass())) {
+            return (T) fieldValue;
+        }
+
+        return null;
+    }
+
+    /**
+     * 获取字段值
+     *
+     * @param obj       对象
      * @param fieldName 字段名称
      * @param fieldType 字段类型
      * @return 值
@@ -599,7 +619,7 @@ public class ReflectionHelper extends JavassistHelper {
                 for (Class<?> allInterface : allInterfaces) {
                     Method[] methods = allInterface.getDeclaredMethods();
                     for (Method method : methods) {
-                        if(method.isDefault()) {
+                        if (method.isDefault()) {
                             result.add(method);
                         }
                     }

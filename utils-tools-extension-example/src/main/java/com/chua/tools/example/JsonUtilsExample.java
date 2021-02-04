@@ -28,7 +28,8 @@ public class JsonUtilsExample {
      */
     private static void testJsonPath(String demo1) {
         JsonPath jsonPath = JsonUtils.parser(demo1);
-        LogUtils.script("jsonPath.findMap('*.book[*].*')", OperateHashMap.create("jsonPath", jsonPath));
+        OperateHashMap operateHashMap = OperateHashMap.create("jsonPath", jsonPath);
+        LogUtils.info("jsonPath.findMap('*.book[*].*'): {}", operateHashMap.expression("jsonPath.findMap('*.book[*].*')"));
     }
 
     /**

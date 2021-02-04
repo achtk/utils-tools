@@ -48,7 +48,7 @@ public class ObjectContextManagerExample {
 //        testCacheable();
 //        System.out.println();
 //        //测试对象管理器
-//        testObjectManager();
+        testObjectManager();
 //        System.out.println();
 //        //测试策略管理器
 //        testStrategyManager();
@@ -72,10 +72,10 @@ public class ObjectContextManagerExample {
 //        testEventBusManager();
 //        System.out.println();
 //        //测试类型转化器
-        testTypeConverter();
-        System.out.println();
-        //测试数据工厂
-        testDataFactory();
+//        testTypeConverter();
+//        System.out.println();
+//        //测试数据工厂
+//        testDataFactory();
     }
 
     private static void testDataFactory() throws Exception {

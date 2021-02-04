@@ -40,7 +40,7 @@ public class StandardContextManager implements ContextManager {
 
     @Override
     public ObjectContextManager createObjectContextManager(boolean scanner) {
-        return null;
+        return new StandardScannerObjectContextManager();
     }
 
     @Override
