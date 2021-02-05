@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static com.chua.utils.tools.constant.NumberConstant.THIRD;
+
 /**
  * 扩展性Map
  *
@@ -334,7 +336,7 @@ public class OperateHashMap extends HashMap<String, Object> implements OperateMa
         for (Entry<String, Object> entry : this.entrySet()) {
             stringBuffer.append("\t").append(entry.getKey()).append(":").append(entry.getValue()).append("(").append(entry.getValue().getClass().getSimpleName()).append("),\r\n");
         }
-        if (stringBuffer.length() > 3) {
+        if (stringBuffer.length() > THIRD) {
             stringBuffer.delete(stringBuffer.length() - 3, stringBuffer.length());
         }
         stringBuffer.append("\r\n}");

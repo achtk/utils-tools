@@ -374,7 +374,7 @@ public class StringUtils extends StringHelper {
             return ImmutablePair.of(value, null);
         }
         List<String> values = Splitter.on(mapper).trimResults().omitEmptyStrings().limit(2).splitToList(value);
-        if (null == values || values.size() < 2) {
+        if (null == values || values.size() < TWE) {
             return ImmutablePair.of(value, null);
         }
         return ImmutablePair.of(values.get(0), values.get(1));

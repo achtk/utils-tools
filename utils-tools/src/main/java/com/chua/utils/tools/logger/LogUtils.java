@@ -211,7 +211,7 @@ public class LogUtils {
     static class ConsoleHandler extends java.util.logging.ConsoleHandler {
 
         private OutputStream output;
-        private static final int offValue = Level.OFF.intValue();
+        private static final int OFF_VALUE = Level.OFF.intValue();
         boolean sealed = true;
         private boolean doneHeader;
         private volatile Writer writer;
@@ -301,7 +301,7 @@ public class LogUtils {
                 return false;
             }
             final int levelValue = getLevel().intValue();
-            if (record.getLevel().intValue() < levelValue || levelValue == offValue) {
+            if (record.getLevel().intValue() < levelValue || levelValue == OFF_VALUE) {
                 return false;
             }
             final Filter filter = getFilter();
