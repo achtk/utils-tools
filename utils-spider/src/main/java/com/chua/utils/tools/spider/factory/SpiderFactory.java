@@ -4,13 +4,13 @@ import com.chua.utils.tools.spider.config.ProcessConfiguration;
 import com.chua.utils.tools.spider.config.SpiderConfig;
 import com.chua.utils.tools.spider.config.scheduler.SpikeFileCacheQueueScheduler;
 import com.chua.utils.tools.spider.interpreter.IPageInterpreter;
-import com.chua.utils.tools.spider.process.IPageProcessor;
+import com.chua.utils.tools.spider.process.PageProcessor;
 import com.chua.utils.tools.spider.process.WebMagicProcessor;
 import lombok.AllArgsConstructor;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.scheduler.Scheduler;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,9 +44,9 @@ public class SpiderFactory {
     /**
      * 启动
      *
-     * @return
+     * @param processor 页面处理器
      */
-    public void runAsync(IPageProcessor processor) {
+    public void runAsync(PageProcessor processor) {
         processor = null == processor ? new WebMagicProcessor() : processor;
 
         ProcessConfiguration processConfiguration = new ProcessConfiguration();
@@ -55,7 +55,7 @@ public class SpiderFactory {
 
         processor.config(processConfiguration);
 
-        Spider spider = Spider.create((PageProcessor) processor);
+        Spider spider = Spider.create((us.codecraft.webmagic.processor.PageProcessor) processor);
         spider.addUrl(urls.toArray(new String[0]));
         spider.setScheduler(scheduler);
         spider.thread(threadNum);
@@ -77,9 +77,7 @@ public class SpiderFactory {
 
         public Builder setUrl(String... url) {
             this.urls.clear();
-            for (String s : url) {
-                urls.add(s);
-            }
+            urls.addAll(Arrays.asList(url));
             return this;
         }
 

@@ -1,16 +1,9 @@
 package com.chua.utils.tools.spider.config.scheduler;
 
-import com.chua.utils.netx.datasource.properties.DataSourceProperties;
 import com.chua.utils.netx.datasource.template.StandardJdbcOperatorTemplate;
 import com.chua.utils.netx.datasource.transform.JdbcOperatorTransform;
 import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.properties.OperatorProperties;
-import net.sf.cglib.beans.BeanMap;
-import org.apache.commons.codec.Charsets;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.assertj.core.util.Lists;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.scheduler.DuplicateRemovedScheduler;
@@ -18,7 +11,6 @@ import us.codecraft.webmagic.scheduler.MonitorableScheduler;
 import us.codecraft.webmagic.scheduler.component.DuplicateRemover;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
@@ -35,7 +27,6 @@ public class DbCacheQueueScheduler extends DuplicateRemovedScheduler implements 
     private OperatorProperties operatorProperties;
     private StandardJdbcOperatorTemplate jdbcOperatorTemplate;
     private static final String SPIDER_NAME = "T_SPIDER_INFO";
-    private static final String SPIDER_URL = "COL_URL_NAME";
     private static final String CREATE_TABLE = "CREATE TABLE " + SPIDER_NAME + "(" + SPIDER_NAME + " VARCHAR(255))";
     private static final String SELECT_TABLE = "SELECT * FROM " + SPIDER_NAME;
     private static final String INSERT_TABLE = "INSERT INTO " + SPIDER_NAME + " VALUES (?)";
@@ -66,12 +57,12 @@ public class DbCacheQueueScheduler extends DuplicateRemovedScheduler implements 
         this.initial();
     }
 
+    /**
+     * 初始化
+     */
     private void initial() {
         try {
             jdbcOperatorTemplate.execute(CREATE_TABLE);
-        } catch (Exception e) {
-        }
-        try {
             List<Map<String, Object>> maps = jdbcOperatorTemplate.queryForList(SELECT_TABLE);
             for (Map<String, Object> map : maps) {
                 Object value = map.get("tSpiderInfo");
@@ -145,10 +136,6 @@ public class DbCacheQueueScheduler extends DuplicateRemovedScheduler implements 
 
 
     @Override
-    public void close() throws IOException {
-    }
-
-    @Override
     protected void pushWhenNoDuplicate(Request request, Task task) {
         queue.add(request);
         cacheUrl.add(request.getUrl());
@@ -169,5 +156,10 @@ public class DbCacheQueueScheduler extends DuplicateRemovedScheduler implements 
     @Override
     public Request poll(Task task) {
         return queue.poll();
+    }
+
+    @Override
+    public void close() throws IOException {
+        //ignore
     }
 }

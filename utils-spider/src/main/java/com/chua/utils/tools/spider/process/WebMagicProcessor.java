@@ -6,7 +6,6 @@ import com.chua.utils.tools.spider.interpreter.IPageInterpreter;
 import net.sf.cglib.beans.BeanMap;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
-import us.codecraft.webmagic.processor.PageProcessor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,15 +18,14 @@ import java.util.function.Consumer;
  *
  * @author CH
  */
-public class WebMagicProcessor implements PageProcessor, IPageProcessor<Page> {
+public class WebMagicProcessor implements us.codecraft.webmagic.processor.PageProcessor, PageProcessor<Page> {
 
-    private ProcessConfiguration processConfiguration;
     private SpiderConfig spiderConfig;
     private Set<IPageInterpreter> interpreters;
 
     @Override
     public void process(Page page) {
-        if (null == interpreters || interpreters.size() == 0) {
+        if (null == interpreters || interpreters.isEmpty()) {
             return;
         }
         for (IPageInterpreter interpreter : interpreters) {
@@ -54,8 +52,7 @@ public class WebMagicProcessor implements PageProcessor, IPageProcessor<Page> {
 
     @Override
     public void config(ProcessConfiguration processConfiguration) {
-        this.processConfiguration = processConfiguration;
-        this.interpreters = this.processConfiguration.getInterpreters();
+        this.interpreters = processConfiguration.getInterpreters();
         this.spiderConfig = processConfiguration.getSpiderConfig();
     }
 
