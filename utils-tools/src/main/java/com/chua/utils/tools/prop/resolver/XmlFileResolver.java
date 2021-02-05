@@ -1,9 +1,9 @@
 package com.chua.utils.tools.prop.resolver;
 
 import com.chua.utils.tools.constant.SuffixConstant;
+import com.chua.utils.tools.function.FileConverter;
+import com.chua.utils.tools.function.NoneFileConverter;
 import com.chua.utils.tools.prop.mapper.FileMapper;
-import com.chua.utils.tools.function.AbstractConverter;
-import com.chua.utils.tools.function.NoneAbstractConverter;
 import com.google.common.collect.HashMultimap;
 import org.w3c.dom.*;
 import org.xml.sax.EntityResolver;
@@ -20,11 +20,12 @@ import java.util.Set;
 
 /**
  * yaml解析
+ *
  * @author CH
  */
 public class XmlFileResolver implements IFileResolver {
 
-    private HashMultimap hashMultimap = HashMultimap.create();
+    private HashMultimap<Object, Object> hashMultimap = HashMultimap.create();
 
     @Override
     public void stream(InputStream inputStream) {
@@ -32,6 +33,7 @@ public class XmlFileResolver implements IFileResolver {
         documentBuilderFactory.setValidating(false);
         documentBuilderFactory.setIgnoringComments(true);
         try {
+            documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             documentBuilder.setEntityResolver(new EntityResolver() {
                 @Override
@@ -48,7 +50,7 @@ public class XmlFileResolver implements IFileResolver {
             Element element = document.getDocumentElement();
             checkAttribute("", element.getAttributes());
             checkElement("", element.getChildNodes());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -69,10 +71,6 @@ public class XmlFileResolver implements IFileResolver {
         String newPrefix;
         for (int i = 0; i < length; i++) {
             Node node = childNodes.item(i);
-            short nodeType = node.getNodeType();
-           // if (node instanceof DeferredTextImpl) {
-             //   continue;
-           // }
             newPrefix = prefix + "." + node.getNodeName();
             checkAttribute(newPrefix, node.getAttributes());
             checkElement(newPrefix, node.getChildNodes());
@@ -98,20 +96,20 @@ public class XmlFileResolver implements IFileResolver {
     }
 
     @Override
-    public FileMapper analysis(AbstractConverter abstractConverter) {
+    public FileMapper analysis(FileConverter fileConverter) {
         if (null == hashMultimap) {
             return null;
         }
-        if (null == abstractConverter) {
-            abstractConverter = new NoneAbstractConverter();
+        if (null == fileConverter) {
+            fileConverter = new NoneFileConverter();
         }
-        HashMultimap<String, Object> hashMultimap = HashMultimap.create();
+        HashMultimap<Object, Object> multimap = HashMultimap.create();
         FileMapper fileMapper = new FileMapper();
-        fileMapper.setHashMultimap(hashMultimap);
+        fileMapper.setHashMultimap(multimap);
 
-        Set<Map.Entry<String, Object>> entries = this.hashMultimap.entries();
-        for (Map.Entry<String, Object> entry : entries) {
-            hashMultimap.put(entry.getKey(), abstractConverter.doBackward(entry.getValue()));
+        Set<Map.Entry<Object, Object>> entries = this.hashMultimap.entries();
+        for (Map.Entry<Object, Object> entry : entries) {
+            multimap.put(entry.getKey(), fileConverter.doBackward(entry.getValue()));
         }
         return fileMapper;
     }

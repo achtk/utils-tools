@@ -1,8 +1,8 @@
 package com.chua.utils.tools.prop.resolver;
 
 import com.chua.utils.tools.common.JsonHelper;
-import com.chua.utils.tools.function.AbstractConverter;
-import com.chua.utils.tools.function.NoneAbstractConverter;
+import com.chua.utils.tools.function.FileConverter;
+import com.chua.utils.tools.function.NoneFileConverter;
 import com.chua.utils.tools.prop.mapper.FileMapper;
 import com.google.common.collect.HashMultimap;
 
@@ -24,19 +24,19 @@ public class JsonFileResolver implements IFileResolver {
     }
 
     @Override
-    public FileMapper analysis(AbstractConverter abstractConverter) {
+    public FileMapper analysis(FileConverter fileConverter) {
         if(null == properties) {
             return null;
         }
-        if(null == abstractConverter) {
-            abstractConverter = new NoneAbstractConverter();
+        if(null == fileConverter) {
+            fileConverter = new NoneFileConverter();
         }
-        HashMultimap hashMultimap = HashMultimap.create();
+        HashMultimap<Object, Object> hashMultimap = HashMultimap.create();
         FileMapper fileMapper = new FileMapper();
         fileMapper.setHashMultimap(hashMultimap);
 
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            hashMultimap.put(entry.getKey(), abstractConverter.doBackward(entry.getValue()));
+            hashMultimap.put(entry.getKey(), fileConverter.doBackward(entry.getValue()));
         }
         return fileMapper;
     }

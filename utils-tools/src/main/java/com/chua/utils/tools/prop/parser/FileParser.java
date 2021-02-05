@@ -2,7 +2,7 @@ package com.chua.utils.tools.prop.parser;
 
 import com.chua.utils.tools.collects.collections.CollectionHelper;
 import com.chua.utils.tools.common.FileHelper;
-import com.chua.utils.tools.function.AbstractConverter;
+import com.chua.utils.tools.function.FileConverter;
 import com.chua.utils.tools.prop.decorator.FileDecorator;
 import com.chua.utils.tools.prop.finder.FileFinder;
 import com.chua.utils.tools.prop.mapper.FileDataMapper;
@@ -65,10 +65,10 @@ public class FileParser {
     /**
      * 解析文件
      * @param path 文件
-     * @param abstractConverter 转化器
+     * @param fileConverter 转化器
      * @return
      */
-    public FileDataMapper stream(final String path, final AbstractConverter abstractConverter) {
+    public FileDataMapper stream(final String path, final FileConverter<?, ?> fileConverter) {
         if(null == path) {
             return null;
         }
@@ -76,7 +76,7 @@ public class FileParser {
         if(null == inputStream) {
             return null;
         }
-        return parser(FileHelper.getName(path), inputStream, abstractConverter);
+        return parser(FileHelper.getName(path), inputStream, fileConverter);
     }
 
     /**
@@ -101,10 +101,10 @@ public class FileParser {
      * 解析文件
      * @param name 文件名
      * @param stream 流
-     * @param abstractConverter 转化器
+     * @param fileConverter 转化器
      * @return
      */
-    public FileDataMapper parser(final String name, final InputStream stream, final AbstractConverter abstractConverter) {
+    public FileDataMapper parser(final String name, final InputStream stream, final FileConverter<?, ?> fileConverter) {
         if(null == stream || null == name) {
             return null;
         }
@@ -116,7 +116,7 @@ public class FileParser {
             throw new IllegalArgumentException("不支持该文件" + extension);
         }
         fileResolver.stream(stream);
-        FileMapper fileMapper = fileResolver.analysis(abstractConverter);
+        FileMapper fileMapper = fileResolver.analysis(fileConverter);
         fileDecorator.dissolves(fileMapper);
 
         return fileDecorator.toMapper();

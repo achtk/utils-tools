@@ -4,6 +4,7 @@ import com.chua.utils.tools.aware.NamedAware;
 import com.chua.utils.tools.aware.NamedFactoryAware;
 import com.chua.utils.tools.aware.OrderAware;
 import com.chua.utils.tools.classes.ClassHelper;
+import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.spi.Spi;
 import com.chua.utils.tools.spi.entity.ExtensionClass;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.chua.utils.tools.classes.ClassLoaderHelper.getDefaultClassLoader;
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_COMMA;
 
 /**
@@ -31,11 +33,11 @@ public abstract class AbstractSimpleExtensionProcessor<T> implements ExtensionPr
     private String interfaceName;
 
     public ClassLoader getClassLoader() {
-        return null == classLoader ? ClassHelper.getDefaultClassLoader() : classLoader;
+        return null == classLoader ? getDefaultClassLoader() : classLoader;
     }
 
     public void setClassLoader(ClassLoader classLoader) {
-        this.classLoader = null == classLoader ? ClassHelper.getDefaultClassLoader() : classLoader;
+        this.classLoader = null == classLoader ? getDefaultClassLoader() : classLoader;
     }
 
     public void setInterfaceClass(Class<T> interfaceClass) {
@@ -146,7 +148,7 @@ public abstract class AbstractSimpleExtensionProcessor<T> implements ExtensionPr
     private List<ExtensionClass<T>> buildExtensionClassBySpi(Class<?> tClass, boolean isSingle, int order, T t) {
         String[] names = getName(tClass, t);
         if (null == names) {
-            return null;
+            return Collections.emptyList();
         }
         List<ExtensionClass<T>> result = new ArrayList<>(names.length);
         for (String name : names) {
@@ -198,6 +200,6 @@ public abstract class AbstractSimpleExtensionProcessor<T> implements ExtensionPr
             NamedAware namedAware = (NamedAware) t;
             return namedAware.named().split(SYMBOL_COMMA);
         }
-        return null;
+        return EmptyOrBase.EMPTY_STRING;
     }
 }

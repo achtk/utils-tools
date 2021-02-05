@@ -4,7 +4,9 @@ import com.chua.utils.tools.common.charset.CharsetHelper;
 import com.chua.utils.tools.common.codec.binary.Hex;
 import com.chua.utils.tools.environment.StandardEnvironment;
 import com.chua.utils.tools.exceptions.NotSupportedException;
-import com.google.common.base.Charsets;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 
 /**
  * 标准的加解密
@@ -70,9 +72,9 @@ public abstract class AbstractStandardEncrypt extends StandardEnvironment implem
      */
     protected byte[] getKey(final int size) {
         if (!container(ENCRYPT_KEY)) {
-            return null;
+            return new byte[0];
         }
-        byte[] bytes = getStringOrDefault(ENCRYPT_KEY, DEFAULT_ENCRYPT_KEY_VALUE).getBytes(Charsets.UTF_8);
+        byte[] bytes = getStringOrDefault(ENCRYPT_KEY, DEFAULT_ENCRYPT_KEY_VALUE).getBytes(UTF_8);
         if (size == -1) {
             return bytes;
         }

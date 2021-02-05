@@ -6,7 +6,6 @@ import com.chua.utils.tools.collects.map.MapOperableHelper;
 import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.StringHelper;
-import com.chua.utils.tools.constant.NumberConstant;
 import com.chua.utils.tools.text.IdHelper;
 import com.google.common.collect.Sets;
 
@@ -28,7 +27,7 @@ public abstract class AbstractPropertiesProducer {
     private PropertiesConfiguration configuration = DEFAULT_PROPERTIES_CONFIGURATION;
     private static final Properties DEFAULT_PROPERTIES = new Properties();
 
-    public AbstractPropertiesProducer() {
+    protected AbstractPropertiesProducer() {
     }
 
     /**
@@ -37,7 +36,7 @@ public abstract class AbstractPropertiesProducer {
      * @param source        数据源
      * @param configuration 配置
      */
-    public AbstractPropertiesProducer(Map<String, Properties> source, PropertiesConfiguration configuration) {
+    protected AbstractPropertiesProducer(Map<String, Properties> source, PropertiesConfiguration configuration) {
         if (null != source) {
             this.source.putAll(source);
         }
@@ -197,36 +196,30 @@ public abstract class AbstractPropertiesProducer {
     /**
      * 获取 map
      *
-     * @param defaultValue 默认值
-     * @param keyClass     类型
-     * @param valueClass   类型
-     * @param keys         索引
-     * @return
+     * @param map        默认值
+     * @param keyClass   类型
+     * @param valueClass 类型
+     * @param keys       索引
+     * @return Map
      */
-    public <K, V> Map<K, V> maps(final Map<K, V> defaultValue, final Class<K> keyClass, final Class<V> valueClass, final String... keys) {
-        Object objects = objects(defaultValue, keys);
+    public <K, V> Map<K, V> maps(final Map<K, V> map, final Class<K> keyClass, final Class<V> valueClass, final String... keys) {
+        Object objects = objects(map, keys);
 
         if (null == objects) {
             return isNeedEmptyCollection(Collections.emptyMap());
         }
         Map<K, V> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
         if (objects instanceof Map) {
-            Map value = (Map) objects;
+            Map<?, ?> value = (Map) objects;
             if (value.size() == 0 || null == keyClass || null == valueClass) {
                 return isNeedEmptyCollection(Collections.emptyMap());
             }
-            for (Object o : value.keySet()) {
-                if (null == o) {
+            for (Map.Entry<?, ?> entry : value.entrySet()) {
+                Object key = entry.getKey();
+                if (null != key && !keyClass.isAssignableFrom(key.getClass()) || !valueClass.isAssignableFrom(entry.getValue().getClass())) {
                     continue;
                 }
-                if (!keyClass.isAssignableFrom(o.getClass())) {
-                    continue;
-                }
-                Object o1 = value.get(o);
-                if (!valueClass.isAssignableFrom(o1.getClass())) {
-                    continue;
-                }
-                result.put((K) o, (V) o1);
+                result.put((K) entry.getKey(), (V) entry.getValue());
             }
             return result;
         }
@@ -280,26 +273,26 @@ public abstract class AbstractPropertiesProducer {
         }
         Set<T> result = new HashSet<>();
         if (objects instanceof Set) {
-            Set value = (Set) objects;
-            if (value.size() == 0 || null == tClass) {
+            Set<?> value = (Set) objects;
+            if (value.isEmpty() || null == tClass) {
                 return isNeedEmptyCollection(Collections.emptySet());
             }
 
-            for (Object o : value) {
+            value.forEach(o -> {
                 if (whetherToIgnoreWhenNull(o)) {
                     result.add(null);
-                    continue;
+                    return;
                 }
                 if (tClass.isAssignableFrom(o.getClass())) {
                     result.add((T) o);
-                    continue;
+                    return;
                 }
-            }
+            });
             return result;
         }
         //强制转化
         if (configuration.isTypeInconsistentForcedConversion()) {
-            if (null != objects && !tClass.isAssignableFrom(objects.getClass())) {
+            if (!tClass.isAssignableFrom(objects.getClass())) {
                 return isNeedEmptyCollection(Collections.emptySet());
             }
             result.add((T) objects);
@@ -411,33 +404,33 @@ public abstract class AbstractPropertiesProducer {
             return isNeedEmptyCollection(Collections.emptyList());
         }
         List<T> result = new ArrayList<>();
-        if (objects instanceof List) {
-            List value = (List) objects;
-            if (value.size() == 0 || null == tClass) {
-                return isNeedEmptyCollection(Collections.emptyList());
+        if (!(objects instanceof List)) {
+            //强制转化
+            if (configuration.isTypeInconsistentForcedConversion()) {
+                if (!tClass.isAssignableFrom(objects.getClass())) {
+                    return isNeedEmptyCollection(Collections.emptyList());
+                }
+                result.add((T) objects);
+                return result;
             }
+            return isNeedEmptyCollection(Collections.emptyList());
+        }
+        List<?> value = (List) objects;
+        if (value.isEmpty() || null == tClass) {
+            return isNeedEmptyCollection(Collections.emptyList());
+        }
 
-            for (Object o : value) {
-                if (whetherToIgnoreWhenNull(o)) {
-                    result.add(null);
-                    continue;
-                }
-                if (tClass.isAssignableFrom(o.getClass())) {
-                    result.add((T) o);
-                    continue;
-                }
+        for (Object o : value) {
+            if (whetherToIgnoreWhenNull(o)) {
+                result.add(null);
+                continue;
             }
-            return result;
-        }
-        //强制转化
-        if (configuration.isTypeInconsistentForcedConversion()) {
-            if (null != objects && !tClass.isAssignableFrom(objects.getClass())) {
-                return isNeedEmptyCollection(Collections.emptyList());
+            if (tClass.isAssignableFrom(o.getClass())) {
+                result.add((T) o);
             }
-            result.add((T) objects);
-            return result;
         }
-        return isNeedEmptyCollection(Collections.emptyList());
+        return result;
+
     }
 
     /**

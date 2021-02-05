@@ -17,11 +17,11 @@ public abstract class AbstractPropertiesPlaceholderResolver implements Propertie
     private String valueSeparate = DEFAULT_VALUE_SEPARATE;
     private String before = DEFAULT_BEFORE;
 
-    public AbstractPropertiesPlaceholderResolver() {
+    protected AbstractPropertiesPlaceholderResolver() {
         this(DEFAULT_BEFORE, DEFAULT_VALUE_SEPARATE, DEFAULT_AFTER);
     }
 
-    public AbstractPropertiesPlaceholderResolver(String before, String valueSeparate, String after) {
+    protected AbstractPropertiesPlaceholderResolver(String before, String valueSeparate, String after) {
         this.before = before;
         this.valueSeparate = valueSeparate;
         this.after = after;
