@@ -1,7 +1,5 @@
 package com.chua.utils.tools.function.converter;
 
-import com.chua.utils.tools.classes.ClassHelper;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -30,7 +28,7 @@ public class BigDecimalTypeConverter implements TypeConverter<BigDecimal> {
         if (value instanceof String) {
             try {
                 return new BigDecimal((String) value);
-            } catch (Exception e) {
+            } catch (Exception ignore) {
             }
         }
 
@@ -39,7 +37,7 @@ public class BigDecimalTypeConverter implements TypeConverter<BigDecimal> {
         }
 
         if (value instanceof Double) {
-            return new BigDecimal((Double) value);
+            return BigDecimal.valueOf((Double) value);
         }
 
         if (value instanceof BigInteger) {

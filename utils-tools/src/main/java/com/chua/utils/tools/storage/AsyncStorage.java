@@ -13,16 +13,7 @@ import java.util.function.Supplier;
  */
 public class AsyncStorage {
 
-    /**
-     * 处理任务
-     *
-     * @param supplier 回调
-     * @return 结果
-     */
-    public synchronized static void run(final Supplier<?> supplier) {
-         CompletableFuture.runAsync(() -> {
-            supplier.get();
-        });
+    private AsyncStorage() {
     }
 
     /**
@@ -31,7 +22,17 @@ public class AsyncStorage {
      * @param supplier 回调
      * @return 结果
      */
-    public synchronized static <T> T runAsync(final Supplier<T> supplier) throws ExecutionException, InterruptedException {
+    public static void run(final Supplier<? extends Runnable> supplier) {
+        CompletableFuture.runAsync(supplier.get());
+    }
+
+    /**
+     * 处理任务
+     *
+     * @param supplier 回调
+     * @return 结果
+     */
+    public static <T> T runAsync(final Supplier<T> supplier) throws ExecutionException, InterruptedException {
         CompletableFuture<T> completableFuture = CompletableFuture.supplyAsync(supplier);
         return completableFuture.get();
     }

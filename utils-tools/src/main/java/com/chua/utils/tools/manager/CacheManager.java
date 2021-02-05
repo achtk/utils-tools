@@ -33,7 +33,7 @@ public interface CacheManager<K, V> {
             return Collections.emptyList();
         }
         for (V value : values) {
-            put(key, values);
+            put(key, value);
         }
         return values;
     }
@@ -46,11 +46,12 @@ public interface CacheManager<K, V> {
      * @return
      */
     default V[] put(K key, V[] values) {
-        if (null != key || !BooleanHelper.hasLength(values)) {
+        if (null == key || !BooleanHelper.hasLength(values)) {
             return null;
         }
+
         for (V value : values) {
-            put(key, values);
+            put(key, value);
         }
         return values;
     }

@@ -300,6 +300,7 @@ public class EmptyOrBase extends InitializingCacheable {
             'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
             'Z'};
     public static final Object[] EMPTY_OBJECT = new Object[0];
+    public static final Class<?>[] EMPTY_CLASS = new Class<?>[0];
     public static final CharSequence TIMEOUT = "timeout";
     public static final String OBJECT_NAME = Object.class.getName();
     private static final String SPECIAL_SYMBOL = ".$|()[{^?*+\\";

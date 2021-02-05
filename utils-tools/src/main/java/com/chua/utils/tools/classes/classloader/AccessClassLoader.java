@@ -1,12 +1,12 @@
 package com.chua.utils.tools.classes.classloader;
 
-import com.chua.utils.tools.util.ClassUtils;
-
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
 import java.util.Map;
 import java.util.WeakHashMap;
+
+import static com.chua.utils.tools.classes.ClassLoaderHelper.getCallerClassLoader;
 
 /**
  * access class loader
@@ -17,9 +17,9 @@ import java.util.WeakHashMap;
  */
 public class AccessClassLoader extends ClassLoader {
     private static final Map<ClassLoader, WeakReference<AccessClassLoader>> ACCESS_CLASS_LOADERS = new WeakHashMap<>();
-    private static volatile ClassLoader PARENT_CLASS_LOADER =  ClassUtils.getCallerClassLoader(AccessClassLoader.class);
-    static private volatile AccessClassLoader ACCESS_CLASS_LOADER = new AccessClassLoader(PARENT_CLASS_LOADER);
-    private static volatile Method defineClassMethod;
+    private static final ClassLoader PARENT_CLASS_LOADER = getCallerClassLoader(AccessClassLoader.class);
+    private static AccessClassLoader ACCESS_CLASS_LOADER = new AccessClassLoader(PARENT_CLASS_LOADER);
+    private static Method defineClassMethod;
 
     private AccessClassLoader(ClassLoader parent) {
         super(parent);
@@ -27,12 +27,13 @@ public class AccessClassLoader extends ClassLoader {
 
     /**
      * AccessClassLoader
+     *
      * @param tClass
      * @param <T>
      * @return
      */
     public static <T> AccessClassLoader get(Class<T> tClass) {
-        ClassLoader parent = ClassUtils.getCallerClassLoader(tClass);
+        ClassLoader parent = getCallerClassLoader(tClass);
         // 1. fast-path:
         if (parent.equals(ACCESS_CLASS_LOADER)) {
             if (ACCESS_CLASS_LOADER == null) {
@@ -105,10 +106,10 @@ public class AccessClassLoader extends ClassLoader {
         // DCL on volatile
         if (defineClassMethod == null) {
             synchronized (ACCESS_CLASS_LOADERS) {
-                defineClassMethod = ClassLoader.class.getDeclaredMethod("defineClass", new Class[]{String.class, byte[].class, int.class, int.class, ProtectionDomain.class});
+                defineClassMethod = ClassLoader.class.getDeclaredMethod("defineClass", new Class<?>[]{String.class, byte[].class, int.class, int.class, ProtectionDomain.class});
                 try {
                     defineClassMethod.setAccessible(true);
-                } catch (Exception ignored) {
+                } catch (SecurityException ignored) {
                 }
             }
         }

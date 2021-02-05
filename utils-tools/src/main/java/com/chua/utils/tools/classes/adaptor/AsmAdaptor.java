@@ -9,7 +9,6 @@ import org.objectweb.asm.ClassReader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,27 +30,18 @@ public class AsmAdaptor implements MetadataAdapter {
 
     private ClassReader classReader = null;
     private ClassNode classNode;
-    private InputStream inputStream;
-    private List<String> annotations = new ArrayList<>();
-    private List<FieldDescription> fieldDescriptions = new ArrayList<>();
-    private List<MethodDescription> methodDescriptions = new ArrayList<>();
-    private String source;
     private static final String L = "L";
     private static final String RETURN_L = "()L";
 
     public AsmAdaptor(InputStream inputStream) {
-        this.inputStream = inputStream;
-        ClassReader classReader= null;
         try {
-            classReader = new ClassReader(inputStream);
+            this.classReader = new ClassReader(inputStream);
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
-        this.classReader = classReader;
         this.classNode = new ClassNode();
         this.classReader.accept(classNode, 0);
-        this.source = resolveNewName(classNode.name);
     }
 
     @Override
@@ -76,7 +66,7 @@ public class AsmAdaptor implements MetadataAdapter {
 
     @Override
     public List<String> getInterfaceName() {
-        return this.classNode.interfaces.stream().map(str -> resolveNewName(str)).collect(Collectors.toList());
+        return this.classNode.interfaces.stream().map(AsmAdaptor::resolveNewName).collect(Collectors.toList());
     }
 
     @Override
@@ -110,9 +100,13 @@ public class AsmAdaptor implements MetadataAdapter {
 
 
     public String getModifier(int accessFlags) {
-        return isPrivate(accessFlags) ? "private" :
-                isProtected(accessFlags) ? "protected" :
-                        isPublic(accessFlags) ? "public" : "";
+        if (isPrivate(accessFlags)) {
+            return "private";
+        }
+        if (isProtected(accessFlags)) {
+            return "protected";
+        }
+        return isPublic(accessFlags) ? "public" : "";
     }
 
     /**
@@ -122,7 +116,7 @@ public class AsmAdaptor implements MetadataAdapter {
      * @return 名称
      */
     public static String resolveNewName(String descriptor) {
-        if(Strings.isNullOrEmpty(descriptor)) {
+        if (Strings.isNullOrEmpty(descriptor)) {
             return null;
         }
         String newDescriptor = descriptor;

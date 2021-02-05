@@ -58,9 +58,7 @@ public class ArraysHelper {
     public static <T> List<T> newArrays(@SuppressWarnings("unchecked") final T... t) {
         if (null != t && t.length > 0) {
             List<T> tList = new ArrayList<>(t.length);
-            for (T t1 : t) {
-                tList.add(t1);
-            }
+            tList.addAll(Arrays.asList(t));
             return tList;
         }
         return Collections.emptyList();
@@ -74,7 +72,7 @@ public class ArraysHelper {
      * @return
      */
     public static int binarySearch(Object[] arrays, Object object) {
-        int index = -1, line = -1;
+        int index = -1, line;
         if (null != arrays && (line = arrays.length) > 0 && null != object) {
             for (int i = 0; i < line; i++) {
                 Object array = arrays[i];
@@ -174,6 +172,7 @@ public class ArraysHelper {
         T[] ts = (T[]) Array.newInstance(tClass);
         return list.toArray(ts);
     }
+
     /**
      * 把Set转换成T数组
      *
@@ -245,7 +244,7 @@ public class ArraysHelper {
      */
     public static Object[] combine(Object[] first, Object[] last) {
         if (first.length == 0 && last.length == 0) {
-            return null;
+            return EmptyOrBase.EMPTY_OBJECT;
         }
         Object[] result = new Object[first.length + last.length];
         System.arraycopy(first, 0, result, 0, first.length);
@@ -268,9 +267,7 @@ public class ArraysHelper {
             return list;
         }
 
-        for (int i = 0; i < array.length; i++) {
-            list.add(array[i]);
-        }
+        list.addAll(Arrays.asList(array));
         if (!isEmpty(defaultT)) {
             list.addAll(Arrays.asList(defaultT));
         }
@@ -285,7 +282,7 @@ public class ArraysHelper {
      * @return 清除null后的字符串数组
      */
     public static String[] clearNull(String[] array) {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < array.length; i++) {
             if (array[i] != null) {
                 list.add(array[i]);
@@ -313,7 +310,11 @@ public class ArraysHelper {
      */
     public static <T> T[] clone(final T[] array) {
         if (array == null) {
-            return null;
+            try {
+                return (T[]) EmptyOrBase.EMPTY_OBJECT;
+            } catch (Exception e) {
+                return null;
+            }
         }
         return array.clone();
     }
@@ -363,6 +364,7 @@ public class ArraysHelper {
      * @param <T>
      * @return
      */
+    @SuppressWarnings("ALL")
     public static <T> T[] add(final T[] array, final T element) {
         if (array == null) {
             return null == element ? null : ((Supplier<T[]>) () -> {
@@ -635,7 +637,7 @@ public class ArraysHelper {
         } else {
             splitter = Splitter.on(delimiter);
         }
-        if(omitEmptyStrings) {
+        if (omitEmptyStrings) {
             splitter = splitter.trimResults().omitEmptyStrings();
         }
         return toArray(splitter.splitToList(source));

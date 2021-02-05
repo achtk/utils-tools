@@ -11,6 +11,9 @@ import java.util.Map;
  * @author CH
  */
 public class Assert {
+    private Assert() {
+    }
+
     /**
      * @param expression
      * @param message

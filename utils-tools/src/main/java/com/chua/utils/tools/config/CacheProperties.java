@@ -27,7 +27,7 @@ public class CacheProperties {
     /**
      * 类加载器
      */
-    private CacheLoader cacheLoader;
+    private CacheLoader<Object, Object> cacheLoader;
     /**
      * 内存存储最大数量
      */

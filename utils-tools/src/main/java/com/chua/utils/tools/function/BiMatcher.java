@@ -13,9 +13,9 @@ public interface BiMatcher<T, T2> {
     /**
      * 回调
      *
-     * @param item 元素
+     * @param item  元素
      * @param item2 元素
-     * @throws Throwable
+     * @throws Exception Exception
      */
-    void doWith(T item, T2 item2) throws Throwable;
+    void doWith(T item, T2 item2) throws Exception;
 }

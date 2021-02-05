@@ -1,6 +1,7 @@
 package com.chua.utils.tools.util;
 
 import com.chua.utils.tools.common.ArraysHelper;
+import com.chua.utils.tools.empty.EmptyOrBase;
 
 /**
  * 数组
@@ -33,8 +34,14 @@ public class ArrayUtils extends ArraysHelper {
      * @return 数组类型
      */
     public static Class<?>[] toClass(Object[] params) {
-
-        return new Class[0];
+        if(null == params) {
+            return EmptyOrBase.EMPTY_CLASS;
+        }
+        Class<?>[] result = new Class<?>[params.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = params[i] == null ? void.class : params[i].getClass();
+        }
+        return result;
     }
 
     /**

@@ -1,13 +1,12 @@
 package com.chua.utils.tools.collects.iterator;
 
 import com.chua.utils.tools.collects.collections.CollectionHelper;
-import com.chua.utils.tools.function.OperatorIterator;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -61,7 +60,7 @@ public class IndexIterator implements Iterator<Integer> {
      * @return
      */
     @Override
-    public Integer next() {
+    public Integer next() throws NoSuchElementException {
         return index;
     }
 }

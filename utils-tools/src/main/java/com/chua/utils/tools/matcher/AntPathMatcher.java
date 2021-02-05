@@ -2,6 +2,7 @@ package com.chua.utils.tools.matcher;
 
 
 import com.chua.utils.tools.common.StringHelper;
+import com.chua.utils.tools.empty.EmptyOrBase;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -31,8 +32,6 @@ public class AntPathMatcher implements PathMatcher {
 
     private String pathSeparator;
 
-    private PathSeparatorPatternCache pathSeparatorPatternCache;
-
     private boolean caseSensitive = true;
 
     private boolean trimTokens = false;
@@ -45,17 +44,14 @@ public class AntPathMatcher implements PathMatcher {
 
     public AntPathMatcher() {
         this.pathSeparator = DEFAULT_PATH_SEPARATOR;
-        this.pathSeparatorPatternCache = new PathSeparatorPatternCache(DEFAULT_PATH_SEPARATOR);
     }
 
     public AntPathMatcher(String pathSeparator) {
         this.pathSeparator = pathSeparator;
-        this.pathSeparatorPatternCache = new PathSeparatorPatternCache(pathSeparator);
     }
 
     public void setPathSeparator(String pathSeparator) {
         this.pathSeparator = (pathSeparator != null ? pathSeparator : DEFAULT_PATH_SEPARATOR);
-        this.pathSeparatorPatternCache = new PathSeparatorPatternCache(this.pathSeparator);
     }
 
     @Override
@@ -191,17 +187,17 @@ public class AntPathMatcher implements PathMatcher {
             int foundIdx = -1;
 
             strLoop:
-            for (int i = 0; i <= strLength - patLength; i++) {
-                for (int j = 0; j < patLength; j++) {
-                    String subPat = patternDirs[pattIdxStart + j + 1];
-                    String subStr = pathDirs[pathIdxStart + i + j];
-                    if (!matchStrings(subPat, subStr, uriTemplateVariables)) {
-                        continue strLoop;
+                for (int i = 0; i <= strLength - patLength; i++) {
+                    for (int j = 0; j < patLength; j++) {
+                        String subPat = patternDirs[pattIdxStart + j + 1];
+                        String subStr = pathDirs[pathIdxStart + i + j];
+                        if (!matchStrings(subPat, subStr, uriTemplateVariables)) {
+                            continue strLoop;
+                        }
                     }
+                    foundIdx = pathIdxStart + i;
+                    break;
                 }
-                foundIdx = pathIdxStart + i;
-                break;
-            }
 
             if (foundIdx == -1) {
                 return false;
@@ -279,12 +275,12 @@ public class AntPathMatcher implements PathMatcher {
      */
     private String[] getPatternDirs(String path, boolean fullMatch, String pattern) {
         if (path.startsWith(this.pathSeparator) != pattern.startsWith(this.pathSeparator)) {
-            return null;
+            return EmptyOrBase.EMPTY_STRING;
         }
 
         String[] patternDirs = tokenizePattern(pattern);
         if (fullMatch && this.caseSensitive && !isPotentialMatch(path, patternDirs)) {
-            return null;
+            return EmptyOrBase.EMPTY_STRING;
         }
         return patternDirs;
     }
@@ -377,17 +373,17 @@ public class AntPathMatcher implements PathMatcher {
      */
     protected String[] tokenizePattern(String pattern) {
         String[] tokenized = null;
-        Boolean cachePatterns = this.cachePatterns;
-        if (cachePatterns == null || cachePatterns) {
+        Boolean patterns = this.cachePatterns;
+        if (patterns == null || patterns) {
             tokenized = this.tokenizedPatternCache.get(pattern);
         }
         if (tokenized == null) {
             tokenized = tokenizePath(pattern);
-            if (cachePatterns == null && this.tokenizedPatternCache.size() >= CACHE_TURNOFF_THRESHOLD) {
+            if (patterns == null && this.tokenizedPatternCache.size() >= CACHE_TURNOFF_THRESHOLD) {
                 deactivatePatternCache();
                 return tokenized;
             }
-            if (cachePatterns == null || cachePatterns) {
+            if (patterns == null || patterns) {
                 this.tokenizedPatternCache.put(pattern, tokenized);
             }
         }
@@ -424,17 +420,17 @@ public class AntPathMatcher implements PathMatcher {
      */
     protected AntPathStringMatcher getStringMatcher(final String pattern) {
         AntPathStringMatcher matcher = null;
-        Boolean cachePatterns = this.cachePatterns;
-        if (cachePatterns == null || cachePatterns) {
+        Boolean patterns = this.cachePatterns;
+        if (patterns == null || patterns) {
             matcher = this.stringMatcherCache.get(pattern);
         }
         if (matcher == null) {
             matcher = new AntPathStringMatcher(pattern, this.caseSensitive);
-            if (cachePatterns == null && this.stringMatcherCache.size() >= CACHE_TURNOFF_THRESHOLD) {
+            if (patterns == null && this.stringMatcherCache.size() >= CACHE_TURNOFF_THRESHOLD) {
                 deactivatePatternCache();
                 return matcher;
             }
-            if (cachePatterns == null || cachePatterns) {
+            if (patterns == null || patterns) {
                 this.stringMatcherCache.put(pattern, matcher);
             }
         }
@@ -461,7 +457,7 @@ public class AntPathMatcher implements PathMatcher {
 
         private final Pattern pattern;
 
-        private final List<String> variableNames = new LinkedList<String>();
+        private final List<String> variableNames = new LinkedList<>();
 
         public AntPathStringMatcher(String pattern) {
             this(pattern, true);

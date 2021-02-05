@@ -36,7 +36,7 @@ public abstract class AbstractRewriteScanner extends AbstractScanner {
     public Object scan(Vfs.File file, Object classObject, Store store) {
         if (classObject == null) {
             try {
-                MetadataAdapter metadataAdapter = configuration.getMetadataAdapter();
+                MetadataAdapter<?, ?, ?> metadataAdapter = configuration.getMetadataAdapter();
                 classObject = metadataAdapter.getOrCreateClassObject(file);
             } catch (Exception e) {
                 throw new ReflectionsException("could not create class object from file " + file.getRelativePath(), e);

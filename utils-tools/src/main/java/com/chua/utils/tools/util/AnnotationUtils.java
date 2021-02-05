@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static com.chua.utils.tools.classes.ReflectionHelper.getLocalField;
+import static com.chua.utils.tools.common.ArraysHelper.contains;
+
 /**
  * 注解工具类
  *
@@ -34,6 +37,9 @@ public class AnnotationUtils {
             Native.class,
             Inherited.class
     };
+
+    private AnnotationUtils() {
+    }
 
     /**
      * 注解转Map
@@ -68,7 +74,7 @@ public class AnnotationUtils {
         Class<? extends Annotation> aClass = annotation.annotationType();
         Annotation[] annotations = aClass.getDeclaredAnnotations();
         for (Annotation annotation1 : annotations) {
-            if (ArrayUtils.contains(IGNORED, annotation1.annotationType())) {
+            if (contains(IGNORED, annotation1.annotationType())) {
                 continue;
             }
             result.putAll(asMap(annotation1));
@@ -136,7 +142,7 @@ public class AnnotationUtils {
         }
 
         InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
-        Field field = ClassUtils.getLocalField(invocationHandler, MEMBER_VALUES);
+        Field field = getLocalField(invocationHandler, MEMBER_VALUES);
         if (null == field) {
             return Collections.emptyMap();
         }
@@ -156,7 +162,13 @@ public class AnnotationUtils {
         if (null != compiler.getDeclaredAnnotation(componentClass)) {
             return true;
         }
-        Set<Annotation> allAnnotation = findAllAnnotation(compiler, annotation -> annotation.getClass().getName().equals(componentClass.getName()));
+        Set<Annotation> allAnnotation = findAllAnnotation(compiler, annotation -> {
+            if(annotation.getClass().isAssignableFrom(componentClass)) {
+                return true;
+            }
+            String name = annotation.getClass().getName();
+            return name.equals(componentClass.getName());
+        });
         return !allAnnotation.isEmpty();
     }
 
@@ -207,10 +219,7 @@ public class AnnotationUtils {
         Class<? extends Annotation> aClass = annotation.annotationType();
         Annotation[] declaredAnnotations = aClass.getDeclaredAnnotations();
         for (Annotation declaredAnnotation : declaredAnnotations) {
-            if (ArrayUtils.contains(IGNORED, declaredAnnotation.annotationType())) {
-                continue;
-            }
-            if (result.contains(declaredAnnotation)) {
+            if (contains(IGNORED, declaredAnnotation.annotationType()) || result.contains(declaredAnnotation)) {
                 continue;
             }
 

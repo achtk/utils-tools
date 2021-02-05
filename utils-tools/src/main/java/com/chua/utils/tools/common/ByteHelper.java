@@ -1,5 +1,7 @@
 package com.chua.utils.tools.common;
 
+import com.chua.utils.tools.empty.EmptyOrBase;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -406,7 +408,7 @@ public class ByteHelper {
         int len = source.length();
         int shortSize = 2;
         if (len % shortSize != 0) {
-            return null;
+            return EmptyOrBase.EMPTY_BYTES;
         }
         int size = len / 2;
         byte[] data = new byte[size];

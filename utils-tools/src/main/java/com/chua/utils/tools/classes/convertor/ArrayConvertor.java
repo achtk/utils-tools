@@ -1,10 +1,7 @@
 package com.chua.utils.tools.classes.convertor;
 
+import com.chua.utils.tools.empty.EmptyOrBase;
 import com.google.common.base.Splitter;
-
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * 字符串转换器
@@ -17,7 +14,7 @@ public class ArrayConvertor implements Convertor<Object[]> {
     @Override
     public Object[] convert(Object value) {
         if(null == value) {
-            return null;
+            return EmptyOrBase.EMPTY_OBJECT;
         }
 
         if(value.getClass().isArray()) {
@@ -28,6 +25,6 @@ public class ArrayConvertor implements Convertor<Object[]> {
         }
 
 
-        return null;
+        return EmptyOrBase.EMPTY_OBJECT;
     }
 }
