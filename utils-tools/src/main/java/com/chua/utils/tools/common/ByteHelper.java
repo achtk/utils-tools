@@ -402,9 +402,9 @@ public class ByteHelper {
      *
      * @param source the string value
      * @return byte array
-     * @throws NullPointerException NullPointerException
+     * @throws Exception Exception
      */
-    public static byte[] parseHexStringToArray(String source) throws NullPointerException {
+    public static byte[] parseHexStringToArray(String source) throws Exception {
         int len = source.length();
         int shortSize = 2;
         if (len % shortSize != 0) {

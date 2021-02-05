@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * spi扩展器
@@ -513,5 +514,14 @@ public class ExtensionLoader<T> {
             }
         }
         return result;
+    }
+
+    /**
+     * 流式操作
+     *
+     * @return 流
+     */
+    public Stream<Map.Entry<String, ExtensionClass<T>>> stream() {
+        return extensionClassMultimap.entrySet().stream();
     }
 }

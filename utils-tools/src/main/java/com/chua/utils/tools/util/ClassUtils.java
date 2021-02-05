@@ -570,17 +570,29 @@ public class ClassUtils extends ClassHelper {
     }
 
     /**
-     * 获取泛型
-     *
+     * 获取泛型类型
+     * <p>1.先判断父类泛型</p>
+     * <p>2.判断接口泛型</p>
      * @param value 类
      * @return 泛型类型
      */
     public static Type[] getActualTypeArguments(final Class<?> value) {
         Type type = value.getGenericSuperclass();
+        List<Type> types = new ArrayList<>();
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
-            return parameterizedType.getActualTypeArguments();
+            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+            types.addAll(Arrays.asList(actualTypeArguments));
         }
-        return new Type[0];
+
+        Type[] genericInterfaces = value.getGenericInterfaces();
+        for (Type anInterface : genericInterfaces) {
+            if (anInterface instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) anInterface;
+                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                types.addAll(Arrays.asList(actualTypeArguments));
+            }
+        }
+        return types.toArray(new Type[0]);
     }
 }

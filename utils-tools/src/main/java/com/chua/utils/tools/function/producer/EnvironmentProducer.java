@@ -6,7 +6,7 @@ import java.util.Properties;
  * 环境提供接口
  * @author CH
  */
-public interface IEnvironmentProducer {
+public interface EnvironmentProducer {
     /**
      * 获取环境
      * @return
@@ -25,7 +25,7 @@ public interface IEnvironmentProducer {
      * @param value 数据
      * @return
      */
-    default IEnvironmentProducer append(final Object key, final Object value) {
+    default EnvironmentProducer append(final Object key, final Object value) {
         Properties environment = getEnvironment();
         if(null == environment) {
             return this;
