@@ -196,6 +196,14 @@ public class StringConstant {
      */
     public static final String JAVASSIST = "$javassist";
     /**
+     * javassist
+     */
+    public static final String NAMED_JAVASSIST = "javassist";
+    /**
+     * jdk
+     */
+    public static final String NAMED_JDK = "jdk";
+    /**
      * window
      */
     public static final String WINDOW = "window";

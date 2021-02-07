@@ -17,7 +17,26 @@ public interface TypeConverter<O> extends Converter<Object, O> {
      * @param value 值
      * @return O
      */
-    O convert(Object value);
+    default O convert(Object value) {
+        if (null == value || null == getType()) {
+            return null;
+        }
+
+        if (getType().isAssignableFrom(value.getClass())) {
+            return (O) value;
+        }
+        return convertIfNecessary(value);
+    }
+
+    /**
+     * 类型转化
+     *
+     * @param value 值
+     * @return O
+     */
+    default O convertIfNecessary(Object value) {
+        return com.chua.utils.tools.function.converter.Converter.getTypeConversionDefinition(value.getClass(), getType()).convert(value);
+    }
 
     /**
      * 转化类型

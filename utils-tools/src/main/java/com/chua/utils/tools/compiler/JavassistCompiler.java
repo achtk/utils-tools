@@ -1,12 +1,15 @@
 package com.chua.utils.tools.compiler;
 
+import com.chua.utils.tools.aware.NamedAware;
 import com.chua.utils.tools.classes.ClassHelper;
-import lombok.extern.slf4j.Slf4j;
 import javassist.CtClass;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.chua.utils.tools.constant.StringConstant.NAMED_JAVASSIST;
 
 /**
  * javassist 编译器
@@ -14,7 +17,7 @@ import java.util.regex.Pattern;
  * @author CHTK
  */
 @Slf4j
-public class JavassistCompiler implements Compiler {
+public class JavassistCompiler implements Compiler, NamedAware {
 
     private static final Pattern IMPORT_PATTERN = Pattern.compile("import\\s+([\\w\\.\\*]+);");
 
@@ -74,4 +77,8 @@ public class JavassistCompiler implements Compiler {
         return cls.toClass(classLoader, JavassistCompiler.class.getProtectionDomain());
     }
 
+    @Override
+    public String named() {
+        return NAMED_JAVASSIST;
+    }
 }

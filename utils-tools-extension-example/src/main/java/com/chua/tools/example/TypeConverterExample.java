@@ -23,9 +23,9 @@ public class TypeConverterExample extends BaseExample {
         TypeConverter dateConverter = Converter.getTypeConverter(Date.class);
         TypeConverter stringConverter = Converter.getTypeConverter(String.class);
         // 12:00:00
+        log.info("data 2020 -> {}({})", Converter.convertIfNecessary("2020", Float.class), floatConverter.getType());
         log.info("data [2020] -> {}({})", Converter.convertIfNecessary("[2020]", List.class), listConverter.getType());
         log.info("data 2020 -> {}({})", Converter.convertIfNecessary("2020", List.class), listConverter.getType());
-        log.info("data 2020 -> {}({})", Converter.convertIfNecessary("2020", Float.class), floatConverter.getType());
         log.info("data 2020 -> {}({})", Converter.convertIfNecessary("2020", Time.class), Time.class);
         log.info("data 2020-10 -> {}({})", Converter.convertIfNecessary("2020-10", String.class), stringConverter.getType());
         log.info("data 2020-10 -> {}({})", Converter.convertIfNecessary("2020-10", Date.class), dateConverter.getType());

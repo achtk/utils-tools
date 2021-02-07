@@ -8,18 +8,6 @@ package com.chua.utils.tools.function.converter;
  * @since 2020/12/19
  */
 public class EnumTypeConverter implements TypeConverter<Enum> {
-    @Override
-    public Enum convert(Object value) {
-        if (null == value) {
-            return null;
-        }
-
-        if (value instanceof Enum) {
-            return (Enum) value;
-        }
-        return null;
-    }
-
 
     @Override
     public Enum convert(Object value, Class<? extends Enum> tClass) {

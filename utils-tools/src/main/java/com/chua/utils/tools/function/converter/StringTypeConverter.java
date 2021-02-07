@@ -8,10 +8,6 @@ package com.chua.utils.tools.function.converter;
  * @since 2020/11/5
  */
 public class StringTypeConverter implements TypeConverter<String> {
-    @Override
-    public String convert(Object value) {
-        return null == value ? null : value.toString();
-    }
 
     @Override
     public Class<String> getType() {

@@ -10,22 +10,6 @@ import java.util.regex.Pattern;
  * @since 2020/12/19
  */
 public class PatternTypeConverter implements TypeConverter<Pattern> {
-    @Override
-    public Pattern convert(Object value) {
-        if (null == value) {
-            return null;
-        }
-
-        if (value instanceof Pattern) {
-            return (Pattern) value;
-        }
-
-        if (value instanceof String) {
-            return Pattern.compile(value.toString());
-        }
-
-        return null;
-    }
 
     @Override
     public Class<Pattern> getType() {

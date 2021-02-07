@@ -5,8 +5,7 @@ import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.read.builder.ExcelReaderBuilder;
-import com.chua.utils.tools.function.AbstractConverter;
-import com.chua.utils.tools.function.NoneAbstractConverter;
+import com.chua.utils.tools.function.FileConverter;
 import com.chua.utils.tools.prop.mapper.FileMapper;
 import com.chua.utils.tools.prop.resolver.IFileResolver;
 import com.google.common.collect.HashMultimap;
@@ -35,7 +34,6 @@ public class XlsFileResolver implements IFileResolver {
 
             @Override
             public void doAfterAllAnalysed(AnalysisContext context) {
-                System.out.println();
             }
         });
         ExcelReader excelReader = readerBuilder.build();
@@ -43,12 +41,9 @@ public class XlsFileResolver implements IFileResolver {
     }
 
     @Override
-    public FileMapper analysis(AbstractConverter abstractConverter) {
+    public FileMapper analysis(FileConverter fileConverter) {
         if(null == items) {
             return null;
-        }
-        if(null == abstractConverter) {
-            abstractConverter = new NoneAbstractConverter();
         }
         FileMapper fileMapper = new FileMapper();
         fileMapper.setHashMultimap(items);

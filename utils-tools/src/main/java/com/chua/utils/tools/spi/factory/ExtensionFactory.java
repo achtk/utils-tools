@@ -1,23 +1,45 @@
 package com.chua.utils.tools.spi.factory;
 
+import com.chua.utils.tools.aware.NamedAware;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.common.ThreadHelper;
+import com.chua.utils.tools.resource.entity.Resource;
+import com.chua.utils.tools.resource.template.ResourceTemplate;
+import com.chua.utils.tools.spi.common.SpiConfigs;
 import com.chua.utils.tools.spi.entity.ExtensionClass;
 import com.chua.utils.tools.spi.extension.ExtensionLoader;
+import com.chua.utils.tools.spi.options.SpiOptions;
 import com.chua.utils.tools.spi.processor.*;
+import com.chua.utils.tools.util.BooleanUtils;
+import com.chua.utils.tools.util.ClassUtils;
+import com.chua.utils.tools.util.CollectionUtils;
+import com.chua.utils.tools.util.IoUtils;
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 扩展工厂类
@@ -359,6 +381,71 @@ public class ExtensionFactory implements Runnable {
         }
         ExtensionLoader<T> extensionLoader = getExtensionLoader(tClass);
         extensionLoader.getAllSpiService().forEach(consumer);
+    }
+    /**
+     * 转化为spi文件
+     *
+     * @param interfaceClass 接口
+     */
+    public static void createSpi(Class<?> interfaceClass) {
+       createSpi(interfaceClass, null);
+    }
+    /**
+     * 转化为spi文件
+     *
+     * @param interfaceClass 接口
+     * @param stringSupplier 命名
+     */
+    public static void createSpi(Class<?> interfaceClass, Function<Class<?>, String> stringSupplier) {
+        ResourceTemplate template = new ResourceTemplate();
+        List<Class<?>> subOfType = template.getSubOfType(interfaceClass);
+        List<String> listValue = SpiConfigs.newConfig().getListValue(SpiOptions.EXTENSION_LOAD_PATH);
+        if (!BooleanUtils.hasLength(listValue)) {
+            return;
+        }
+        String last = CollectionUtils.findLast(listValue);
+        String source = ExtensionFactory.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
+        Set<Resource> resources = template.getResources("classpath:" + last);
+        Resource resource1 = resources.stream().filter(resource -> {
+            return resource.getUrl().toExternalForm().startsWith(source);
+        }).findFirst().get();
+
+        String spiName = interfaceClass.getName();
+        String replace = resource1.getUrl().toExternalForm().replace("/target/classes", "/src/main/resources");
+
+
+        try {
+            Path realSpiPath = Paths.get(new URI(replace + "/" + spiName));
+            Path targetSpiPath = Paths.get(new URI(resource1.getUrl().toExternalForm() + "/" + spiName));
+            if (!Files.exists(realSpiPath)) {
+                if (!Files.exists(realSpiPath.getParent())) {
+                    Files.createDirectories(realSpiPath.getParent());
+                }
+                Files.createFile(realSpiPath);
+            }
+
+            if (!Files.exists(targetSpiPath)) {
+                if (!Files.exists(targetSpiPath.getParent())) {
+                    Files.createDirectories(targetSpiPath.getParent());
+                }
+                Files.createFile(targetSpiPath);
+            }
+            byte[] bytes = IoUtils.toByteArray(new StringReader(Joiner.on("\r\n").join(subOfType.stream().map(s -> {
+                if (null != stringSupplier) {
+                    String s1 = stringSupplier.apply(s);
+                    return Strings.isNullOrEmpty(s1) ? s.getName() : s1 + "=" + s.getName();
+                }
+                if (NamedAware.class.isAssignableFrom(s)) {
+                    NamedAware forObject = ClassUtils.forObject(s, NamedAware.class);
+                    return forObject.named() + "=" + s.getName();
+                }
+                return s.getName();
+            }).collect(Collectors.toList()))));
+            Files.write(realSpiPath, bytes, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(targetSpiPath, bytes, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
 

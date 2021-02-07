@@ -10,18 +10,6 @@ import java.util.Map;
  * @since 2020/11/5
  */
 public class MapTypeConverter implements TypeConverter<Map> {
-    @Override
-    public Map convert(Object value) {
-        if (null == value) {
-            return null;
-        }
-
-        if (value instanceof Map) {
-            return (Map) value;
-        }
-
-        return null;
-    }
 
     @Override
     public Class<Map> getType() {

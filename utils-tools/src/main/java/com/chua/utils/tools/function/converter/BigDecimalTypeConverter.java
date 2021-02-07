@@ -1,7 +1,6 @@
 package com.chua.utils.tools.function.converter;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 /**
  * BigDecimal转化
@@ -11,44 +10,6 @@ import java.math.BigInteger;
  * @since 2020/11/26
  */
 public class BigDecimalTypeConverter implements TypeConverter<BigDecimal> {
-    @Override
-    public BigDecimal convert(Object value) {
-        if (null == value) {
-            return null;
-        }
-
-        if (value instanceof BigDecimal) {
-            return (BigDecimal) value;
-        }
-
-        if (value instanceof Long) {
-            return new BigDecimal((Long) value);
-        }
-
-        if (value instanceof String) {
-            try {
-                return new BigDecimal((String) value);
-            } catch (Exception ignore) {
-            }
-        }
-
-        if (value instanceof Integer) {
-            return new BigDecimal((Integer) value);
-        }
-
-        if (value instanceof Double) {
-            return BigDecimal.valueOf((Double) value);
-        }
-
-        if (value instanceof BigInteger) {
-            return new BigDecimal((BigInteger) value);
-        }
-
-        if (value instanceof char[]) {
-            return new BigDecimal((char[]) value);
-        }
-        return null;
-    }
 
     @Override
     public Class<BigDecimal> getType() {

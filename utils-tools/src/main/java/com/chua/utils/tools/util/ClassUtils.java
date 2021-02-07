@@ -573,26 +573,57 @@ public class ClassUtils extends ClassHelper {
      * 获取泛型类型
      * <p>1.先判断父类泛型</p>
      * <p>2.判断接口泛型</p>
+     *
      * @param value 类
      * @return 泛型类型
      */
-    public static Type[] getActualTypeArguments(final Class<?> value) {
+    public static Type[] getActualTypeArguments(final Class<?> value, final Class<?>... includes) {
         Type type = value.getGenericSuperclass();
         List<Type> types = new ArrayList<>();
         if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-            types.addAll(Arrays.asList(actualTypeArguments));
+            if (container(type, includes)) {
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                types.addAll(Arrays.asList(actualTypeArguments));
+            }
         }
 
         Type[] genericInterfaces = value.getGenericInterfaces();
         for (Type anInterface : genericInterfaces) {
             if (anInterface instanceof ParameterizedType) {
-                ParameterizedType parameterizedType = (ParameterizedType) anInterface;
-                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-                types.addAll(Arrays.asList(actualTypeArguments));
+                if (container(anInterface, includes)) {
+                    ParameterizedType parameterizedType = (ParameterizedType) anInterface;
+                    Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                    types.addAll(Arrays.asList(actualTypeArguments));
+                }
             }
         }
         return types.toArray(new Type[0]);
+    }
+
+    /**
+     * 是否包含类
+     *
+     * @param type     类
+     * @param includes 类集合
+     * @return 包含返回true
+     */
+    public static boolean container(Type type, Class<?>[] includes) {
+        if (null == type || null == includes || includes.length == 0) {
+            return true;
+        }
+
+        String typeName = type.getTypeName();
+        for (Class<?> include : includes) {
+            int index = typeName.indexOf("<");
+            if(index != -1) {
+                typeName = typeName.substring(0, index);
+            }
+            if (typeName.equals(include.getName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

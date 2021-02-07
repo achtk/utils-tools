@@ -522,6 +522,7 @@ public class ExtensionLoader<T> {
      * @return 流
      */
     public Stream<Map.Entry<String, ExtensionClass<T>>> stream() {
-        return extensionClassMultimap.entrySet().stream();
+        Map<String, ExtensionClass<T>> first = extensionClassMultimap.getAllFirst();
+        return first.entrySet().stream();
     }
 }
