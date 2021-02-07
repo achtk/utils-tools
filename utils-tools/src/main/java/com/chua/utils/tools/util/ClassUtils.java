@@ -35,11 +35,9 @@ public class ClassUtils extends ClassHelper {
 
     private static final CtClass[] EMPTY = new CtClass[0];
     private static final Class<?>[] EMPTY_CLASS = new Class[0];
-    public static final Map<String, Class<?>> NAME_PRIMITIVE_MAP = new HashMap<>();
+    protected static final Map<String, Class<?>> NAME_PRIMITIVE_MAP = new HashMap<>();
     public static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_MAP;
     private static final Map<Class<?>, Class<?>> WRAPPER_PRIMITIVE_MAP;
-    private static final Map<String, String> ABBREVIATION_MAP;
-    private static final Map<String, String> REVERSE_ABBREVIATION_MAP;
 
     static {
         NAME_PRIMITIVE_MAP.put("boolean", Boolean.TYPE);
@@ -64,7 +62,7 @@ public class ClassUtils extends ClassHelper {
         PRIMITIVE_WRAPPER_MAP.put(Void.TYPE, Void.TYPE);
 
         WRAPPER_PRIMITIVE_MAP = new HashMap<>();
-        Iterator var0 = PRIMITIVE_WRAPPER_MAP.entrySet().iterator();
+        Iterator<Map.Entry<Class<?>, Class<?>>> var0 = PRIMITIVE_WRAPPER_MAP.entrySet().iterator();
 
         while (var0.hasNext()) {
             Map.Entry<Class<?>, Class<?>> entry = (Map.Entry) var0.next();
@@ -75,7 +73,7 @@ public class ClassUtils extends ClassHelper {
             }
         }
 
-        Map<String, String> m = new HashMap();
+        Map<String, String> m = new HashMap<>();
         m.put("int", "I");
         m.put("boolean", "Z");
         m.put("float", "F");
@@ -84,16 +82,14 @@ public class ClassUtils extends ClassHelper {
         m.put("byte", "B");
         m.put("double", "D");
         m.put("char", "C");
-        Map<String, String> r = new HashMap();
-        Iterator var6 = m.entrySet().iterator();
+        Map<String, String> r = new HashMap<>();
+        Iterator<Map.Entry<String, String>> var6 = m.entrySet().iterator();
 
         while (var6.hasNext()) {
-            Map.Entry<String, String> e = (Map.Entry) var6.next();
+            Map.Entry<String, String> e = var6.next();
             r.put(e.getValue(), e.getKey());
         }
 
-        ABBREVIATION_MAP = Collections.unmodifiableMap(m);
-        REVERSE_ABBREVIATION_MAP = Collections.unmodifiableMap(r);
     }
 
     /**
@@ -219,7 +215,7 @@ public class ClassUtils extends ClassHelper {
                 java.lang.Object entity = null;
                 try {
                     entity = toEntity(ctClass, classPool);
-                } catch (Throwable exception) {
+                } catch (Exception exception) {
                     if (!exception.getMessage().contains(DUPLICATE)) {
                         exception.printStackTrace();
                         return null;
@@ -352,8 +348,6 @@ public class ClassUtils extends ClassHelper {
         if (BooleanUtils.isEmpty(classes)) {
             return EMPTY;
         }
-        ClassPool classPool = getClassPool();
-
         List<CtClass> ctClassList = new ArrayList<>(classes.length);
         for (Class<?> aClass : classes) {
             try {
@@ -392,6 +386,9 @@ public class ClassUtils extends ClassHelper {
      * @param field 字段
      */
     public static void setAccessible(Field field) {
+        if(null == field) {
+            return;
+        }
         field.setAccessible(true);
     }
 
@@ -401,6 +398,9 @@ public class ClassUtils extends ClassHelper {
      * @param method 方法
      */
     public static void setAccessible(Method method) {
+        if(null == method) {
+            return;
+        }
         method.setAccessible(true);
     }
 
@@ -565,7 +565,7 @@ public class ClassUtils extends ClassHelper {
         try {
             field = aClass.getDeclaredField(fieldName);
             setFieldValue(field, value, bean);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException ignore) {
         }
     }
 
@@ -580,22 +580,18 @@ public class ClassUtils extends ClassHelper {
     public static Type[] getActualTypeArguments(final Class<?> value, final Class<?>... includes) {
         Type type = value.getGenericSuperclass();
         List<Type> types = new ArrayList<>();
-        if (type instanceof ParameterizedType) {
-            if (container(type, includes)) {
-                ParameterizedType parameterizedType = (ParameterizedType) type;
-                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-                types.addAll(Arrays.asList(actualTypeArguments));
-            }
+        if (type instanceof ParameterizedType && container(type, includes)) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+            types.addAll(Arrays.asList(actualTypeArguments));
         }
 
         Type[] genericInterfaces = value.getGenericInterfaces();
         for (Type anInterface : genericInterfaces) {
-            if (anInterface instanceof ParameterizedType) {
-                if (container(anInterface, includes)) {
-                    ParameterizedType parameterizedType = (ParameterizedType) anInterface;
-                    Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-                    types.addAll(Arrays.asList(actualTypeArguments));
-                }
+            if (anInterface instanceof ParameterizedType && container(anInterface, includes)) {
+                ParameterizedType parameterizedType = (ParameterizedType) anInterface;
+                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                types.addAll(Arrays.asList(actualTypeArguments));
             }
         }
         return types.toArray(new Type[0]);
@@ -616,7 +612,7 @@ public class ClassUtils extends ClassHelper {
         String typeName = type.getTypeName();
         for (Class<?> include : includes) {
             int index = typeName.indexOf("<");
-            if(index != -1) {
+            if (index != -1) {
                 typeName = typeName.substring(0, index);
             }
             if (typeName.equals(include.getName())) {

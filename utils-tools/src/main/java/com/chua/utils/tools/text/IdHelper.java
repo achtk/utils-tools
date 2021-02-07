@@ -4,9 +4,9 @@ import com.chua.utils.tools.common.codec.encrypt.DesedeEncrypt;
 import com.chua.utils.tools.common.codec.encrypt.Encrypt;
 import com.chua.utils.tools.common.codec.encrypt.Md5Encrypt;
 import com.chua.utils.tools.text.snowflake.Snowflake;
-import sun.misc.BASE64Encoder;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -84,8 +84,8 @@ public class IdHelper {
      */
     public static String createDataFinger() {
         String md5 = createMd5();
-        BASE64Encoder base64Encoder = new BASE64Encoder();
-        return base64Encoder.encode(md5.getBytes());
+        Base64.Encoder encoder = Base64.getEncoder();
+        return encoder.encodeToString(md5.getBytes());
     }
 
     /**

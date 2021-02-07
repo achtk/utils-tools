@@ -1,7 +1,6 @@
 package com.chua.utils.tools.classes;
 
 import com.chua.utils.tools.common.IoHelper;
-import com.chua.utils.tools.function.able.InitializingCacheable;
 import com.chua.utils.tools.text.IdHelper;
 import com.google.common.base.Strings;
 import javassist.*;
@@ -25,7 +24,7 @@ import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_WELL;
  * @author CH
  * @date 2020-09-26
  */
-public class JavassistHelper extends InitializingCacheable {
+public class JavassistHelper {
 
 
     /**

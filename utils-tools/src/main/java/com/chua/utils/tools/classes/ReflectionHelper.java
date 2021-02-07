@@ -117,7 +117,7 @@ public class ReflectionHelper extends JavassistHelper {
      * @param object 对象
      * @return 所有构造
      */
-    public static List<Constructor<?>> getLocalConstructors(final Object object) throws Exception {
+    public static List<Constructor<?>> getLocalConstructors(final Object object) {
         if (null == object) {
             return Collections.emptyList();
         }
@@ -1038,9 +1038,7 @@ public class ReflectionHelper extends JavassistHelper {
      */
     public static List<Method> findLocalMethodAnnotation(Class<?> source, Class<? extends Annotation> annotation) {
         List<Method> result = new ArrayList<>();
-        doWithLocalMethodAnnotation(source, annotation, method -> {
-            result.add(method);
-        });
+        doWithLocalMethodAnnotation(source, annotation, result::add);
         return result;
     }
 
@@ -1052,9 +1050,7 @@ public class ReflectionHelper extends JavassistHelper {
      */
     public static List<Method> findMethodAnnotation(Class<?> source, Class<? extends Annotation> annotation) {
         List<Method> result = new ArrayList<>();
-        doWithMethodAnnotation(source, annotation, method -> {
-            result.add(method);
-        });
+        doWithMethodAnnotation(source, annotation, result::add);
         return result;
     }
 
@@ -1099,9 +1095,7 @@ public class ReflectionHelper extends JavassistHelper {
      */
     public static List<Field> findFieldAnnotation(Class<?> source, Class<? extends Annotation> annotation) {
         List<Field> result = new ArrayList<>();
-        doWithFieldAnnotation(source, annotation, field -> {
-            result.add(field);
-        });
+        doWithFieldAnnotation(source, annotation, result::add);
         return result;
     }
 
@@ -1113,9 +1107,7 @@ public class ReflectionHelper extends JavassistHelper {
      */
     public static List<Field> findLocalFieldAnnotation(Class<?> source, Class<? extends Annotation> annotation) {
         List<Field> result = new ArrayList<>();
-        doWithLocalFieldAnnotation(source, annotation, field -> {
-            result.add(field);
-        });
+        doWithLocalFieldAnnotation(source, annotation, result::add);
         return result;
     }
 }

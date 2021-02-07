@@ -10,5 +10,5 @@ public interface ActionListener {
      * @param key 索引
      * @param items 值
      */
-    public void listener(Object key, Object... items);
+    void listener(Object key, Object... items);
 }

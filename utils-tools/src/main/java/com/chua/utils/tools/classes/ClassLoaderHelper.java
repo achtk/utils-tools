@@ -8,13 +8,13 @@ import com.chua.utils.tools.common.skip.SkipPatterns;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import sun.misc.SharedSecrets;
-import sun.misc.URLClassPath;
 
 import javax.annotation.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.*;
 
 /**
@@ -106,8 +106,21 @@ public class ClassLoaderHelper extends ReflectionHelper {
         if (!(classLoader instanceof URLClassLoader)) {
             return ArraysHelper.emptyArray(URL.class);
         }
-        URLClassPath urlClassPath = SharedSecrets.getJavaNetAccess().getURLClassPath((URLClassLoader) classLoader);
-        URL[] urls = urlClassPath.getURLs();
+        URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
+        URL[] urls = urlClassLoader.getURLs();
+        try {
+            Map<CodeSource, ProtectionDomain> pdcache = getOnlyFieldValue(urlClassLoader, "pdcache", Map.class);
+            int size = pdcache.size();
+            URL[] newUrls = new URL[urls.length + size];
+            int index = urls.length;
+            System.arraycopy(urls, 0, newUrls, 0, index);
+            for (ProtectionDomain domain : pdcache.values()) {
+                newUrls[index ++] = domain.getCodeSource().getLocation();
+            }
+            urls = newUrls;
+        } catch (Exception ignore) {
+
+        }
         if (BooleanHelper.hasLength(urls)) {
             return urls;
         }

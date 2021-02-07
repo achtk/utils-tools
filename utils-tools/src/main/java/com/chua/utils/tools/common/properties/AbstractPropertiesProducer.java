@@ -216,7 +216,10 @@ public abstract class AbstractPropertiesProducer {
             }
             for (Map.Entry<?, ?> entry : value.entrySet()) {
                 Object key = entry.getKey();
-                if (null != key && !keyClass.isAssignableFrom(key.getClass()) || !valueClass.isAssignableFrom(entry.getValue().getClass())) {
+                if (null != key) {
+                    continue;
+                }
+                if (!keyClass.isAssignableFrom(key.getClass()) || !valueClass.isAssignableFrom(entry.getValue().getClass())) {
                     continue;
                 }
                 result.put((K) entry.getKey(), (V) entry.getValue());

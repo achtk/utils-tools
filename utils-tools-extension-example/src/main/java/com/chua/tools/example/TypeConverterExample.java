@@ -19,7 +19,6 @@ public class TypeConverterExample extends BaseExample {
     public static void main(String[] args) {
         TypeConverter listConverter = Converter.getTypeConverter(List.class);
         TypeConverter floatConverter = Converter.getTypeConverter(Float.class);
-        TypeConverter timeConverter = Converter.getTypeConverter(Time.class);
         TypeConverter dateConverter = Converter.getTypeConverter(Date.class);
         TypeConverter stringConverter = Converter.getTypeConverter(String.class);
         // 12:00:00
