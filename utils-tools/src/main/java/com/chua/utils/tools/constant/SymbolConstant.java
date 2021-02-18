@@ -262,6 +262,10 @@ public class SymbolConstant {
      */
     public static final char LETTER_LOWERCASE_Z = 'z';
     /**
+     * 0
+     */
+    public static final String ZERO = "0";
+    /**
      * [L
      */
     private static final String SYMBOL_NON_PRIMITIVE_ARRAY_PREFIX = "[L";

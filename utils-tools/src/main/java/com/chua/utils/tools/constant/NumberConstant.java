@@ -161,5 +161,16 @@ public class NumberConstant {
      * 1000
      */
     public static final int ONE_THOUSAND = 1000;
-
+    /**
+     * 0x
+     */
+    public static final String HEX_LOWER = "0x";
+    /**
+     * 0X
+     */
+    public static final String HEX_UPPER = "0X";
+    /**
+     * 16
+     */
+    public static final int HEX = 16;
 }
