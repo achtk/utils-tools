@@ -232,7 +232,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
             }
         });
         Class<?> aClass = classLoader.loadClass(ctClass.toClass().getName());
-        modifyDescription.setAClass((Class<T>) aClass);
+        modifyDescription.setModifyType((Class<T>) aClass);
         return modifyDescription;
     }
 

@@ -1,8 +1,10 @@
 package com.chua.utils.tools.example;
 
+import com.chua.utils.tools.annotations.BinderMapper;
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.example.entity.TDemoInfo;
 import com.chua.utils.tools.util.ClassUtils;
+import com.google.common.collect.Maps;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.Column;
@@ -28,5 +30,6 @@ public class ClassHelperExample {
         System.out.println("获取类加载器加载的URL: " + ClassHelper.getUrlsByClassLoader(ClassHelper.getDefaultClassLoader()));
         System.out.println("获取字段值:" + ClassUtils.getFieldIfOnlyValue(new TDemoInfo(), "uuid"));
         System.out.println("方法插入日志:" + ClassUtils.insertCode(new TDemoInfo(), "getId", 0, "{System.out.println(this.getClass().toString());}"));
+        System.out.println("生成注解:" + ClassUtils.makeAnnotation(BinderMapper.class, Maps.newHashMap()));
     }
 }

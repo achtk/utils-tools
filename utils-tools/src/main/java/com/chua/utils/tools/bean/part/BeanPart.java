@@ -461,4 +461,15 @@ public interface BeanPart<T> {
         }
         return ArrayUtils.newArrays(ClassUtils.getActualTypeArguments(toClass(), includes));
     }
+
+    /**
+     * 获取字段注解
+     *
+     * @param fieldName 字段名称
+     * @return 注解
+     */
+    default List<Annotation> getFieldAnnotation(String fieldName) {
+        Field field = getField(fieldName);
+        return null == field ? Collections.emptyList() : Arrays.asList(field.getDeclaredAnnotations());
+    }
 }

@@ -1,7 +1,7 @@
 package com.chua.utils.tools.manager.parser.description;
 
+import com.chua.utils.tools.util.ClassUtils;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,18 @@ public class ModifyDescription<T> {
     /**
      * 类
      */
-    @Setter
-    private Class<T> aClass;
+    private Class<T> modifyType;
+
+    public void setModifyType(Class<T> modifyType) {
+        this.modifyType = modifyType;
+        this.toObject = ClassUtils.forObject(modifyType);
+    }
+
+    /**
+     * 类
+     */
+    @Getter
+    private T toObject;
 
     /**
      * 获取class
@@ -31,7 +41,7 @@ public class ModifyDescription<T> {
      * @return class
      */
     public Class<T> toClass() {
-        return aClass;
+        return modifyType;
     }
 
     /**
