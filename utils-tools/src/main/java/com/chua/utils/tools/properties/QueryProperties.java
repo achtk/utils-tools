@@ -5,6 +5,7 @@ import java.util.Properties;
 
 /**
  * netx查询配置项
+ *
  * @author CH
  * @version 1.0.0
  * @className ActionProperties

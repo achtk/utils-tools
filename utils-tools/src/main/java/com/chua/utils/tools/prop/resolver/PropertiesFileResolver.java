@@ -12,11 +12,12 @@ import java.util.Properties;
 
 /**
  * yaml解析
+ *
  * @author CH
  */
-public class PropertiesFileResolver implements IFileResolver{
+public class PropertiesFileResolver implements IFileResolver {
 
-    private Properties properties = new Properties();
+    private final Properties properties = new Properties();
 
     @Override
     public void stream(InputStream inputStream) {
@@ -29,10 +30,10 @@ public class PropertiesFileResolver implements IFileResolver{
 
     @Override
     public FileMapper analysis(FileConverter fileConverter) {
-        if(null == properties) {
+        if (null == properties) {
             return null;
         }
-        if(null == fileConverter) {
+        if (null == fileConverter) {
             fileConverter = new NoneFileConverter();
         }
         HashMultimap<Object, Object> hashMultimap = HashMultimap.create();
@@ -47,6 +48,6 @@ public class PropertiesFileResolver implements IFileResolver{
 
     @Override
     public String[] suffixes() {
-        return new String[] {"properties"};
+        return new String[]{"properties"};
     }
 }

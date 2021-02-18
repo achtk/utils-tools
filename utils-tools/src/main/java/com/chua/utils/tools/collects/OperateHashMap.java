@@ -27,10 +27,8 @@ import static com.chua.utils.tools.constant.NumberConstant.THIRD;
  */
 public class OperateHashMap extends HashMap<String, Object> implements OperateMap {
 
-    private final Interpreter interpreter = new Interpreter();
-
     private final static OperateHashMap INSTANCE = OperateHashMap.create();
-
+    private final Interpreter interpreter = new Interpreter();
     private Class<?> valueClass = Object.class;
 
     public OperateHashMap() {

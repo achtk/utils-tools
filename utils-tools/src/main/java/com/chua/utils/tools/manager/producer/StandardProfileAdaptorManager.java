@@ -8,7 +8,6 @@ import com.chua.utils.tools.prop.loader.ProfileLoader;
 import com.chua.utils.tools.spi.factory.ExtensionFactory;
 import com.chua.utils.tools.spi.processor.ExtensionProcessor;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,12 +20,9 @@ import java.util.Set;
  */
 public class StandardProfileAdaptorManager extends InitializingCacheable implements ProfileAdaptorManager {
 
-    private static final CacheProvider<String, ProfileLoader> PROFILE_LOADER_MAP = new ConcurrentCacheProvider<String, ProfileLoader>();
-
-    private final ExtensionProcessor extensionProcessor;
+    private static final CacheProvider<String, ProfileLoader> PROFILE_LOADER_MAP = new ConcurrentCacheProvider<>();
 
     public StandardProfileAdaptorManager(ExtensionProcessor extensionProcessor) {
-        this.extensionProcessor = extensionProcessor;
         Map<String, ProfileLoader> extension = ExtensionFactory.getTempExtensionLoader(ProfileLoader.class, extensionProcessor).getPriorityExtension();
         PROFILE_LOADER_MAP.putAll(extension);
     }

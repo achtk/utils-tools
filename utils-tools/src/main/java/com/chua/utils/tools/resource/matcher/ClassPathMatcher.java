@@ -41,8 +41,8 @@ public class ClassPathMatcher extends UrlHelper implements PathMatcher {
     private final Matcher<Resource> matcher;
     private final String name;
     private final String[] excludes;
-    private ClassLoader classLoader;
     private final AtomicInteger atomicInteger;
+    private ClassLoader classLoader;
 
     public ClassPathMatcher(String name, String[] excludes, ClassLoader classLoader, AtomicInteger atomicInteger, Matcher<Resource> matcher) {
         this.name = name;
@@ -118,7 +118,7 @@ public class ClassPathMatcher extends UrlHelper implements PathMatcher {
     private Resource createResource(URL url, String[] excludes) {
         String name = FileHelper.getName(url.toExternalForm());
         for (String exclude : excludes) {
-            if(StringHelper.wildcardMatch(name, exclude)) {
+            if (StringHelper.wildcardMatch(name, exclude)) {
                 continue;
             }
             return Resource.create(url);

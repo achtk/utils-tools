@@ -5,12 +5,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
  * Getter and Setter数据分析对象
+ *
  * @author CH
  * @date 2020-09-26
  */
@@ -23,6 +23,7 @@ public class GetterSetterProperties {
 
     /**
      * 创建状态
+     *
      * @return
      */
     public static GetterSetterStatus newStatus() {
@@ -32,23 +33,27 @@ public class GetterSetterProperties {
     public boolean isEmpty() {
         return LONG_ADDER.intValue() == 0;
     }
+
     /**
      * 存储状态
-     * @param name 属性名称
+     *
+     * @param name      属性名称
      * @param hasGetter 是否包含get
      * @param hasSetter 是否包含set
      * @return
      */
     public GetterSetterProperties put(String name, boolean hasGetter, boolean hasSetter) {
-        if(!hasGetter || !hasSetter) {
+        if (!hasGetter || !hasSetter) {
             LONG_ADDER.increment();
         }
         CACHE.put(name, GetterSetterStatus.newStatus(hasGetter, hasSetter));
         return this;
     }
+
     /**
      * 存储状态
-     * @param name 属性名称
+     *
+     * @param name   属性名称
      * @param status 状态
      * @return
      */
@@ -58,6 +63,7 @@ public class GetterSetterProperties {
 
     /**
      * 记录一个类
+     *
      * @param aClass
      */
     public void record(Class<?> aClass) {
@@ -66,6 +72,7 @@ public class GetterSetterProperties {
 
     /**
      * 获取记录的类
+     *
      * @return
      */
     public Class<?> getRecordClass() {

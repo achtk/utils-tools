@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class XmlFileResolver implements IFileResolver {
 
-    private HashMultimap<Object, Object> hashMultimap = HashMultimap.create();
+    private final HashMultimap<Object, Object> hashMultimap = HashMultimap.create();
 
     @Override
     public void stream(InputStream inputStream) {

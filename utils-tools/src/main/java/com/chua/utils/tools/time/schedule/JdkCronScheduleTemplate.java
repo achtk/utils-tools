@@ -53,9 +53,7 @@ public class JdkCronScheduleTemplate implements CronScheduleOperations<Runtime>,
 
     @Override
     public void removeJob(String jobName) throws Exception {
-        if (groupCache.containsKey(jobName)) {
-            groupCache.remove(jobName);
-        }
+        groupCache.remove(jobName);
     }
 
     /**

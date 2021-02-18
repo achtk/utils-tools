@@ -20,6 +20,7 @@ public interface ParserJava {
      * @return class
      */
     Class<?> toClass(ClassLoader classLoader);
+
     /**
      * 编译Java
      *
@@ -36,6 +37,7 @@ public interface ParserJava {
     default Class<?> toClass() {
         return toClass(ClassHelper.getDefaultClassLoader());
     }
+
     /**
      * 编译Java
      *

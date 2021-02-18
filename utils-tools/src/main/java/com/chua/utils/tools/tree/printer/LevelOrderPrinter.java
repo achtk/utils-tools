@@ -30,7 +30,7 @@ public final class LevelOrderPrinter implements Printer {
      */
     private static final int MIN_SPACE = 1;
     private final PrintTree tree;
-    private Node root;
+    private final Node root;
     private int minX;
     private int maxWidth;
     private List<List<Node>> nodes;
@@ -347,14 +347,6 @@ public final class LevelOrderPrinter implements Printer {
         String string;
         int width;
 
-        private void init(String string) {
-            string = (string == null) ? "null" : string;
-            string = string.isEmpty() ? " " : string;
-
-            width = string.length();
-            this.string = string;
-        }
-
         public Node(String string) {
             init(string);
         }
@@ -363,6 +355,14 @@ public final class LevelOrderPrinter implements Printer {
             init(opetaion.string(btNode).toString());
 
             this.btNode = btNode;
+        }
+
+        private void init(String string) {
+            string = (string == null) ? "null" : string;
+            string = string.isEmpty() ? " " : string;
+
+            width = string.length();
+            this.string = string;
         }
 
         /**

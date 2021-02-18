@@ -2,6 +2,7 @@ package com.chua.utils.tools.constant;
 
 /**
  * http常量
+ *
  * @author CH
  */
 public class HttpConstant {
@@ -24,22 +25,22 @@ public class HttpConstant {
     /**
      * OPTIONS
      */
-    public static final String HTTP_METHOD_OPTIONS= "OPTIONS";
+    public static final String HTTP_METHOD_OPTIONS = "OPTIONS";
     /**
-     *  PUT
+     * PUT
      */
     public static final String HTTP_METHOD_PUT = "PUT";
 
     /**
-     *  Accept-Charset
+     * Accept-Charset
      */
     public static final String HTTP_HEADER_ACCEPT_CHARSET = "Accept-Charset";
     /**
-     *  Content-Type
+     * Content-Type
      */
     public static final String HTTP_HEADER_CONTENT_TYPE = "Content-Type";
     /**
-     *  Content-Length
+     * Content-Length
      */
     public static final String HTTP_HEADER_CONTENT_LENGTH = "Content-Length";
 

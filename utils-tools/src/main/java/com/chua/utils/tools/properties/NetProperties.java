@@ -35,6 +35,10 @@ public class NetProperties extends Properties implements StatelessProperties {
     public static final String CONFIG_FIELD_DATABASE_NAME = "databaseName";
     private static final String DEFAULT_HOST = "localhost";
     /**
+     * 数据库名称
+     */
+    private final String databaseName = "db";
+    /**
      * 主机
      */
     private String[] host;
@@ -63,10 +67,6 @@ public class NetProperties extends Properties implements StatelessProperties {
      */
     private int connectTimeout = connectionTimeout;
     /**
-     * 数据库名称
-     */
-    private final String databaseName = "db";
-    /**
      * 最大连接数
      */
     private int maxConnection;
@@ -94,11 +94,6 @@ public class NetProperties extends Properties implements StatelessProperties {
         return netProperties;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-        this.put("version", version);
-    }
-
     /**
      * 初始化
      *
@@ -109,6 +104,11 @@ public class NetProperties extends Properties implements StatelessProperties {
         NetProperties netProperties = new NetProperties();
         netProperties.setHost(host);
         return netProperties;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+        this.put("version", version);
     }
 
     /**
@@ -215,13 +215,13 @@ public class NetProperties extends Properties implements StatelessProperties {
         this.put(CONFIG_FIELD_PATH, path);
     }
 
+    public int getRetry() {
+        return retry < 0 ? DEFAULT_CONFIG_FIELD_RETRY : retry;
+    }
+
     public void setRetry(int retry) {
         this.retry = retry;
         this.put(CONFIG_FIELD_RETRY, retry);
-    }
-
-    public int getRetry() {
-        return retry < 0 ? DEFAULT_CONFIG_FIELD_RETRY : retry;
     }
 
     public void setPort(int port) {

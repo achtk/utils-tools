@@ -15,10 +15,6 @@ public class ClassFileObject extends SimpleJavaFileObject {
     private String content;
     private ByteArrayOutputStream byteArrayOutputStream = null;
 
-    public String getContent() {
-        return content;
-    }
-
     public ClassFileObject(URI uri, Kind kind, String content) {
         super(uri, kind);
         this.content = content;
@@ -27,6 +23,10 @@ public class ClassFileObject extends SimpleJavaFileObject {
     public ClassFileObject(String className, Kind kind) {
         super(URI.create(className), kind);
         this.byteArrayOutputStream = new ByteArrayOutputStream();
+    }
+
+    public String getContent() {
+        return content;
     }
 
     @Override

@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 public class MapMaker<K, V> {
 
     @NonNull
-    private Class<? extends Map> mapClass;
+    private final Class<? extends Map> mapClass;
     /**
      * 初始化大小
      */
@@ -36,7 +36,7 @@ public class MapMaker<K, V> {
     /**
      * 数据
      */
-    private Map<K, V> loaderMapData = new HashMap<>();
+    private final Map<K, V> loaderMapData = new HashMap<>();
 
     /**
      * 初始化大小

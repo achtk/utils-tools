@@ -5,13 +5,18 @@ import java.io.FileFilter;
 
 /**
  * SizeFileFilter
+ *
  * @author CH
  */
 public class SizeFileFilter implements FileFilter {
 
-    /** The size threshold. */
+    /**
+     * The size threshold.
+     */
     private final long size;
-    /** Whether the files accepted will be larger or smaller. */
+    /**
+     * Whether the files accepted will be larger or smaller.
+     */
     private final boolean acceptLarger;
 
     public SizeFileFilter(final long size) {
@@ -29,6 +34,6 @@ public class SizeFileFilter implements FileFilter {
     @Override
     public boolean accept(File pathname) {
         final boolean smaller = pathname.length() < size;
-        return acceptLarger ? !smaller : smaller;
+        return acceptLarger != smaller;
     }
 }

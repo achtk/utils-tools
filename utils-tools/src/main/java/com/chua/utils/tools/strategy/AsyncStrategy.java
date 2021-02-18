@@ -23,12 +23,11 @@ public class AsyncStrategy<T> extends StandardProxyStrategy<T> implements Strate
 
     @Setter
     protected Consumer consumer;
+    protected ExecutorService executorService = ThreadHelper.newProcessorThreadExecutor("strategy-proxy");
 
     public AsyncStrategy(Consumer consumer) {
         this.consumer = consumer;
     }
-
-    protected ExecutorService executorService = ThreadHelper.newProcessorThreadExecutor("strategy-proxy");
 
     @Override
     public Object invoke(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {

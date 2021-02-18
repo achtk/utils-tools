@@ -13,13 +13,12 @@ import com.chua.utils.tools.data.table.type.TableType;
  */
 public class MongoDataTableWrapper {
 
-    private final TableType tableType = TableType.MONGO;
     private static final String FACTORY = "org.apache.calcite.adapter.mongodb.MongoSchemaFactory";
-
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 6379;
     private static final int DATABASE = 0;
     private static final String PASSWORD = "";
+    private final TableType tableType = TableType.MONGO;
 
     /**
      * 构建数据

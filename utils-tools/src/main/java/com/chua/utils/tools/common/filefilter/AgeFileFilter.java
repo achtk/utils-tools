@@ -8,13 +8,18 @@ import java.util.Date;
 
 /**
  * AgeFileFilter
+ *
  * @author CH
  */
 public class AgeFileFilter implements FileFilter {
 
-    /** The cutoff time threshold. */
+    /**
+     * The cutoff time threshold.
+     */
     private final long cutoff;
-    /** Whether the files accepted will be older or newer. */
+    /**
+     * Whether the files accepted will be older or newer.
+     */
     private final boolean acceptOlder;
 
     public AgeFileFilter(final long cutoff) {
@@ -45,6 +50,6 @@ public class AgeFileFilter implements FileFilter {
     @Override
     public boolean accept(File file) {
         final boolean newer = FileHelper.isFileNewer(file, cutoff);
-        return acceptOlder ? !newer : newer;
+        return acceptOlder != newer;
     }
 }

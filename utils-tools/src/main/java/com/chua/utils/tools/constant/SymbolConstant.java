@@ -41,14 +41,9 @@ public class SymbolConstant {
      */
     public static final String QUOTATION_MARKS = "\"";
     /**
-     *  " "
+     * " "
      */
     public static final String SYMBOL_BLANK = " ";
-
-    /**
-     * [L
-     */
-    private static final String SYMBOL_NON_PRIMITIVE_ARRAY_PREFIX = "[L";
     /**
      * .
      */
@@ -173,11 +168,11 @@ public class SymbolConstant {
      * ~
      */
     public static final String SYMBOL_WAVY_LINE = "~";
-    /*****************************************char******************************************/
     /**
      * .
      */
     public static final char SYMBOL_DOT_CHAR = '.';
+    /*****************************************char******************************************/
     /**
      * /
      */
@@ -198,7 +193,6 @@ public class SymbolConstant {
      * '?'
      */
     public static final char SYMBOL_QUESTION_CHAR = '?';
-
     /**
      * {
      */
@@ -236,7 +230,7 @@ public class SymbolConstant {
      */
     public static final char CHARACTER_9 = '9';
     /**
-     *  ' '
+     * ' '
      */
     public static final char SYMBOL_BLANK_CHAR = ' ';
     /**
@@ -267,5 +261,9 @@ public class SymbolConstant {
      * 'z'
      */
     public static final char LETTER_LOWERCASE_Z = 'z';
+    /**
+     * [L
+     */
+    private static final String SYMBOL_NON_PRIMITIVE_ARRAY_PREFIX = "[L";
 
 }

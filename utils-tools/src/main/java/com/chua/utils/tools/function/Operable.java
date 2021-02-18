@@ -11,7 +11,8 @@ package com.chua.utils.tools.function;
 public interface Operable<I, O> {
     /**
      * 操作输出
-     * @param source  输入
+     *
+     * @param source 输入
      * @return O
      */
     O operate(I source);

@@ -1,8 +1,6 @@
 package com.chua.utils.tools.classes.classloader;
 
 
-import com.chua.utils.tools.common.UrlHelper;
-
 import java.net.URL;
 
 import static com.chua.utils.tools.constant.StringConstant.*;
@@ -19,7 +17,7 @@ public interface IClassLoaderAdaptor {
      *
      * @param url
      */
-    public void setUrl(URL url);
+    void setUrl(URL url);
 
     /**
      * 解析的后缀类型
@@ -27,7 +25,7 @@ public interface IClassLoaderAdaptor {
      * @param extension 后缀
      * @return
      */
-    public boolean allow(String extension);
+    boolean allow(String extension);
 
     /**
      * 解析文件
@@ -35,7 +33,7 @@ public interface IClassLoaderAdaptor {
      * @param name
      * @return
      */
-    public byte[] analyze(String name);
+    byte[] analyze(String name);
 
     /**
      * 格式化url

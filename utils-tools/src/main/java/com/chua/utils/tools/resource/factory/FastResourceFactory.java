@@ -39,7 +39,8 @@ public class FastResourceFactory extends UrlHelper implements ResourceFactory {
     private AtomicInteger atomicInteger = new AtomicInteger(0);
     private boolean cache = true;
     private ClassLoader classLoader = ClassHelper.getDefaultClassLoader();
-    private Matcher<Resource> matcher = resource -> {};
+    private Matcher<Resource> matcher = resource -> {
+    };
 
     @Override
     public ResourceFactory classLoader(ClassLoader classLoader) {

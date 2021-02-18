@@ -4,6 +4,7 @@ import java.util.List;
 
 /**
  * the loop list
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/12/17
@@ -11,6 +12,7 @@ import java.util.List;
 public interface LoopList<E> extends List<E> {
     /**
      * 获取节点
+     *
      * @param index 索引
      * @return 节点
      */

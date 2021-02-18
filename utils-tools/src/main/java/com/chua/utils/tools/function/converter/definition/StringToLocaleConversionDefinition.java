@@ -7,11 +7,12 @@ import java.util.Locale;
 
 /**
  * String -> Locale
+ *
  * @author CH
  * @version 1.0.0
  * @since 2021/2/7
  */
-public class StringToLocaleConversionDefinition implements TypeConversionDefinition<String, Locale>{
+public class StringToLocaleConversionDefinition implements TypeConversionDefinition<String, Locale> {
     @Nullable
     @Override
     public Locale convert(String source) {

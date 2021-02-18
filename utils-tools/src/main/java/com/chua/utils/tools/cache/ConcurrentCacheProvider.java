@@ -19,10 +19,10 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class ConcurrentCacheProvider<K, V> implements CacheProvider<K, V>, CacheManager<K, V> {
 
-    private final ConcurrentHashMap<K, Properties> cache = new ConcurrentHashMap<>();
-    private int timeout = -1;
     private static final String DEFAULT_TIMEOUT_FIELDS = "config.cache.timeout";
     private static final String DEFAULT_KEY_FIELDS = "config.cache.key";
+    private final ConcurrentHashMap<K, Properties> cache = new ConcurrentHashMap<>();
+    private int timeout = -1;
 
     public ConcurrentCacheProvider() {
         this.putAll(initialValue());

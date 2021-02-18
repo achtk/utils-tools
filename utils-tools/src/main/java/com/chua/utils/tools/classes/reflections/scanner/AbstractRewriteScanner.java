@@ -24,7 +24,7 @@ import java.util.function.Predicate;
  */
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public abstract class AbstractRewriteScanner extends AbstractScanner {
 
     private Configuration configuration;
@@ -53,7 +53,7 @@ public abstract class AbstractRewriteScanner extends AbstractScanner {
 
     @Override
     protected void put(Store store, String key, String value) {
-        if(store instanceof RewriteStore) {
+        if (store instanceof RewriteStore) {
             RewriteStore rewriteStore = (RewriteStore) store;
             rewriteStore.put(Utils.index(getClass()), key, value, url);
             return;

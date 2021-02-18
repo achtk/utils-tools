@@ -1,14 +1,11 @@
 package com.chua.utils.tools.resource.parser.file;
 
 
-import com.chua.utils.tools.constant.StringConstant;
-import com.chua.utils.tools.constant.SuffixConstant;
 import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.resource.parser.Parser;
 import com.chua.utils.tools.resource.parser.ParserDir;
 import com.chua.utils.tools.resource.parser.ParserFile;
 import com.chua.utils.tools.resource.parser.compress.dir.JavaFileParserDir;
-import com.chua.utils.tools.resource.parser.compress.dir.SystemFileParserDir;
 
 import java.io.File;
 import java.net.URL;

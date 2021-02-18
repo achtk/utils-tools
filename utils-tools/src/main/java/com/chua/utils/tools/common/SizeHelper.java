@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 大小
+ *
  * @author CH
  */
 public class SizeHelper {
@@ -29,32 +30,36 @@ public class SizeHelper {
     private static final int THREAD_DAYS = 24 * THREAD_HOURS;
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("####.00");
+
     /**
      * 字节大小计算
+     *
      * @param size
      * @return
      */
     public static String getSize(final long size) {
-        if(size < B) {
+        if (size < B) {
             return size + "B";
-        } else if(size < K) {
+        } else if (size < K) {
             return DECIMAL_FORMAT.format(size / B) + "K";
-        } else if(size < M) {
+        } else if (size < M) {
             return DECIMAL_FORMAT.format(size / K) + "M";
-        } else if(size < G) {
+        } else if (size < G) {
             return DECIMAL_FORMAT.format(size / M) + "G";
-        } else if(size < T) {
+        } else if (size < T) {
             return DECIMAL_FORMAT.format(size / G) + "T";
         }
         return size + " B";
     }
+
     /**
      * 字节大小计算
+     *
      * @param size
      * @return
      */
     public static String kb(final long size) {
-        if(size < B) {
+        if (size < B) {
             return size + " B";
         } else {
             return DECIMAL_FORMAT.format(size / B) + "K";
@@ -63,122 +68,141 @@ public class SizeHelper {
 
     /**
      * 获取集合长度
+     *
      * @param collection 集合
      * @param <E>
      * @return
      */
-    public static <E>int getSize(final Collection<E> collection) {
+    public static <E> int getSize(final Collection<E> collection) {
         return BooleanHelper.hasLength(collection) ? collection.size() : 0;
     }
+
     /**
      * 获取集合长度
+     *
      * @param collection 集合
      * @param <E>
      * @return
      */
-    public static <E>int sizeNotNull(final Collection<E> collection) {
+    public static <E> int sizeNotNull(final Collection<E> collection) {
         Iterator<E> eIterator = elementNotNull(collection);
         return BooleanHelper.hasLength(eIterator) ? SizeHelper.getSize(eIterator) : 0;
     }
+
     /**
      * 获取集合长度
+     *
      * @param <E>
      * @param collection 集合
      * @return
      */
     public static <E> Iterator<E> elementNotNull(final Collection<E> collection) {
-        if(!BooleanHelper.hasLength(collection)) {
+        if (!BooleanHelper.hasLength(collection)) {
             return null;
         }
         Iterator<E> iterator = collection.iterator();
         while (iterator.hasNext()) {
-            if(null == iterator.next()) {
+            if (null == iterator.next()) {
                 iterator.remove();
             }
         }
         return iterator;
     }
+
     /**
      * 获取集合长度
+     *
      * @param iterator 集合
      * @param <E>
      * @return
      */
-    public static <E>int getSize(final Iterator iterator) {
-        if(!BooleanHelper.hasLength(iterator)) {
+    public static <E> int getSize(final Iterator iterator) {
+        if (!BooleanHelper.hasLength(iterator)) {
             return 0;
         }
 
         int cnt = 0;
         while (iterator.hasNext()) {
-            ++ cnt;
+            ++cnt;
         }
 
         return cnt;
     }
+
     /**
      * 获取集合长度
+     *
      * @param collection 集合
      * @param <E>
      * @return
      */
-    public static <E>int getSize(final E... collection) {
+    public static <E> int getSize(final E... collection) {
         return BooleanHelper.hasLength(collection) ? collection.length : 0;
     }
+
     /**
      * 获取集合长度
+     *
      * @param collection 集合
      * @param <E>
      * @return
      */
-    public static <E>E[] elementNotNull(final E... collection) {
-        if(!BooleanHelper.hasLength(collection)) {
+    public static <E> E[] elementNotNull(final E... collection) {
+        if (!BooleanHelper.hasLength(collection)) {
             return null;
         }
         return collection;
     }
+
     /**
      * 获取集合长度
+     *
      * @param collection 集合
      * @param <E>
      * @return
      */
-    public static <E>int sizeNotNull(final E... collection) {
+    public static <E> int sizeNotNull(final E... collection) {
         E[] es = elementNotNull(collection);
         return BooleanHelper.hasLength(es) ? es.length : 0;
     }
+
     /**
      * 获取集合长度
+     *
      * @param kvMap 集合
      * @param <K>
      * @param <V>
      * @return
      */
-    public static <K, V>int getSize(final Map<K, V> kvMap) {
+    public static <K, V> int getSize(final Map<K, V> kvMap) {
         return BooleanHelper.hasLength(kvMap) ? kvMap.size() : 0;
     }
+
     /**
      * 获取集合长度
+     *
      * @param kvMap 集合
      * @param <K>
      * @param <V>
      * @return
      */
-    public static <K, V>int sizeNotNull(final Map<K, V> kvMap) {
-        if(!BooleanHelper.hasLength(kvMap)) {
+    public static <K, V> int sizeNotNull(final Map<K, V> kvMap) {
+        if (!BooleanHelper.hasLength(kvMap)) {
             return 0;
         }
         int cnt = 0;
         for (K k : kvMap.keySet()) {
-            if(null != k) {
-                ++ cnt;
+            if (null != k) {
+                ++cnt;
             }
         }
         return cnt;
     }
+
     /**
      * timeUnit 转化为毫秒
-     * @param time 时间
+     *
+     * @param time     时间
      * @param timeUnit 时间类型
      * @return
      * @throws InterruptedException

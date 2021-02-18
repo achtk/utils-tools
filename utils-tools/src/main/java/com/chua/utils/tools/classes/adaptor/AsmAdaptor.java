@@ -28,10 +28,10 @@ import static javassist.bytecode.AccessFlag.isProtected;
  */
 public class AsmAdaptor implements MetadataAdapter {
 
-    private ClassReader classReader = null;
-    private ClassNode classNode;
     private static final String L = "L";
     private static final String RETURN_L = "()L";
+    private ClassReader classReader = null;
+    private ClassNode classNode;
 
     public AsmAdaptor(InputStream inputStream) {
         try {
@@ -42,6 +42,32 @@ public class AsmAdaptor implements MetadataAdapter {
         }
         this.classNode = new ClassNode();
         this.classReader.accept(classNode, 0);
+    }
+
+    /**
+     * 解析名称
+     *
+     * @param descriptor 名称
+     * @return 名称
+     */
+    public static String resolveNewName(String descriptor) {
+        if (Strings.isNullOrEmpty(descriptor)) {
+            return null;
+        }
+        String newDescriptor = descriptor;
+        if (descriptor.startsWith(L)) {
+            newDescriptor = descriptor.substring(1);
+        }
+
+        if (descriptor.startsWith(RETURN_L)) {
+            newDescriptor = descriptor.substring(3);
+        }
+        newDescriptor = newDescriptor.replace(SYMBOL_LEFT_SLASH, SYMBOL_DOT);
+
+        if (newDescriptor.endsWith(SYMBOL_SEMICOLON)) {
+            newDescriptor = newDescriptor.substring(0, newDescriptor.length() - 1);
+        }
+        return newDescriptor;
     }
 
     @Override
@@ -98,7 +124,6 @@ public class AsmAdaptor implements MetadataAdapter {
         }).collect(Collectors.toList());
     }
 
-
     public String getModifier(int accessFlags) {
         if (isPrivate(accessFlags)) {
             return "private";
@@ -107,31 +132,5 @@ public class AsmAdaptor implements MetadataAdapter {
             return "protected";
         }
         return isPublic(accessFlags) ? "public" : "";
-    }
-
-    /**
-     * 解析名称
-     *
-     * @param descriptor 名称
-     * @return 名称
-     */
-    public static String resolveNewName(String descriptor) {
-        if (Strings.isNullOrEmpty(descriptor)) {
-            return null;
-        }
-        String newDescriptor = descriptor;
-        if (descriptor.startsWith(L)) {
-            newDescriptor = descriptor.substring(1);
-        }
-
-        if (descriptor.startsWith(RETURN_L)) {
-            newDescriptor = descriptor.substring(3);
-        }
-        newDescriptor = newDescriptor.replace(SYMBOL_LEFT_SLASH, SYMBOL_DOT);
-
-        if (newDescriptor.endsWith(SYMBOL_SEMICOLON)) {
-            newDescriptor = newDescriptor.substring(0, newDescriptor.length() - 1);
-        }
-        return newDescriptor;
     }
 }

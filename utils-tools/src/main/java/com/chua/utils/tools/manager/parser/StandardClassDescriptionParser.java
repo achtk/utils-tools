@@ -7,9 +7,8 @@ import javassist.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * 标准的类解析器
@@ -28,11 +27,7 @@ public class StandardClassDescriptionParser<T> implements ClassDescriptionParser
     /**
      * 待解析的类
      */
-    private Class<T> tClass;
-    /**
-     * 方法替换对象
-     */
-    private final ConcurrentMap<String, String> methodReplaceCache = new ConcurrentHashMap<>();
+    private final Class<T> tClass;
 
     public StandardClassDescriptionParser(T obj) {
         this.tClass = (Class<T>) ClassHelper.getClass(obj);
@@ -46,7 +41,7 @@ public class StandardClassDescriptionParser<T> implements ClassDescriptionParser
     @Override
     public Collection<FieldDescription<T>> fieldDescription() {
         if (null == tClass) {
-            return null;
+            return Collections.emptyList();
         }
         List<FieldDescription<T>> fieldDescriptions = new ArrayList<>();
         ClassHelper.doWithLocalFields(tClass, field -> {
@@ -63,7 +58,7 @@ public class StandardClassDescriptionParser<T> implements ClassDescriptionParser
     @Override
     public Collection<MethodDescription<T>> methodDescription() {
         if (null == tClass) {
-            return null;
+            return Collections.emptyList();
         }
         List<MethodDescription<T>> methodDescriptions = new ArrayList<>();
         ClassHelper.doWithLocalMethods(tClass, method -> {

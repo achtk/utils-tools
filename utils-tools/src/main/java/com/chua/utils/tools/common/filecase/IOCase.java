@@ -6,11 +6,12 @@ import lombok.Getter;
 
 /**
  * IOCase
+ *
  * @author CH
  */
 @Getter
 @AllArgsConstructor
-public enum  IOCase {
+public enum IOCase {
     /**
      *
      */

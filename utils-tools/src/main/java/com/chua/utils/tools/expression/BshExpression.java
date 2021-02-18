@@ -11,7 +11,7 @@ import bsh.Interpreter;
  */
 public class BshExpression implements Expression {
 
-    private Interpreter interpreter = new Interpreter();
+    private final Interpreter interpreter = new Interpreter();
 
     @Override
     public void set(String key, Object value) throws Exception {

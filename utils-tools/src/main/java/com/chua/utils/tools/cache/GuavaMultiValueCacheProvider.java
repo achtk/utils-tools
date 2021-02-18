@@ -29,6 +29,13 @@ public class GuavaMultiValueCacheProvider<K, T> implements MultiValueCacheProvid
         this.putAll(initialValue());
     }
 
+    public GuavaMultiValueCacheProvider(long expire) {
+        CacheProperties cacheProperties = new CacheProperties();
+        cacheProperties.setExpire(expire);
+        this.configure(cacheProperties);
+        this.putAll(initialValue());
+    }
+
     @Override
     public CacheProvider configure(CacheProperties cacheProperties) {
         CacheBuilder<Object, Object> objectObjectCacheBuilder = CacheBuilder.newBuilder();

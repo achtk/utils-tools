@@ -16,8 +16,8 @@ import java.util.*;
 @NoArgsConstructor
 public class FlatHashMap implements FlatMap {
 
-    private transient Map<String, Object> flatMap = new HashMap<>();
     private final LevelsClose levelsClose = new LevelsClose();
+    private transient Map<String, Object> flatMap = new HashMap<>();
     private Map<String, Object> source = new HashMap<>();
 
     public FlatHashMap(Map<String, Object> source) {
@@ -32,7 +32,7 @@ public class FlatHashMap implements FlatMap {
 
     @Override
     public boolean isEmpty() {
-        return null == source ? true : source.isEmpty();
+        return null == source || source.isEmpty();
     }
 
     @Override
@@ -48,9 +48,9 @@ public class FlatHashMap implements FlatMap {
     @Override
     public Object get(Object key) {
         List<Object> values = new ArrayList<>();
-        for (String s : flatMap.keySet()) {
-            if (StringUtils.wildcardMatch(s, key.toString())) {
-                values.add(flatMap.get(s));
+        for (Entry<String, Object> entry : flatMap.entrySet()) {
+            if (StringUtils.wildcardMatch(entry.getKey(), key.toString())) {
+                values.add(entry.getValue());
             }
         }
         return values;

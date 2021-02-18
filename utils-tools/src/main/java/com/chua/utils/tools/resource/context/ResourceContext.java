@@ -17,6 +17,7 @@ import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_QUESTION;
 
 /**
  * 资源上下文
+ *
  * @author CH
  * @since 1.0
  */
@@ -29,7 +30,7 @@ public class ResourceContext {
     /**
      * 属性
      */
-    private Attribute attribute = new Attribute();
+    private final Attribute attribute = new Attribute();
 
     public void setResources(Map<String, Resource> resources) {
         this.resources = resources;
@@ -37,11 +38,12 @@ public class ResourceContext {
 
     /**
      * 添加资源
+     *
      * @param resource
      * @return
      */
     public ResourceContext addResource(Resource resource) {
-        if(null == resource) {
+        if (null == resource) {
             return this;
         }
         resources.put(resource.toString(), resource);
@@ -50,20 +52,22 @@ public class ResourceContext {
 
     /**
      * 添加属性
-     * @param name 名称
+     *
+     * @param name  名称
      * @param value 值
      */
     public void addAttribute(final String name, final Object value) {
-        if(Strings.isNullOrEmpty(name)) {
+        if (Strings.isNullOrEmpty(name)) {
             return;
         }
         attribute.put(name, value);
     }
+
     /**
      * 添加属性
      */
     public void addAttributes(final Map<String, Object> attributes) {
-        if(null == attributes) {
+        if (null == attributes) {
             return;
         }
         attribute.putAll(attributes);
@@ -71,6 +75,7 @@ public class ResourceContext {
 
     /**
      * 所有资源文件
+     *
      * @return
      */
     public Map<String, Resource> allResource() {
@@ -79,11 +84,12 @@ public class ResourceContext {
 
     /**
      * 查询文件
+     *
      * @param name 文件名
      * @return
      */
     public Set<Resource> findResource(final String name) {
-        if(Strings.isNullOrEmpty(name) || !BooleanHelper.hasLength(resources)) {
+        if (Strings.isNullOrEmpty(name) || !BooleanHelper.hasLength(resources)) {
             return null;
         }
 
@@ -91,13 +97,13 @@ public class ResourceContext {
         resources.values().parallelStream().forEach(new Consumer<Resource>() {
             @Override
             public void accept(Resource resource) {
-                if(isMatch(resource)) {
+                if (isMatch(resource)) {
                     sets.add(resource);
                 }
             }
 
             private boolean isMatch(Resource resource) {
-                if(name.indexOf(SYMBOL_ASTERISK) == -1 && name.indexOf(SYMBOL_QUESTION) == -1) {
+                if (name.indexOf(SYMBOL_ASTERISK) == -1 && name.indexOf(SYMBOL_QUESTION) == -1) {
                     return name.equals(resource.toString());
                 }
 

@@ -10,43 +10,6 @@ package com.chua.utils.tools.tree;
 public class BinaryTree implements PrintTree<BinaryTree.Node> {
 
     /**
-     * This class implements the nodes that will go on the Binary Tree. They consist of the data in
-     * them, the node to the left, the node to the right, and the parent from which they came from.
-     *
-     * @author Unknown
-     */
-    class Node {
-        /**
-         * Data for the node
-         */
-        public int data;
-        /**
-         * The Node to the left of this one
-         */
-        public Node left;
-        /**
-         * The Node to the right of this one
-         */
-        public Node right;
-        /**
-         * The parent of this node
-         */
-        public Node parent;
-
-        /**
-         * Constructor of Node
-         *
-         * @param value Value to put in the node
-         */
-        public Node(int value) {
-            data = value;
-            left = null;
-            right = null;
-            parent = null;
-        }
-    }
-
-    /**
      * The root of the Binary Tree
      */
     private Node root;
@@ -277,5 +240,42 @@ public class BinaryTree implements PrintTree<BinaryTree.Node> {
     @Override
     public Object string(BinaryTree.Node node) {
         return node.data;
+    }
+
+    /**
+     * This class implements the nodes that will go on the Binary Tree. They consist of the data in
+     * them, the node to the left, the node to the right, and the parent from which they came from.
+     *
+     * @author Unknown
+     */
+    class Node {
+        /**
+         * Data for the node
+         */
+        public int data;
+        /**
+         * The Node to the left of this one
+         */
+        public Node left;
+        /**
+         * The Node to the right of this one
+         */
+        public Node right;
+        /**
+         * The parent of this node
+         */
+        public Node parent;
+
+        /**
+         * Constructor of Node
+         *
+         * @param value Value to put in the node
+         */
+        public Node(int value) {
+            data = value;
+            left = null;
+            right = null;
+            parent = null;
+        }
     }
 }

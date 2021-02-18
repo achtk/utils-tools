@@ -47,9 +47,9 @@ public class CsvFileDataParser implements DataParser {
         try {
             this.bufferedReader = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
             String firstLine = bufferedReader.readLine();
-            String[] lines =  ArraysHelper.splice(firstLine, delimiter, true);
+            String[] lines = ArraysHelper.splice(firstLine, delimiter, true);
             Arrays.stream(lines).forEach(column -> {
-                if(Strings.isNullOrEmpty(column)) {
+                if (Strings.isNullOrEmpty(column)) {
                     return;
                 }
                 String name = column.split(":")[0];
@@ -81,7 +81,7 @@ public class CsvFileDataParser implements DataParser {
             e.printStackTrace();
             return false;
         }
-        if(null == readLine) {
+        if (null == readLine) {
             return false;
         }
         this.readLine = readLine;

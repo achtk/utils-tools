@@ -43,6 +43,23 @@ public class ExtensionLoader<T> {
 
     public static final String ANY = StringConstant.ANY;
     /**
+     * 默认
+     */
+    private static final ExtensionProcessor[] DEFAULT_PROCESSOR = new ExtensionProcessor[]{
+            new CustomExtensionProcessor(),
+            new ServiceLoaderProcessor()
+    };
+    private final Comparator<ExtensionClass<T>> comparator = new Comparator<ExtensionClass<T>>() {
+        @Override
+        public int compare(ExtensionClass<T> o1, ExtensionClass<T> o2) {
+            return Ordering.natural().compare(o2.getOrder(), o1.getOrder());
+        }
+    };
+    /**
+     * 缓存数据
+     */
+    private final MultiSortValueMap<String, ExtensionClass<T>> extensionClassMultimap = MultiValueSortMap.create(comparator);
+    /**
      * 待查询类
      */
     private Class<T> service;
@@ -55,27 +72,9 @@ public class ExtensionLoader<T> {
      */
     private SpiConfig spiConfig;
     /**
-     * 默认
-     */
-    private static final ExtensionProcessor[] DEFAULT_PROCESSOR = new ExtensionProcessor[]{
-            new CustomExtensionProcessor(),
-            new ServiceLoaderProcessor()
-    };
-    /**
      * 处理器
      */
     private ExtensionProcessor[] extensionProcessor = DEFAULT_PROCESSOR;
-
-    private final Comparator<ExtensionClass<T>> comparator = new Comparator<ExtensionClass<T>>() {
-        @Override
-        public int compare(ExtensionClass<T> o1, ExtensionClass<T> o2) {
-            return Ordering.natural().compare(o2.getOrder(), o1.getOrder());
-        }
-    };
-    /**
-     * 缓存数据
-     */
-    private final MultiSortValueMap<String, ExtensionClass<T>> extensionClassMultimap = MultiValueSortMap.create(comparator);
 
     private ExtensionLoader() {
     }

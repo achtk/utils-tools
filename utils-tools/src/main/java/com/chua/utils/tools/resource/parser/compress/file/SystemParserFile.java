@@ -2,11 +2,9 @@ package com.chua.utils.tools.resource.parser.compress.file;
 
 import com.chua.utils.tools.resource.parser.ParserFile;
 import com.chua.utils.tools.resource.parser.compress.dir.SystemParserDir;
-import org.reflections.vfs.SystemDir;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;

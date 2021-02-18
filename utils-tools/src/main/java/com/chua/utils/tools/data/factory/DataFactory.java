@@ -23,6 +23,7 @@ public interface DataFactory {
      * @param dataTable 数据表
      */
     void addSchema(String schema, DataTable dataTable);
+
     /**
      * 添加架图
      *

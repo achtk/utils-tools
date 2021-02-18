@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class JsonStream {
 
-    private JsonNode jsonNode;
+    private final JsonNode jsonNode;
     private JsonNode jsonCopyNode;
 
     public JsonStream(JsonNode jsonNode) {
@@ -51,6 +51,7 @@ public class JsonStream {
         this.jsonCopyNode = jsonCopyNode.path(index);
         return this;
     }
+
     /**
      * 查找节点
      *
@@ -61,8 +62,8 @@ public class JsonStream {
     public JsonStream findPath(final String index, final Object value) {
         List<JsonNode> jsonNodeList = new ArrayList<>();
         jsonCopyNode.elements().forEachRemaining(jsonNode1 -> {
-            if(jsonNode1.has(index)) {
-                if(jsonNode1.findValue(index).asText().equals(value.toString())) {
+            if (jsonNode1.has(index)) {
+                if (jsonNode1.findValue(index).asText().equals(value.toString())) {
                     jsonNodeList.add(jsonNode1);
                 }
             }

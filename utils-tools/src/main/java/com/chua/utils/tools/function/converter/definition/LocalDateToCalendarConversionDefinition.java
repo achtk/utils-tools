@@ -21,7 +21,7 @@ public class LocalDateToCalendarConversionDefinition implements TypeConversionDe
         if (null == source) {
             return null;
         }
-        LocalDate localDate = (LocalDate) source;
+        LocalDate localDate = source;
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(DateUtils.parseDate(localDate));
         return calendar;

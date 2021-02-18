@@ -17,7 +17,7 @@ import static org.reflections.util.Utils.join;
  * @version 1.0.0
  * @since 2020/11/12
  */
-public class RewriteMethodParameterNamesScanner extends AbstractRewriteScanner{
+public class RewriteMethodParameterNamesScanner extends AbstractRewriteScanner {
 
     @Override
     public void scan(Object cls, Store store) {

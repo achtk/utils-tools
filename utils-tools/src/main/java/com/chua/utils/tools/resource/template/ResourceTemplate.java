@@ -42,8 +42,6 @@ import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_DOLLAR;
 @NoArgsConstructor
 public class ResourceTemplate {
 
-    private ResourceFactory resourceFactory = new FastResourceFactory();
-
     private static final String ANY = "classpath:**/*.class";
     /**
      * 子类缓存
@@ -56,7 +54,8 @@ public class ResourceTemplate {
     /**
      * 子类关系缓存
      */
-    private static final MultiValueCacheProvider<String, String> SUB_CACHE = new GuavaMultiValueCacheProvider();
+    private static final MultiValueCacheProvider<String, String> SUB_CACHE = new GuavaMultiValueCacheProvider(10 * 60 * 1000L);
+    private ResourceFactory resourceFactory = new FastResourceFactory();
     @Setter
     private ClassLoader classLoader;
 
@@ -106,7 +105,7 @@ public class ResourceTemplate {
             if (SUB_CACHE.size() == 0) {
                 ExecutorService executorService = ThreadHelper.newProcessorThreadExecutor();
                 List<Future<String>> futures = new ArrayList<>();
-                resources.parallelStream().forEach(resource -> futures.add(executorService.submit(() -> {
+                resources.stream().forEach(resource -> futures.add(executorService.submit(() -> {
                     ClassReader classReader;
                     try (InputStream inputStream = resource.getUrl().openStream()) {
                         classReader = new ClassReader(inputStream);
@@ -136,6 +135,8 @@ public class ResourceTemplate {
                 }
 
                 executorService.shutdown();
+            } else {
+                SUB_CACHE.putAll(SUB_CACHE.asMap());
             }
             List<String> subs = new ArrayList<>();
             subs.add(encryptClass.getName());

@@ -8,13 +8,11 @@ import javassist.bytecode.ClassFile;
 import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.annotation.Annotation;
-import lombok.Getter;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +30,7 @@ import static javassist.bytecode.AccessFlag.isProtected;
 public class JavassistAdaptor implements MetadataAdapter {
 
     private final ClassFile classFile;
-    private InputStream inputStream;
+    private final InputStream inputStream;
 
     public JavassistAdaptor(InputStream inputStream) {
         this.inputStream = inputStream;

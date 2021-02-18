@@ -52,29 +52,6 @@ public class AvlTree<E extends Comparable<E>> implements PrintTree<AvlTree.Node>
     }
 
     /**
-     * 内部类Node树对象，存值E value，左子节点，
-     * 右子节点 Node<E>表示泛型，可以支持对传入类型的排序存储
-     */
-    public static class Node<E> {
-        public E value;
-        Node<E> left;
-        Node<E> right;
-        // 值0表示根节点，值1表示左节点，值2表示右节点
-        // 如图中的节点5、7、10、22、23、24、30都属于左节点类型，
-        // isLeftRight属性值为1;
-        // 如图中的15、17、30、36、38都属于右节点类型,
-        // isLeftRight属性值为2;
-        Integer isLeftRight;
-
-        public Node(E value, Node<E> leftNode, Node<E> rightNode, Integer isLeftRight) {
-            this.value = value;
-            this.left = leftNode;
-            this.right = rightNode;
-            this.isLeftRight = isLeftRight;
-        }
-    }
-
-    /**
      * 1.1、为树添加节点，提供对外的方法
      *
      * @param e e
@@ -649,6 +626,29 @@ public class AvlTree<E extends Comparable<E>> implements PrintTree<AvlTree.Node>
                 leftRotate(node);
             }
 
+        }
+    }
+
+    /**
+     * 内部类Node树对象，存值E value，左子节点，
+     * 右子节点 Node<E>表示泛型，可以支持对传入类型的排序存储
+     */
+    public static class Node<E> {
+        public E value;
+        Node<E> left;
+        Node<E> right;
+        // 值0表示根节点，值1表示左节点，值2表示右节点
+        // 如图中的节点5、7、10、22、23、24、30都属于左节点类型，
+        // isLeftRight属性值为1;
+        // 如图中的15、17、30、36、38都属于右节点类型,
+        // isLeftRight属性值为2;
+        Integer isLeftRight;
+
+        public Node(E value, Node<E> leftNode, Node<E> rightNode, Integer isLeftRight) {
+            this.value = value;
+            this.left = leftNode;
+            this.right = rightNode;
+            this.isLeftRight = isLeftRight;
         }
     }
 

@@ -10,13 +10,14 @@ import java.util.concurrent.atomic.LongAdder;
 
 /**
  * 轮训均衡器
+ *
  * @author CH
  */
 public class RotationBalancerLoader<T> implements BalancerLoader<T> {
 
+    private final LongAdder longAdder = new LongAdder();
     private Filter<T> filter;
     private Collection<T> source;
-    private final LongAdder longAdder = new LongAdder();
     private int size;
 
     @Override
@@ -34,7 +35,7 @@ public class RotationBalancerLoader<T> implements BalancerLoader<T> {
 
     @Override
     public T balancer() {
-        if(size == 0) {
+        if (size == 0) {
             return null;
         }
         int index = longAdder.intValue() % size;
@@ -47,7 +48,7 @@ public class RotationBalancerLoader<T> implements BalancerLoader<T> {
 
     @Override
     public T random() {
-        if(0 == size) {
+        if (0 == size) {
             return null;
         }
         Double doubles = Math.random() * Math.pow(size, 10);

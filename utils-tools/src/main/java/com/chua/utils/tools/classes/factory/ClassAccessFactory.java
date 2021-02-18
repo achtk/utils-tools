@@ -34,26 +34,25 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public class ClassAccessFactory<T> {
 
-    private final Class<T> clazz;
-    private final ClassWriter cw;
-
-    private final List<ClassPropertyInfoAbstractAbstract> accessorInfoList = new ArrayList<>();
-    private String classAccessInternalName;
-    private String classAccessTypeDescriptor;
-    private String classTypeDescriptor;
     private static final String MEMBER_TYPE_FIELD = "field";
     private static final String MEMBER_TYPE_PROPERTY = "property";
+    private static final int MAX_METHOD_ACCESS_PARAMETER_COUNT = 22;
+    private final Class<T> clazz;
+    private final ClassWriter cw;
+    private final List<ClassPropertyInfoAbstractAbstract> accessorInfoList = new ArrayList<>();
     private final List<ClassFieldInfoAbstractAbstract> fieldInfoList = new ArrayList<>();
-    private String internalName;
     private final List<ClassMethodInfoAbstract> methodInfoList = new ArrayList<>();
     private final List<ClassPropertyInfoAbstractAbstract> mutatorInfoList = new ArrayList<>();
-    private MethodVisitor mv;
     private final Map<Integer, List<ClassMethodInfoAbstract>> paramCountMethodsMap = new HashMap<>();
     private final List<ClassPropertyInfoAbstractAbstract> propertyInfoList = new ArrayList<>();
     private final Map<String, List<ClassPropertyInfoAbstractAbstract>> typeToAccessorsMap = new HashMap<>();
     private final Map<String, List<ClassFieldInfoAbstractAbstract>> typeToFieldsMap = new HashMap<>();
     private final Map<String, List<ClassPropertyInfoAbstractAbstract>> typeToMutatorsMap = new HashMap<>();
-    private static final int MAX_METHOD_ACCESS_PARAMETER_COUNT = 22;
+    private String classAccessInternalName;
+    private String classAccessTypeDescriptor;
+    private String classTypeDescriptor;
+    private String internalName;
+    private MethodVisitor mv;
 
     public ClassAccessFactory(Class<T> clazz) {
         this.clazz = clazz;
@@ -61,6 +60,64 @@ public class ClassAccessFactory<T> {
         initializeFields();
         initializeMethods();
         cw = new ClassWriter(0);
+    }
+
+    /**
+     * 是否是Long/Double
+     *
+     * @param descriptor descriptor
+     * @return boolean
+     */
+    private static boolean isDescriptorDoubleOrLong(String descriptor) {
+        return descriptor.equals(Type.DOUBLE_TYPE.getDescriptor())
+                || descriptor.equals(Type.LONG_TYPE.getDescriptor());
+    }
+
+    /**
+     * getTableSwitchLabelsForAccess
+     *
+     * @param defaultCaseLabel defaultCaseLabel
+     * @param members          members
+     * @return Label[]
+     */
+    private static Label[] getTableSwitchLabelsForAccess(Label defaultCaseLabel, List<? extends AbstractMemberInfo> members) {
+        return AsmUtils.getTableSwitchLabels(defaultCaseLabel, members.stream().mapToInt(m -> m.memberIndex).toArray());
+    }
+
+    /**
+     * new Label array
+     *
+     * @param size size
+     * @return Label array
+     */
+    private static Label[] newLabelArray(int size) {
+        Label[] labels = new Label[size];
+        for (int i = 0; i < size; i++) {
+            labels[i] = new Label();
+        }
+        return labels;
+    }
+
+    /**
+     * useTableSwitch
+     *
+     * @param members members
+     * @return boolean
+     */
+    private static boolean useTableSwitch(List<? extends AbstractMemberInfo> members) {
+        return AsmUtils.useTableSwitch(members.stream()
+                .mapToInt(m -> m.memberIndex)
+                .toArray());
+    }
+
+    /**
+     * 创建方法名
+     *
+     * @param clazz 类
+     * @return 方法名
+     */
+    public static String getClassNameOfClassAccessFor(Class<?> clazz) {
+        return clazz.getName() + "$" + clazz.getSimpleName() + "ClassAccess";
     }
 
     /**
@@ -387,7 +444,7 @@ public class ClassAccessFactory<T> {
         mv.visitVarInsn(ALOAD, 2);
         mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "stream", "([Ljava/lang/Object;)Ljava/util/stream/Stream;", false);
         mv.visitLabel(new Label());
-        mv.visitInvokeDynamicInsn("apply", "()Ljava/util/function/Function;", new Handle(H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;", false), new Object[]{Type.getType("(Ljava/lang/Object;)Ljava/lang/Object;"), new Handle(H_INVOKEVIRTUAL, "java/lang/Class", "getName", "()Ljava/lang/String;", false), Type.getType("(Ljava/lang/Class;)Ljava/lang/String;")});
+        mv.visitInvokeDynamicInsn("apply", "()Ljava/util/function/Function;", new Handle(H_INVOKESTATIC, "java/lang/invoke/LambdaMetafactory", "metafactory", "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;", false), Type.getType("(Ljava/lang/Object;)Ljava/lang/Object;"), new Handle(H_INVOKEVIRTUAL, "java/lang/Class", "getName", "()Ljava/lang/String;", false), Type.getType("(Ljava/lang/Class;)Ljava/lang/String;"));
         mv.visitMethodInsn(INVOKEINTERFACE, "java/util/stream/Stream", "map", "(Ljava/util/function/Function;)Ljava/util/stream/Stream;", true);
         mv.visitLabel(new Label());
         mv.visitMethodInsn(INVOKESTATIC, "java/util/stream/Collectors", "toList", "()Ljava/util/stream/Collector;", false);
@@ -775,17 +832,6 @@ public class ClassAccessFactory<T> {
     }
 
     /**
-     * 是否是Long/Double
-     *
-     * @param descriptor descriptor
-     * @return boolean
-     */
-    private static boolean isDescriptorDoubleOrLong(String descriptor) {
-        return descriptor.equals(Type.DOUBLE_TYPE.getDescriptor())
-                || descriptor.equals(Type.LONG_TYPE.getDescriptor());
-    }
-
-    /**
      * 访问最后一个Setter
      *
      * @param memberType      memberType
@@ -913,31 +959,6 @@ public class ClassAccessFactory<T> {
         mv.visitFrame(F_SAME, 0, null, 0, null);
 
         visitAccessGetterLastPart(accessInfo.memberType, firstLabel);
-    }
-
-    /**
-     * getTableSwitchLabelsForAccess
-     *
-     * @param defaultCaseLabel defaultCaseLabel
-     * @param members          members
-     * @return Label[]
-     */
-    private static Label[] getTableSwitchLabelsForAccess(Label defaultCaseLabel, List<? extends AbstractMemberInfo> members) {
-        return AsmUtils.getTableSwitchLabels(defaultCaseLabel, members.stream().mapToInt(m -> m.memberIndex).toArray());
-    }
-
-    /**
-     * new Label array
-     *
-     * @param size size
-     * @return Label array
-     */
-    private static Label[] newLabelArray(int size) {
-        Label[] labels = new Label[size];
-        for (int i = 0; i < size; i++) {
-            labels[i] = new Label();
-        }
-        return labels;
     }
 
     /**
@@ -1257,21 +1278,45 @@ public class ClassAccessFactory<T> {
     }
 
     /**
-     * useTableSwitch
-     *
-     * @param members members
-     * @return boolean
+     * 可铸
      */
-    private static boolean useTableSwitch(List<? extends AbstractMemberInfo> members) {
-        return AsmUtils.useTableSwitch(members.stream()
-                .mapToInt(m -> m.memberIndex)
-                .toArray());
+    private interface Castable {
+        /**
+         * 获取描述
+         *
+         * @return 描述
+         */
+        String getDescriptor();
+
+        /**
+         * 获取名称
+         *
+         * @return 名称
+         */
+        String getInternalName();
+
+        @SuppressWarnings("rawtypes")
+        /**
+         * 获取类型
+         * @return 类型
+         */
+        Class getType();
     }
 
     /**
      * 返回值与索引
      */
     private static class StringCaseReturnIndex {
+        protected final int hashCode;
+        protected final int index;
+        protected final String name;
+        protected final Label returnIndexLabel = new Label();
+        protected StringCaseReturnIndex(String name, int index) {
+            hashCode = name.hashCode();
+            this.index = index;
+            this.name = name;
+        }
+
         private static int compareIndex(StringCaseReturnIndex a, StringCaseReturnIndex b) {
             return Integer.compare(a.index, b.index);
         }
@@ -1279,23 +1324,29 @@ public class ClassAccessFactory<T> {
         private static int compareHashCode(StringCaseReturnIndex a, StringCaseReturnIndex b) {
             return Integer.compare(a.hashCode, b.hashCode);
         }
-
-        protected final int hashCode;
-        protected final int index;
-        protected final String name;
-        protected final Label returnIndexLabel = new Label();
-
-        protected StringCaseReturnIndex(String name, int index) {
-            hashCode = name.hashCode();
-            this.index = index;
-            this.name = name;
-        }
     }
 
     /**
      * 访问信息
      */
     private static class AccessInfo {
+        private final String className;
+        private final String descriptor;
+        private final String getMethodName;
+        private final int loadOpcode;
+        private final String memberType;
+        private final int returnOpcode;
+        private final String setMethodName;
+        private AccessInfo(String memberType, String getMethodName, String setMethodName, String className, String descriptor, int loadOpcode, int returnOpcode) {
+            this.className = className;
+            this.descriptor = descriptor;
+            this.getMethodName = getMethodName;
+            this.loadOpcode = loadOpcode;
+            this.memberType = memberType;
+            this.returnOpcode = returnOpcode;
+            this.setMethodName = setMethodName;
+        }
+
         private static AccessInfo forPrimitive(String memberType, Type type) {
             String camelCaseClassName = StringUtils.capitalize(type.getClassName());
             String capitalizedMemberType = StringUtils.capitalize(memberType);
@@ -1315,24 +1366,6 @@ public class ClassAccessFactory<T> {
             String capitalizedMemberType = StringUtils.capitalize(memberType);
 
             return new AccessInfo(memberType, "get" + clazz.getSimpleName() + capitalizedMemberType, "set" + clazz.getSimpleName() + capitalizedMemberType, clazz.getName(), Type.getDescriptor(clazz), ALOAD, ARETURN);
-        }
-
-        private final String className;
-        private final String descriptor;
-        private final String getMethodName;
-        private final int loadOpcode;
-        private final String memberType;
-        private final int returnOpcode;
-        private final String setMethodName;
-
-        private AccessInfo(String memberType, String getMethodName, String setMethodName, String className, String descriptor, int loadOpcode, int returnOpcode) {
-            this.className = className;
-            this.descriptor = descriptor;
-            this.getMethodName = getMethodName;
-            this.loadOpcode = loadOpcode;
-            this.memberType = memberType;
-            this.returnOpcode = returnOpcode;
-            this.setMethodName = setMethodName;
         }
     }
 
@@ -1371,6 +1404,12 @@ public class ClassAccessFactory<T> {
         protected final String internalName;
         protected final Class<?> type;
 
+        private AbstractAssignableInfoAbstract(String name, int memberIndex, Class<?> type) {
+            super(name, memberIndex, Type.getDescriptor(type));
+            this.internalName = Type.getInternalName(type);
+            this.type = type;
+        }
+
         @Override
         public String getDescriptor() {
             return descriptor;
@@ -1385,12 +1424,6 @@ public class ClassAccessFactory<T> {
         @Override
         public Class getType() {
             return type;
-        }
-
-        private AbstractAssignableInfoAbstract(String name, int memberIndex, Class<?> type) {
-            super(name, memberIndex, Type.getDescriptor(type));
-            this.internalName = Type.getInternalName(type);
-            this.type = type;
         }
     }
 
@@ -1444,6 +1477,12 @@ public class ClassAccessFactory<T> {
         private final String internalName;
         private final Class<?> type;
 
+        private ParameterInfo(Class<?> type) {
+            descriptor = Type.getDescriptor(type);
+            internalName = Type.getInternalName(type);
+            this.type = type;
+        }
+
         @Override
         public String getDescriptor() {
             return descriptor;
@@ -1459,47 +1498,5 @@ public class ClassAccessFactory<T> {
         public Class getType() {
             return type;
         }
-
-        private ParameterInfo(Class<?> type) {
-            descriptor = Type.getDescriptor(type);
-            internalName = Type.getInternalName(type);
-            this.type = type;
-        }
-    }
-
-    /**
-     *可铸
-     */
-    private static interface Castable {
-        /**
-         * 获取描述
-         *
-         * @return 描述
-         */
-        String getDescriptor();
-
-        /**
-         * 获取名称
-         *
-         * @return 名称
-         */
-        String getInternalName();
-
-        @SuppressWarnings("rawtypes")
-        /**
-         * 获取类型
-         * @return 类型
-         */
-        Class getType();
-    }
-
-    /**
-     * 创建方法名
-     *
-     * @param clazz 类
-     * @return 方法名
-     */
-    public static String getClassNameOfClassAccessFor(Class<?> clazz) {
-        return clazz.getName() + "$" + clazz.getSimpleName() + "ClassAccess";
     }
 }

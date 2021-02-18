@@ -37,8 +37,10 @@ public interface ExtensionProcessor<T> {
      * 删除缓存
      */
     void removeAll();
+
     /**
      * 删除缓存
+     *
      * @param tClass 类
      */
     void remove(Class<T> tClass);

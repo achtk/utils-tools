@@ -15,7 +15,7 @@ import static org.reflections.util.Utils.join;
  * @version 1.0.0
  * @since 2020/11/12
  */
-public class RewriteMemberUsageScanner extends AbstractRewriteScanner{
+public class RewriteMemberUsageScanner extends AbstractRewriteScanner {
     private ClassPool classPool;
 
     @Override

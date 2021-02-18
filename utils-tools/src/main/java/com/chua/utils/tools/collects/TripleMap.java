@@ -86,7 +86,7 @@ public interface TripleMap<L, M, R> {
      * @return 包含左侧索引返回true
      */
     default boolean containsLm(L left, M middle) {
-        return getRight(left, middle).size() != 0;
+        return getRight(left, middle).isEmpty();
     }
 
     /**
@@ -107,7 +107,7 @@ public interface TripleMap<L, M, R> {
      * @return 包含右侧索引返回true
      */
     default boolean containsRm(R right, M middle) {
-        return getLeft(middle, right).size() != 0;
+        return getLeft(middle, right).isEmpty();
     }
 
     /**
@@ -128,7 +128,7 @@ public interface TripleMap<L, M, R> {
      * @return 包含中侧索引返回true
      */
     default boolean containsLr(L left, R right) {
-        return getMiddle(left, right).size() != 0;
+        return getMiddle(left, right).isEmpty();
     }
 
     /**

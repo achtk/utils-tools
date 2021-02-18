@@ -12,6 +12,7 @@ import com.chua.utils.tools.function.Matcher;
 public interface ParserProcess<T> {
     /**
      * 解析过程
+     *
      * @param matcher 匹配
      */
     void doWith(Matcher<T> matcher);

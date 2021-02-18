@@ -6,13 +6,14 @@ import java.util.regex.Matcher;
 
 /**
  * 默认占位符
+ *
  * @author CH
  */
 public class DefaultPropertiesPlaceholderResolver extends AbstractPropertiesPlaceholderResolver {
 
     @Override
     public boolean isMatcher(String value) {
-        if(null == value) {
+        if (null == value) {
             return false;
         }
         return getCompile().matcher(value).find();
@@ -28,7 +29,7 @@ public class DefaultPropertiesPlaceholderResolver extends AbstractPropertiesPlac
         //分割数据
         String[] split = placeValue.split(valueSeparate());
         String placeholderValue = split[0], defaultValue = null;
-        if(split.length > 1) {
+        if (split.length > 1) {
             defaultValue = split[1];
         }
 

@@ -31,10 +31,8 @@ import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_LEFT_SLASH;
 public class CustomExtensionProcessor<T> extends AbstractSimpleExtensionProcessor<T> {
 
     private static final Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
-
-    private List<String> extensionLoadPath;
-
     protected String nameAndOrder = "|";
+    private List<String> extensionLoadPath;
 
     @Override
     public void init(SpiConfig spiConfig) {

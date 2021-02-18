@@ -23,26 +23,6 @@ public class DesedeEncrypt extends AbstractStandardEncrypt {
 
     private static final String DEFAULT_CIPHER_ALGORITHM = "DESede/ECB/ISO10126Padding";
 
-    @Override
-    public byte[] encode(byte[] bytes) throws Exception {
-        //实例化
-        Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
-        //使用密钥初始化，设置为加密模式
-        cipher.init(Cipher.ENCRYPT_MODE, toKey(getKey(LENGTH)));
-        //执行操作
-        return cipher.doFinal(bytes);
-    }
-
-    @Override
-    public byte[] decode(byte[] bytes) throws Exception {
-        //实例化
-        Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
-        //使用密钥初始化，设置为解密模式
-        cipher.init(Cipher.DECRYPT_MODE, toKey(getKey(LENGTH)));
-        //执行操作
-        return cipher.doFinal(bytes);
-    }
-
     /**
      * 初始化密钥
      *
@@ -75,5 +55,25 @@ public class DesedeEncrypt extends AbstractStandardEncrypt {
         //生成密钥
         SecretKey secretKey = skf.generateSecret(dks);
         return secretKey;
+    }
+
+    @Override
+    public byte[] encode(byte[] bytes) throws Exception {
+        //实例化
+        Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
+        //使用密钥初始化，设置为加密模式
+        cipher.init(Cipher.ENCRYPT_MODE, toKey(getKey(LENGTH)));
+        //执行操作
+        return cipher.doFinal(bytes);
+    }
+
+    @Override
+    public byte[] decode(byte[] bytes) throws Exception {
+        //实例化
+        Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
+        //使用密钥初始化，设置为解密模式
+        cipher.init(Cipher.DECRYPT_MODE, toKey(getKey(LENGTH)));
+        //执行操作
+        return cipher.doFinal(bytes);
     }
 }

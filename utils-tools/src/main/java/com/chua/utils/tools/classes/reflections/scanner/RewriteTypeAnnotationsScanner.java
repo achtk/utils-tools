@@ -1,8 +1,6 @@
 package com.chua.utils.tools.classes.reflections.scanner;
 
 import org.reflections.Store;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.vfs.Vfs;
 
 import java.lang.annotation.Inherited;
 import java.util.List;

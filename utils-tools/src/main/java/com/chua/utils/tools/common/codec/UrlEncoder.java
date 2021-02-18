@@ -39,7 +39,7 @@ public class UrlEncoder implements StringEncoder {
     /**
      * 是否编码空格为+
      */
-    private boolean encodeSpaceAsPlus = false;
+    private final boolean encodeSpaceAsPlus = false;
 
     /**
      * 构造<br>

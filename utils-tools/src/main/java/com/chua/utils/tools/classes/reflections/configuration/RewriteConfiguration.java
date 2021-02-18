@@ -8,15 +8,11 @@ import com.chua.utils.tools.common.ThreadHelper;
 import com.google.common.collect.Sets;
 import org.reflections.Reflections;
 import org.reflections.adapters.JavaReflectionAdapter;
-import org.reflections.adapters.JavassistAdapter;
 import org.reflections.adapters.MetadataAdapter;
 import org.reflections.scanners.Scanner;
 import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -29,13 +25,12 @@ import java.util.function.Predicate;
  */
 public class RewriteConfiguration extends ConfigurationBuilder {
 
-    private Predicate<String> inputsFilter;
     /**
      * lazy
      */
     protected MetadataAdapter metadataAdapter;
-
-    private Set<AbstractRewriteScanner> rewriteScanners = Sets.newHashSet(new RewriteTypeAnnotationsScanner(), new RewriteSubTypesScanner());
+    private Predicate<String> inputsFilter;
+    private final Set<AbstractRewriteScanner> rewriteScanners = Sets.newHashSet(new RewriteTypeAnnotationsScanner(), new RewriteSubTypesScanner());
 
     {
         setExecutorService(ThreadHelper.newProcessorThreadExecutor("REWRITE REFLECTIONS"));

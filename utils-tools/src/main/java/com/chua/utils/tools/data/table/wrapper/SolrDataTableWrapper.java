@@ -18,12 +18,11 @@ import java.util.List;
  */
 public class SolrDataTableWrapper {
 
-    private final TableType tableType = TableType.ELASTIC_SEARCH;
-
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 6379;
     private static final String INDEX = "default";
     private static final String PASSWORD = "";
+    private final TableType tableType = TableType.ELASTIC_SEARCH;
     private DataTable dataTable;
 
     /**
@@ -93,10 +92,10 @@ public class SolrDataTableWrapper {
     @AllArgsConstructor
     public class DataTableWrapperTableBuilder {
 
-        private DataTable dataTable;
-        private SolrDataTableWrapper solrDataTableWrapper;
         private final List<String> columns = new ArrayList<>();
         private final List<String> mappers = new ArrayList<>();
+        private final DataTable dataTable;
+        private final SolrDataTableWrapper solrDataTableWrapper;
 
         /**
          * 创建字段

@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RoundRobin<T> implements Balanceable<T> {
 
-    private static AtomicInteger CNT = new AtomicInteger();
+    private static final AtomicInteger CNT = new AtomicInteger();
 
     @Override
     public T balance(List<T> ts) {

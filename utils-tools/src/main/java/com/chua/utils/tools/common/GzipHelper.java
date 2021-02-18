@@ -11,6 +11,7 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * gzip
+ *
  * @author CH
  */
 public class GzipHelper {
@@ -33,6 +34,7 @@ public class GzipHelper {
     public static byte[] compress(String string) {
         return compress(string, GZIP_ENCODE_UTF_8);
     }
+
     /**
      * "utf-8"编码压缩
      *
@@ -42,6 +44,7 @@ public class GzipHelper {
     public static String compressToString(String string) {
         return compressToString(string, GZIP_ENCODE_UTF_8);
     }
+
     /**
      * 指定编码压缩
      *
@@ -65,6 +68,7 @@ public class GzipHelper {
         }
         return baos.toByteArray();
     }
+
     /**
      * 指定编码压缩
      *
@@ -88,6 +92,7 @@ public class GzipHelper {
         }
         return baos.toString();
     }
+
     /**
      * 解压为字节数组
      *
@@ -102,7 +107,7 @@ public class GzipHelper {
     /**
      * 解压字符串
      *
-     * @param source 要解压的字节数组
+     * @param source  要解压的字节数组
      * @param charset 编码
      * @return 字节数组
      */
@@ -116,6 +121,7 @@ public class GzipHelper {
             return null;
         }
     }
+
     /**
      * 解压为字节数组
      *
@@ -155,7 +161,7 @@ public class GzipHelper {
     /**
      * 指定编码解压
      *
-     * @param bytes   要压缩的字符串
+     * @param bytes    要压缩的字符串
      * @param encoding 编码
      * @return 字节数组
      */

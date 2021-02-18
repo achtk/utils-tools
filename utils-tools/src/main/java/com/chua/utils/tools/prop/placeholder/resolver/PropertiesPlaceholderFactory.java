@@ -209,8 +209,8 @@ public class PropertiesPlaceholderFactory {
     @Accessors(chain = true)
     public static class Builder {
 
-        private List<AbstractPropertiesPlaceholderResolver> resolvers = new ArrayList<>();
         private final List<HashMultimap> hashMultimapList = new ArrayList<>();
+        private List<AbstractPropertiesPlaceholderResolver> resolvers = new ArrayList<>();
         //查找路径
         private Set<String> paths = new HashSet<>();
         //文件解析器
@@ -314,11 +314,11 @@ public class PropertiesPlaceholderFactory {
      */
     private class FileResolverFactory {
         //查找路径
-        private Set<String> paths;
+        private final Set<String> paths;
         //文件解析器
-        private Set<IFileResolver> fileResolvers;
+        private final Set<IFileResolver> fileResolvers;
         //文件转化
-        private FileParser fileParser;
+        private final FileParser fileParser;
 
         public FileResolverFactory(Set<String> paths, Set<IFileResolver> fileResolvers) {
             this.paths = paths;

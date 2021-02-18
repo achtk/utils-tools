@@ -119,7 +119,7 @@ public class MultiValueSortMap<K, V> implements MultiSortValueMap<K, V> {
     @Override
     public V put(K key, V value) {
         SortedSet<V> sortedSet = temporary.get(key);
-        if(null == sortedSet) {
+        if (null == sortedSet) {
             sortedSet = new TreeSet<>(comparator);
         }
         sortedSet.add(value);

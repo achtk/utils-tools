@@ -15,13 +15,13 @@ import java.util.regex.Pattern;
 @Spi("jdk")
 public interface Compiler {
 
-    static final Pattern PARENT_PATTERN = Pattern.compile("extends\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
-    static final Pattern INTERFACE_PATTERN = Pattern.compile("implements\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
-    static final Pattern PACKAGE_PATTERN = Pattern.compile("package\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
-    static final Pattern CLASS_PATTERN = Pattern.compile("class\\s+([$_a-zA-z][$_a-zA-z0-9]*)");
-    static final Pattern IMPORT_PATTERN = Pattern.compile("import\\s+(.*)\\;");
-    static final Pattern FIELD_PATTERN = Pattern.compile("(private|public|protect){1}\\s+(.*)\\;");
-    static final Pattern METHOD_PATTERN = Pattern.compile("(private|public|protect){1}\\s+(([a-zA-z][$_a-zA-z0-9\\.]*)(\\<(.*?)\\>){0,})\\s+([a-zA-z][$_a-zA-z0-9\\.]*)(\\s+){0,}\\((.*)\\)(\\s+){0,}\\{((.*?)|\n){0,}\\}");
+    Pattern PARENT_PATTERN = Pattern.compile("extends\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
+    Pattern INTERFACE_PATTERN = Pattern.compile("implements\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
+    Pattern PACKAGE_PATTERN = Pattern.compile("package\\s+([a-zA-z][$_a-zA-z0-9\\.]*)");
+    Pattern CLASS_PATTERN = Pattern.compile("class\\s+([$_a-zA-z][$_a-zA-z0-9]*)");
+    Pattern IMPORT_PATTERN = Pattern.compile("import\\s+(.*)\\;");
+    Pattern FIELD_PATTERN = Pattern.compile("(private|public|protect){1}\\s+(.*)\\;");
+    Pattern METHOD_PATTERN = Pattern.compile("(private|public|protect){1}\\s+(([a-zA-z][$_a-zA-z0-9\\.]*)(\\<(.*?)\\>){0,})\\s+([a-zA-z][$_a-zA-z0-9\\.]*)(\\s+){0,}\\((.*)\\)(\\s+){0,}\\{((.*?)|\n){0,}\\}");
 
     /**
      * 編譯器

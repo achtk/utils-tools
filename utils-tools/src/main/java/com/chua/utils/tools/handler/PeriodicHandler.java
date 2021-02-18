@@ -1,7 +1,5 @@
 package com.chua.utils.tools.handler;
 
-import lombok.EqualsAndHashCode;
-
 /**
  * 周期性任务
  *

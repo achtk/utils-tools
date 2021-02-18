@@ -9,13 +9,16 @@ import java.util.Set;
 
 /**
  * 文件修饰
+ *
  * @author CH
  */
 public class FileDecorator {
 
     private final FileDataMapper fileDataMapper = new FileDataMapper();
+
     /**
      * 合并数据
+     *
      * @param fileMapper 文件映射
      */
     public void dissolves(FileMapper fileMapper) {
@@ -24,6 +27,7 @@ public class FileDecorator {
 
     /**
      * fileMapper -> fileDataMapper
+     *
      * @param fileMapper fileMapper
      */
     private void converter2FileDataMapper(FileMapper fileMapper) {
@@ -31,8 +35,8 @@ public class FileDecorator {
         HashMultimap<String, Object> hashMultimap = fileMapper.getHashMultimap();
         Set<Map.Entry<String, Object>> entries = hashMultimap.entries();
         for (Map.Entry<String, Object> entry : entries) {
-            if(entry.getValue() instanceof  Map) {
-                converter2NoMap(entry.getKey(), (Map<String, Object>)entry.getValue(), result);
+            if (entry.getValue() instanceof Map) {
+                converter2NoMap(entry.getKey(), (Map<String, Object>) entry.getValue(), result);
                 continue;
             }
 
@@ -47,8 +51,9 @@ public class FileDecorator {
 
     /**
      * 当结果里面还存在Map再次解析
-     * @param key 索引
-     * @param value 值
+     *
+     * @param key    索引
+     * @param value  值
      * @param result 存储引用
      */
     private void converter2NoMap(String key, Map<String, Object> value, HashMultimap<String, Object> result) {
@@ -56,8 +61,8 @@ public class FileDecorator {
         for (Map.Entry<String, Object> entry : value.entrySet()) {
             newKey = key + "." + entry.getKey();
 
-            if(entry.getValue() instanceof  Map) {
-                converter2NoMap(newKey, (Map<String, Object>)entry.getValue(), result);
+            if (entry.getValue() instanceof Map) {
+                converter2NoMap(newKey, (Map<String, Object>) entry.getValue(), result);
                 continue;
             }
 
@@ -66,7 +71,6 @@ public class FileDecorator {
     }
 
     /**
-     *
      * @return
      */
     public FileDataMapper toMapper() {

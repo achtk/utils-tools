@@ -19,9 +19,9 @@ public class GUID {
 
     public static volatile String valueAfterMD5 = "";
 
-    private static Random myRand;
+    private static final Random myRand;
 
-    private static SecureRandom mySecureRand;
+    private static final SecureRandom mySecureRand;
 
     private static String sId;
 
@@ -71,9 +71,9 @@ public class GUID {
 
             buffer.append(sId);
             buffer.append(":");
-            buffer.append(Long.toString(time));
+            buffer.append(time);
             buffer.append(":");
-            buffer.append(Long.toString(rand));
+            buffer.append(rand);
 
             valueBeforeMD5 = buffer.toString();
             md5.update(valueBeforeMD5.getBytes());
@@ -104,13 +104,13 @@ public class GUID {
     public String toString() {
         String raw = valueAfterMD5.toUpperCase();
         StringBuffer sb = new StringBuffer();
-        sb.append(raw.substring(0, 8));
+        sb.append(raw, 0, 8);
         sb.append("-");
-        sb.append(raw.substring(8, 12));
+        sb.append(raw, 8, 12);
         sb.append("-");
-        sb.append(raw.substring(12, 16));
+        sb.append(raw, 12, 16);
         sb.append("-");
-        sb.append(raw.substring(16, 20));
+        sb.append(raw, 16, 20);
         sb.append("-");
         sb.append(raw.substring(20));
         sb.append(raw);

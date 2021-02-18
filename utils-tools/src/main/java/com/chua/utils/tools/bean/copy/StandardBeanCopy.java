@@ -29,21 +29,25 @@ import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPAC
  */
 public class StandardBeanCopy<T> implements BeanCopy<T> {
     /**
+     * 类属性
+     */
+    protected BeanMap beanMap;
+    /**
+     * 待处理的数据缓存
+     */
+    protected Map<String, Object> withParams = new HashMap<>();
+    /**
      * 字段信息
      */
     private Map<String, Class<?>> fieldInfo;
     /**
      * 字段映射
      */
-    private Multimap<String, String> mapper = HashMultimap.create();
+    private final Multimap<String, String> mapper = HashMultimap.create();
     /**
      * 基础配置
      */
     private BeanConfig beanConfig = new BeanConfig();
-    /**
-     * 类属性
-     */
-    protected BeanMap beanMap;
     /**
      * 待处理类
      */
@@ -52,10 +56,6 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
      * 待处理的对象
      */
     private T entity;
-    /**
-     * 待处理的数据缓存
-     */
-    protected Map<String, Object> withParams = new HashMap<>();
 
     private StandardBeanCopy() {
     }
@@ -81,25 +81,6 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     }
 
     /**
-     * 解析字段信息
-     *
-     * @return 字段信息
-     */
-    private void analyse() {
-        if (null == tClass) {
-            return;
-        }
-        this.fieldInfo = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
-        ClassUtils.doWithFields(tClass, field -> {
-            fieldInfo.put(field.getName(), field.getType());
-            BinderMapper binderMapper = field.getDeclaredAnnotation(BinderMapper.class);
-            if (null != binderMapper) {
-                mapper.put(binderMapper.value(), field.getName());
-            }
-        });
-    }
-
-    /**
      * 初始化bean拷贝
      *
      * @param tClass 类
@@ -122,6 +103,25 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
             return null;
         }
         return new StandardBeanCopy<>(entity);
+    }
+
+    /**
+     * 解析字段信息
+     *
+     * @return 字段信息
+     */
+    private void analyse() {
+        if (null == tClass) {
+            return;
+        }
+        this.fieldInfo = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
+        ClassUtils.doWithFields(tClass, field -> {
+            fieldInfo.put(field.getName(), field.getType());
+            BinderMapper binderMapper = field.getDeclaredAnnotation(BinderMapper.class);
+            if (null != binderMapper) {
+                mapper.put(binderMapper.value(), field.getName());
+            }
+        });
     }
 
     @Override
@@ -189,7 +189,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     }
 
     @Override
-    public BeanCopy with(Map<String, Object> param) {
+    public BeanCopy<T> with(Map<String, Object> param) {
         if (MapOperableHelper.isEmpty(param)) {
             return this;
         }
@@ -200,7 +200,7 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
     }
 
     @Override
-    public BeanCopy with(Object entity) {
+    public BeanCopy<T> with(Object entity) {
         if (null == entity || entity instanceof Class) {
             return this;
         }

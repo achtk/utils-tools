@@ -2,7 +2,6 @@ package com.chua.utils.tools.data.table;
 
 import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.data.table.type.TableType;
-import com.chua.utils.tools.data.wrapper.Wrapper;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +21,7 @@ public class FilterDataTable<F> extends DataTable {
 
     private List<F> filters;
 
-    FilterDataTable(String id, String name, Object source, TableType tableType, String parser, OperateHashMap operate, Wrapper<?> wrapper, OperateHashMap operate2) {
-        super(id, name, source, tableType, parser, operate, wrapper, operate2);
+    FilterDataTable(String id, String name, Object source, TableType tableType, String parser, OperateHashMap operate, OperateHashMap operate2) {
+        super(id, name, source, tableType, parser, operate, operate2);
     }
 }

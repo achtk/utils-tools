@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * 文件映射
+ *
  * @author CH
  */
 @Getter
@@ -18,14 +19,15 @@ public class FileDataMapper {
     /**
      * 文件
      */
-    private List<String> names = new ArrayList<>();;
+    private List<String> names = new ArrayList<>();
     /**
      * 属性
      */
-    private List<FileMapper> fileMapperList = new ArrayList<>();;
+    private List<FileMapper> fileMapperList = new ArrayList<>();
 
     /**
      * 添加FileMapper
+     *
      * @param fileMapper FileMapper
      */
     public void addFileMapper(FileMapper fileMapper) {

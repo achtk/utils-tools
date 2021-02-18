@@ -22,6 +22,7 @@ import java.util.Set;
 
 /**
  * 文件解析
+ *
  * @author CH
  */
 @NoArgsConstructor
@@ -39,10 +40,9 @@ public class FileParser {
     /**
      * 文件解析器
      */
-    private Set<IFileResolver> fileResolvers = new HashSet<>();
+    private final Set<IFileResolver> fileResolvers = new HashSet<>();
 
     /**
-     *
      * @param fileResolvers
      */
     public FileParser(Set<IFileResolver> fileResolvers) {
@@ -55,7 +55,6 @@ public class FileParser {
     }
 
     /**
-     *
      * @return
      */
     public static FileParser.Builder builder() {
@@ -64,16 +63,17 @@ public class FileParser {
 
     /**
      * 解析文件
-     * @param path 文件
+     *
+     * @param path          文件
      * @param fileConverter 转化器
      * @return
      */
     public FileDataMapper stream(final String path, final FileConverter<?, ?> fileConverter) {
-        if(null == path) {
+        if (null == path) {
             return null;
         }
         InputStream inputStream = this.stream(path);
-        if(null == inputStream) {
+        if (null == inputStream) {
             return null;
         }
         return parser(FileHelper.getName(path), inputStream, fileConverter);
@@ -81,11 +81,12 @@ public class FileParser {
 
     /**
      * 文件解析
+     *
      * @param path 文件路径
      * @return
      */
     public InputStream stream(String path) {
-        if(null == path) {
+        if (null == path) {
             return null;
         }
         try {
@@ -99,20 +100,21 @@ public class FileParser {
 
     /**
      * 解析文件
-     * @param name 文件名
-     * @param stream 流
+     *
+     * @param name          文件名
+     * @param stream        流
      * @param fileConverter 转化器
      * @return
      */
     public FileDataMapper parser(final String name, final InputStream stream, final FileConverter<?, ?> fileConverter) {
-        if(null == stream || null == name) {
+        if (null == stream || null == name) {
             return null;
         }
         //获取文件类型
         String extension = FileHelper.getExtension(name);
         IFileResolver fileResolver = ExtensionFactory.getExtensionLoader(IFileResolver.class).getExtension(extension);
         fileResolver = isValid(extension, fileResolver);
-        if(null == fileResolver) {
+        if (null == fileResolver) {
             throw new IllegalArgumentException("不支持该文件" + extension);
         }
         fileResolver.stream(stream);
@@ -124,17 +126,18 @@ public class FileParser {
 
     /**
      * 是否适配文件
-     * @param extension 文件后缀
+     *
+     * @param extension    文件后缀
      * @param fileResolver 文件解析器
      * @return
      */
     private IFileResolver isValid(String extension, IFileResolver fileResolver) {
-        if(null != fileResolver && fileResolver.isValid(extension)) {
+        if (null != fileResolver && fileResolver.isValid(extension)) {
             return fileResolver;
         }
 
         for (IFileResolver resolver : fileResolvers) {
-            if(null == resolver || !resolver.isValid(extension)) {
+            if (null == resolver || !resolver.isValid(extension)) {
                 continue;
             }
             return resolver;
@@ -161,7 +164,6 @@ public class FileParser {
         private FileDecorator fileDecorator;
 
         /**
-         *
          * @return
          */
         public FileParser build() {

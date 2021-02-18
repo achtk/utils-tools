@@ -16,14 +16,6 @@ import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPAC
  * @since 2021/1/27
  */
 public class LevelsClose implements Levels {
-    @Override
-    public Map<String, Object> apply(Map<String, Object> stringObjectMap) {
-        Map<String, Object> properties1 = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
-        analysisHierarchicalAnalysis(stringObjectMap, properties1);
-        return properties1;
-    }
-
-
     /**
      * 解析map
      *
@@ -31,7 +23,7 @@ public class LevelsClose implements Levels {
      * @param result 返回结果集
      */
     private static void analysisHierarchicalAnalysis(Map<String, Object> map, final Map<String, Object> result) {
-        if(null == map) {
+        if (null == map) {
             return;
         }
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -40,7 +32,6 @@ public class LevelsClose implements Levels {
             dataFormatProfileHierarchicalAnalysis(key, value, result);
         }
     }
-
 
     /**
      * 数据格式化成 配置格式
@@ -85,5 +76,12 @@ public class LevelsClose implements Levels {
         for (int i = 0; i < source.size(); i++) {
             dataFormatProfileHierarchicalAnalysis(parentName + "[" + i + "]", source.get(i), result);
         }
+    }
+
+    @Override
+    public Map<String, Object> apply(Map<String, Object> stringObjectMap) {
+        Map<String, Object> properties1 = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
+        analysisHierarchicalAnalysis(stringObjectMap, properties1);
+        return properties1;
     }
 }

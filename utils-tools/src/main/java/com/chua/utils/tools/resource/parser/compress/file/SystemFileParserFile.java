@@ -36,7 +36,7 @@ public class SystemFileParserFile implements ParserFile {
         String filepath = file.getPath().replace("\\", "/");
         if (filepath.startsWith(root.getPath())) {
             int length = root.getPath().length() + 1;
-            if(length < filepath.length()) {
+            if (length < filepath.length()) {
                 return filepath.substring(length);
             }
             return filepath;

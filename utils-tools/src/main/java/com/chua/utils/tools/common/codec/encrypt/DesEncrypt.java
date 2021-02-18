@@ -8,6 +8,7 @@ import java.security.SecureRandom;
 
 /**
  * des加解密
+ *
  * @author CH
  */
 public class DesEncrypt extends AbstractStandardEncrypt {
@@ -15,7 +16,7 @@ public class DesEncrypt extends AbstractStandardEncrypt {
 
     @Override
     public byte[] encode(byte[] bytes) {
-        try{
+        try {
             SecureRandom random = new SecureRandom();
             DESKeySpec desKey = new DESKeySpec(getKey(8));
             //创建一个密匙工厂，然后用它把DESKeySpec转换成
@@ -28,7 +29,7 @@ public class DesEncrypt extends AbstractStandardEncrypt {
             //现在，获取数据并加密
             //正式执行加密操作
             return cipher.doFinal(bytes);
-        }catch(Throwable e){
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         return null;

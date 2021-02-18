@@ -11,14 +11,6 @@ package com.chua.utils.tools.function;
 public interface Matcher<T> {
 
     /**
-     * 回调
-     *
-     * @param item 元素
-     */
-    void doWith(T item);
-
-
-    /**
      * Matcher不为空执行
      *
      * @param matcher Mathcer
@@ -31,4 +23,11 @@ public interface Matcher<T> {
         }
         matcher.doWith(data);
     }
+
+    /**
+     * 回调
+     *
+     * @param item 元素
+     */
+    void doWith(T item);
 }

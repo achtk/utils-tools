@@ -19,9 +19,8 @@ import java.lang.management.ManagementFactory;
 public class MbeanTemplate {
 
     private static final ContextManager CONTEXT_MANAGER = new StandardContextManager();
-    private final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-
     private static final String M_BEAN = "MBean";
+    private final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
 
     /**
      * 注销对象

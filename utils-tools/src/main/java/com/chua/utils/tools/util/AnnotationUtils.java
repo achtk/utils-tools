@@ -163,7 +163,7 @@ public class AnnotationUtils {
             return true;
         }
         Set<Annotation> allAnnotation = findAllAnnotation(compiler, annotation -> {
-            if(annotation.getClass().isAssignableFrom(componentClass)) {
+            if (annotation.getClass().isAssignableFrom(componentClass)) {
                 return true;
             }
             String name = annotation.getClass().getName();

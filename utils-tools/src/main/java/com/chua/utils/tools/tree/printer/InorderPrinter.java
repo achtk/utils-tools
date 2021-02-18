@@ -23,10 +23,10 @@ import com.chua.utils.tools.tree.PrintTree;
  * @author MJ Lee
  */
 public final class InorderPrinter implements Printer {
-    private static String rightAppend;
-    private static String leftAppend;
-    private static String blankAppend;
-    private static String lineAppend;
+    private static final String rightAppend;
+    private static final String leftAppend;
+    private static final String blankAppend;
+    private static final String lineAppend;
 
     static {
         int length = 2;

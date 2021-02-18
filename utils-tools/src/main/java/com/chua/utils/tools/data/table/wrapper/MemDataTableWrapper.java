@@ -14,9 +14,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class MemDataTableWrapper {
 
-    private String name;
-
     private final TableType tableType = TableType.MEM;
+    private final String name;
 
     /**
      * 构建数据

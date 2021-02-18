@@ -9,13 +9,12 @@ import com.chua.utils.tools.compiler.JavassistCompiler;
 import com.chua.utils.tools.resource.parser.ParserFile;
 import com.chua.utils.tools.resource.parser.ParserJava;
 import com.chua.utils.tools.resource.parser.compress.dir.ClassFileParserDir;
-import com.chua.utils.tools.resource.parser.compress.dir.JavaFileParserDir;
 import com.taobao.arthas.compiler.DynamicCompiler;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.bytecode.ClassFile;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;

@@ -1,7 +1,5 @@
 package com.chua.utils.tools.manager.builder;
 
-import com.chua.utils.tools.function.intercept.MethodIntercept;
-
 /**
  * 限流策略
  *

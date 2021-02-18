@@ -1,9 +1,8 @@
 package com.chua.utils.tools.common;
 
-import com.chua.utils.tools.constant.NumberConstant;
-
-import java.io.OutputStream;
-import java.lang.management.*;
+import java.lang.management.LockInfo;
+import java.lang.management.MonitorInfo;
+import java.lang.management.ThreadInfo;
 import java.util.concurrent.*;
 
 import static com.chua.utils.tools.constant.NumberConstant.THIRTY_TWO;
@@ -46,7 +45,7 @@ public class ThreadHelper {
                 SINGLETON,
                 KEEP_ALIVE_TIME,
                 TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(),
+                new LinkedBlockingQueue<>(),
                 newThreadFactory(name)
 
         );
@@ -64,7 +63,7 @@ public class ThreadHelper {
                 SINGLETON,
                 KEEP_ALIVE_TIME,
                 TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(),
+                new LinkedBlockingQueue<>(),
                 threadFactory
         );
     }
@@ -144,7 +143,7 @@ public class ThreadHelper {
      * @return
      */
     public static ExecutorService newCachedThreadPool(final String name) {
-        return new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), newThreadFactory(name));
+        return new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), newThreadFactory(name));
     }
 
     /**
@@ -152,7 +151,7 @@ public class ThreadHelper {
      * @return
      */
     public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
-        return new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), threadFactory);
+        return new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory);
     }
 
     /**
@@ -237,19 +236,16 @@ public class ThreadHelper {
      * @return
      */
     public static ThreadFactory newThreadFactory(final String name) {
-        return new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setName(name);
-                if (thread.isDaemon()) {
-                    thread.setDaemon(false);
-                }
-                if (thread.getPriority() != Thread.NORM_PRIORITY) {
-                    thread.setPriority(Thread.NORM_PRIORITY);
-                }
-                return thread;
+        return r -> {
+            Thread thread = new Thread(r);
+            thread.setName(name);
+            if (thread.isDaemon()) {
+                thread.setDaemon(false);
             }
+            if (thread.getPriority() != Thread.NORM_PRIORITY) {
+                thread.setPriority(Thread.NORM_PRIORITY);
+            }
+            return thread;
         };
     }
 
@@ -266,7 +262,7 @@ public class ThreadHelper {
      * @return
      */
     public static <T> CompletableFuture<T> newCompletableFuture() {
-        return new CompletableFuture<T>();
+        return new CompletableFuture<>();
     }
 
 
@@ -300,7 +296,7 @@ public class ThreadHelper {
         try {
             long unit = timeUnit.toMillis(time);
             Thread.sleep(unit);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignore) {
         }
     }
 
@@ -323,34 +319,25 @@ public class ThreadHelper {
     }
 
     /**
-     * 获取jstack
-     *
-     * @param stream 输出流
-     * @throws Exception
-     */
-    public static void jstack(OutputStream stream) throws Exception {
-        ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
-        for (ThreadInfo threadInfo : threadMxBean.dumpAllThreads(true, true)) {
-            stream.write(getThreadDumpString(threadInfo).getBytes());
-        }
-    }
-
-    /**
      * 获取线程信息
      *
      * @param threadInfo
      * @return
      */
     private static String getThreadDumpString(ThreadInfo threadInfo) {
-        StringBuilder sb = new StringBuilder("\"" + threadInfo.getThreadName() + "\"" +
-                " Id=" + threadInfo.getThreadId() + " " +
-                threadInfo.getThreadState());
+        StringBuilder sb = new StringBuilder("\"");
+        sb.append(threadInfo.getThreadName()).append("\"");
+        sb.append(" Id=").append(threadInfo.getThreadId()).append(" ");
+        sb.append(threadInfo.getThreadState());
         if (threadInfo.getLockName() != null) {
-            sb.append(" on " + threadInfo.getLockName());
+            sb.append(" on ");
+            sb.append(threadInfo.getLockName());
         }
         if (threadInfo.getLockOwnerName() != null) {
-            sb.append(" owned by \"" + threadInfo.getLockOwnerName() +
-                    "\" Id=" + threadInfo.getLockOwnerId());
+            sb.append(" owned by \"");
+            sb.append(threadInfo.getLockOwnerName());
+            sb.append("\" Id=");
+            sb.append(threadInfo.getLockOwnerId());
         }
         if (threadInfo.isSuspended()) {
             sb.append(" (suspended)");
@@ -365,30 +352,32 @@ public class ThreadHelper {
         MonitorInfo[] lockedMonitors = threadInfo.getLockedMonitors();
         for (; i < stackTrace.length && i < THIRTY_TWO; i++) {
             StackTraceElement ste = stackTrace[i];
-            sb.append("\tat " + ste.toString());
+            sb.append("\tat ");
+            sb.append(ste.toString());
             sb.append('\n');
             if (i == 0 && threadInfo.getLockInfo() != null) {
                 Thread.State ts = threadInfo.getThreadState();
                 switch (ts) {
                     case BLOCKED:
-                        sb.append("\t-  blocked on " + threadInfo.getLockInfo());
-                        sb.append('\n');
+                        sb.append("\t-  blocked on ");
                         break;
                     case WAITING:
-                        sb.append("\t-  waiting on " + threadInfo.getLockInfo());
-                        sb.append('\n');
+                        sb.append("\t-  waiting on ");
                         break;
                     case TIMED_WAITING:
-                        sb.append("\t-  waiting on " + threadInfo.getLockInfo());
-                        sb.append('\n');
+                        sb.append("\t-  timed waiting on ");
                         break;
                     default:
                 }
+
+                sb.append(threadInfo.getLockInfo());
+                sb.append('\n');
             }
 
             for (MonitorInfo mi : lockedMonitors) {
                 if (mi.getLockedStackDepth() == i) {
-                    sb.append("\t-  locked " + mi);
+                    sb.append("\t-  locked ");
+                    sb.append(mi);
                     sb.append('\n');
                 }
             }
@@ -400,10 +389,12 @@ public class ThreadHelper {
 
         LockInfo[] locks = threadInfo.getLockedSynchronizers();
         if (locks.length > 0) {
-            sb.append("\n\tNumber of locked synchronizers = " + locks.length);
+            sb.append("\n\tNumber of locked synchronizers = ");
+            sb.append(locks.length);
             sb.append('\n');
             for (LockInfo li : locks) {
-                sb.append("\t- " + li);
+                sb.append("\t- ");
+                sb.append(li);
                 sb.append('\n');
             }
         }

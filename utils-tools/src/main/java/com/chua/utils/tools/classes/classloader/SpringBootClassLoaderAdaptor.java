@@ -2,7 +2,6 @@ package com.chua.utils.tools.classes.classloader;
 
 
 import com.chua.utils.tools.common.IoHelper;
-import com.chua.utils.tools.common.UrlHelper;
 
 import java.io.IOException;
 import java.net.URL;
@@ -19,10 +18,10 @@ import static com.chua.utils.tools.constant.SymbolConstant.*;
  */
 public class SpringBootClassLoaderAdaptor implements IClassLoaderAdaptor {
 
-    private URL url;
     private static final String META_INFO = "META-INF/";
     private static final String MF = "MANIFEST.MF";
     private static final String SPRING_BOOT_MAIN = "Spring-Boot-Classes";
+    private URL url;
     private String springBootClassName;
 
     @Override

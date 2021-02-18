@@ -1,8 +1,5 @@
 package com.chua.utils.tools.resource.parser;
 
-import lombok.extern.slf4j.Slf4j;
-import org.reflections.vfs.Vfs;
-
 /**
  * 目录
  *
@@ -13,12 +10,14 @@ import org.reflections.vfs.Vfs;
 public interface ParserDir {
     /**
      * 获取路径
+     *
      * @return 路径
      */
     String getPath();
 
     /**
      * 遍历文件
+     *
      * @return 文件
      */
     Iterable<ParserFile> getFiles();

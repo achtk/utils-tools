@@ -22,6 +22,9 @@ public class TimerStorage {
     private static final String QUARTZ_CRON = "com.chua.utils.schedule.template.QuartzCronScheduleTemplate";
     private static final String QUARTZ_SIMPLE = "com.chua.utils.schedule.template.QuartzSimpleScheduleTemplate";
 
+    private TimerStorage() {
+    }
+
     /**
      * 处理任务
      *
@@ -51,6 +54,12 @@ public class TimerStorage {
             cronScheduleTemplate.addCronJob(group, cron, () -> consumer.accept(group));
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                cronScheduleTemplate.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -83,6 +92,12 @@ public class TimerStorage {
             scheduleOperations.addSimpleJob(group, time, TimeUnit.SECONDS, () -> consumer.accept(group));
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                scheduleOperations.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

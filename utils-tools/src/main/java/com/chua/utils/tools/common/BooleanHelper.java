@@ -783,7 +783,6 @@ public class BooleanHelper {
     }
 
 
-
     /**
      * 判断是否数字表示
      *
@@ -1133,7 +1132,7 @@ public class BooleanHelper {
      * @return
      */
     public static boolean isArray(final Object objects) {
-        return null == objects ? false : objects.getClass().isArray();
+        return null != objects && objects.getClass().isArray();
     }
 
     /**
@@ -1148,7 +1147,7 @@ public class BooleanHelper {
      * @return
      */
     public static boolean isCollection(final Object objects) {
-        return null == objects ? false : objects instanceof Collection;
+        return null != objects && objects instanceof Collection;
     }
 
     /**
@@ -1164,7 +1163,7 @@ public class BooleanHelper {
      * @return
      */
     public static boolean isMap(final Object objects) {
-        return null == objects ? false : objects instanceof Map;
+        return null != objects && objects instanceof Map;
     }
 
     /**
@@ -1271,7 +1270,7 @@ public class BooleanHelper {
      * @return
      */
     public static boolean isAssignableFrom(final Object object, Class<?> comparisonClass) {
-        return null == object ? false : (isClass(object) ? comparisonClass.isAssignableFrom((Class<?>) object) : comparisonClass.isAssignableFrom(object.getClass()));
+        return null != object && (isClass(object) ? comparisonClass.isAssignableFrom((Class<?>) object) : comparisonClass.isAssignableFrom(object.getClass()));
     }
 
     /**

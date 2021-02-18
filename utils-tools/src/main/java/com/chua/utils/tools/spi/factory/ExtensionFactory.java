@@ -53,16 +53,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ExtensionFactory implements Runnable {
     /**
-     * 定时时间
-     */
-    @NonNull
-    private int timePeriod;
-
-    /**
-     * 时间类型
-     */
-    public static TimeUnit TIME_UNIT = TimeUnit.SECONDS;
-    /**
      *
      */
     private static final Lock LOCK = new ReentrantLock();
@@ -71,9 +61,18 @@ public class ExtensionFactory implements Runnable {
      */
     private static final ConcurrentMap<Class<?>, ExtensionLoader> LOADER_MAP = new ConcurrentHashMap<>();
     /**
+     * 时间类型
+     */
+    public static TimeUnit TIME_UNIT = TimeUnit.SECONDS;
+    /**
      * 单例监控线程
      */
     private static ExecutorService EXECUTOR_SERVICE = null;
+    /**
+     * 定时时间
+     */
+    @NonNull
+    private int timePeriod;
 
     /**
      * 监听数据变化
@@ -118,7 +117,7 @@ public class ExtensionFactory implements Runnable {
      * @return ExtensionLoader
      */
     public static synchronized <T> ExtensionLoader<T> getExtensionLoader(String className) {
-        return (ExtensionLoader<T>) getExtensionLoader(ClassHelper.forName(className), null);
+        return (ExtensionLoader<T>) getExtensionLoader(ClassHelper.forName(className), new ExtensionProcessor[0]);
     }
 
     /**
@@ -382,14 +381,16 @@ public class ExtensionFactory implements Runnable {
         ExtensionLoader<T> extensionLoader = getExtensionLoader(tClass);
         extensionLoader.getAllSpiService().forEach(consumer);
     }
+
     /**
      * 转化为spi文件
      *
      * @param interfaceClass 接口
      */
     public static void createSpi(Class<?> interfaceClass) {
-       createSpi(interfaceClass, null);
+        createSpi(interfaceClass, null);
     }
+
     /**
      * 转化为spi文件
      *

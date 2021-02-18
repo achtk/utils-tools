@@ -29,6 +29,7 @@ public interface JsonPath {
      * @return Map
      */
     Map<String, Object> findMap(String path);
+
     /**
      * 查询数据
      *

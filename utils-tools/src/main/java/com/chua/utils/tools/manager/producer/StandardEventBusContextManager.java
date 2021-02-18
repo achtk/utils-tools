@@ -48,7 +48,7 @@ public class StandardEventBusContextManager implements EventBusContextManager {
     public void close() throws Exception {
         Collection<List<EventBus>> values = CONCURRENT_HASH_MAP.values();
         values.forEach(eventBuses -> {
-            if(eventBuses instanceof ServerEventBus) {
+            if (eventBuses instanceof ServerEventBus) {
                 try {
                     ((ServerEventBus) eventBuses).close();
                 } catch (Exception ignore) {

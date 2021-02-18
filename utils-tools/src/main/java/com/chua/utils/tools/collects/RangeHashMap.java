@@ -19,7 +19,7 @@ public class RangeHashMap<K extends Comparable, V> implements RangeMap<K, V> {
     private final com.google.common.collect.RangeMap<K, V> rangeMap;
 
     public RangeHashMap() {
-        this. rangeMap = TreeRangeMap.create();
+        this.rangeMap = TreeRangeMap.create();
     }
 
     @Nullable

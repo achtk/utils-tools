@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.chua.utils.tools.constant.StringConstant.CLASSPATH_URL_PREFIX;
-import static com.chua.utils.tools.constant.StringConstant.SUBCLASS_URL_PREFIX;
 
 /**
  * 反射获取资源
@@ -40,8 +39,6 @@ import static com.chua.utils.tools.constant.StringConstant.SUBCLASS_URL_PREFIX;
 @Slf4j
 public class ReflectionFactory implements ResourceFactory {
 
-    private PathMatcher pathMatcher = new AntPathMatcher();
-
     private static final Cache<String, Set<Resource>> CACHE_LOCAL_RESOURCE = CacheBuilder.newBuilder()
             .softValues()
             .recordStats()
@@ -49,7 +46,7 @@ public class ReflectionFactory implements ResourceFactory {
             .expireAfterWrite(10, TimeUnit.MINUTES)
             .expireAfterAccess(10, TimeUnit.MINUTES)
             .maximumSize(100).build();
-
+    private final PathMatcher pathMatcher = new AntPathMatcher();
     private ClassLoader classLoader;
     private Matcher<Resource> matcher;
     private boolean cache;

@@ -16,9 +16,8 @@ import static com.chua.utils.tools.constant.NumberConstant.TWE;
  */
 public class LoopLinkList<E> implements LoopList<E> {
 
-    private LoopList.Node<E> first = null;
-
     int size = 0;
+    private LoopList.Node<E> first = null;
 
     @Override
     public int size() {

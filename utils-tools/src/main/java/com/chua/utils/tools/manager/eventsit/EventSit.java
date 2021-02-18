@@ -2,8 +2,6 @@ package com.chua.utils.tools.manager.eventsit;
 
 
 import com.chua.utils.tools.classes.ClassHelper;
-import com.chua.utils.tools.common.FinderHelper;
-import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.manager.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -13,7 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -28,7 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class EventSit implements EventBus {
 
-    private Dispatcher dispatcher = new Dispatcher(this);
+    private final Dispatcher dispatcher = new Dispatcher(this);
 
     @Override
     public void register(Object object) {
@@ -54,8 +51,8 @@ public class EventSit implements EventBus {
 
         private final ThreadLocal<Deque<Event>> eventsCache = ThreadLocal.withInitial(() -> new ArrayDeque<>());
         private final ThreadLocal<Queue<Object>> queue = ThreadLocal.withInitial(() -> new ArrayDeque<>());
-        private EventSit eventSit;
-        private Executor executorService;
+        private final EventSit eventSit;
+        private final Executor executorService;
 
         public Dispatcher(EventSit eventSit) {
             this.eventSit = eventSit;
@@ -98,7 +95,7 @@ public class EventSit implements EventBus {
                         list.add(event1);
                     }
                 }
-                if(list.size() == 0) {
+                if (list.size() == 0) {
                     return;
                 }
                 synchronized (list) {

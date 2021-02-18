@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentMap;
  * @since 2020/11/9
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @SuppressWarnings("all")
 public class StandardStrategyContextManager extends InitializingCacheable implements StrategyContextManager {
 

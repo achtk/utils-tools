@@ -7,8 +7,6 @@ import com.chua.utils.tools.resource.parser.Parser;
 import com.chua.utils.tools.resource.parser.ParserDir;
 import com.chua.utils.tools.resource.parser.ParserFile;
 import com.chua.utils.tools.resource.parser.compress.dir.ClassFileParserDir;
-import com.chua.utils.tools.resource.parser.compress.dir.SystemFileParserDir;
-import com.chua.utils.tools.resource.parser.compress.dir.SystemParserDir;
 
 import java.io.File;
 import java.net.URL;

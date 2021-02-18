@@ -77,7 +77,7 @@ public interface BeanCopy<T> {
      * @return this
      */
     static <T> BeanCopy<T> of(Class<T> t) {
-        return StandardBeanCopy.<T>of(t);
+        return StandardBeanCopy.of(t);
     }
 
     /**

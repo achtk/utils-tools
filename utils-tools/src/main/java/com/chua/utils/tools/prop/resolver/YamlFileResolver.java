@@ -12,9 +12,10 @@ import java.util.Properties;
 
 /**
  * yaml解析
+ *
  * @author CH
  */
-public class YamlFileResolver implements IFileResolver{
+public class YamlFileResolver implements IFileResolver {
     private Properties properties;
 
     @Override
@@ -25,10 +26,10 @@ public class YamlFileResolver implements IFileResolver{
 
     @Override
     public FileMapper analysis(FileConverter fileConverter) {
-        if(null == properties) {
+        if (null == properties) {
             return null;
         }
-        if(null == fileConverter) {
+        if (null == fileConverter) {
             fileConverter = new NoneFileConverter();
         }
         HashMultimap<Object, Object> hashMultimap = HashMultimap.create();
@@ -43,6 +44,6 @@ public class YamlFileResolver implements IFileResolver{
 
     @Override
     public String[] suffixes() {
-        return new String[] {"yml", "yaml"};
+        return new String[]{"yml", "yaml"};
     }
 }

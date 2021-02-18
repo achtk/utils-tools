@@ -1,6 +1,5 @@
 package com.chua.utils.tools.resource.parser.compress.file;
 
-import com.chua.utils.tools.resource.parser.ParserDir;
 import com.chua.utils.tools.resource.parser.ParserFile;
 import com.chua.utils.tools.resource.parser.compress.dir.ZipParserDir;
 
@@ -19,8 +18,8 @@ import java.util.zip.ZipEntry;
  */
 public class ZipParserFile implements ParserFile {
 
-    private ZipParserDir zipParserDir;
-    private ZipEntry zipEntry;
+    private final ZipParserDir zipParserDir;
+    private final ZipEntry zipEntry;
 
     public ZipParserFile(final ZipParserDir root, ZipEntry entry) {
         this.zipParserDir = root;

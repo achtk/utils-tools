@@ -631,7 +631,7 @@ public class FinderHelper {
      * @param collector 集合
      * @return 元素
      */
-    public static synchronized  <T> T getRandomOne(Collection<T> collector) {
+    public static synchronized <T> T getRandomOne(Collection<T> collector) {
         if (null == collector || collector.isEmpty()) {
             return null;
         }

@@ -4,14 +4,11 @@ import com.chua.utils.tools.cache.CacheProvider;
 import com.chua.utils.tools.cache.ConcurrentCacheProvider;
 import com.chua.utils.tools.function.intercept.MethodIntercept;
 import com.google.common.base.Joiner;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 缓存策略
@@ -26,7 +23,7 @@ public class CacheStrategy<T> extends StandardProxyStrategy<T> implements Strate
     @Setter
     private int timeout = 0;
 
-    private CacheProvider<String, Object> cache = new ConcurrentCacheProvider<>();
+    private final CacheProvider<String, Object> cache = new ConcurrentCacheProvider<>();
 
     public CacheStrategy(int timeout) {
         this.timeout = timeout;

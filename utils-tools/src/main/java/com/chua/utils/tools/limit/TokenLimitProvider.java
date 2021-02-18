@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 限流
+ *
  * @author CH
  */
 @NoArgsConstructor
@@ -38,7 +39,7 @@ public class TokenLimitProvider implements LimiterProvider {
     @Override
     public synchronized boolean tryAcquire(String name) {
         RateLimiter rateLimiter = RATE_LIMITER_CONCURRENT_HASH_MAP.get(name);
-        if(null == rateLimiter) {
+        if (null == rateLimiter) {
             newLimiter(name, DEFAULT_SIZE);
             return tryAcquire(name);
         }
@@ -48,7 +49,7 @@ public class TokenLimitProvider implements LimiterProvider {
     @Override
     public synchronized boolean tryAcquire(String name, long time) {
         RateLimiter rateLimiter = RATE_LIMITER_CONCURRENT_HASH_MAP.get(name);
-        if(null == rateLimiter) {
+        if (null == rateLimiter) {
             newLimiter(name, DEFAULT_SIZE);
             return tryAcquire(name);
         }
@@ -58,7 +59,7 @@ public class TokenLimitProvider implements LimiterProvider {
     @Override
     public synchronized boolean tryAcquire(String name, long time, TimeUnit timeUnit) {
         RateLimiter rateLimiter = RATE_LIMITER_CONCURRENT_HASH_MAP.get(name);
-        if(null == rateLimiter) {
+        if (null == rateLimiter) {
             newLimiter(name, DEFAULT_SIZE);
             return tryAcquire(name);
         }

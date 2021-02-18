@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -40,21 +39,18 @@ import java.util.function.Supplier;
  */
 public class StandardScannerObjectContextManager implements Runnable, ObjectContextManager {
 
-    private ExecutorService executorService = ThreadHelper.newSingleThreadExecutor("object-context-manager");
-    private RewriteReflections reflectionsFactory;
     private final static CacheProvider SUB_CACHE = new ConcurrentCacheProvider<>();
     private final static CacheProvider<Class<? extends Annotation>, Set<Class<?>>> ANNOTATION_TYPE_CACHE = new ConcurrentCacheProvider<>();
     private final static CacheProvider<Class<? extends Annotation>, Set<Method>> ANNOTATION_METHOD_CACHE = new ConcurrentCacheProvider<>();
     private final static CacheProvider<Class<? extends Annotation>, Set<Field>> ANNOTATION_FIELD_CACHE = new ConcurrentCacheProvider<>();
-
     private static final String[] EXCLUDE_URLS = new String[]{
             "netty-*", "vertx-*", "jackson-*", "lucene-*", "*-guava-*", "kotlin-*",
             "mockio-*", "woodstox-*", "*-guava"
     };
-
     private static final List<URL> EXCLUDE_URL = new ArrayList<>();
-
-    private Future<?> future;
+    private final ExecutorService executorService = ThreadHelper.newSingleThreadExecutor("object-context-manager");
+    private RewriteReflections reflectionsFactory;
+    private final Future<?> future;
 
     public StandardScannerObjectContextManager() {
         this.future = executorService.submit(this);
@@ -79,9 +75,7 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
 
     @Override
     public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation) {
-        return CacheStorage.run(() -> {
-            return reflectionsFactory.getTypesAnnotatedWith(annotation);
-        }, annotation, ANNOTATION_TYPE_CACHE);
+        return CacheStorage.run(() -> reflectionsFactory.getTypesAnnotatedWith(annotation), annotation, ANNOTATION_TYPE_CACHE);
     }
 
     @Override
@@ -91,28 +85,21 @@ public class StandardScannerObjectContextManager implements Runnable, ObjectCont
 
     @Override
     public Set<Method> getMethodsAnnotatedWith(final Class<? extends Annotation> annotation) {
-        return CacheStorage.run(() -> {
-            return reflectionsFactory.getMethodsAnnotatedWith(annotation);
-        }, annotation, ANNOTATION_METHOD_CACHE);
+        return CacheStorage.run(() -> reflectionsFactory.getMethodsAnnotatedWith(annotation), annotation, ANNOTATION_METHOD_CACHE);
     }
 
     @Override
     public Set<Field> getFieldsAnnotatedWith(final Class<? extends Annotation> annotation) {
-        return CacheStorage.run(() -> {
-            return reflectionsFactory.getFieldsAnnotatedWith(annotation);
-        }, annotation, ANNOTATION_FIELD_CACHE);
+        return CacheStorage.run(() -> reflectionsFactory.getFieldsAnnotatedWith(annotation), annotation, ANNOTATION_FIELD_CACHE);
     }
 
     @Override
     public void doWithMatcher(Matcher<String> matcher) {
-        reflectionsFactory.getAllTypes().parallelStream().forEach(new Consumer<String>() {
-            @Override
-            public void accept(String s) {
-                try {
-                    matcher.doWith(s);
-                } catch (Throwable throwable) {
-                    return;
-                }
+        reflectionsFactory.getAllTypes().parallelStream().forEach(s -> {
+            try {
+                matcher.doWith(s);
+            } catch (Throwable throwable) {
+                return;
             }
         });
     }

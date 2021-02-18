@@ -26,6 +26,7 @@ public interface ProfileAdaptorManager {
 
     /**
      * 获取所有适配器名称
+     *
      * @return 所有适配器名称
      */
     Set<String> names();

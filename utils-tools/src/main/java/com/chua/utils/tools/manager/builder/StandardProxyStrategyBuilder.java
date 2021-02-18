@@ -3,7 +3,6 @@ package com.chua.utils.tools.manager.builder;
 import com.chua.utils.tools.function.intercept.MethodIntercept;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -16,7 +15,7 @@ import java.lang.reflect.Proxy;
  * @version 1.0.0
  * @since 2020/11/9
  */
-public class StandardProxyStrategyBuilder<T> implements ProxyStrategyBuilder<T>, StrategyBuilder<T>  {
+public class StandardProxyStrategyBuilder<T> implements ProxyStrategyBuilder<T>, StrategyBuilder<T> {
     private MethodIntercept methodIntercept;
 
     @Override
@@ -25,7 +24,7 @@ public class StandardProxyStrategyBuilder<T> implements ProxyStrategyBuilder<T>,
         return new ProxyCreateStrategyBuilder<T>() {
             @Override
             public T create(T entity) {
-               return StandardProxyStrategyBuilder.this.create(entity);
+                return StandardProxyStrategyBuilder.this.create(entity);
             }
         };
     }
@@ -42,9 +41,7 @@ public class StandardProxyStrategyBuilder<T> implements ProxyStrategyBuilder<T>,
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(entity);
         enhancer.setUseCache(true);
-        enhancer.setCallback((MethodInterceptor) (obj, method, args, proxy) -> {
-            return methodIntercept.invoke(obj, method, args, proxy);
-        });
+        enhancer.setCallback((MethodInterceptor) (obj, method, args, proxy) -> methodIntercept.invoke(obj, method, args, proxy));
         return (T) enhancer.create();
     }
 

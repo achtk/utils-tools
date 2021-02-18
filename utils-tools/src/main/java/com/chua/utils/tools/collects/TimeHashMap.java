@@ -1,5 +1,6 @@
 package com.chua.utils.tools.collects;
 
+import com.chua.utils.tools.util.NumberUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
@@ -41,7 +42,7 @@ public class TimeHashMap<K, V> implements TimeMap<K, V> {
 
     @Override
     public int size() {
-        return Long.valueOf(cache.size()).intValue();
+        return NumberUtils.toInt(cache.size());
     }
 
     @Override

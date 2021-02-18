@@ -1,7 +1,7 @@
 package com.chua.utils.tools.loader;
 
-import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.collects.collections.CollectionHelper;
+import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.FinderHelper;
 import com.chua.utils.tools.common.ThreadHelper;
 import com.chua.utils.tools.enums.HttpStatus;
@@ -23,19 +23,15 @@ import java.util.concurrent.ExecutorService;
  */
 public class UrlBalancerLoader implements BalancerLoader<String> {
 
-    private Filter<String> filter;
-    private Collection<String> urls;
     private final ExecutorService executorService = ThreadHelper.newSingleThreadExecutor("balancer-url-executor");
     private final CopyOnWriteArraySet<String> copyOnWriteArraySet = new CopyOnWriteArraySet<>();
+    private Collection<String> urls;
     private int size;
 
     {
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                if (copyOnWriteArraySet.size() != 0) {
-                    checkUrlCode(copyOnWriteArraySet.iterator().next());
-                }
+        executorService.submit(() -> {
+            if (copyOnWriteArraySet.size() != 0) {
+                checkUrlCode(copyOnWriteArraySet.iterator().next());
             }
         });
     }
@@ -49,7 +45,6 @@ public class UrlBalancerLoader implements BalancerLoader<String> {
 
     @Override
     public BalancerLoader filter(Filter<String> filter) {
-        this.filter = filter;
         return this;
     }
 
@@ -82,8 +77,8 @@ public class UrlBalancerLoader implements BalancerLoader<String> {
     /**
      * 检测地址有效性
      *
-     * @param url
-     * @return
+     * @param url 地址
+     * @return -1.地址无效, 其它状态参见: HttpStatus
      */
     private int checkUrlCode(String url) {
         if (null == url) {
@@ -104,7 +99,7 @@ public class UrlBalancerLoader implements BalancerLoader<String> {
      * @param url 地址
      */
     private void checkCacheUrl(String url) {
-        if (copyOnWriteArraySet.size() == 0) {
+        if (copyOnWriteArraySet.isEmpty()) {
             return;
         }
         String next = copyOnWriteArraySet.iterator().next();

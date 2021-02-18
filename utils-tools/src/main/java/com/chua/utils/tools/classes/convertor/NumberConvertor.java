@@ -12,11 +12,11 @@ import java.math.BigDecimal;
 public class NumberConvertor implements Convertor<Number> {
     @Override
     public Long convert(Object value) {
-        if(null == value) {
+        if (null == value) {
             return null;
         }
 
-        if(value instanceof String) {
+        if (value instanceof String) {
             return Long.parseLong(value.toString());
         }
         BigDecimal bigDecimal = getNumber(value);

@@ -5,6 +5,7 @@ import java.io.FileFilter;
 
 /**
  * 非文件
+ *
  * @author CH
  */
 public class NotFileFilter implements FileFilter {
@@ -17,6 +18,7 @@ public class NotFileFilter implements FileFilter {
         }
         this.filter = filter;
     }
+
     @Override
     public boolean accept(File pathname) {
         return !pathname.isFile();

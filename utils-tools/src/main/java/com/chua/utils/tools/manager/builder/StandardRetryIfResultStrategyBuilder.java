@@ -32,11 +32,6 @@ public class StandardRetryIfResultStrategyBuilder<T> implements RetryStrategyBui
         this.timeout = timeout;
         this.predicate = predicate;
 
-        return new RetryCreateStrategyBuilder<T>() {
-            @Override
-            public T create(T entity) {
-                return StandardRetryIfResultStrategyBuilder.this.create(entity);
-            }
-        };
+        return entity -> StandardRetryIfResultStrategyBuilder.this.create(entity);
     }
 }

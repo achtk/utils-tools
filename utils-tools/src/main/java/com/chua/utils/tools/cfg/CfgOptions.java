@@ -34,17 +34,17 @@ import static com.chua.utils.tools.constant.StringConstant.SYSTEM_PRIORITY_PROP;
 @Slf4j
 public class CfgOptions {
 
-    private final ConcurrentMap<String, List<Properties>> cache = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, ProfileLoader> LOADER_CACHE = new ConcurrentHashMap<>();
     private static final String KEY_NAME = "KEY#NAME";
-    /**
-     * 占位符
-     */
-    private final Set<PropertyPlaceholder> placeholder = new HashSet<>();
     /**
      * 默认占位符
      */
     private static final Set<PropertyPlaceholder> DEFAULT_PLACE_HOLDER = Sets.newHashSet(new EnvPropertyPlaceholder());
+    private final ConcurrentMap<String, List<Properties>> cache = new ConcurrentHashMap<>();
+    /**
+     * 占位符
+     */
+    private final Set<PropertyPlaceholder> placeholder = new HashSet<>();
     /**
      * 文件名称
      */
@@ -72,6 +72,16 @@ public class CfgOptions {
      */
     public static CfgOptions analysis(String master) {
         return new CfgOptions(new CfgConfig().setMaster(master));
+    }
+
+    /**
+     * 获取缓存索引
+     *
+     * @param cfgConfig 配置文件
+     * @return 缓存索引
+     */
+    private static String getCacheKey(CfgConfig cfgConfig) {
+        return cfgConfig.getMaster();
     }
 
     /**
@@ -157,16 +167,6 @@ public class CfgOptions {
 
 
         return values;
-    }
-
-    /**
-     * 获取缓存索引
-     *
-     * @param cfgConfig 配置文件
-     * @return 缓存索引
-     */
-    private static String getCacheKey(CfgConfig cfgConfig) {
-        return cfgConfig.getMaster();
     }
 
     /**

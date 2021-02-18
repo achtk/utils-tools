@@ -51,6 +51,9 @@ public interface ParserFile {
      */
     default ByteBuffer toByteBuffer() {
         try (InputStream inputStream = openInputStream()) {
+            if (null == inputStream) {
+                return null;
+            }
             return IoHelper.copyInputStream(inputStream);
         } catch (IOException e) {
         }

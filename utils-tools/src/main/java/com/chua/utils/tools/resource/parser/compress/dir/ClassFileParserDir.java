@@ -4,7 +4,6 @@ import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.resource.parser.ParserDir;
 import com.chua.utils.tools.resource.parser.ParserFile;
 import com.chua.utils.tools.resource.parser.compress.file.ClassFileParserFile;
-import com.chua.utils.tools.resource.parser.compress.file.SystemFileParserFile;
 
 import java.io.File;
 import java.util.Collections;
@@ -19,7 +18,7 @@ import java.util.Collections;
 public class ClassFileParserDir implements ParserDir {
 
     private final File file;
-    private Matcher<ParserFile> matcher;
+    private final Matcher<ParserFile> matcher;
 
     public ClassFileParserDir(File file, Matcher<ParserFile> matcher) {
         if (null != file) {

@@ -26,7 +26,7 @@ public class ProxyStorage {
      * @return 代理类
      */
     @SuppressWarnings("ALL")
-    public static <T> T run(Class<T> entity, final MethodIntercept<Object> methodIntercept) {
+    public static <T> T run(Class<T> entity, final MethodIntercept methodIntercept) {
         return (T) run(ClassUtils.forObject(entity), methodIntercept);
     }
 
@@ -39,7 +39,7 @@ public class ProxyStorage {
      * @return 代理类
      */
     @SuppressWarnings("ALL")
-    public static <T> Object run(T entity, final MethodIntercept<Object> methodIntercept) {
+    public static <T> T run(T entity, final MethodIntercept methodIntercept) {
         if (null == entity) {
             return null;
         }
@@ -54,9 +54,9 @@ public class ProxyStorage {
 
         Class<?> aClass = entity.getClass();
         if (aClass.isInterface()) {
-            return createInterfaceProxy(aClass, entity, methodIntercept);
+            return (T) createInterfaceProxy(aClass, entity, methodIntercept);
         }
-        return createEntityProxy(aClass, entity, methodIntercept);
+        return (T) createEntityProxy(aClass, entity, methodIntercept);
 
     }
 
@@ -89,7 +89,7 @@ public class ProxyStorage {
      * @return 代理
      */
     @SuppressWarnings("ALL")
-    private static <T> T createEntityProxy(Class<?> aClass, Object entity, MethodIntercept<Object> methodIntercept) {
+    private static <T> T createEntityProxy(Class<?> aClass, Object entity, MethodIntercept methodIntercept) {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(aClass);
         enhancer.setUseCache(true);

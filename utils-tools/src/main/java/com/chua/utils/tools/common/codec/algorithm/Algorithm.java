@@ -2,6 +2,7 @@ package com.chua.utils.tools.common.codec.algorithm;
 
 /**
  * 算法
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/11/4

@@ -1,7 +1,5 @@
 package com.chua.utils.tools.bean.interpreter;
 
-import com.chua.utils.tools.common.StringHelper;
-import com.chua.utils.tools.constant.SymbolConstant;
 import com.chua.utils.tools.named.NamedHelper;
 
 import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_MINS;

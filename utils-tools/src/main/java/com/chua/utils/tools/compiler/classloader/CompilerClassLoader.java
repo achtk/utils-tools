@@ -9,9 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CompilerClassLoader extends ClassLoader {
 
-    private ClassLoader classLoader;
-
     private static final ConcurrentHashMap<String, ClassFileObject> CACHE_CLASS = new ConcurrentHashMap<>();
+    private final ClassLoader classLoader;
 
     public CompilerClassLoader(ClassLoader classLoader) {
         super(classLoader);

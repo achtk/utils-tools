@@ -15,17 +15,17 @@ import java.util.Collection;
 public class CollectionConvertor implements Convertor<Collection> {
     @Override
     public Collection convert(Object value) {
-        if(null == value) {
+        if (null == value) {
             return null;
         }
-        if(value instanceof Collection) {
-            return (Collection)value;
+        if (value instanceof Collection) {
+            return (Collection) value;
         }
-        if(value instanceof String) {
+        if (value instanceof String) {
             return Splitter.on(delimiter()).omitEmptyStrings().trimResults().splitToList(value.toString());
         }
 
-        if(value.getClass().isArray()) {
+        if (value.getClass().isArray()) {
             return (Arrays.asList(value));
         }
 

@@ -5,6 +5,7 @@ import java.io.FileFilter;
 
 /**
  * 永假
+ *
  * @author CH
  */
 public class FalseFileFilter implements FileFilter {

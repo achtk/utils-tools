@@ -2,6 +2,7 @@ package com.chua.utils.tools.exceptions;
 
 /**
  * 服务繁忙异常
+ *
  * @author CH
  */
 public class BusyServiceException extends Exception {

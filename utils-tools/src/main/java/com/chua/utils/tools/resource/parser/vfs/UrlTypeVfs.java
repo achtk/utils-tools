@@ -23,17 +23,17 @@ import java.util.regex.Pattern;
  */
 public class UrlTypeVfs {
 
-    private final Pattern p = Pattern.compile("\\.[ejprw]ar/");
-    public final static String[] REPLACE_EXTENSION = new String[]{
+    private final static String[] REPLACE_EXTENSION = new String[]{
             ".ear/",
             ".jar/",
             ".war/",
             ".sar/",
             ".har/",
             ".par/"};
-
-    final String VFS_ZIP = StringConstant.URL_PROTOCOL_VFSZIP;
-    final String VFS_FILE = StringConstant.URL_PROTOCOL_VFSFILE;
+    private static final String VFS_ZIP = StringConstant.URL_PROTOCOL_VFSZIP;
+    private static final String VFS_FILE = StringConstant.URL_PROTOCOL_VFSFILE;
+    private final Pattern p = Pattern.compile("\\.[ejprw]ar/");
+    Predicate<File> realFile = file -> file.exists() && file.isFile();
 
     public boolean matches(URL url) {
         return VFS_ZIP.equals(url.getProtocol()) || VFS_FILE.equals(url.getProtocol());
@@ -95,8 +95,6 @@ public class UrlTypeVfs {
         }
     }
 
-    Predicate<File> realFile = file -> file.exists() && file.isFile();
-
     URL replaceZipSeparatorStartingFrom(String path, int pos)
             throws MalformedURLException {
         String zipFile = path.substring(0, pos - 1);
@@ -110,9 +108,9 @@ public class UrlTypeVfs {
             }
         }
 
-        String prefix = "";
+        StringBuilder prefix = new StringBuilder();
         for (int i = 0; i < numSubs; i++) {
-            prefix += "zip:";
+            prefix.append("zip:");
         }
 
         if (zipPath.trim().length() == 0) {

@@ -33,7 +33,7 @@ public abstract class AbstractStandardEncrypt extends StandardEnvironment implem
     @Override
     public String decode(String source) throws Exception {
         byte[] decode = decode(Hex.decodeHex(source));
-        if(null == decode) {
+        if (null == decode) {
             return null;
         }
         return new String(decode);

@@ -78,6 +78,7 @@ public class PropertiesPropertyPlaceholder implements PropertyPlaceholder {
 
     /**
      * 解析占位符
+     *
      * @param stringValue
      * @return
      */
@@ -100,6 +101,7 @@ public class PropertiesPropertyPlaceholder implements PropertyPlaceholder {
 
     /**
      * 解析占位符
+     *
      * @param stringValue
      * @return
      */

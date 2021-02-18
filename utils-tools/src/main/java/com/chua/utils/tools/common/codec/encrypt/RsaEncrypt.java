@@ -51,72 +51,6 @@ public class RsaEncrypt extends AbstractStandardEncrypt implements EncryptKeySpe
     }
 
     /**
-     * 初始化密钥对
-     *
-     * @return Map 甲方密钥的Map
-     */
-    private Map<String, Object> initKey() throws Exception {
-        //实例化密钥生成器
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(KEY_ALGORITHM);
-        //初始化密钥生成器
-        keyPairGenerator.initialize(KEY_SIZE);
-        //生成密钥对
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        //甲方公钥
-        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-        //甲方私钥
-        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-        //将密钥存储在map中
-        Map<String, Object> keyMap = new HashMap<>(2);
-        keyMap.put(PUBLIC_KEY, publicKey);
-        keyMap.put(PRIVATE_KEY, privateKey);
-        return keyMap;
-    }
-
-    @Override
-    public byte[] encode(byte[] bytes) {
-        byte[] keyBytes = getKey(-1);
-        String type = getStringOrDefault(TYPE, TYPE_PUBLIC);
-        try {
-            if (TYPE_PUBLIC.equals(type)) {
-                return encryptByPublicKey(bytes, keyBytes);
-            }
-            return encryptByPrivateKey(bytes, keyBytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-    @Override
-    public byte[] decode(byte[] bytes) {
-        byte[] keyBytes = getKey(-1);
-        String type = getStringOrDefault(TYPE, TYPE_PUBLIC);
-        try {
-            if (TYPE_PUBLIC.equals(type)) {
-                return decryptByPublicKey(bytes, keyBytes);
-            }
-            return decryptByPrivateKey(bytes, keyBytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public byte[] getPrivateKey(Map<String, Object> keyMap) {
-        Key key = (Key) keyMap.get(PRIVATE_KEY);
-        return key.getEncoded();
-    }
-
-    @Override
-    public byte[] getPublicKey(Map<String, Object> keyMap) throws Exception {
-        Key key = (Key) keyMap.get(PUBLIC_KEY);
-        return key.getEncoded();
-    }
-
-    /**
      * 私钥加密
      *
      * @param data 待加密数据
@@ -198,5 +132,70 @@ public class RsaEncrypt extends AbstractStandardEncrypt implements EncryptKeySpe
         Cipher cipher = Cipher.getInstance(keyFactory.getAlgorithm());
         cipher.init(Cipher.DECRYPT_MODE, pubKey);
         return cipher.doFinal(data);
+    }
+
+    /**
+     * 初始化密钥对
+     *
+     * @return Map 甲方密钥的Map
+     */
+    private Map<String, Object> initKey() throws Exception {
+        //实例化密钥生成器
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(KEY_ALGORITHM);
+        //初始化密钥生成器
+        keyPairGenerator.initialize(KEY_SIZE);
+        //生成密钥对
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+        //甲方公钥
+        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+        //甲方私钥
+        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+        //将密钥存储在map中
+        Map<String, Object> keyMap = new HashMap<>(2);
+        keyMap.put(PUBLIC_KEY, publicKey);
+        keyMap.put(PRIVATE_KEY, privateKey);
+        return keyMap;
+    }
+
+    @Override
+    public byte[] encode(byte[] bytes) {
+        byte[] keyBytes = getKey(-1);
+        String type = getStringOrDefault(TYPE, TYPE_PUBLIC);
+        try {
+            if (TYPE_PUBLIC.equals(type)) {
+                return encryptByPublicKey(bytes, keyBytes);
+            }
+            return encryptByPrivateKey(bytes, keyBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public byte[] decode(byte[] bytes) {
+        byte[] keyBytes = getKey(-1);
+        String type = getStringOrDefault(TYPE, TYPE_PUBLIC);
+        try {
+            if (TYPE_PUBLIC.equals(type)) {
+                return decryptByPublicKey(bytes, keyBytes);
+            }
+            return decryptByPrivateKey(bytes, keyBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public byte[] getPrivateKey(Map<String, Object> keyMap) {
+        Key key = (Key) keyMap.get(PRIVATE_KEY);
+        return key.getEncoded();
+    }
+
+    @Override
+    public byte[] getPublicKey(Map<String, Object> keyMap) throws Exception {
+        Key key = (Key) keyMap.get(PUBLIC_KEY);
+        return key.getEncoded();
     }
 }

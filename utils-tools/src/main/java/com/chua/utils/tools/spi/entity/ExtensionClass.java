@@ -20,6 +20,10 @@ import static com.chua.utils.tools.constant.StringConstant.FILE;
 @Setter
 public class ExtensionClass<T> {
     /**
+     * 扩展接口实现类名
+     */
+    protected Class<?> implClass;
+    /**
      * 扩展名称
      */
     private String name;
@@ -31,20 +35,14 @@ public class ExtensionClass<T> {
      * 文件位置
      */
     private URL url;
-
     /**
      * 是否为单例模式
      */
     private boolean single;
-
     /**
      * 类加载器
      */
     private ClassLoader classLoader;
-    /**
-     * 扩展接口实现类名
-     */
-    protected Class<?> implClass;
     /**
      * 接口名称
      */
@@ -67,11 +65,11 @@ public class ExtensionClass<T> {
     private long recordTime;
 
     public void setUrl(URL url) {
-        if(null == url) {
+        if (null == url) {
             return;
         }
         String protocol = url.getProtocol();
-        if(FILE.equals(protocol)) {
+        if (FILE.equals(protocol)) {
             this.recordTime = new File(url.getFile()).lastModified();
         }
         this.url = url;

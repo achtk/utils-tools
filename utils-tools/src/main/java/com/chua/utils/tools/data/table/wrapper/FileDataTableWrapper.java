@@ -16,9 +16,8 @@ import java.io.File;
 @AllArgsConstructor
 public class FileDataTableWrapper {
 
-    private String name;
-
     private final TableType tableType = TableType.FILE;
+    private final String name;
 
     /**
      * 构建数据

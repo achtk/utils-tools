@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 
 /**
  * 文件映射
+ *
  * @author CH
  */
 @Getter

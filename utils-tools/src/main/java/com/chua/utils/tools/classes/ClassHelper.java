@@ -616,11 +616,11 @@ public class ClassHelper extends ClassLoaderHelper {
             Object data = newParams[i];
             atomicInteger.decrementAndGet();
             TypeConverter typeConverter = getTypeConverter(paramType);
-            if(null == typeConverter) {
+            if (null == typeConverter) {
                 result[i] = data;
                 continue;
             }
-            result[i]  = typeConverter.convert(data);
+            result[i] = typeConverter.convert(data);
         }
         return atomicInteger.get() == 0 ? result : null;
     }

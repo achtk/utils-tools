@@ -43,6 +43,7 @@ public class BooleanUtils extends BooleanHelper {
     public static boolean isEmpty(final Iterator<?> iterator) {
         return !hasLength(iterator);
     }
+
     /**
      * 是否为空
      *
@@ -62,6 +63,7 @@ public class BooleanUtils extends BooleanHelper {
     public static boolean isEmpty(final Enumeration<?> enumeration) {
         return null == enumeration || !enumeration.hasMoreElements();
     }
+
     /**
      * 是否为空
      *

@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 final class BasicProfile implements Profile {
 
-    private Map<String, Properties> propertiesMap = new LinkedHashMap<>();
-    private Set<PropertyPlaceholder> holders = new HashSet<>();
+    private final Map<String, Properties> propertiesMap = new LinkedHashMap<>();
+    private final Set<PropertyPlaceholder> holders = new HashSet<>();
 
     {
         holders.add(new PropertiesPropertyPlaceholder());
@@ -84,7 +84,7 @@ final class BasicProfile implements Profile {
         for (PropertyPlaceholder placeholder : holders) {
             placeholder.addPropertySource(propertiesMap);
             Object tempResult = placeholder.placeholder(value);
-            if(null != tempResult) {
+            if (null != tempResult) {
                 result = tempResult;
             }
         }

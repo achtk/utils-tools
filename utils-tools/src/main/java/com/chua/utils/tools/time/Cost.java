@@ -17,6 +17,7 @@ public interface Cost {
     static Cost mill() {
         return new MillisecondCost();
     }
+
     /**
      * 毫秒
      *
@@ -25,6 +26,7 @@ public interface Cost {
     static Cost nano() {
         return new NanosecondCost();
     }
+
     /**
      * 停止计时，返回计时结果
      *

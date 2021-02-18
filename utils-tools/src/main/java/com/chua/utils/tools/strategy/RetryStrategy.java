@@ -37,19 +37,19 @@ public class RetryStrategy<T> extends StandardProxyStrategy<T> implements Strate
     /**
      * 自增
      */
-    private long increment = 0;
+    private final long increment = 0;
     /**
      * 异常规则
      */
     @Setter
-    private Predicate throwPredicate;
+    private Predicate<Throwable> throwPredicate;
     /**
      * 返回子规则
      */
     @Setter
-    private Predicate returnPredicate;
+    private Predicate<T> returnPredicate;
 
-    public RetryStrategy(Predicate predicate) {
+    public RetryStrategy(Predicate<Throwable> predicate) {
         this.throwPredicate = predicate;
     }
 
@@ -60,7 +60,7 @@ public class RetryStrategy<T> extends StandardProxyStrategy<T> implements Strate
 
     @Override
     public Object invoke(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-        RetryerBuilder<T> retryerBuilder = RetryerBuilder.<T>newBuilder();
+        RetryerBuilder<T> retryerBuilder = RetryerBuilder.newBuilder();
         retryerBuilder.withStopStrategy(StopStrategies.stopAfterAttempt(retry));
         retryerBuilder.withWaitStrategy(WaitStrategies.incrementingWait(timeout, TimeUnit.MILLISECONDS, increment, TimeUnit.MILLISECONDS));
 

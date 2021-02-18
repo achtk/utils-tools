@@ -23,10 +23,10 @@ import java.util.List;
 @Setter
 public class StandardProxyStrategy<T> implements ProxyStrategy<T, MethodProxy> {
 
+    private static final List<String> SKIP_METHOD_NAME = Lists.newArrayList("toString", "equals");
     private Class<?>[] interfaces;
     private ClassLoader classloader;
     private MethodIntercept<MethodProxy> methodIntercept;
-    private static final List<String> SKIP_METHOD_NAME = Lists.newArrayList("toString", "equals");
     private T source;
 
     @Override

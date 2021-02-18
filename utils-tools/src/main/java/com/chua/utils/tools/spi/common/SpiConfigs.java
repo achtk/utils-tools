@@ -36,15 +36,15 @@ public class SpiConfigs implements IOptions {
      * 全部配置
      */
     private final static ConcurrentMap<String, Object> CFG = new ConcurrentHashMap<>();
+    public static IOptions options = null;
 
     static {
         init();
     }
-    public static IOptions options = null;
 
     private static void init() {
         long startTime = System.currentTimeMillis();
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("{}开始初始化", SPI_CONFIG_DEFAULT);
         }
         CfgConfig cfgConfig = new CfgConfig();
@@ -62,7 +62,7 @@ public class SpiConfigs implements IOptions {
                 return CFG;
             }
         };
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("{}完成初始化, 耗时: {}ms", SPI_CONFIG_DEFAULT, System.currentTimeMillis() - startTime);
         }
     }
@@ -77,8 +77,8 @@ public class SpiConfigs implements IOptions {
             File temps = new File(path);
             File[] list = temps.listFiles();
             for (File s1 : list) {
-                String path1 = s1.getAbsolutePath() +  "/src/main/resources/" + s;
-                if(new File(path1).exists()) {
+                String path1 = s1.getAbsolutePath() + "/src/main/resources/" + s;
+                if (new File(path1).exists()) {
                     try {
                         makeMetaFile(path1, s, metaName);
                     } catch (IOException e) {
@@ -91,7 +91,7 @@ public class SpiConfigs implements IOptions {
     }
 
     /**
-     *  @param resources
+     * @param resources
      * @param s
      * @param metaName
      */
@@ -103,7 +103,7 @@ public class SpiConfigs implements IOptions {
         for (File item : items) {
 
             String name = item.getName();
-            if(name.equalsIgnoreCase(metaName)) {
+            if (name.equalsIgnoreCase(metaName)) {
                 continue;
             }
 
@@ -113,10 +113,10 @@ public class SpiConfigs implements IOptions {
             meta.put(name.replace(s + "/", ""), infos);
             for (String string : strings) {
                 Map<String, Object> map = new HashMap<>(3);
-                if(string.indexOf("=") > -1) {
+                if (string.indexOf("=") > -1) {
                     String[] split = string.split("=");
                     String nameAndOrder = split[0];
-                    if(nameAndOrder.indexOf("@") > -1) {
+                    if (nameAndOrder.indexOf("@") > -1) {
                         map.put("name", nameAndOrder.split("@")[0]);
                         map.put("order", nameAndOrder.split("@")[1]);
                     } else {

@@ -1,8 +1,6 @@
 package com.chua.utils.tools.manager;
 
 import com.chua.utils.tools.manager.builder.*;
-import com.chua.utils.tools.strategy.CacheStrategy;
-import com.chua.utils.tools.strategy.ProxyStrategy;
 
 /**
  * 策略管理器
@@ -51,10 +49,10 @@ public interface StrategyContextManager {
      * 获取策略
      *
      * @param strategyClass 策略类型
-     * @param <Strategy>    策略类型
+     * @param <S>           策略类型
      * @return 策略
      */
-    <Strategy> Strategy createStrategy(Class<Strategy> strategyClass);
+    <S> S createStrategy(Class<S> strategyClass);
 
     /**
      * 设置构造器

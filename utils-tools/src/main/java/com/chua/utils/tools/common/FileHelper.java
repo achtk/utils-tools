@@ -52,29 +52,17 @@ public class FileHelper {
     public static final long ONE_MB = ONE_KB * ONE_KB;
 
     public static final BigInteger ONE_MB_BI = ONE_KB_BI.multiply(ONE_KB_BI);
-
-    private static final long FILE_COPY_BUFFER_SIZE = ONE_MB * 30;
-
     public static final long ONE_GB = ONE_KB * ONE_MB;
-
     public static final BigInteger ONE_GB_BI = ONE_KB_BI.multiply(ONE_MB_BI);
-
     public static final long ONE_TB = ONE_KB * ONE_GB;
-
     public static final BigInteger ONE_TB_BI = ONE_KB_BI.multiply(ONE_GB_BI);
-
     public static final long ONE_PB = ONE_KB * ONE_TB;
-
     public static final BigInteger ONE_PB_BI = ONE_KB_BI.multiply(ONE_TB_BI);
-
     public static final long ONE_EB = ONE_KB * ONE_PB;
-
     public static final BigInteger ONE_EB_BI = ONE_KB_BI.multiply(ONE_PB_BI);
-
     public static final BigInteger ONE_ZB = BigInteger.valueOf(ONE_KB).multiply(BigInteger.valueOf(ONE_EB));
-
     public static final BigInteger ONE_YB = ONE_KB_BI.multiply(ONE_ZB);
-
+    private static final long FILE_COPY_BUFFER_SIZE = ONE_MB * 30;
     private static final List<Object> IGNORE = new ArrayList<>();
 
     public static boolean isSystemWindows() {
@@ -731,7 +719,7 @@ public class FileHelper {
      * @return 创建父目录成功返回true
      */
     public static boolean createParentFolder(final File folder) {
-        return null == folder ? false : createParentFolder(folder.getAbsolutePath());
+        return null != folder && createParentFolder(folder.getAbsolutePath());
     }
 
     /**
@@ -794,12 +782,12 @@ public class FileHelper {
 
         try (
                 InputStream is = clazz.getResourceAsStream("/" + relativePath);
+                InputStreamReader reader = new InputStreamReader(is, encoding);
+                BufferedReader bufferedReader = new BufferedReader(reader)
         ) {
             if (null == is) {
                 return null;
             }
-            InputStreamReader reader = new InputStreamReader(is, encoding);
-            BufferedReader bufferedReader = new BufferedReader(reader);
             StringBuilder context = new StringBuilder();
             String lineText;
             while ((lineText = bufferedReader.readLine()) != null) {
@@ -1471,6 +1459,7 @@ public class FileHelper {
     public static boolean wildcardMatch(final String filename, final String wildcardMatcher) {
         return FileWildcard.wildcardMatch(filename, wildcardMatcher, IOCase.SYSTEM);
     }
+
     /**
      * Checks a filename to see if it matches the specified wildcard matcher,
      * always testing case-sensitive.
@@ -1496,14 +1485,14 @@ public class FileHelper {
     public static boolean wildcardMatches(final String filename, final String wildcardMatcher) {
         List<String> strings = Splitter.on(PatternConstant.PATTERN_EMPTY).trimResults().omitEmptyStrings().splitToList(wildcardMatcher);
         for (String item : strings) {
-            if(!item.startsWith("*")) {
+            if (!item.startsWith("*")) {
                 item = "*" + item;
             }
 
-            if(!item.endsWith("*")) {
+            if (!item.endsWith("*")) {
                 item += "*";
             }
-            if(!wildcardMatch(filename, item)) {
+            if (!wildcardMatch(filename, item)) {
                 return false;
             }
         }

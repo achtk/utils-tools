@@ -12,14 +12,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ClassFileManager extends ForwardingJavaFileManager {
 
+    private static final ConcurrentHashMap<URI, JavaFileObject> URI_JAVA_FILE_OBJECT_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
     private final CompilerClassLoader compilerClassLoader;
     private ClassFileObject classFileObject;
 
-    private static final ConcurrentHashMap<URI, JavaFileObject> URI_JAVA_FILE_OBJECT_CONCURRENT_HASH_MAP = new ConcurrentHashMap<>();
     /**
      * Creates a new instance of ForwardingJavaFileManager.
      *
-     * @param fileManager delegate to this file manager
+     * @param fileManager         delegate to this file manager
      * @param compilerClassLoader
      */
     public ClassFileManager(JavaFileManager fileManager, CompilerClassLoader compilerClassLoader) {
@@ -32,7 +32,7 @@ public class ClassFileManager extends ForwardingJavaFileManager {
     public FileObject getFileForInput(Location location, String packageName, String relativeName) throws IOException {
         URI uri = URI.create(location.getName() + '/' + packageName + '/' + relativeName);
         JavaFileObject javaFileObject = URI_JAVA_FILE_OBJECT_CONCURRENT_HASH_MAP.get(uri);
-        if(null != javaFileObject) {
+        if (null != javaFileObject) {
             return javaFileObject;
         }
         return super.getFileForInput(location, packageName, relativeName);

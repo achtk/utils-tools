@@ -1,12 +1,8 @@
 package com.chua.utils.tools.loader;
 
-import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.function.Filter;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 
 /**
  * 负载均衡加载器
@@ -41,6 +37,7 @@ public interface BalancerLoader<T> {
 
     /**
      * 获取随机数据
+     *
      * @return
      */
     T random();

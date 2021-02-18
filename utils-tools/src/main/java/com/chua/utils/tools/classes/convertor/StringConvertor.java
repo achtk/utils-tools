@@ -10,10 +10,10 @@ package com.chua.utils.tools.classes.convertor;
 public class StringConvertor implements Convertor<String> {
     @Override
     public String convert(Object value) {
-        if(null == value) {
+        if (null == value) {
             return null;
         }
-        if(value instanceof String) {
+        if (value instanceof String) {
             return value.toString();
         }
         return null;

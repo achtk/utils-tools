@@ -22,61 +22,15 @@ import static com.chua.utils.tools.constant.NumberConstant.TWE;
  */
 public class Hex implements BinaryEncoder, BinaryDecoder {
 
-    private final Charset charset = StandardCharsets.UTF_8;
-
     /**
      * Used to build output as hex.
      */
     private static final char[] DIGITS_LOWER = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-
     /**
      * Used to build output as hex.
      */
     private static final char[] DIGITS_UPPER = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-
-    @Override
-    public byte[] encode(byte[] source) throws Exception {
-        return encodeHexString(source).getBytes(this.getCharset());
-    }
-
-    @Override
-    public Object decode(Object object) throws Exception {
-        if (object instanceof String) {
-            return decode(((String) object).toCharArray());
-        } else if (object instanceof byte[]) {
-            return decode((byte[]) object);
-        } else if (object instanceof ByteBuffer) {
-            return decode((ByteBuffer) object);
-        } else {
-            try {
-                return decodeHex((char[]) object);
-            } catch (final ClassCastException e) {
-                throw new Exception(e.getMessage(), e);
-            }
-        }
-    }
-
-    @Override
-    public Object encode(Object object) throws Exception {
-        byte[] byteArray;
-        if (object instanceof String) {
-            byteArray = ((String) object).getBytes(this.getCharset());
-        } else if (object instanceof ByteBuffer) {
-            byteArray = toByteArray((ByteBuffer) object);
-        } else {
-            try {
-                byteArray = (byte[]) object;
-            } catch (final ClassCastException e) {
-                throw new Exception(e.getMessage(), e);
-            }
-        }
-        return encodeHex(byteArray);
-    }
-
-    @Override
-    public byte[] decode(final byte[] array) throws Exception {
-        return decodeHex(new String(array, getCharset()).toCharArray());
-    }
+    private final Charset charset = StandardCharsets.UTF_8;
 
     /**
      * byte to hex string
@@ -99,7 +53,6 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
         }
         return stringBuilder.toString();
     }
-
 
     /**
      * hex加密
@@ -320,16 +273,6 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
     }
 
     /**
-     * Gets the charset.
-     *
-     * @return the charset.
-     * @since 1.7
-     */
-    public Charset getCharset() {
-        return this.charset;
-    }
-
-    /**
      * byteBuffer 转 byte[]
      *
      * @param byteBuffer byteBuffer
@@ -417,5 +360,59 @@ public class Hex implements BinaryEncoder, BinaryDecoder {
         int low = b & 0x0f;
         builder.append(toDigits[high]);
         builder.append(toDigits[low]);
+    }
+
+    @Override
+    public byte[] encode(byte[] source) throws Exception {
+        return encodeHexString(source).getBytes(this.getCharset());
+    }
+
+    @Override
+    public Object decode(Object object) throws Exception {
+        if (object instanceof String) {
+            return decode(((String) object).toCharArray());
+        } else if (object instanceof byte[]) {
+            return decode((byte[]) object);
+        } else if (object instanceof ByteBuffer) {
+            return decode(object);
+        } else {
+            try {
+                return decodeHex((char[]) object);
+            } catch (final ClassCastException e) {
+                throw new Exception(e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
+    public Object encode(Object object) throws Exception {
+        byte[] byteArray;
+        if (object instanceof String) {
+            byteArray = ((String) object).getBytes(this.getCharset());
+        } else if (object instanceof ByteBuffer) {
+            byteArray = toByteArray((ByteBuffer) object);
+        } else {
+            try {
+                byteArray = (byte[]) object;
+            } catch (final ClassCastException e) {
+                throw new Exception(e.getMessage(), e);
+            }
+        }
+        return encodeHex(byteArray);
+    }
+
+    @Override
+    public byte[] decode(final byte[] array) throws Exception {
+        return decodeHex(new String(array, getCharset()).toCharArray());
+    }
+
+    /**
+     * Gets the charset.
+     *
+     * @return the charset.
+     * @since 1.7
+     */
+    public Charset getCharset() {
+        return this.charset;
     }
 }

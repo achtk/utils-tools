@@ -2,6 +2,7 @@ package com.chua.utils.tools.function;
 
 /**
  * 不转化转化器
+ *
  * @author CH
  */
 public class NoneFileConverter implements FileConverter<Object, Object> {

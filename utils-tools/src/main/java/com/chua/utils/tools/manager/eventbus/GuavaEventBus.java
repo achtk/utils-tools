@@ -10,7 +10,7 @@ package com.chua.utils.tools.manager.eventbus;
  */
 public class GuavaEventBus implements EventBus {
 
-    private com.google.common.eventbus.EventBus eventBus = new com.google.common.eventbus.EventBus();
+    private final com.google.common.eventbus.EventBus eventBus = new com.google.common.eventbus.EventBus();
 
     @Override
     public void register(Object object) {

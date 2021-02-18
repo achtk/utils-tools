@@ -18,6 +18,28 @@ import java.util.function.Consumer;
 @Setter
 public class RequestConfig<Client> {
     /**
+     * JSON
+     */
+    public static final String JSON_HEADER = "application/json";
+    /**
+     * 是否是https
+     */
+    public boolean https;
+    /**
+     * sslSocketFactory
+     *
+     * @return
+     */
+    public Object sslSocketFactory;
+    /**
+     * 协议
+     */
+    public List<String> protocols;
+    /**
+     * dns
+     */
+    public String dns;
+    /**
      * 请求地址
      */
     private String url;
@@ -42,10 +64,6 @@ public class RequestConfig<Client> {
      */
     private Map<String, String> cookie = new HashMap<>();
     /**
-     * JSON
-     */
-    public static final String JSON_HEADER = "application/json";
-    /**
      * 超时时间
      */
     private Long timeout = 60_000L;
@@ -54,18 +72,6 @@ public class RequestConfig<Client> {
      */
     private ThrowableHandler handler;
     /**
-     * 是否是https
-     */
-    public boolean https;
-
-    /**
-     * sslSocketFactory
-     *
-     * @return
-     */
-    public Object sslSocketFactory;
-
-    /**
      * 最大连接数
      */
     private int maxConnTotal = 24;
@@ -73,7 +79,6 @@ public class RequestConfig<Client> {
      * 最大连接路由
      */
     private int maxConnRoute = 3;
-
     /**
      * 连接超时
      */
@@ -86,15 +91,6 @@ public class RequestConfig<Client> {
      * 会话超时
      */
     private Long socketTimeout = 5000L;
-    /**
-     * 协议
-     */
-    public List<String> protocols;
-    /**
-     * dns
-     */
-    public String dns;
-
     /**
      * 是否开启权限
      */

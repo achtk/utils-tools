@@ -14,7 +14,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 import static com.chua.utils.tools.constant.StringConstant.FILE_URL_PREFIX;
@@ -30,18 +33,18 @@ public class LocationFinder implements IResourceAdaptor {
 
     @Override
     public ResourceContext analyze(String path) throws IOException {
-        if(!path.startsWith(FILE_URL_PREFIX)) {
+        if (!path.startsWith(FILE_URL_PREFIX)) {
             return null;
         }
 
         path = path.replace("\\", "/");
         String substring = path.substring(FILE_URL_PREFIX.length());
         int index = substring.indexOf("*");
-        if(index == -1) {
+        if (index == -1) {
             index = substring.indexOf("?");
         }
 
-        if(index == -1) {
+        if (index == -1) {
             return new ResourceContext().addResource(Resource.create(new File(path).toURI().toURL()));
         }
 
@@ -49,7 +52,7 @@ public class LocationFinder implements IResourceAdaptor {
         String patternRegex = substring.substring(index);
 
         Map<String, Resource> resourceSet = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
-        if(!Strings.isNullOrEmpty(parentPath)) {
+        if (!Strings.isNullOrEmpty(parentPath)) {
             File parents = new File(parentPath);
             //深度检索
             doFindFileAndPathByDepth(parents, patternRegex, resourceSet);
@@ -58,7 +61,7 @@ public class LocationFinder implements IResourceAdaptor {
             Iterable<Path> directories = FileSystems.getDefault().getRootDirectories();
             Iterator<Path> iterator = directories.iterator();
             while (iterator.hasNext()) {
-                ++ count;
+                ++count;
                 iterator.next();
             }
 
@@ -113,6 +116,7 @@ public class LocationFinder implements IResourceAdaptor {
 
     /**
      * 获取广度文件夹/文件
+     *
      * @param i
      * @param parents
      * @param patternRegex

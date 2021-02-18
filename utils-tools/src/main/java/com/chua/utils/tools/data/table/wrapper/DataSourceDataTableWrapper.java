@@ -17,9 +17,8 @@ import javax.sql.DataSource;
 @AllArgsConstructor
 public class DataSourceDataTableWrapper {
 
-    private String name;
-
     private final TableType tableType = TableType.DATA_SOURCE;
+    private final String name;
 
     /**
      * 构建数据

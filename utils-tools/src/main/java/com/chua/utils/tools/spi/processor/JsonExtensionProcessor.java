@@ -24,9 +24,9 @@ import java.util.*;
 @Slf4j
 public class JsonExtensionProcessor<T> extends AbstractSimpleExtensionProcessor<T> {
 
-    private List<String> extensionLoadPath;
     private static final String FACTORIES_RESOURCE_LOCATION = "tools-extension.json";
     private static final Multimap<String, ExtensionClass<?>> CACHE = HashMultimap.create();
+    private List<String> extensionLoadPath;
 
     @Override
     public void init(SpiConfig spiConfig) {

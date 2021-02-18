@@ -14,7 +14,7 @@ public class StringToCurrencyConversionDefinition implements TypeConversionDefin
     @Nullable
     @Override
     public Currency convert(String source) {
-        if(null == source) {
+        if (null == source) {
             return null;
         }
 

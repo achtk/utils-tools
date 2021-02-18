@@ -52,7 +52,7 @@ public class LevelsOpen implements Levels {
                     newKey = key.substring(0, index);
                     splitKey = key.substring(index + 1);
                 }
-                if(!Strings.isNullOrEmpty(splitKey)) {
+                if (!Strings.isNullOrEmpty(splitKey)) {
                     map.put(newKey, levelOpenMap(splitKey, value));
                 } else {
                     map.put(newKey, value);
@@ -86,17 +86,17 @@ public class LevelsOpen implements Levels {
      * @param mapRight 右侧集合
      */
     public void merge(Map<String, Object> mapLeft, Map<String, Object> mapRight) {
-        for (String key : mapRight.keySet()) {
-            if (mapLeft.containsKey(key)) {
-                Object o = mapLeft.get(key);
-                Object o1 = mapRight.get(key);
+        for (Map.Entry<String, Object> entry : mapRight.entrySet()) {
+            if (mapLeft.containsKey(entry.getKey())) {
+                Object o = mapLeft.get(entry.getKey());
+                Object o1 = entry.getValue();
                 if (isAllMap(o, o1)) {
                     merge(MapUtils.asMap(o), MapUtils.asMap(o1));
                 } else if (CollectionUtils.isList(o)) {
                     mergeList(o, o1);
                 }
             } else {
-                mapLeft.put(key, mapRight.get(key));
+                mapLeft.put(entry.getKey(), entry.getValue());
             }
         }
     }

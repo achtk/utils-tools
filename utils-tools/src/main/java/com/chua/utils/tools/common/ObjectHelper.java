@@ -184,7 +184,7 @@ public class ObjectHelper {
         } else if (object instanceof Collection) {
             return ((Collection) object).isEmpty();
         } else {
-            return object instanceof Map ? ((Map) object).isEmpty() : false;
+            return object instanceof Map && ((Map) object).isEmpty();
         }
     }
 
@@ -200,7 +200,7 @@ public class ObjectHelper {
             return entity;
         }
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-             ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);) {
+             ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream)) {
             outputStream.writeObject(entity);
 
             try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
@@ -312,7 +312,7 @@ public class ObjectHelper {
      * @return String
      */
     public static String nullToEmpty(String source) {
-        return null == source ? "" : source.toString();
+        return null == source ? "" : source;
     }
 
     /**

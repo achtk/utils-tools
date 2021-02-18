@@ -147,10 +147,16 @@ public enum ZoneIdEnum {
     /**
      * "-10:00","夏威夷-阿留申标准时区"
      */
-    HST("-10:00", "夏威夷-阿留申标准时区"),;
+    HST("-10:00", "夏威夷-阿留申标准时区"),
+    ;
 
     private final String zoneIdName;
     private final String zoneIdNameCn;
+
+    ZoneIdEnum(String zoneIdName, String zoneIdNameCn) {
+        this.zoneIdName = zoneIdName;
+        this.zoneIdNameCn = zoneIdNameCn;
+    }
 
     public String getZoneIdName() {
         return zoneIdName;
@@ -158,10 +164,5 @@ public enum ZoneIdEnum {
 
     public String getZoneIdNameCn() {
         return zoneIdNameCn;
-    }
-
-    private ZoneIdEnum(String zoneIdName, String zoneIdNameCn) {
-        this.zoneIdName = zoneIdName;
-        this.zoneIdNameCn = zoneIdNameCn;
     }
 }

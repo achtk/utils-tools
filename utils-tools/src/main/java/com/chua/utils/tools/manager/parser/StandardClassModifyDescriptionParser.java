@@ -30,6 +30,10 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionParser<T> {
     /**
+     * 后缀
+     */
+    private static final String JAVASSIST_SUFFIX = "$javassist";
+    /**
      * Ct类
      */
     private final CtClass ctClass;
@@ -41,15 +45,10 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
      * 类池
      */
     private final ClassPool classPool;
-
     /**
      * 待解析的类
      */
     private final Class<T> tClass;
-    /**
-     * 后缀
-     */
-    private static final String JAVASSIST_SUFFIX = "$javassist";
     /**
      * 待添加的接口
      */
@@ -85,12 +84,12 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     /**
      * 待添加的注解
      */
-    private Set<Annotation> addingAnnotations = new HashSet<>();
+    private final Set<Annotation> addingAnnotations = new HashSet<>();
 
-    private ClassDescriptionParser classDescriptionParser;
+    private final ClassDescriptionParser<T> classDescriptionParser;
     private String name;
 
-    public StandardClassModifyDescriptionParser(Class<T> tClass, ClassDescriptionParser classDescriptionParser) throws NotFoundException {
+    public StandardClassModifyDescriptionParser(Class<T> tClass, ClassDescriptionParser<T> classDescriptionParser) throws NotFoundException {
         this.tClass = tClass;
         this.classDescriptionParser = classDescriptionParser;
         this.superClass = tClass.getSuperclass();
@@ -139,7 +138,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
 
     @Override
     public void addFieldGetter(String fieldName, Annotation... annotations) {
-        FieldDescription fieldDescription = classDescriptionParser.findFieldDescription(fieldName);
+        FieldDescription<T> fieldDescription = classDescriptionParser.findFieldDescription(fieldName);
         if (null != fieldDescription) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("get").append(NamedHelper.firstUpperCase(fieldName));
@@ -150,7 +149,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
 
     @Override
     public void addFieldSetter(String fieldName, Annotation... annotations) {
-        FieldDescription fieldDescription = classDescriptionParser.findFieldDescription(fieldName);
+        FieldDescription<T> fieldDescription = classDescriptionParser.findFieldDescription(fieldName);
         if (null != fieldDescription) {
 
             addMethod("set" + NamedHelper.firstUpperCase(fieldName), fieldDescription.getType(), new Class[]{fieldDescription.getType()}, "this." + fieldName + "=" + fieldName + ";", annotations);
@@ -159,7 +158,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
 
     @Override
     public void addFieldsAnnotations(String fieldName, Annotation... annotations) {
-        FieldDescription fieldDescription = classDescriptionParser.findFieldDescription(fieldName);
+        FieldDescription<T> fieldDescription = classDescriptionParser.findFieldDescription(fieldName);
         if (null != fieldDescription) {
             fieldAnnotationsCache.put(fieldDescription.getField(), annotations);
         }
@@ -212,7 +211,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
         //添加父类(必须不存在父类)
         this.renderSuper(modifyDescription);
         //渲染当前类自身
-        this.renderType(modifyDescription);
+        this.renderType();
         //修改方法
         this.modifyMethods(modifyDescription);
         //修改方法注解
@@ -265,7 +264,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
      *
      * @param modifyDescription<?>
      */
-    private void modifyFieldsAnnotations(ModifyDescription modifyDescription) {
+    private void modifyFieldsAnnotations(ModifyDescription<T> modifyDescription) {
         for (Map.Entry<Field, Annotation[]> entry : fieldAnnotationsCache.entrySet()) {
             try {
                 modifyFieldAnnotations(entry.getKey(), entry.getValue());
@@ -324,10 +323,8 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
 
     /**
      * 渲染当前类自身
-     *
-     * @param modifyDescription 修改修饰
      */
-    private void renderType(ModifyDescription<?> modifyDescription) {
+    private void renderType() {
         this.makeTypeAnnotationInfo();
     }
 
@@ -339,7 +336,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     private void modifyMethods(ModifyDescription<?> modifyDescription) {
         for (Map.Entry<Method, String> entry : methodReplaceCache.entrySet()) {
             try {
-                modifyMethod(entry, modifyDescription);
+                modifyMethod(entry);
             } catch (Exception e) {
                 modifyDescription.addThrowable(e);
             }
@@ -349,10 +346,9 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     /**
      * 修改方法
      *
-     * @param entry             待修改的方法
-     * @param modifyDescription 修改修饰
+     * @param entry 待修改的方法
      */
-    private void modifyMethod(Map.Entry<Method, String> entry, ModifyDescription modifyDescription) throws NotFoundException, CannotCompileException {
+    private void modifyMethod(Map.Entry<Method, String> entry) throws NotFoundException, CannotCompileException {
         Method method = entry.getKey();
         String methodBody = entry.getValue();
         //获取方法参数
@@ -376,7 +372,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
      *
      * @param modifyDescription 修改修饰
      */
-    private void renderSuper(ModifyDescription modifyDescription) {
+    private void renderSuper(ModifyDescription<T> modifyDescription) {
         if (null == superClass) {
             try {
                 ctClass.setSuperclass(classPool.get(this.addingSuper.getName()));
@@ -391,7 +387,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
      *
      * @param modifyDescription 修改修饰
      */
-    private void renderInterfaces(ModifyDescription modifyDescription) {
+    private void renderInterfaces(ModifyDescription<T> modifyDescription) {
         for (Class<?> aClass : interfaceCache) {
             try {
                 ctClass.addInterface(classPool.get(aClass.getName()));
@@ -406,7 +402,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
      *
      * @param modifyDescription 修改修饰
      */
-    private void renderMethods(ModifyDescription modifyDescription) {
+    private void renderMethods(ModifyDescription<T> modifyDescription) {
         for (Map.Entry<String, Annotation[]> entry : methodCache.entrySet()) {
             try {
                 CtMethod ctMethod = CtMethod.make(entry.getKey(), ctClass);
@@ -424,7 +420,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
      *
      * @param modifyDescription 修改修饰
      */
-    private void renderFields(ModifyDescription modifyDescription) {
+    private void renderFields(ModifyDescription<T> modifyDescription) {
         for (Map.Entry<String, Annotation[]> entry : fieldCache.entrySet()) {
             try {
                 CtField ctField = CtField.make(entry.getKey(), ctClass);
@@ -530,9 +526,9 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
     /**
      * 注解赋值
      *
-     * @param annotation1 待赋值
-     * @param annotationValue  添加的注解
-     * @param constPool   对象池
+     * @param annotation1     待赋值
+     * @param annotationValue 添加的注解
+     * @param constPool       对象池
      */
     private void addAnnotationValue(javassist.bytecode.annotation.Annotation annotation1, Map<String, Object> annotationValue, ConstPool constPool) {
         for (Map.Entry<String, Object> entry : annotationValue.entrySet()) {
@@ -543,6 +539,7 @@ class StandardClassModifyDescriptionParser<T> implements ClassModifyDescriptionP
             annotation1.addMemberValue(entry.getKey(), memberValue);
         }
     }
+
     /**
      * 注解赋值
      *

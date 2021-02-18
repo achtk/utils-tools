@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 public interface MessageHandler<Action> extends Handler<Action> {
     /**
      * 处理动作
+     *
      * @param action 动作
      */
     @Override
@@ -35,7 +36,7 @@ public interface MessageHandler<Action> extends Handler<Action> {
 
     @lombok.Data
     @EqualsAndHashCode
-    public static class Message {
+    class Message {
         /**
          * 接收方名称
          */

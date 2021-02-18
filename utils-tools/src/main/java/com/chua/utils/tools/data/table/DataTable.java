@@ -3,7 +3,6 @@ package com.chua.utils.tools.data.table;
 import com.chua.utils.tools.collects.OperateHashMap;
 import com.chua.utils.tools.common.FileHelper;
 import com.chua.utils.tools.data.table.type.TableType;
-import com.chua.utils.tools.data.wrapper.Wrapper;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,16 +30,6 @@ public class DataTable {
      * 表名
      */
     private String name;
-
-    /**
-     * 获取表名
-     *
-     * @return
-     */
-    public String getName() {
-        return null == name && tableType == TableType.FILE ? FileHelper.getName(source.toString()) : name;
-    }
-
     /**
      * 数据源
      */
@@ -62,12 +51,17 @@ public class DataTable {
     @Builder.Default
     private OperateHashMap operate = OperateHashMap.create();
     /**
-     * 数据包裹方式
-     */
-    private Wrapper<?> wrapper;
-    /**
      * 额外参数
      */
     @Builder.Default
     private OperateHashMap operate2 = OperateHashMap.create();
+
+    /**
+     * 获取表名
+     *
+     * @return
+     */
+    public String getName() {
+        return null == name && tableType == TableType.FILE ? FileHelper.getName(source.toString()) : name;
+    }
 }

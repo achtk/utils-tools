@@ -8,6 +8,7 @@ import java.util.TimeZone;
 
 /**
  * String -> TimeZone
+ *
  * @author CH
  * @version 1.0.0
  * @since 2021/2/7
@@ -16,7 +17,7 @@ public class StringToTimeZoneConversionDefinition implements TypeConversionDefin
     @Nullable
     @Override
     public TimeZone convert(String source) {
-        if(Strings.isNullOrEmpty(source)) {
+        if (Strings.isNullOrEmpty(source)) {
             return null;
         }
         return StringUtils.parseTimeZoneString(source);

@@ -10,7 +10,7 @@ import java.util.List;
  * @version 1.0.0
  * @since 2020/11/12
  */
-public class RewriteMethodParameterScanner extends AbstractRewriteScanner{
+public class RewriteMethodParameterScanner extends AbstractRewriteScanner {
     @Override
     public void scan(Object cls, Store store) {
         final MetadataAdapter md = getMetadataAdapter();

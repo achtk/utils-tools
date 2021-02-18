@@ -38,11 +38,6 @@ public class LogUtils {
     private static final String PID = SystemUtil.getPid();
 
     private static final Logger LOGGER = Logger.getLogger("com.chua.tools");
-
-    static {
-        LOGGER.addHandler(new ConsoleHandler());
-    }
-
     private static final List<LogInterceptor> INTERCEPTORS = new ArrayList<LogInterceptor>() {
         {
             add(new TimeLogInterceptor());
@@ -50,6 +45,10 @@ public class LogUtils {
             add(new IpLogInterceptor());
         }
     };
+
+    static {
+        LOGGER.addHandler(new ConsoleHandler());
+    }
 
     /**
      * 添加拦截器
@@ -210,12 +209,12 @@ public class LogUtils {
 
     static class ConsoleHandler extends java.util.logging.ConsoleHandler {
 
-        private OutputStream output;
         private static final int OFF_VALUE = Level.OFF.intValue();
+        private final Permission controlPermission = new LoggingPermission("control", null);
         boolean sealed = true;
+        private OutputStream output;
         private boolean doneHeader;
         private volatile Writer writer;
-        private final Permission controlPermission = new LoggingPermission("control", null);
 
         public ConsoleHandler() {
             sealed = false;

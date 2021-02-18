@@ -28,19 +28,12 @@ public class AntPathMatcher implements PathMatcher {
     private static final int CACHE_TURNOFF_THRESHOLD = 65536;
 
     private static final char[] WILDCARD_CHARS = {SYMBOL_ASTERISK_CHAR, SYMBOL_QUESTION_CHAR, SYMBOL_LEFT_BIG_PARANTHESES_CHAR};
-
-
-    private String pathSeparator;
-
-    private boolean caseSensitive = true;
-
-    private boolean trimTokens = false;
-
-    private volatile Boolean cachePatterns;
-
-    private final Map<String, String[]> tokenizedPatternCache = new ConcurrentHashMap<>(256);
-
     final Map<String, AntPathStringMatcher> stringMatcherCache = new ConcurrentHashMap<>(256);
+    private final Map<String, String[]> tokenizedPatternCache = new ConcurrentHashMap<>(256);
+    private String pathSeparator;
+    private final boolean caseSensitive = true;
+    private final boolean trimTokens = false;
+    private volatile Boolean cachePatterns;
 
     public AntPathMatcher() {
         this.pathSeparator = DEFAULT_PATH_SEPARATOR;
@@ -187,17 +180,17 @@ public class AntPathMatcher implements PathMatcher {
             int foundIdx = -1;
 
             strLoop:
-                for (int i = 0; i <= strLength - patLength; i++) {
-                    for (int j = 0; j < patLength; j++) {
-                        String subPat = patternDirs[pattIdxStart + j + 1];
-                        String subStr = pathDirs[pathIdxStart + i + j];
-                        if (!matchStrings(subPat, subStr, uriTemplateVariables)) {
-                            continue strLoop;
-                        }
+            for (int i = 0; i <= strLength - patLength; i++) {
+                for (int j = 0; j < patLength; j++) {
+                    String subPat = patternDirs[pattIdxStart + j + 1];
+                    String subStr = pathDirs[pathIdxStart + i + j];
+                    if (!matchStrings(subPat, subStr, uriTemplateVariables)) {
+                        continue strLoop;
                     }
-                    foundIdx = pathIdxStart + i;
-                    break;
                 }
+                foundIdx = pathIdxStart + i;
+                break;
+            }
 
             if (foundIdx == -1) {
                 return false;

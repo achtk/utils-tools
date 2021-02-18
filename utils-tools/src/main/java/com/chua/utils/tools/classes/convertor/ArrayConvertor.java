@@ -13,14 +13,14 @@ import com.google.common.base.Splitter;
 public class ArrayConvertor implements Convertor<Object[]> {
     @Override
     public Object[] convert(Object value) {
-        if(null == value) {
+        if (null == value) {
             return EmptyOrBase.EMPTY_OBJECT;
         }
 
-        if(value.getClass().isArray()) {
+        if (value.getClass().isArray()) {
             return (Object[]) value;
         }
-        if(value instanceof String) {
+        if (value instanceof String) {
             return Splitter.on(delimiter()).omitEmptyStrings().trimResults().splitToList(value.toString()).toArray(new Object[0]);
         }
 

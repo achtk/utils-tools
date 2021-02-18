@@ -20,6 +20,16 @@ import static com.chua.utils.tools.constant.SymbolConstant.*;
 public class NetHelper {
 
     /**
+     * 任意地址
+     */
+    public static final String ANYHOST = "0.0.0.0";
+    /**
+     * IPv4地址
+     */
+    public static final Pattern IPV4_PATTERN = Pattern
+            .compile(
+                    "^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
+    /**
      * 最小端口
      */
     private static final int MIN_PORT = 0;
@@ -27,24 +37,12 @@ public class NetHelper {
      * 最大端口
      */
     private static final int MAX_PORT = 65535;
-
-    /**
-     * 任意地址
-     */
-    public static final String ANYHOST = "0.0.0.0";
     /**
      * 本机地址正则
      */
     private static final Pattern LOCAL_IP_PATTERN = Pattern.compile("127(\\.\\d{1,3}){3}$");
-
-    /**
-     * IPv4地址
-     */
-    public static final Pattern IPV4_PATTERN = Pattern
-            .compile(
-                    "^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
-    private static String HTTP = "http://";
-    private static String HTTPS = "https://";
+    private static final String HTTP = "http://";
+    private static final String HTTPS = "https://";
 
     /**
      * 是否本地地址 127.x.x.x 或者 localhost

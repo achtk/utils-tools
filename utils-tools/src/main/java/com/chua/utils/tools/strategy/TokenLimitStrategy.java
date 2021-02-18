@@ -3,7 +3,6 @@ package com.chua.utils.tools.strategy;
 import com.chua.utils.tools.exceptions.BusyServiceException;
 import com.chua.utils.tools.function.intercept.MethodIntercept;
 import com.google.common.util.concurrent.RateLimiter;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.sf.cglib.proxy.MethodProxy;

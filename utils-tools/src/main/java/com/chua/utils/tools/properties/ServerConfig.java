@@ -6,6 +6,7 @@ import lombok.experimental.Accessors;
 
 /**
  * 基础服务配置项
+ *
  * @author CH
  */
 @Getter

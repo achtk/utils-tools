@@ -4,7 +4,6 @@ import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.common.UrlHelper;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Map;
 
 /**

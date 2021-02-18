@@ -19,7 +19,7 @@ public interface BeanMapper extends Map<String, Object> {
      * @return 对象集合
      */
     static BeanMapper of(Object obj) {
-        return new StandardBeanMap(obj, null);
+        return new StandardBeanMapper(obj, null);
     }
 
     /**
@@ -30,7 +30,7 @@ public interface BeanMapper extends Map<String, Object> {
      * @return 对象集合
      */
     static BeanMapper of(Object obj, String... mapper) {
-        return new StandardBeanMap(obj, mapper);
+        return new StandardBeanMapper(obj, mapper);
     }
 
     /**

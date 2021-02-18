@@ -9,17 +9,20 @@ import java.io.InputStream;
 
 /**
  * 文件解析
+ *
  * @author CH
  */
 public interface IFileResolver {
     /**
      * 设置流
+     *
      * @param inputStream 流
      */
     void stream(InputStream inputStream);
 
     /**
      * 解析文件
+     *
      * @param fileConverter 转化器
      * @return
      */
@@ -27,22 +30,25 @@ public interface IFileResolver {
 
     /**
      * 支持的文件后缀
+     *
      * @return
      */
     String[] suffixes();
+
     /**
      * 是否匹配
+     *
      * @param extension
      * @return
      */
     default boolean isValid(String extension) {
-        if(Strings.isNullOrEmpty(extension) || !BooleanHelper.hasLength(suffixes())) {
+        if (Strings.isNullOrEmpty(extension) || !BooleanHelper.hasLength(suffixes())) {
             return false;
         }
 
         extension = extension.toLowerCase();
         for (String suffix : suffixes()) {
-            if(extension.equals(suffix)) {
+            if (extension.equals(suffix)) {
                 return true;
             }
         }

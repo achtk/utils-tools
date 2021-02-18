@@ -9,7 +9,7 @@ import java.util.List;
  * @version 1.0.0
  * @since 2020/11/12
  */
-public class RewriteFieldAnnotationsScanner extends AbstractRewriteScanner{
+public class RewriteFieldAnnotationsScanner extends AbstractRewriteScanner {
     @Override
     public void scan(Object cls, Store store) {
         final String className = getMetadataAdapter().getClassName(cls);

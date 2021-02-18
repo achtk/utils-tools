@@ -5,6 +5,7 @@ import java.util.Objects;
 
 /**
  * 集合基础比较方法
+ *
  * @author Administrator
  */
 public interface ListComparator {

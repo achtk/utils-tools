@@ -35,8 +35,10 @@ public class Judgeable<T> {
     public T getIfPresent() {
         return value;
     }
+
     /**
      * 尝试获取List
+     *
      * @return List
      */
     public List<T> getListIfFeasible() {

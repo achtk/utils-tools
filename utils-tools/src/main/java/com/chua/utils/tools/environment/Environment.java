@@ -87,7 +87,7 @@ public interface Environment {
      */
     default String getStringOrDefault(String name, final String defaultValue) {
         String object = getString(name);
-        return null == object ? defaultValue : object.toString();
+        return null == object ? defaultValue : object;
     }
 
     /**

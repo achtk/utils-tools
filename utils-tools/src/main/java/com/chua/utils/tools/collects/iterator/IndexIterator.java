@@ -31,7 +31,7 @@ public class IndexIterator implements Iterator<Integer> {
     /**
      * 计数器
      */
-    private AtomicInteger atomicCount = new AtomicInteger(-1);
+    private final AtomicInteger atomicCount = new AtomicInteger(-1);
     /**
      * 索引位置
      */

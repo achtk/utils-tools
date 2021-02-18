@@ -7,12 +7,15 @@ import java.util.List;
 
 /**
  * or
+ *
  * @author CH
  */
 public class OrFileFilter implements FileFilter {
 
-    /** The list of file filters. */
-    private List<FileFilter> fileFilters;
+    /**
+     * The list of file filters.
+     */
+    private final List<FileFilter> fileFilters;
 
     public OrFileFilter() {
         this.fileFilters = new ArrayList<>();

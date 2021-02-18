@@ -5,11 +5,12 @@ import java.util.Locale;
 
 /**
  * LocaleCategory -> Locale
+ *
  * @author CH
  * @version 1.0.0
  * @since 2021/2/7
  */
-public class LocaleCategoryToLocaleConversionDefinition implements TypeConversionDefinition<Locale.Category, Locale>{
+public class LocaleCategoryToLocaleConversionDefinition implements TypeConversionDefinition<Locale.Category, Locale> {
     @Nullable
     @Override
     public Locale convert(Locale.Category source) {

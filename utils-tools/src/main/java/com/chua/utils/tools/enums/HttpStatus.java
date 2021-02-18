@@ -2,10 +2,11 @@ package com.chua.utils.tools.enums;
 
 /**
  * Http状态码枚举
+ *
  * @author CH
  * @date 2020-09-28
  */
-public enum  HttpStatus {
+public enum HttpStatus {
     /**
      *
      */
@@ -81,21 +82,29 @@ public enum  HttpStatus {
     NOT_EXTENDED(510, "Not Extended", "获取资源所需的策略没有被满足"),
     NETWORK_AUTHENTICATION_REQUIRED(511, "Network Authentication Required", "需要进行网络授权");
 
-    private final int code;
-    private final String reasonPhraseUS;
-    private final String reasonPhraseCN;
-
     private static final int
             INFORMATIONAL = 1,
             SUCCESSFUL = 2,
             REDIRECTION = 3,
             CLIENT_ERROR = 4,
             SERVER_ERROR = 5;
+    private final int code;
+    private final String reasonPhraseUS;
+    private final String reasonPhraseCN;
 
     HttpStatus(int code, String reasonPhraseUs, String reasonPhraseCn) {
         this.code = code;
         this.reasonPhraseUS = reasonPhraseUs;
         this.reasonPhraseCN = reasonPhraseCn;
+    }
+
+    public static HttpStatus valueOf(int code) {
+        for (HttpStatus httpStatus : values()) {
+            if (httpStatus.code() == code) {
+                return httpStatus;
+            }
+        }
+        throw new IllegalArgumentException("No matching constant for [" + code + "]");
     }
 
     public int code() {
@@ -108,15 +117,6 @@ public enum  HttpStatus {
 
     public String reasonPhraseCn() {
         return reasonPhraseCN;
-    }
-
-    public static HttpStatus valueOf(int code) {
-        for (HttpStatus httpStatus : values()) {
-            if (httpStatus.code() == code) {
-                return httpStatus;
-            }
-        }
-        throw new IllegalArgumentException("No matching constant for [" + code + "]");
     }
 
     public boolean is1xxInformational() {
@@ -139,7 +139,7 @@ public enum  HttpStatus {
         return type() == SERVER_ERROR;
     }
 
-    private int type(){
-        return (int) code / 100;
+    private int type() {
+        return code / 100;
     }
 }

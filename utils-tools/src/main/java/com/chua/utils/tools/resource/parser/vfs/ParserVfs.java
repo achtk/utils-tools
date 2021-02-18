@@ -2,7 +2,6 @@ package com.chua.utils.tools.resource.parser.vfs;
 
 import com.chua.utils.tools.classes.ClassHelper;
 import com.chua.utils.tools.empty.EmptyOrBase;
-import com.chua.utils.tools.exceptions.NotSupportedException;
 import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.resource.log.Log;
 import com.chua.utils.tools.resource.parser.Parser;
@@ -13,7 +12,6 @@ import com.chua.utils.tools.resource.parser.file.ClassParser;
 import com.chua.utils.tools.resource.parser.file.JavaParser;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.reflections.ReflectionsException;
 
 import java.net.URL;
 import java.util.ArrayList;

@@ -63,6 +63,36 @@ public class FieldDescription<T> {
         this.setField(field);
     }
 
+    public FieldDescription(T entity, Field field) {
+        this.entity = entity;
+        this.field = field;
+        this.setField(field);
+    }
+
+    /**
+     * 获取字段值
+     *
+     * @param field  字段
+     * @param entity 对象
+     * @return 字段值
+     */
+    public static Object get(final Field field, Object entity) {
+        return get(field, entity, Object.class);
+    }
+
+    /**
+     * 获取字段值
+     *
+     * @param field      字段
+     * @param entity     对象
+     * @param returnType 返回类型
+     * @return 字段值
+     */
+    public static <T> T get(final Field field, Object entity, Class<T> returnType) {
+        Object value = new FieldDescription<>(entity, field).get();
+        return null == value || returnType == null || returnType.isAssignableFrom(value.getClass()) ? (T) value : null;
+    }
+
     /**
      * 计算字段
      *
@@ -81,12 +111,6 @@ public class FieldDescription<T> {
             return null;
         }
 
-    }
-
-    public FieldDescription(T entity, Field field) {
-        this.entity = entity;
-        this.field = field;
-        this.setField(field);
     }
 
     /**
@@ -131,30 +155,6 @@ public class FieldDescription<T> {
             e.printStackTrace();
             return null;
         }
-    }
-
-    /**
-     * 获取字段值
-     *
-     * @param field  字段
-     * @param entity 对象
-     * @return 字段值
-     */
-    public static Object get(final Field field, Object entity) {
-        return get(field, entity, Object.class);
-    }
-
-    /**
-     * 获取字段值
-     *
-     * @param field      字段
-     * @param entity     对象
-     * @param returnType 返回类型
-     * @return 字段值
-     */
-    public static <T> T get(final Field field, Object entity, Class<T> returnType) {
-        Object value = new FieldDescription<>(entity, field).get();
-        return null == value || returnType == null || returnType.isAssignableFrom(value.getClass()) ? (T) value : null;
     }
 
     /**

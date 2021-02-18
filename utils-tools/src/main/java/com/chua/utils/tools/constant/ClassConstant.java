@@ -1,9 +1,5 @@
 package com.chua.utils.tools.constant;
 
-import java.io.File;
-import java.text.DecimalFormat;
-import java.util.regex.Pattern;
-
 /**
  * 字符串常量
  *

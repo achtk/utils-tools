@@ -1,17 +1,11 @@
 package com.chua.utils.tools.classes.reflections;
 
-import com.chua.utils.tools.classes.reflections.scan.RewriteScan;
 import com.chua.utils.tools.classes.reflections.scanner.AbstractRewriteScanner;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import org.reflections.ReflectionsException;
 import org.reflections.Store;
 import org.reflections.scanners.Scanner;
 import org.reflections.util.Utils;
-import org.reflections.vfs.Vfs;
 
-import java.net.CookieHandler;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -19,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.function.Function;
 
 import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPACITY;
 import static org.reflections.util.Utils.index;
@@ -142,7 +135,6 @@ public class RewriteStore extends Store {
             } catch (Exception ignore) {
             }
         }
-        ;
         return result;
     }
 
@@ -221,7 +213,7 @@ public class RewriteStore extends Store {
                 continue;
             }
             CopyOnWriteArrayList<String> strings = multimap.get(key);
-            if(null == strings) {
+            if (null == strings) {
                 continue;
             }
             for (String value : multimap.get(key)) {

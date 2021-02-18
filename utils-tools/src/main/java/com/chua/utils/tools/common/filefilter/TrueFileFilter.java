@@ -5,6 +5,7 @@ import java.io.FileFilter;
 
 /**
  * 永真
+ *
  * @author CH
  */
 public class TrueFileFilter implements FileFilter {

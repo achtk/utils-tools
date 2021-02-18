@@ -80,7 +80,7 @@ public class HttpTemplate implements HttpOperations {
      */
     @AllArgsConstructor
     class SimpleRequestCallback implements RequestCallback {
-        private Object params;
+        private final Object params;
 
         @Override
         public Map<String, String> getHeaders() {
@@ -104,7 +104,7 @@ public class HttpTemplate implements HttpOperations {
      */
     @AllArgsConstructor
     class SimpleResponseExtractor<T> implements ResponseExtractor<T> {
-        private Class<T> responseType;
+        private final Class<T> responseType;
 
         @Override
         public ResponseEntity<T> convert(ResponseEntity responseEntity) {

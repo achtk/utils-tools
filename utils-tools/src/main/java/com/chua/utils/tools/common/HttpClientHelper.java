@@ -11,6 +11,7 @@ import java.util.Map;
 
 /**
  * http部分工具
+ *
  * @author CH
  * @since 1.0
  */
@@ -18,6 +19,7 @@ public class HttpClientHelper {
 
     /**
      * 生成安全套接字工厂，用于https请求的证书跳过
+     *
      * @return
      */
     public static SSLSocketFactory createSslSocketFactory() {
@@ -33,6 +35,7 @@ public class HttpClientHelper {
 
     /**
      * 创建默认 HostnameVerifier
+     *
      * @return
      */
     public static HostnameVerifier createDefaultHostnameVerifier() {
@@ -43,18 +46,22 @@ public class HttpClientHelper {
             }
         };
     }
+
     /**
      * 创建 默认SslContext
+     *
      * @return
      * @throws NoSuchProviderException
      * @throws NoSuchAlgorithmException
      * @throws KeyManagementException
      */
     public static SSLContext createDefaultSslContext() throws NoSuchAlgorithmException, NoSuchProviderException, KeyManagementException {
-        return createSslContext("SSL","SunJSSE");
+        return createSslContext("SSL", "SunJSSE");
     }
+
     /**
      * 创建SslContext
+     *
      * @param protocol 协议
      * @param provider 生产者
      * @return
@@ -65,8 +72,10 @@ public class HttpClientHelper {
     public static SSLContext createSslContext(final String protocol, final String provider) throws NoSuchProviderException, NoSuchAlgorithmException, KeyManagementException {
         return createSslContext(protocol, provider, new TrustAllCerts());
     }
+
     /**
      * 创建SslContext
+     *
      * @param protocol 协议
      * @param provider 生产者
      * @return
@@ -76,7 +85,7 @@ public class HttpClientHelper {
      */
     public static SSLContext createSslContext(final String protocol, final String provider, final X509TrustManager x509TrustManager) throws NoSuchProviderException, NoSuchAlgorithmException, KeyManagementException {
         SSLContext sslcontext = null;
-        if(null == provider) {
+        if (null == provider) {
             sslcontext = SSLContext.getInstance(protocol);
         } else {
             sslcontext = SSLContext.getInstance(protocol, provider);
@@ -87,19 +96,22 @@ public class HttpClientHelper {
 
     /**
      * 创建带参数的url
-     * @param url url
+     *
+     * @param url    url
      * @param bodyer 消息体
      * @return
      */
     public static String createUrlWithParameters(String url, Map<String, Object> bodyer) {
-        if(null == url) {
+        if (null == url) {
             return url;
         }
         String urlParameter = createWithParameters(bodyer);
         return url + "?" + urlParameter;
     }
+
     /**
      * 创建带参数的url
+     *
      * @param bodyer 消息体
      * @return
      */
@@ -114,10 +126,12 @@ public class HttpClientHelper {
         @Override
         public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
         }
+
         @Override
         public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
 
         }
+
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             return new X509Certificate[0];

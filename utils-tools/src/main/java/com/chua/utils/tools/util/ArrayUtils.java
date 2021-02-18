@@ -34,7 +34,7 @@ public class ArrayUtils extends ArraysHelper {
      * @return 数组类型
      */
     public static Class<?>[] toClass(Object[] params) {
-        if(null == params) {
+        if (null == params) {
             return EmptyOrBase.EMPTY_CLASS;
         }
         Class<?>[] result = new Class<?>[params.length];

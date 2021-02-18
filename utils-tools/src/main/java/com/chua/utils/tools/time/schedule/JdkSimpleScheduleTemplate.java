@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class JdkSimpleScheduleTemplate implements SimpleScheduleOperations<Runnable> {
 
-    private final Map<String, JobTime> groupCache = new ConcurrentHashMap<>();
     private static final String THREAD_NAME = "schedule-group-job";
+    private final Map<String, JobTime> groupCache = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduledThreadPoolExecutor = ThreadHelper.newScheduledThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), THREAD_NAME);
 
     @Override

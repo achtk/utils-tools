@@ -18,6 +18,9 @@ import static org.objectweb.asm.Opcodes.*;
  * @since 2020/12/30
  */
 public class AsmUtils {
+    private AsmUtils() {
+    }
+
     /**
      * @param defaultCaseLabel defaultCaseLabel
      * @param cases            should be a sorted int array
@@ -133,8 +136,5 @@ public class AsmUtils {
             }
             mv.visitInsn(opcode);
         }
-    }
-
-    private AsmUtils() {
     }
 }

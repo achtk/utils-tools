@@ -6,14 +6,19 @@ import java.io.FilenameFilter;
 
 /**
  * DelegateFileFilter
+ *
  * @author CH
  */
 public class DelegateFileFilter implements FileFilter {
 
-    /** The Filename filter */
-    private FilenameFilter filenameFilter;
-    /** The File filter */
-    private FileFilter fileFilter;
+    /**
+     * The Filename filter
+     */
+    private final FilenameFilter filenameFilter;
+    /**
+     * The File filter
+     */
+    private final FileFilter fileFilter;
 
     public DelegateFileFilter(final FilenameFilter filter) {
         if (filter == null) {

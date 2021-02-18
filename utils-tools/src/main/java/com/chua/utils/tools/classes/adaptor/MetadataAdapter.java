@@ -16,15 +16,18 @@ import java.util.List;
 public interface MetadataAdapter {
     /**
      * 是否为空
+     *
      * @return 空返回true
      */
     boolean isEmpty();
 
     /**
      * 修饰符
+     *
      * @return 修饰符
      */
     int getAccessFlags();
+
     /**
      * 父类
      *
@@ -73,7 +76,7 @@ public interface MetadataAdapter {
      * @return 类描述
      */
     default ClassDescription description() {
-        if(isEmpty()) {
+        if (isEmpty()) {
             return null;
         }
         ClassDescription classDescription = new ClassDescription();
@@ -88,13 +91,14 @@ public interface MetadataAdapter {
 
         return classDescription;
     }
+
     /**
      * 获取描述
      *
      * @return 类描述
      */
     default ClassDescription descriptionExtends() {
-        if(isEmpty()) {
+        if (isEmpty()) {
             return null;
         }
         ClassDescription classDescription = new ClassDescription();

@@ -20,17 +20,17 @@ import static com.chua.utils.tools.constant.HttpConstant.*;
 @AllArgsConstructor
 public class UrlClientBuilder implements HttpClientBuilder {
 
-    private RequestConfig requestConfig;
-    private Sync sync;
+    private final RequestConfig<?> requestConfig;
+    private final Sync sync;
 
-    public UrlClientBuilder(RequestConfig requestConfig) {
+    public UrlClientBuilder(RequestConfig<?> requestConfig) {
         this.requestConfig = requestConfig;
         this.sync = new Sync(requestConfig);
     }
 
     @Override
     public <T> ResponseEntity<T> execute(Class<T> tClass) {
-        ResponseEntity responseEntity = null;
+        ResponseEntity<T> responseEntity = null;
         if (HTTP_METHOD_GET.equals(requestConfig.getMethod())) {
             responseEntity = sync.executeGet();
         } else if (HTTP_METHOD_POST.equals(requestConfig.getMethod())) {
@@ -41,7 +41,7 @@ public class UrlClientBuilder implements HttpClientBuilder {
             responseEntity = sync.executeDelete();
         }
 
-        return (ResponseEntity<T>) createResponseEntity(responseEntity, tClass);
+        return createResponseEntity(responseEntity, tClass);
     }
 
     @Override

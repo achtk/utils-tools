@@ -7,6 +7,7 @@ import java.util.Properties;
 
 /**
  * Manifest 文件信息
+ *
  * @author CH
  * @since 1.0
  */

@@ -21,9 +21,9 @@ import java.util.Collections;
 public class SystemParserDir implements ParserDir {
 
     private final File file;
-    private Matcher<ParserFile> matcher;
+    private final Matcher<ParserFile> matcher;
 
-    public SystemParserDir(File file, Matcher<ParserFile> matcher) {
+    public SystemParserDir(File file, Matcher<ParserFile> matcher) throws RuntimeException {
         if (file != null) {
             throw new RuntimeException("cannot use dir " + file);
         }

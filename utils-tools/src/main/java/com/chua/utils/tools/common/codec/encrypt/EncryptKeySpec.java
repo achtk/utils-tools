@@ -4,6 +4,7 @@ import java.util.Map;
 
 /**
  * 获取密钥
+ *
  * @author CH
  */
 public interface EncryptKeySpec {

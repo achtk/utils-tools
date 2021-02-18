@@ -79,6 +79,26 @@ public class AccessClassLoader extends ClassLoader {
     }
 
     /**
+     * 定义方法
+     *
+     * @return 方法
+     * @throws Exception
+     */
+    private static Method getDefineClassMethod() throws Exception {
+        // DCL on volatile
+        if (defineClassMethod == null) {
+            synchronized (ACCESS_CLASS_LOADERS) {
+                defineClassMethod = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class, ProtectionDomain.class);
+                try {
+                    defineClassMethod.setAccessible(true);
+                } catch (SecurityException ignored) {
+                }
+            }
+        }
+        return defineClassMethod;
+    }
+
+    /**
      * 获取类
      *
      * @param name  名称
@@ -94,25 +114,5 @@ public class AccessClassLoader extends ClassLoader {
             // continue with the definition in the current loader (won't have access to protected and package-protected members)
         }
         return defineClass(name, bytes, 0, bytes.length, getClass().getProtectionDomain());
-    }
-
-    /**
-     * 定义方法
-     *
-     * @return 方法
-     * @throws Exception
-     */
-    private static Method getDefineClassMethod() throws Exception {
-        // DCL on volatile
-        if (defineClassMethod == null) {
-            synchronized (ACCESS_CLASS_LOADERS) {
-                defineClassMethod = ClassLoader.class.getDeclaredMethod("defineClass", new Class<?>[]{String.class, byte[].class, int.class, int.class, ProtectionDomain.class});
-                try {
-                    defineClassMethod.setAccessible(true);
-                } catch (SecurityException ignored) {
-                }
-            }
-        }
-        return defineClassMethod;
     }
 }

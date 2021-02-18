@@ -2,6 +2,7 @@ package com.chua.utils.tools.constant;
 
 /**
  * 加密算法
+ *
  * @author CH
  */
 public class EncryptConstant {

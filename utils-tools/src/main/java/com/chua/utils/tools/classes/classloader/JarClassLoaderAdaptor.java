@@ -15,7 +15,7 @@ import static com.chua.utils.tools.constant.SymbolConstant.SYMBOL_LEFT_SLASH;
  * @author CH
  * @since 1.0
  */
-public class JarClassLoaderAdaptor implements IClassLoaderAdaptor{
+public class JarClassLoaderAdaptor implements IClassLoaderAdaptor {
 
     private URL url;
 
@@ -39,19 +39,20 @@ public class JarClassLoaderAdaptor implements IClassLoaderAdaptor{
 
     /**
      * 格式化名称
+     *
      * @param name 名称
      * @return 格式化名称
      */
     private String formatName(String name) {
         String newName = name.replace(SYMBOL_DOT, SYMBOL_LEFT_SLASH);
-        if(name.startsWith(SYMBOL_LEFT_SLASH)) {
+        if (name.startsWith(SYMBOL_LEFT_SLASH)) {
             newName = newName.substring(1);
         }
-        if(name.endsWith(SYMBOL_LEFT_SLASH)) {
+        if (name.endsWith(SYMBOL_LEFT_SLASH)) {
             newName = newName.substring(0, newName.length() - 1);
         }
 
-        if(!name.endsWith(SUFFIX_CLASS)) {
+        if (!name.endsWith(SUFFIX_CLASS)) {
             newName += SUFFIX_CLASS;
         }
         return newName;

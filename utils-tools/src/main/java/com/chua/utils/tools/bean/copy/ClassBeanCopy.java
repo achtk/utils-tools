@@ -16,11 +16,11 @@ import java.util.Map;
  */
 public class ClassBeanCopy<T> extends StandardBeanCopy<T> implements BeanCopy<T> {
 
-    private String className;
+    private final String className;
 
-    private Class<T> tClass;
+    private final Class<T> tClass;
 
-    private Map<String, Object> params = new HashMap<>();
+    private final Map<String, Object> params = new HashMap<>();
 
     public ClassBeanCopy(String className, Class<T> tClass) {
         super((Class<T>) ClassUtils.forName(className));

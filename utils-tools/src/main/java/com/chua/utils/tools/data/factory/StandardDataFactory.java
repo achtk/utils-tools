@@ -46,6 +46,8 @@ import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPAC
  */
 @Slf4j
 public class StandardDataFactory implements DataFactory {
+    public static final Map<TableType, String> FACTORY_CACHE = new ConcurrentHashMap<>();
+    public static final Map<String, DataParser> PARSER_CACHE = new ConcurrentHashMap<>();
     private static final String CALCITE_URL = "jdbc:calcite:";
     private static final String DATA_SOURCE_FACTORY = "org.apache.calcite.adapter.jdbc.JdbcSchema$Factory";
     private static final String SOLR_FACTORY = "org.apache.calcite.adapter.solr.SolrTableFactory";
@@ -54,12 +56,8 @@ public class StandardDataFactory implements DataFactory {
     private static final String MONGO_FACTORY = "org.apache.calcite.adapter.mongodb.MongoSchemaFactory";
     private static final String DRUID_FACTORY = "org.apache.calcite.adapter.druid.DruidSchemaFactory";
     private static final String COMMON_FACTORY = "com.chua.utils.netx.data.schema.CalciteDataSchemaFactory";
-
-    private final Multimap<String, DataTable> schemaDataTable = HashMultimap.create();
-    private final static Map<String, DataTable> ID_DATA_TABLE = new ConcurrentHashMap();
-    public final static Map<TableType, String> FACTORY_CACHE = new ConcurrentHashMap<>();
-    public final static Map<String, DataParser> PARSER_CACHE = new ConcurrentHashMap<>();
-    private final static LongAdder LONG_ADDER = new LongAdder();
+    private static final Map<String, DataTable> ID_DATA_TABLE = new ConcurrentHashMap<>();
+    private static final LongAdder LONG_ADDER = new LongAdder();
 
     static {
         FACTORY_CACHE.put(TableType.FILE, COMMON_FACTORY);
@@ -85,11 +83,10 @@ public class StandardDataFactory implements DataFactory {
         ExtensionLoader<DataParser> extensionLoader = ExtensionFactory.getExtensionLoader(DataParser.class);
         MultiSortValueMap<String, ExtensionClass<DataParser>> allSpiService = extensionLoader.getAllExtensionClassess();
 
-        allSpiService.keySet().stream().filter(item -> !item.equals(DataParser.class.getName())).forEach(name -> {
-            PARSER_CACHE.put(name, extensionLoader.getExtension(name));
-        });
+        allSpiService.keySet().stream().filter(item -> !item.equals(DataParser.class.getName())).forEach(name -> PARSER_CACHE.put(name, extensionLoader.getExtension(name)));
     }
 
+    private final Multimap<String, DataTable> schemaDataTable = HashMultimap.create();
     private CalciteInfo calciteInfo;
     private Properties info;
 
@@ -101,105 +98,6 @@ public class StandardDataFactory implements DataFactory {
      */
     public static DataTable getDataTable(String id) {
         return ID_DATA_TABLE.get(id);
-    }
-
-    @Override
-    public void addSchema(String schema, DataTable dataTable) {
-        schemaDataTable.put(schema, repairDataTable(dataTable));
-    }
-
-    /**
-     * 补充参数
-     *
-     * @param dataTable 数据表
-     * @return 数据表
-     */
-    private DataTable repairDataTable(DataTable dataTable) {
-        dataTable.setId(IdHelper.createUuid());
-        if (Strings.isNullOrEmpty(dataTable.getParser())) {
-            DataParser parser = createParser(dataTable);
-            dataTable.setParser(null == parser ? null : parser.getClass().getName());
-        }
-        ID_DATA_TABLE.put(dataTable.getId(), dataTable);
-        return dataTable;
-    }
-
-    /**
-     * 创建解析器
-     *
-     * @param dataTable 表类型
-     * @return
-     */
-    private DataParser createParser(DataTable dataTable) {
-        if (dataTable.getTableType() == TableType.FILE) {
-            Object source = dataTable.getSource();
-            String extension = FileHelper.getExtension(Objects.toString(source));
-            return PARSER_CACHE.get(extension);
-        }
-        return PARSER_CACHE.get(dataTable.getTableType().name().toLowerCase());
-    }
-
-    @Override
-    public Connection getConnection() throws SQLException {
-        String url = getUrl();
-        return DriverManager.getConnection(CALCITE_URL, info);
-    }
-
-    @Override
-    public String schema() {
-        return JsonHelper.toFormatJson(calciteInfo);
-    }
-
-    @Override
-    public String getUrl() {
-        List<Map<String, Object>> schemas = schemaDataTable.asMap().entrySet().parallelStream().map(entry -> {
-            Collection<DataTable> entryValue = entry.getValue();
-            Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
-            Schema schema = new Schema();
-            schema.setName(entry.getKey());
-            //只判断第一个类型
-            DataTable dataTable = FinderHelper.firstElement(entryValue);
-            schema.setFactory(FACTORY_CACHE.get(dataTable.getTableType()));
-            OperateHashMap operateMap = OperateHashMap.create("id", entryValue.stream().map(dataTable1 -> dataTable1.getId()).collect(Collectors.toList()));
-            //创建参数
-            this.createOperate(schema, operateMap, dataTable);
-            schema.setOperand(operateMap);
-            result.putAll(BeanCopy.of(schema).asMap());
-            if(null != dataTable.getOperate2()) {
-                result.putAll(dataTable.getOperate2());
-            }
-            return result;
-        }).collect(Collectors.toList());
-
-        this.calciteInfo = new CalciteInfo();
-        calciteInfo.setSchemas(schemas);
-
-        this.info = new Properties();
-        info.put("model", "inline:" + JsonHelper.toFormatJson(calciteInfo));
-        return CALCITE_URL + "model=inline:" + JsonHelper.toJson(calciteInfo);
-    }
-
-    /**
-     * 补充数据源参数
-     *
-     * @param schema
-     * @param operateMap 参数集合
-     * @param dataTable  表
-     * @return 集合
-     */
-    private void createOperate(Schema schema, OperateHashMap operateMap, DataTable dataTable) {
-        OperateHashMap operate = dataTable.getOperate();
-        if (dataTable.getTableType() == TableType.DATA_SOURCE) {
-            if (null != dataTable.getOperate()) {
-                operateMap.putAll(dataTable.getOperate());
-            }
-            Object source = dataTable.getSource();
-            if (null != source && source instanceof DataSource) {
-                DataDataSource dataDataSource = new DataDataSource((DataSource) source);
-                operateMap.put("dataSource", dataDataSource.getDataSourceClass());
-            }
-        }
-        operateMap.putAll(operate);
     }
 
     /**
@@ -250,6 +148,105 @@ public class StandardDataFactory implements DataFactory {
         PARSER_CACHE.put(extension, dataFileParser);
     }
 
+    @Override
+    public void addSchema(String schema, DataTable dataTable) {
+        schemaDataTable.put(schema, repairDataTable(dataTable));
+    }
+
+    /**
+     * 补充参数
+     *
+     * @param dataTable 数据表
+     * @return 数据表
+     */
+    private DataTable repairDataTable(DataTable dataTable) {
+        dataTable.setId(IdHelper.createUuid());
+        if (Strings.isNullOrEmpty(dataTable.getParser())) {
+            DataParser parser = createParser(dataTable);
+            dataTable.setParser(null == parser ? null : parser.getClass().getName());
+        }
+        ID_DATA_TABLE.put(dataTable.getId(), dataTable);
+        return dataTable;
+    }
+
+    /**
+     * 创建解析器
+     *
+     * @param dataTable 表类型
+     * @return
+     */
+    private DataParser createParser(DataTable dataTable) {
+        if (dataTable.getTableType() == TableType.FILE) {
+            Object source = dataTable.getSource();
+            String extension = FileHelper.getExtension(Objects.toString(source));
+            return PARSER_CACHE.get(extension);
+        }
+        return PARSER_CACHE.get(dataTable.getTableType().name().toLowerCase());
+    }
+
+    @Override
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(CALCITE_URL, info);
+    }
+
+    @Override
+    public String schema() {
+        return JsonHelper.toFormatJson(calciteInfo);
+    }
+
+    @Override
+    public String getUrl() {
+        List<Map<String, Object>> schemas = schemaDataTable.asMap().entrySet().parallelStream().map(entry -> {
+            Collection<DataTable> entryValue = entry.getValue();
+            Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
+            Schema schema = new Schema();
+            schema.setName(entry.getKey());
+            //只判断第一个类型
+            DataTable dataTable = FinderHelper.firstElement(entryValue);
+            schema.setFactory(FACTORY_CACHE.get(dataTable.getTableType()));
+            OperateHashMap operateMap = OperateHashMap.create("id", entryValue.stream().map(DataTable::getId).collect(Collectors.toList()));
+            //创建参数
+            this.createOperate(schema, operateMap, dataTable);
+            schema.setOperand(operateMap);
+            result.putAll(BeanCopy.of(schema).asMap());
+            if (null != dataTable.getOperate2()) {
+                result.putAll(dataTable.getOperate2());
+            }
+            return result;
+        }).collect(Collectors.toList());
+
+        this.calciteInfo = new CalciteInfo();
+        calciteInfo.setSchemas(schemas);
+
+        this.info = new Properties();
+        info.put("model", "inline:" + JsonHelper.toFormatJson(calciteInfo));
+        return CALCITE_URL + "model=inline:" + JsonHelper.toJson(calciteInfo);
+    }
+
+    /**
+     * 补充数据源参数
+     *
+     * @param schema
+     * @param operateMap 参数集合
+     * @param dataTable  表
+     * @return 集合
+     */
+    private void createOperate(Schema schema, OperateHashMap operateMap, DataTable dataTable) {
+        log.info("{}", null == schema ? null : schema.name);
+        OperateHashMap operate = dataTable.getOperate();
+        if (dataTable.getTableType() == TableType.DATA_SOURCE) {
+            if (null != dataTable.getOperate()) {
+                operateMap.putAll(dataTable.getOperate());
+            }
+            Object source = dataTable.getSource();
+            if (source instanceof DataSource) {
+                DataDataSource dataDataSource = new DataDataSource((DataSource) source);
+                operateMap.put("dataSource", dataDataSource.getDataSourceClass());
+            }
+        }
+        operateMap.putAll(operate);
+    }
+
     /**
      * Calcite信息
      */
@@ -275,7 +272,7 @@ public class StandardDataFactory implements DataFactory {
      */
     @Getter
     @Setter
-    class Schema  {
+    class Schema {
         /**
          * 数据库名称
          */

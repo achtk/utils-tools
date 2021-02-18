@@ -2,11 +2,11 @@ package com.chua.utils.tools.classes.entity;
 
 import lombok.Data;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 /**
  * 方法描述
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/11/18

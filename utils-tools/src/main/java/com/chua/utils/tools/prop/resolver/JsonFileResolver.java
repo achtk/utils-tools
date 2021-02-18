@@ -12,6 +12,7 @@ import java.util.Properties;
 
 /**
  * json解析工具
+ *
  * @author CH
  */
 public class JsonFileResolver implements IFileResolver {
@@ -25,10 +26,10 @@ public class JsonFileResolver implements IFileResolver {
 
     @Override
     public FileMapper analysis(FileConverter fileConverter) {
-        if(null == properties) {
+        if (null == properties) {
             return null;
         }
-        if(null == fileConverter) {
+        if (null == fileConverter) {
             fileConverter = new NoneFileConverter();
         }
         HashMultimap<Object, Object> hashMultimap = HashMultimap.create();
@@ -43,6 +44,6 @@ public class JsonFileResolver implements IFileResolver {
 
     @Override
     public String[] suffixes() {
-        return new String[] {"json"};
+        return new String[]{"json"};
     }
 }

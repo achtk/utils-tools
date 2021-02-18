@@ -644,22 +644,6 @@ public class ArraysHelper {
     }
 
     /**
-     * 是否包含重复值
-     *
-     * @param array 数组
-     * @return
-     */
-    public <T> boolean containsDuplicate(final T[] array) {
-        Set<T> set = new HashSet<>();
-        for (T i : array) {
-            if (!set.add(i)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * 遍历
      *
      * @param <T>
@@ -678,5 +662,21 @@ public class ArraysHelper {
                 consumer.accept(t);
             }
         }
+    }
+
+    /**
+     * 是否包含重复值
+     *
+     * @param array 数组
+     * @return
+     */
+    public <T> boolean containsDuplicate(final T[] array) {
+        Set<T> set = new HashSet<>();
+        for (T i : array) {
+            if (!set.add(i)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

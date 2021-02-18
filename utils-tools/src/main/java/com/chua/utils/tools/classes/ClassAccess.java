@@ -16,7 +16,7 @@ import java.util.WeakHashMap;
  */
 public interface ClassAccess<T> extends FieldAccess<T>, PropertyAccess<T>, MethodAccess<T> {
 
-    static final Map<Class, ClassAccess> CLASS_ACCESS_MAP = new WeakHashMap<>();
+    Map<Class, ClassAccess> CLASS_ACCESS_MAP = new WeakHashMap<>();
 
     /**
      * 实例化

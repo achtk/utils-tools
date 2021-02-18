@@ -1,13 +1,11 @@
 package com.chua.utils.tools.strategy;
 
 import com.chua.utils.tools.common.ThreadHelper;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class CycleStrategy<T> extends AsyncStrategy<T> {
 
     private int cycle = 10;
-    private ScheduledExecutorService scheduledExecutorService = ThreadHelper.newScheduledThreadPoolExecutor(1);
+    private final ScheduledExecutorService scheduledExecutorService = ThreadHelper.newScheduledThreadPoolExecutor(1);
 
 
     public CycleStrategy(int cycle) {
@@ -48,7 +46,7 @@ public class CycleStrategy<T> extends AsyncStrategy<T> {
     @Override
     public void close() throws Exception {
         super.close();
-        if(null != scheduledExecutorService) {
+        if (null != scheduledExecutorService) {
             scheduledExecutorService.shutdownNow();
             scheduledExecutorService.shutdown();
         }

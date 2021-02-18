@@ -1,11 +1,15 @@
 package com.chua.utils.tools.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 /**
  * 返回对象
+ *
  * @author CH
  */
 @Data

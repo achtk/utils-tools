@@ -31,7 +31,7 @@ public interface Table {
          * @param name 表名
          * @return this
          */
-        Builder table(String name);
+        Builder<T, D> table(String name);
 
         /**
          * 表名
@@ -39,7 +39,7 @@ public interface Table {
          * @param source 表名
          * @return this
          */
-        Builder source(D source);
+        Builder<T, D> source(D source);
 
         /**
          * 字段
@@ -48,7 +48,7 @@ public interface Table {
          * @param columnType 类型
          * @return this
          */
-        Builder column(String columnName, String columnType);
+        Builder<T, D> column(String columnName, String columnType);
 
         /**
          * 字段
@@ -57,7 +57,7 @@ public interface Table {
          * @param columnType 类型
          * @return this
          */
-        default Builder columns(String[] columnName, String columnType) {
+        default Builder<T, D> columns(String[] columnName, String columnType) {
             for (String name : columnName) {
                 column(name, columnType);
             }

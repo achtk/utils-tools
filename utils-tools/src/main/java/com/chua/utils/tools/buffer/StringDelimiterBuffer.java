@@ -1,7 +1,6 @@
 package com.chua.utils.tools.buffer;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * 分隔符追加
@@ -11,12 +10,12 @@ import java.util.Arrays;
  * @since 2020/10/24 21:47
  */
 public class StringDelimiterBuffer implements Appendable {
-    private String delimiter;
-    private StringBuffer stringBuffer;
+    private final String delimiter;
+    private final StringBuffer stringBuffer;
 
     public StringDelimiterBuffer(String delimiter) {
         this.delimiter = delimiter == null ? "" : delimiter;
-        this.stringBuffer = new StringBuffer(delimiter);
+        this.stringBuffer = new StringBuffer(this.delimiter);
     }
 
     @Override
@@ -38,7 +37,7 @@ public class StringDelimiterBuffer implements Appendable {
     }
 
     public synchronized Appendable append(Object obj) {
-        stringBuffer.append(String.valueOf(obj));
+        stringBuffer.append(obj);
         return this;
     }
 

@@ -3,7 +3,6 @@ package com.chua.utils.tools.common.compress;
 import com.chua.utils.tools.common.ByteHelper;
 import com.chua.utils.tools.common.FileHelper;
 import com.chua.utils.tools.common.IoHelper;
-import com.chua.utils.tools.common.StringHelper;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -264,7 +263,7 @@ public class ZipHelper {
      * @throws ZipException
      */
     private static Enumeration<?> getEntriesEnumeration(File zipFile) throws ZipException, IOException {
-        try (ZipFile zf = new ZipFile(zipFile);) {
+        try (ZipFile zf = new ZipFile(zipFile)) {
             return zf.entries();
         }
     }

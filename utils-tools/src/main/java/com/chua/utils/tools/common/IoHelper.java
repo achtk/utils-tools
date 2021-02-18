@@ -554,6 +554,10 @@ public class IoHelper {
      * @throws IOException IOException
      */
     public static String toString(final URL url, final Charset encoding) throws IOException {
+        if (null == url) {
+            return null;
+        }
+
         try (InputStream inputStream = url.openStream()) {
             return toString(inputStream, encoding);
         }

@@ -5,11 +5,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * 返回true Predicate
+ *
  * @author CH
  */
-public class TruePredicate implements Predicate {
+public class TruePredicate implements Predicate<Object> {
 
-    public static final Predicate INSTANCE = new TruePredicate();
+    public static final Predicate<Object> INSTANCE = new TruePredicate();
 
     @Override
     public boolean apply(@Nullable Object input) {

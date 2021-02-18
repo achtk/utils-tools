@@ -2,18 +2,16 @@ package com.chua.utils.tools.manager;
 
 import com.chua.utils.tools.manager.eventbus.EventBus;
 
-import java.util.List;
-
 /**
  * 消息总线
  *
  * @author CH
  * @version 1.0.0
- * @since 2020/11/9
  * @see com.chua.utils.tools.manager.producer.StandardEventBusContextManager
  * @see com.chua.utils.tools.manager.producer.StandardContextManager
+ * @since 2020/11/9
  */
-public interface EventBusContextManager extends AutoCloseable{
+public interface EventBusContextManager extends AutoCloseable {
 
     /**
      * 获取所有消息总线

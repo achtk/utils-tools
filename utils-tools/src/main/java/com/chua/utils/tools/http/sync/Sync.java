@@ -40,7 +40,7 @@ import static com.chua.utils.tools.constant.HttpConstant.*;
 @AllArgsConstructor
 public class Sync {
 
-    private RequestConfig requestConfig;
+    private final RequestConfig requestConfig;
 
     /**
      * get
@@ -169,9 +169,8 @@ public class Sync {
             Map<String, Object> body = requestConfig.getBody();
             if (BooleanHelper.hasLength(body)) {
                 connection.setDoOutput(true);
-                try {
-                    OutputStream outputStream = connection.getOutputStream();
-                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
+                try (OutputStream outputStream = connection.getOutputStream();
+                     OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream)) {
                     outputStreamWriter.write(HttpClientHelper.createWithParameters(body));
                 } catch (IOException e) {
                     e.printStackTrace();

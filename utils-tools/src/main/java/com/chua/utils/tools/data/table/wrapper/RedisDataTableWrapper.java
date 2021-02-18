@@ -18,16 +18,14 @@ import java.util.List;
  */
 public class RedisDataTableWrapper {
 
-    private final TableType tableType = TableType.REDIS;
     private static final String FACTORY = "org.apache.calcite.adapter.redis.RedisTableFactory";
-
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 6379;
     private static final int DATABASE = 0;
     private static final String PASSWORD = "";
-
     private static final String RAW = "raw";
     private static final String CSV = "csv";
+    private final TableType tableType = TableType.REDIS;
 
     /**
      * 构建数据
@@ -62,10 +60,10 @@ public class RedisDataTableWrapper {
     /**
      * 构建数据
      *
-     * @param host         主机
-     * @param port         端口
+     * @param host     主机
+     * @param port     端口
      * @param database 数据库
-     * @param password     密码
+     * @param password 密码
      * @return DataTableWrapperBuilder
      */
     public DataTableWrapperTableBuilder source(String host, int port, int database, String password) {
@@ -88,11 +86,11 @@ public class RedisDataTableWrapper {
     public
     class DataTableWrapperTableBuilder {
 
+        private final List<RedisTable> tables = new ArrayList<>();
         /**
          * 数据表
          */
-        private DataTable dataTable;
-        private final List<RedisTable> tables = new ArrayList<>();
+        private final DataTable dataTable;
 
         /**
          * 创建表
@@ -156,8 +154,8 @@ public class RedisDataTableWrapper {
     @AllArgsConstructor
     public class DataTableWrapperTableColumnBuilder {
 
-        private RedisTable redisTable;
-        private DataTableWrapperTableBuilder dataTableWrapperTableBuilder;
+        private final RedisTable redisTable;
+        private final DataTableWrapperTableBuilder dataTableWrapperTableBuilder;
 
         /**
          * 创建字段
@@ -185,6 +183,7 @@ public class RedisDataTableWrapper {
         public DataTableWrapperTableColumnBuilder createColumn(String name) {
             return createColumn(name, "varchar", 1);
         }
+
         /**
          * 创建字段
          *

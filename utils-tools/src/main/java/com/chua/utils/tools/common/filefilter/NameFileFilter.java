@@ -7,10 +7,11 @@ import java.io.FileFilter;
 
 /**
  * 后缀
+ *
  * @author CH
  */
 public class NameFileFilter implements FileFilter {
-    private String[] names;
+    private final String[] names;
 
     private IOCase caseSensitivity = IOCase.SENSITIVE;
 
@@ -19,14 +20,14 @@ public class NameFileFilter implements FileFilter {
     }
 
     public NameFileFilter(String name) {
-        this.names = new String[] {name};
+        this.names = new String[]{name};
     }
 
     public NameFileFilter(final String name, final IOCase caseSensitivity) {
         if (name == null) {
             throw new IllegalArgumentException("The prefix must not be null");
         }
-        this.names = new String[] {name};
+        this.names = new String[]{name};
         this.caseSensitivity = caseSensitivity == null ? IOCase.SENSITIVE : caseSensitivity;
     }
 

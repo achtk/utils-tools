@@ -14,7 +14,11 @@ import java.util.*;
 public class SkipPatterns {
 
     public static final Set<String> JDK_LIB;
+    public static final Set<String> DEFAULT;
+    public static final Set<String> DEFAULT_INCLUDE_WORK_SPACES;
     private static final Set<String> SKIP_PATTERNS;
+    private static final Set<String> ADDITIONAL;
+    private static final Set<String> CGY;
 
     static {
         // Same as Tomcat
@@ -62,8 +66,6 @@ public class SkipPatterns {
         patterns.add("accessors*.jar");
         SKIP_PATTERNS = Collections.unmodifiableSet(patterns);
     }
-
-    private static final Set<String> ADDITIONAL;
 
     static {
         // Additional typical for Spring Boot applications
@@ -116,16 +118,11 @@ public class SkipPatterns {
         ADDITIONAL = Collections.unmodifiableSet(patterns);
     }
 
-    private static final Set<String> CGY;
-
     static {
         Set<String> patterns = new LinkedHashSet<>();
         patterns.add("utils-*.jar");
         CGY = Collections.unmodifiableSet(patterns);
     }
-
-    public static final Set<String> DEFAULT;
-    public static final Set<String> DEFAULT_INCLUDE_WORK_SPACES;
 
     static {
         Set<String> patterns = new LinkedHashSet<>();
@@ -149,6 +146,7 @@ public class SkipPatterns {
         JDK_LIB.add("idea_rt.jar");
         JDK_LIB.add("debugger-*.jar");
     }
+
     private SkipPatterns() {
     }
 }

@@ -1,12 +1,13 @@
 package com.chua.utils.tools.cache;
 
 
-import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.collects.collections.CollectionHelper;
+import com.chua.utils.tools.common.BooleanHelper;
 import com.chua.utils.tools.function.Filter;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 缓存接口

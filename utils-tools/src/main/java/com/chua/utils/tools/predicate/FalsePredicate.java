@@ -5,6 +5,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * 返回false Predicate
+ *
  * @author CH
  */
 public class FalsePredicate implements Predicate {

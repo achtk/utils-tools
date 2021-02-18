@@ -195,14 +195,14 @@ public class ClassNode extends ClassVisitor {
         int var3;
         AnnotationNode var5;
         for (var3 = 0; var3 < var4; ++var3) {
-            var5 = (AnnotationNode) this.visibleAnnotations.get(var3);
+            var5 = this.visibleAnnotations.get(var3);
             var5.accept(classVisitor.visitAnnotation(var5.desc, true));
         }
 
         var4 = this.invisibleAnnotations == null ? 0 : this.invisibleAnnotations.size();
 
         for (var3 = 0; var3 < var4; ++var3) {
-            var5 = (AnnotationNode) this.invisibleAnnotations.get(var3);
+            var5 = this.invisibleAnnotations.get(var3);
             var5.accept(classVisitor.visitAnnotation(var5.desc, false));
         }
 
@@ -210,33 +210,33 @@ public class ClassNode extends ClassVisitor {
 
         TypeAnnotationNode var6;
         for (var3 = 0; var3 < var4; ++var3) {
-            var6 = (TypeAnnotationNode) this.visibleTypeAnnotations.get(var3);
+            var6 = this.visibleTypeAnnotations.get(var3);
             var6.accept(classVisitor.visitTypeAnnotation(var6.typeRef, var6.typePath, var6.desc, true));
         }
 
         var4 = this.invisibleTypeAnnotations == null ? 0 : this.invisibleTypeAnnotations.size();
 
         for (var3 = 0; var3 < var4; ++var3) {
-            var6 = (TypeAnnotationNode) this.invisibleTypeAnnotations.get(var3);
+            var6 = this.invisibleTypeAnnotations.get(var3);
             var6.accept(classVisitor.visitTypeAnnotation(var6.typeRef, var6.typePath, var6.desc, false));
         }
 
         var4 = this.attrs == null ? 0 : this.attrs.size();
 
         for (var3 = 0; var3 < var4; ++var3) {
-            classVisitor.visitAttribute((Attribute) this.attrs.get(var3));
+            classVisitor.visitAttribute(this.attrs.get(var3));
         }
 
         for (var3 = 0; var3 < this.innerClasses.size(); ++var3) {
-            ((InnerClassNode) this.innerClasses.get(var3)).accept(classVisitor);
+            this.innerClasses.get(var3).accept(classVisitor);
         }
 
         for (var3 = 0; var3 < this.fields.size(); ++var3) {
-            ((FieldNode) this.fields.get(var3)).accept(classVisitor);
+            this.fields.get(var3).accept(classVisitor);
         }
 
         for (var3 = 0; var3 < this.methods.size(); ++var3) {
-            ((MethodNode) this.methods.get(var3)).accept(classVisitor);
+            this.methods.get(var3).accept(classVisitor);
         }
 
         classVisitor.visitEnd();

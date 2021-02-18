@@ -31,15 +31,14 @@ public class Resource implements Serializable {
      * 资源URL
      */
     private URL url;
-
-    public Resource(URL url) {
-        setUrl(url);
-    }
-
     /**
      * 类信息
      */
     private ClassDescription classDescription = ClassDescription.INSTANCE;
+
+    public Resource(URL url) {
+        setUrl(url);
+    }
 
     /**
      * @param url
@@ -55,10 +54,10 @@ public class Resource implements Serializable {
     }
 
     public ClassDescription makeClassDescription() {
-        if(url.toExternalForm().indexOf(SYMBOL_DOLLAR) != -1) {
+        if (url.toExternalForm().indexOf(SYMBOL_DOLLAR) != -1) {
             return null;
         }
-        if(null == classDescription || Strings.isNullOrEmpty(classDescription.getName())) {
+        if (null == classDescription || Strings.isNullOrEmpty(classDescription.getName())) {
             this.classDescription = createDescription();
         }
         return classDescription;

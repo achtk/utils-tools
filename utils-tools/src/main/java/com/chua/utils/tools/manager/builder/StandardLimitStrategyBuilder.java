@@ -16,12 +16,7 @@ public class StandardLimitStrategyBuilder<T> implements LimitStrategyBuilder<T>,
     @Override
     public LimitCreateStrategyBuilder<T> limit(double token) {
         this.token = token;
-        return new LimitCreateStrategyBuilder<T>() {
-            @Override
-            public T create(T entity) {
-                return StandardLimitStrategyBuilder.this.create(entity);
-            }
-        };
+        return entity -> StandardLimitStrategyBuilder.this.create(entity);
     }
 
     @Override

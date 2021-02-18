@@ -7,10 +7,11 @@ import java.io.FileFilter;
 
 /**
  * 后缀
+ *
  * @author CH
  */
 public class SuffixFileFilter implements FileFilter {
-    private String[] suffixes;
+    private final String[] suffixes;
 
     private IOCase caseSensitivity = IOCase.SENSITIVE;
 
@@ -19,14 +20,14 @@ public class SuffixFileFilter implements FileFilter {
     }
 
     public SuffixFileFilter(String suffix) {
-        this.suffixes = new String[] {suffix};
+        this.suffixes = new String[]{suffix};
     }
 
     public SuffixFileFilter(final String suffix, final IOCase caseSensitivity) {
         if (suffix == null) {
             throw new IllegalArgumentException("The prefix must not be null");
         }
-        this.suffixes = new String[] {suffix};
+        this.suffixes = new String[]{suffix};
         this.caseSensitivity = caseSensitivity == null ? IOCase.SENSITIVE : caseSensitivity;
     }
 

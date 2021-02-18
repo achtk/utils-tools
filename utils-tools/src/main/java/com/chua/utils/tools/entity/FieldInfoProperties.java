@@ -9,6 +9,7 @@ import java.util.Set;
 
 /**
  * 属性信息
+ *
  * @author CH
  * @date 2020-09-26
  */

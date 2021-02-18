@@ -4,10 +4,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
-
 /**
  * 构造信息
+ *
  * @author CH
  * @date 2020-09-26
  */

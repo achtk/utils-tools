@@ -9,7 +9,6 @@ import com.chua.utils.tools.spi.entity.SpiConfig;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ConfigurationBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;

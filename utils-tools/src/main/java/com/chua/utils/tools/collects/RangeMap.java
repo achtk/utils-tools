@@ -16,6 +16,7 @@ public interface RangeMap<K extends Comparable, V> extends com.google.common.col
      * @param value value
      */
     void putCloseOpen(K left, K right, V value);
+
     /**
      * put value
      *
@@ -24,6 +25,7 @@ public interface RangeMap<K extends Comparable, V> extends com.google.common.col
      * @param value value
      */
     void putClose(K left, K right, V value);
+
     /**
      * put value
      *
@@ -32,6 +34,7 @@ public interface RangeMap<K extends Comparable, V> extends com.google.common.col
      * @param value value
      */
     void putOpen(K left, K right, V value);
+
     /**
      * put value
      *

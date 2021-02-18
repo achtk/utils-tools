@@ -1,6 +1,5 @@
 package com.chua.utils.tools.common;
 
-import com.chua.utils.tools.common.loader.PropertiesLoader;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -9,7 +8,6 @@ import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,8 +22,8 @@ import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPAC
 @Slf4j
 public class PropertiesHelper {
     private static final Properties EMPTY = new Properties();
-    private static String DOT = ".";
     private static final String XML_FILE_EXTENSION = ".xml";
+    private static final String DOT = ".";
 
     /**
      * 获取int数据

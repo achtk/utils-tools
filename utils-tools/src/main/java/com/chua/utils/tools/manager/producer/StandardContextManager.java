@@ -26,12 +26,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Data
 public class StandardContextManager implements ContextManager {
 
+    private static final CopyOnWriteArraySet<?> COPY_ON_WRITE_ARRAY_SET = new CopyOnWriteArraySet<>();
+    private static final HashMultimap<Class<?>, Object> MULTIMAP = HashMultimap.create();
     private EventBusContextManager eventBusContextManager = new StandardEventBusContextManager();
     private StrategyContextManager strategyContextManager = new StandardStrategyContextManager();
     private ProfileAdaptorManager profileAdaptorManager = new StandardProfileAdaptorManager(null);
-
-    private static final CopyOnWriteArraySet<?> COPY_ON_WRITE_ARRAY_SET = new CopyOnWriteArraySet<>();
-    private static final HashMultimap<Class<?>, Object> MULTIMAP = HashMultimap.create();
 
     @Override
     public EventBusContextManager createEventBusContextManager() {
@@ -54,24 +53,24 @@ public class StandardContextManager implements ContextManager {
     }
 
     @Override
-    public <Manager> List<Manager> createContextManager(Class<Manager> managerClass) {
+    public <M> List<M> createContextManager(Class<M> managerClass) {
         Set<Object> objects = MULTIMAP.get(managerClass);
-        List<Manager> result = new ArrayList<>();
+        List<M> result = new ArrayList<>();
         CollectionHelper.doWithMatcher(objects, item -> {
             if (item.getClass().isAssignableFrom(managerClass)) {
-                result.add((Manager) item);
+                result.add((M) item);
             }
         });
         return result;
     }
 
     @Override
-    public <Manager> Manager add(Manager manager) {
-        if (null == manager) {
+    public <M> M add(M m) {
+        if (null == m) {
             return null;
         }
-        ClassHelper.doWithInterface(manager.getClass(), item -> MULTIMAP.put(item, manager));
-        return manager;
+        ClassHelper.doWithInterface(m.getClass(), item -> MULTIMAP.put(item, m));
+        return m;
     }
 
     @Override

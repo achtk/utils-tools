@@ -13,6 +13,7 @@ import java.util.Properties;
 
 /**
  * 策略对象
+ *
  * @author CH
  */
 @Getter

@@ -1,6 +1,5 @@
 package com.chua.utils.tools.resource.parser.compress.dir;
 
-import com.chua.utils.tools.common.ObjectHelper;
 import com.chua.utils.tools.function.Matcher;
 import com.chua.utils.tools.resource.parser.ParserDir;
 import com.chua.utils.tools.resource.parser.ParserFile;
@@ -41,6 +40,8 @@ public class JarInputParserDir implements ParserDir {
     @Override
     public Iterable<ParserFile> getFiles() {
         return () -> new Iterator<ParserFile>() {
+            ParserFile entry = null;
+
             {
                 try {
                     jarInputStream = new JarInputStream(url.openConnection().getInputStream());
@@ -48,8 +49,6 @@ public class JarInputParserDir implements ParserDir {
                     throw new ReflectionsException("Could not open url connection", e);
                 }
             }
-
-            ParserFile entry = null;
 
             @Override
             public boolean hasNext() {

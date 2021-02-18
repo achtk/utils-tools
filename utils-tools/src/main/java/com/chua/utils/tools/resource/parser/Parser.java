@@ -1,12 +1,8 @@
 package com.chua.utils.tools.resource.parser;
 
-import com.chua.utils.tools.common.IoHelper;
 import com.chua.utils.tools.function.Matcher;
 
-import java.io.IOException;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.file.Path;
 
 /**
  * 解析器

@@ -7,7 +7,6 @@ import com.chua.utils.tools.resource.parser.compress.file.SystemFileParserFile;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.Iterator;
 
 /**
  * 系统文件
@@ -19,7 +18,7 @@ import java.util.Iterator;
 public class SystemFileParserDir implements ParserDir {
 
     private final File file;
-    private Matcher<ParserFile> matcher;
+    private final Matcher<ParserFile> matcher;
 
     public SystemFileParserDir(File file, Matcher<ParserFile> matcher) {
         if (file != null) {

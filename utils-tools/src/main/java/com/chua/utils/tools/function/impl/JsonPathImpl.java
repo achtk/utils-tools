@@ -24,7 +24,7 @@ import static com.chua.utils.tools.constant.NumberConstant.DEFAULT_INITIAL_CAPAC
 public class JsonPathImpl implements JsonPath {
 
     private final Map<String, Object> profile;
-    private String json;
+    private final String json;
 
     public JsonPathImpl(String json) {
         this.json = json;
@@ -34,9 +34,9 @@ public class JsonPathImpl implements JsonPath {
     @Override
     public List<Object> find(String path) {
         List<Object> result = new ArrayList<>();
-        for (String key : profile.keySet()) {
-            if (StringUtils.wildcardMatch(key, path)) {
-                result.add(profile.get(key));
+        for (Map.Entry<String, Object> entry : profile.entrySet()) {
+            if (StringUtils.wildcardMatch(entry.getKey(), path)) {
+                result.add(entry.getValue());
             }
         }
         return result;
@@ -46,12 +46,12 @@ public class JsonPathImpl implements JsonPath {
     @Override
     public Map<String, Object> findMap(String path) {
         Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
-        for (String key : profile.keySet()) {
-            if (StringUtils.wildcardMatch(key, path)) {
-                result.put(key, profile.get(key));
+        for (Map.Entry<String, Object> entry : profile.entrySet()) {
+            if (StringUtils.wildcardMatch(entry.getKey(), path)) {
+                result.put(entry.getKey(), entry.getValue());
             }
         }
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             return result;
         }
         return MapUtils.levelsMapOpen(result);
@@ -61,12 +61,12 @@ public class JsonPathImpl implements JsonPath {
     @Override
     public FlatMap flatMap(String path) {
         Map<String, Object> result = new HashMap<>(DEFAULT_INITIAL_CAPACITY);
-        for (String key : profile.keySet()) {
-            if (StringUtils.wildcardMatch(key, path)) {
-                result.put(key, profile.get(key));
+        for (Map.Entry<String, Object> entry : profile.entrySet()) {
+            if (StringUtils.wildcardMatch(entry.getKey(), path)) {
+                result.put(entry.getKey(), entry.getValue());
             }
         }
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             return new FlatHashMap();
         }
         return new FlatHashMap(MapUtils.levelsMapOpen(result));

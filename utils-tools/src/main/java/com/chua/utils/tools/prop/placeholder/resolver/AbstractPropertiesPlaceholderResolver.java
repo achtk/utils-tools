@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 /**
  * 抽象占位符
+ *
  * @author CH
  */
 public abstract class AbstractPropertiesPlaceholderResolver implements PropertiesPlaceholderResolver {

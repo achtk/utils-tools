@@ -7,12 +7,15 @@ import java.util.List;
 
 /**
  * and
+ *
  * @author CH
  */
 public class AndFileFilter implements FileFilter {
 
-    /** The list of file filters. */
-    private List<FileFilter> fileFilters;
+    /**
+     * The list of file filters.
+     */
+    private final List<FileFilter> fileFilters;
 
     public AndFileFilter() {
         this.fileFilters = new ArrayList<>();

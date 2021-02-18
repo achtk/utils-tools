@@ -10,6 +10,7 @@ package com.chua.utils.tools.strategy;
 public interface Strategy<T> {
     /**
      * 创建策略
+     *
      * @param source 对象
      * @return T
      */

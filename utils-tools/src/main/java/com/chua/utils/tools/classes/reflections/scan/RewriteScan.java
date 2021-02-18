@@ -6,7 +6,10 @@ import com.chua.utils.tools.classes.reflections.configuration.RewriteConfigurati
 import com.chua.utils.tools.classes.reflections.scanner.*;
 import com.google.common.collect.HashMultimap;
 import lombok.Getter;
-import org.reflections.*;
+import org.reflections.ReflectionUtils;
+import org.reflections.Reflections;
+import org.reflections.ReflectionsException;
+import org.reflections.Store;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.Utils;
 import org.reflections.vfs.Vfs;
@@ -39,10 +42,10 @@ import static org.reflections.util.Utils.*;
  */
 public class RewriteScan extends Reflections {
 
-    protected transient RewriteConfiguration rewriteConfiguration;
     protected static final RewriteStore STORE = new RewriteStore();
+    protected transient RewriteConfiguration rewriteConfiguration;
     @Getter
-    private Map<String, Throwable> throwableMap = new HashMap<>();
+    private final Map<String, Throwable> throwableMap = new HashMap<>();
 
     @Override
     protected void scan() {

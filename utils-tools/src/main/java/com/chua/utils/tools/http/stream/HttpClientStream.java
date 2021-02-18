@@ -21,7 +21,7 @@ import java.util.Map;
 public class HttpClientStream implements ClientStream {
 
     @Getter
-    private RequestConfig requestConfig = new RequestConfig();
+    private final RequestConfig requestConfig = new RequestConfig();
 
     public HttpClientStream(String method) {
         this.method(method);

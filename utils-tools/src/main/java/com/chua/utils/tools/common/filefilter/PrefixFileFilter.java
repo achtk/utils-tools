@@ -12,7 +12,7 @@ import java.io.FileFilter;
  */
 public class PrefixFileFilter implements FileFilter {
 
-    private String[] prefixes;
+    private final String[] prefixes;
 
     private IOCase caseSensitivity = IOCase.SENSITIVE;
 

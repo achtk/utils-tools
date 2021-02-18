@@ -16,6 +16,18 @@ import lombok.Setter;
 @Setter
 public class ValueScript {
     /**
+     * 主体数据
+     */
+    public static final String VALUE = "value";
+    /**
+     * profile
+     */
+    public static final String PROFILE = "profile";
+    /**
+     * 工厂数据
+     */
+    public static final String FACTORY = "factory";
+    /**
      * 对象
      */
     private Object bean;
@@ -36,16 +48,4 @@ public class ValueScript {
      * @see BinderScript#factory()
      */
     private OperateHashMap operate;
-    /**
-     * 主体数据
-     */
-    public static final String VALUE = "value";
-    /**
-     * profile
-     */
-    public static final String PROFILE = "profile";
-    /**
-     * 工厂数据
-     */
-    public static final String FACTORY = "factory";
 }

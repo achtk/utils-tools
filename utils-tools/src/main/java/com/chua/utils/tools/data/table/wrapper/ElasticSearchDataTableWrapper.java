@@ -13,12 +13,11 @@ import com.chua.utils.tools.data.table.type.TableType;
  */
 public class ElasticSearchDataTableWrapper {
 
-    private final TableType tableType = TableType.ELASTIC_SEARCH;
-
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 6379;
     private static final String INDEX = "default";
     private static final String PASSWORD = "";
+    private final TableType tableType = TableType.ELASTIC_SEARCH;
 
     /**
      * 构建数据

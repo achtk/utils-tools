@@ -47,5 +47,5 @@ public enum TableType {
     /**
      * dataSource
      */
-    DATA_SOURCE;
+    DATA_SOURCE
 }

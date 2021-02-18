@@ -14,6 +14,7 @@ import com.chua.utils.tools.data.table.type.TableType;
 public class DruidDataTableWrapper {
 
     private final TableType tableType = TableType.DRUID;
+
     /**
      * 构建数据
      *
@@ -22,15 +23,17 @@ public class DruidDataTableWrapper {
     public DataTableWrapperBuilder source() {
         return source("http://localhost");
     }
+
     /**
      * 构建数据
      *
-     * @param host            druid地址
+     * @param host druid地址
      * @return DataTableWrapperBuilder
      */
     public DataTableWrapperBuilder source(final String host) {
         return source(host + ":8082", host + ":8081");
     }
+
     /**
      * 构建数据
      *

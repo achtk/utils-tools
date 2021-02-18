@@ -18,7 +18,7 @@ public class ModifyDescription<T> {
      * 异常说明
      */
     @Getter
-    private List<Throwable> throwableList = new ArrayList<>();
+    private final List<Throwable> throwableList = new ArrayList<>();
     /**
      * 类
      */
@@ -27,6 +27,7 @@ public class ModifyDescription<T> {
 
     /**
      * 获取class
+     *
      * @return class
      */
     public Class<T> toClass() {

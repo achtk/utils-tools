@@ -12,7 +12,7 @@ import com.chua.utils.tools.common.ThreadHelper;
  */
 public class GuavaAsyncEventBus implements EventBus {
 
-    private com.google.common.eventbus.AsyncEventBus eventBus = new com.google.common.eventbus.AsyncEventBus(ThreadHelper.newSingleThreadExecutor());
+    private final com.google.common.eventbus.AsyncEventBus eventBus = new com.google.common.eventbus.AsyncEventBus(ThreadHelper.newSingleThreadExecutor());
 
     @Override
     public void register(Object object) {

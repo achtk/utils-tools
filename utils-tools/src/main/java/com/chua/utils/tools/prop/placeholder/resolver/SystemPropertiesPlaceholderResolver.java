@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 
 /**
  * 默认占位符
+ *
  * @author CH
  */
 public class SystemPropertiesPlaceholderResolver extends AbstractPropertiesPlaceholderResolver {
@@ -17,7 +18,7 @@ public class SystemPropertiesPlaceholderResolver extends AbstractPropertiesPlace
 
     @Override
     public boolean isMatcher(String value) {
-        if(null == value) {
+        if (null == value) {
             return false;
         }
         return getCompile().matcher(value).find();
@@ -33,11 +34,11 @@ public class SystemPropertiesPlaceholderResolver extends AbstractPropertiesPlace
         //分割数据
         String[] split = placeValue.split(valueSeparate());
         String placeholderValue = split[0], defaultValue = null;
-        if(split.length > 1) {
+        if (split.length > 1) {
             defaultValue = split[1];
         }
         String property = System.getProperty(placeholderValue);
-        if(null == property) {
+        if (null == property) {
             property = System.getenv(placeholderValue);
         }
         return new PlaceholderMapper(property, defaultValue, false);

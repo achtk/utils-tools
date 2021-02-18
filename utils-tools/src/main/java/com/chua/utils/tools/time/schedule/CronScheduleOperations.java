@@ -10,7 +10,7 @@ import com.chua.utils.tools.text.IdHelper;
  * @version 1.0.0
  * @since 2020/12/31
  */
-public interface CronScheduleOperations<Job> extends ScheduleOperations<Job>{
+public interface CronScheduleOperations<Job> extends ScheduleOperations<Job> {
     /**
      * 创建任务
      *

@@ -13,8 +13,8 @@ public class BinaryFormat {
     /**
      * 将十进制的数字转换为指定进制的字符串
      *
-     * @param value    十进制的数字
-     * @param base 指定的进制
+     * @param value 十进制的数字
+     * @param base  指定的进制
      * @return
      */
     public String fromDecimal(long value, int base) {

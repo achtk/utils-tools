@@ -13,6 +13,9 @@ import java.util.function.Supplier;
  */
 public class TimeoutStorage {
 
+    private TimeoutStorage() {
+    }
+
     /**
      * 运行任务
      *

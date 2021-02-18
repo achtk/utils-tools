@@ -133,9 +133,9 @@ public enum JavaType {
      */
     ANY("ANY", URL.class.getName());
 
-    private static JavaType DEFAULT = ANY;
-    private String jdbcType;
-    private String javaType;
+    private static final JavaType DEFAULT = ANY;
+    private final String jdbcType;
+    private final String javaType;
 
     /**
      * jdbcType -> javaType
@@ -166,7 +166,7 @@ public enum JavaType {
      * @return jdbcType
      */
     public static String toJdbcType(Object javaTypeStr) {
-        if(null == javaTypeStr) {
+        if (null == javaTypeStr) {
             return DEFAULT.getJdbcType();
         }
         return Arrays.stream(values()).filter(javaType1 -> javaType1.getJavaType().equals(ClassHelper.getClass(javaTypeStr))).findFirst().orElse(DEFAULT).getJdbcType();

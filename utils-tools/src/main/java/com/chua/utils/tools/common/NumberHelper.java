@@ -976,6 +976,31 @@ public class NumberHelper {
         return toInt(str, 0);
     }
 
+    /**
+     * <pre>
+     *   NumberHelper.toIntValue(null) = 0
+     *   NumberHelper.toIntValue(1L)  = 1
+     * </pre>
+     *
+     * @param longValue 整型
+     * @return int 数据
+     */
+    public static int toIntValue(final Long longValue) {
+        return null == longValue ? 0 : longValue.intValue();
+    }
+
+    /**
+     * <pre>
+     *   NumberHelper.toInt(null) = 0
+     *   NumberHelper.toInt(1L)  = 1
+     * </pre>
+     *
+     * @param longValue 整型
+     * @return int 数据
+     */
+    public static Integer toInt(final Long longValue) {
+        return null == longValue ? null : longValue.intValue();
+    }
 
     /**
      * <pre>

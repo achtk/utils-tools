@@ -2,6 +2,7 @@ package com.chua.utils.tools.constant;
 
 /**
  * bean常量
+ *
  * @author CH
  * @version 1.0.0
  * @since 2020/11/6
@@ -20,7 +21,7 @@ public class BeanConstant {
     /**
      * configurationBeanBindingPostProcessor
      */
-    public static final String BEAN_CONFIGURATION_BEAN_BINDING_POST_PROCESSOR =  "configurationBeanBindingPostProcessor";
+    public static final String BEAN_CONFIGURATION_BEAN_BINDING_POST_PROCESSOR = "configurationBeanBindingPostProcessor";
     /**
      * org.springframework.context.ApplicationContext
      */

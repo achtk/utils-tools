@@ -13,6 +13,7 @@ import java.util.function.BiConsumer;
 public interface TimeMap<K, V> extends Map<K, V> {
     /**
      * 检测器
+     *
      * @param consumer 回调
      */
     void detector(BiConsumer<K, V> consumer);

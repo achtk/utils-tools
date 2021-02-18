@@ -49,12 +49,12 @@ public class Converter {
      * @since 1.0.0
      */
     public static TypeConverter getTypeConverter(Class<?> type) {
-        if(null == type) {
+        if (null == type) {
             return VOID_TYPE_CONVERTER;
         }
 
         TypeConverter typeConverter = TYPE_CONVERTER.get(type);
-        if(null != typeConverter) {
+        if (null != typeConverter) {
             return typeConverter;
         }
 
@@ -94,11 +94,11 @@ public class Converter {
      * @return 目标类型
      */
     public static <T> T convertIfNecessary(Object value, Class<T> target) {
-        if(null == target) {
+        if (null == target) {
             return null;
         }
 
-        if(target.isAssignableFrom(value.getClass())) {
+        if (target.isAssignableFrom(value.getClass())) {
             return (T) value;
         }
 
