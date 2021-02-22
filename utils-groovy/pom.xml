@@ -20,6 +20,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>http-builder</artifactId>
+            <version>0.4.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.chua</groupId>
             <artifactId>utils-tools</artifactId>
             <version>${utils-tools.version}</version>
