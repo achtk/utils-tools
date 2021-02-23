@@ -105,6 +105,11 @@ public class VertxServerEventBus extends AbstractVerticle implements com.chua.ut
     }
 
     @Override
+    public List<BusEntity> getBus() {
+        return null;
+    }
+
+    @Override
     public void post(String channel, Object event) {
         EVENT_BUS.post(event);
         sendEventBus(channel, event);

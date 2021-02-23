@@ -94,7 +94,7 @@ public class Converter {
      * @return 目标类型
      */
     public static <T> T convertIfNecessary(Object value, Class<T> target) {
-        if (null == target) {
+        if (null == target || null == value) {
             return null;
         }
 

@@ -297,8 +297,12 @@ public class StandardBeanCopy<T> implements BeanCopy<T> {
         Map.Entry<String, Object> entry = MapOperableHelper.getFirst(this.withParams);
 
         if (this.beanMap.containsKey(entry.getKey())) {
-            this.beanMap.put(entry.getKey(), entry.getValue());
-            return entry.getValue().equals(this.beanMap.get(entry.getKey()));
+            Object value = entry.getValue();
+            this.beanMap.put(entry.getKey(), value);
+            if (null == value) {
+                return false;
+            }
+            return value.equals(this.beanMap.get(entry.getKey()));
         }
         entry = MapOperableHelper.getIndex(this.withParams, 1);
         if (null != entry && this.beanMap.containsKey(entry.getKey())) {

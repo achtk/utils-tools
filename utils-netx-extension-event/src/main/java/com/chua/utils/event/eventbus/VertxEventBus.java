@@ -2,7 +2,6 @@ package com.chua.utils.event.eventbus;
 
 import com.chua.utils.tools.common.JsonHelper;
 import com.chua.utils.tools.common.ThreadHelper;
-import com.chua.utils.tools.manager.eventbus.EventBus;
 import com.chua.utils.tools.manager.eventbus.ServerEventBus;
 import com.google.common.base.Splitter;
 import com.google.common.eventbus.AsyncEventBus;
@@ -15,7 +14,6 @@ import io.vertx.core.net.SocketAddress;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.concurrent.Executor;
 
 /**
  * vertx 消息总线
@@ -88,6 +86,11 @@ public class VertxEventBus extends AbstractVerticle implements ServerEventBus {
     @Override
     public void post(Object event) {
         asyncEventBus.post(event);
+    }
+
+    @Override
+    public List<BusEntity> getBus() {
+        return null;
     }
 
     @Override
