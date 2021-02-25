@@ -163,6 +163,7 @@
         <freemarker.version>2.3.30</freemarker.version>
         <tensorflow.version>1.15.0</tensorflow.version>
         <jedis.version>3.3.0</jedis.version>
+        <amqp-client.version>5.11.0</amqp-client.version>
 
         <jsonup.version>1.10.3</jsonup.version>
         <htmlunit.version>2.24</htmlunit.version>
