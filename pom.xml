@@ -274,7 +274,8 @@
         <module>utils-tools-extension-springstarter</module>
 <!--        <module>utils-groovy</module>-->
         <module>utils-netx-extension-flink</module>
-<!--        <module>utils-scala</module>-->
+        <module>utils-tools-extension-engine</module>
+        <!--        <module>utils-scala</module>-->
     </modules>
 
     <build>

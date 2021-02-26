@@ -18,7 +18,7 @@ import java.util.Map;
  * @author CH* @since 2021/1/26
  * @version 1.0.0
  */
-class MemTable implements Table {
+public class MemTable implements Table {
 
     private Map<String, Object> columns = new HashMap<>();
     private String tableName;
