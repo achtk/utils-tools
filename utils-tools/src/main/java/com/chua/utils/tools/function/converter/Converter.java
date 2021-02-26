@@ -1,5 +1,6 @@
 package com.chua.utils.tools.function.converter;
 
+import com.chua.utils.tools.empty.EmptyOrBase;
 import com.chua.utils.tools.function.converter.definition.TypeConversionDefinition;
 import com.chua.utils.tools.function.converter.definition.VoidConversionDefinition;
 import com.chua.utils.tools.spi.entity.ExtensionClass;
@@ -8,7 +9,10 @@ import com.chua.utils.tools.util.ClassUtils;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,9 +22,10 @@ import java.util.Map;
  * @version 1.0.0
  * @since 2020/12/19
  */
-public class Converter {
+@SuppressWarnings("ALL")
+public final class Converter {
 
-    private static final TypeConverter<?> VOID_TYPE_CONVERTER = new VoidTypeConverter();
+    public static final TypeConverter<?> VOID_TYPE_CONVERTER = new VoidTypeConverter();
     private static final TypeConversionDefinition<?, ?> VOID_TYPE_CONVERTER_DEFINITION = new VoidConversionDefinition();
 
     private static final Map<Class<?>, TypeConverter> TYPE_CONVERTER = ExtensionFactory.getExtensionLoader(TypeConverter.class).toPriorityMap(typeConverterExtensionClass -> typeConverterExtensionClass.getObj().getType());
@@ -31,7 +36,21 @@ public class Converter {
                 Type[] actualTypeArguments = ClassUtils.getActualTypeArguments(typeConversionDefinition.getClass(), TypeConversionDefinition.class);
                 HashBasedTable<Class<?>, Class<?>, TypeConversionDefinition> table = HashBasedTable.create();
                 if (actualTypeArguments.length > 1) {
-                    table.put((Class<?>) actualTypeArguments[0], (Class<?>) actualTypeArguments[1], typeConversionDefinition);
+                    Object parameterizedTypes1 = actualTypeArguments[0];
+                    Object parameterizedTypes2 = actualTypeArguments[1];
+                    Class<?> type1;
+                    Class<?> type2;
+                    if(parameterizedTypes1 instanceof ParameterizedType) {
+                        type1 = (Class<?>) ((ParameterizedType)parameterizedTypes1).getRawType();
+                    } else {
+                        type1 = (Class<?>) parameterizedTypes1;
+                    }
+                    if(parameterizedTypes2 instanceof ParameterizedType) {
+                        type2 = (Class<?>) ((ParameterizedType)parameterizedTypes2).getRawType();
+                    } else {
+                        type2 = (Class<?>) parameterizedTypes2;
+                    }
+                    table.put(type1 , type2, typeConversionDefinition);
                 }
                 return table;
             }).reduce(HashBasedTable.create(), (objectObjectObjectHashBasedTable, objectObjectObjectHashBasedTable2) -> {
@@ -75,11 +94,23 @@ public class Converter {
         TypeConversionDefinition typeConversionDefinition = TYPE_CONVERTER_DEFINITION.get(type, target);
         if (null == typeConversionDefinition) {
             Map<Class<?>, TypeConversionDefinition> column = TYPE_CONVERTER_DEFINITION.column(type);
-            for (Class<?> aClass : column.keySet()) {
-                if (aClass.isAssignableFrom(target)) {
-                    return column.get(aClass);
+            if(!column.isEmpty()) {
+                for (Class<?> aClass : column.keySet()) {
+                    if (aClass.isAssignableFrom(target)) {
+                        return column.get(aClass);
+                    }
                 }
             }
+            Map<Class<?>, TypeConversionDefinition> definitionMap = TYPE_CONVERTER_DEFINITION.column(target);
+            List<Class<?>> classes = new ArrayList<>(definitionMap.keySet());
+            classes.sort((o1, o2) -> o1.getName().equals(EmptyOrBase.OBJECT_NAME) ? 1 : -1);
+
+            for (Class<?> aClass : classes) {
+                if(aClass.isAssignableFrom(type)) {
+                    return definitionMap.get(aClass);
+                }
+            }
+
         }
         return null == typeConversionDefinition ? (TypeConversionDefinition<Object, T>) VOID_TYPE_CONVERTER_DEFINITION : typeConversionDefinition;
     }
