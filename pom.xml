@@ -111,7 +111,7 @@
         <jooq.version>3.13.1</jooq.version>
         <mybatis.version>3.5.4</mybatis.version>
 
-        <httpclient.version>5.0.3</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <httpasyncclient.version>4.1.4</httpasyncclient.version>
 
         <solr.version>8.5.1</solr.version>
@@ -232,9 +232,6 @@
         <module>utils-tools-extension-template</module>
         <module>utils-tools-extension-feign</module>
         <module>utils-tools-extension-operator</module>
-
-        <module>utils-example</module>
-
         <module>utils-netx</module>
         <module>utils-netx-extension-zookeeper</module>
         <module>utils-netx-extension-nacos</module>
@@ -263,7 +260,7 @@
         <module>utils-tools-extension-pcap</module>
         <module>utils-tools-spider</module>
         <module>utils-netx-extension-rabbitmq</module>
-        <module>utils-opencv</module>
+<!--        <module>utils-opencv</module>-->
         <module>utils-netx-extension-event</module>
         <module>utils-tools-schedule</module>
         <module>utils-tools-extension-system</module>
@@ -275,9 +272,9 @@
         <module>utils-tools-extension-everything</module>
         <module>utils-tools-extension-example</module>
         <module>utils-tools-extension-springstarter</module>
-        <module>utils-groovy</module>
+<!--        <module>utils-groovy</module>-->
         <module>utils-netx-extension-flink</module>
-        <module>utils-scala</module>
+<!--        <module>utils-scala</module>-->
     </modules>
 
     <build>
@@ -308,5 +305,72 @@
         </plugins>
     </build>
 
+    <scm>
+        <connection>scm:git:https://gitee.com/achtk/utils-tools.git</connection>
+        <developerConnection>scm:https://gitee.com/achtk/utils-tools.git</developerConnection>
+        <url>https://gitee.com/achtk/utils-tools.git</url>
+    </scm>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Source -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Javadoc -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- GPG -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>oss</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>oss</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 
 </project>
