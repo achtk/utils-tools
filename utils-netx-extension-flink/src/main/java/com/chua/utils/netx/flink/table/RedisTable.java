@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author CH* @version 1.0.0* @since 2021/1/25
  */
-class RedisTable implements Table {
+public class RedisTable implements Table {
 
     private String host = "127.0.0.1:6379";
     private String password;
